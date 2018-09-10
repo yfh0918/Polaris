@@ -1,0 +1,1 @@
+%JAVA_HOME%\bin\java -Xmx512M -Xms128M -jar Polaris_gateway.jar

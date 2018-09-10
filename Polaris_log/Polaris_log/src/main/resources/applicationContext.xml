@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo" xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd  
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://code.alibabatech.com/schema/dubbo  http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+           http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd"
+	default-init-method="init" default-lazy-init="false"
+	default-destroy-method="destroy">
+
+	<!-- 注解扫描 -->
+	<context:annotation-config />
+	<context:component-scan base-package="com.polaris" />
+
+	<!-- 读入配置文件 -->
+	<bean id="propertyConfigurer" class="com.polaris.comm.config.ConfPropertyPlaceholderConfigurer">  
+		<property name="fileEncoding" value="utf-8" />
+	</bean>
+
+	<mongo:mongo-client id="mongoClient"  host="${mongo.host}" port="${mongo.port}" credentials="${mongo.credentials}">
+        <mongo:client-options
+                connections-per-host="${mongo.connectionsPerHost}"
+                min-connections-per-host="${mongo.minConnectionsPerHost}"
+                threads-allowed-to-block-for-connection-multiplier="${mongo.threadsAllowedToBlockForConnectionMultiplier}"
+                connect-timeout="${mongo.connectTimeout}"
+                max-wait-time="${mongo.maxWaitTime}"
+                socket-keep-alive="${mongo.socketKeepAlive}"
+                socket-timeout="${mongo.socketTimeout}"
+                description="${mongo.description}"
+                max-connection-idle-time="${mongo.maxConnectionIdleTime}"
+                max-connection-life-time="${mongo.maxConnectionLifeTime}"
+                heartbeat-socket-timeout="${mongo.heartbeatSocketTimeout}"
+                heartbeat-connect-timeout="${mongo.heartbeatConnectTimeout}"
+                min-heartbeat-frequency="${mongo.minHeartbeatFrequency}"
+                heartbeat-frequency="${mongo.heartbeatFrequency}"
+
+        />
+    </mongo:mongo-client>
+    <mongo:db-factory id="mongoDbFactory" dbname="${mongo.defaultDbName}" mongo-ref="mongoClient"/>
+    
+	<!-- mongodb的模板 -->
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
+	</bean>
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+
+	<!-- 提供方应用信息，用于计算依赖关系，不要与消费方一样 -->
+	<dubbo:application name="${project.name}" />
+
+	<!-- 注册地址 -->
+	<dubbo:registry address="${dubbo.registry.address}"
+		check="false" />
+
+	<!-- 用dubbo协议在20880端口暴露服务 ，注意不能与其他服务端口相同 -->
+	<dubbo:protocol name="dubbo" port="${dubbo.protocol.port}"
+		dispatcher="all" threadpool="${dubbo.protocol.threadpool}" threads="${dubbo.protocol.threads}"
+		accepts="${dubbo.protocol.accepts}" />
+
+	<!-- 服务提供方的参数设定 -->
+	<dubbo:provider connections="${dubbo.provider.connections}"
+		timeout="${dubbo.provider.timeout}" retries="${dubbo.provider.retries}" />
+    <dubbo:service interface="com.polaris.log.api.service.LogService" ref="logEntry" version="1.0.0">
+    </dubbo:service>
+</beans>

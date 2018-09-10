@@ -1,0 +1,1 @@
+%JAVA_HOME%\bin\java -Ddubbo.shutdown.hook=true -Xmx512M -Xms128M -jar Polaris_demo.jar

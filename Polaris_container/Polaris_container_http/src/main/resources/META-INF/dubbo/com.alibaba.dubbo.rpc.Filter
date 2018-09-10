@@ -1,0 +1,2 @@
+consumer=com.polaris.comm.filter.ConsumerFilter
+provider=com.polaris.comm.filter.ProviderFilter

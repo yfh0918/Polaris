@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ConfZKMapper">
+	
+	<resultMap id="ConfZK" type="com.polaris.conf.admin.core.model.ConfZK" >
+		<result column="zk_name" property="zkName" jdbcType="VARCHAR" />
+		<result column="zk_value" property="zkValue" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.zk_name,
+		t.zk_value
+	</sql>
+
+	<select id="findAll" parameterType="java.util.Map" resultMap="ConfZK">
+		SELECT <include refid="Base_Column_List" />
+		FROM CONF_ZK  t
+		ORDER BY t.zk_name ASC
+	</select>
+	<select id="findCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+		SELECT count(*)
+		FROM CONF_ZK
+		WHERE zk_name = #{zkName} 
+		OR    zk_value = #{zkValue}
+	</select>
+
+	<insert id="save" parameterType="com.polaris.conf.admin.core.model.ConfZK" >
+		INSERT INTO CONF_ZK(zk_name, zk_value)
+		VALUES(#{zkName}, #{zkValue})
+	</insert>
+
+	<update id="update" parameterType="com.polaris.conf.admin.core.model.ConfZK" >
+		UPDATE CONF_ZK
+		SET zk_value = #{zkValue}
+		WHERE zk_name = #{zkName}
+	</update>
+
+	<delete id="remove" parameterType="java.lang.String" >
+		DELETE FROM CONF_ZK
+		WHERE zk_name = #{zkName}
+	</delete>
+
+	<select id="load" parameterType="java.lang.String" resultMap="ConfZK">
+		SELECT <include refid="Base_Column_List" />
+		FROM CONF_ZK  t
+		WHERE zk_name = #{zkName}
+	</select>
+	
+</mapper>

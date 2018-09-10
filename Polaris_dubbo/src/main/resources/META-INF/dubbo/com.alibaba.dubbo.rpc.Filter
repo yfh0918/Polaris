@@ -1,0 +1,2 @@
+consumer=com.polaris.dubbo.filter.ConsumerFilter
+provider=com.polaris.dubbo.filter.ProviderFilter

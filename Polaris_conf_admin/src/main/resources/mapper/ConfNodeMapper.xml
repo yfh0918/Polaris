@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ConfNodeMapper">
+	
+	<resultMap id="ConfNode" type="com.polaris.conf.admin.core.model.ConfNode" >
+		<result column="node_zk" property="nodeZK" jdbcType="VARCHAR" />
+		<result column="node_group" property="nodeGroup" jdbcType="VARCHAR" />
+		<result column="node_key" property="nodeKey" jdbcType="VARCHAR" />
+	    <result column="node_value" property="nodeValue" jdbcType="VARCHAR" />
+	    <result column="node_desc" property="nodeDesc" jdbcType="VARCHAR" />
+	    <result column="del_flg" property="delFlg" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.node_zk,
+		t.node_group,
+		t.node_key,
+		t.node_value,
+		t.node_desc,
+		t.del_flg
+	</sql>
+
+	<select id="findList" parameterType="java.util.Map" resultMap="ConfNode">
+		SELECT <include refid="Base_Column_List" />
+		FROM CONF_NODE  t
+		<trim prefix="WHERE" prefixOverrides="AND | OR" >
+			1=1
+			<if test="nodeZK != null and nodeZK != '' ">
+				AND t.node_zk = #{nodeZK}
+			</if>
+			<if test="nodeGroup != null and nodeGroup != '' ">
+				AND t.node_group = #{nodeGroup}
+			</if>
+			<if test="nodeKey != null and nodeKey != '' ">
+				AND t.node_key like #{nodeKey}
+			</if>
+		</trim>
+		ORDER BY t.node_key ASC
+	</select>
+
+	<delete id="deleteByKey" parameterType="java.util.Map" >
+		DELETE FROM CONF_NODE
+		WHERE   node_zk = #{nodeZK}
+			AND node_group = #{nodeGroup}
+			AND node_key = #{nodeKey}
+	</delete>
+	
+	<update id="logicDeleteByKey" parameterType="java.util.Map" >
+		UPDATE CONF_NODE 
+		SET del_flg = '1'
+		WHERE   node_zk = #{nodeZK}
+			AND node_group = #{nodeGroup}
+			AND node_key = #{nodeKey}
+			AND del_flg = '0'
+	</update>
+	
+	<update id="recovery" parameterType="java.util.Map" >
+		UPDATE CONF_NODE 
+		SET del_flg = '0'
+		WHERE   node_zk = #{nodeZK}
+			AND node_group = #{nodeGroup}
+			AND node_key = #{nodeKey}
+			AND del_flg = '1'
+	</update>
+	
+	<insert id="insert" parameterType="com.polaris.conf.admin.core.model.ConfNode" >
+		INSERT INTO CONF_NODE(node_zk,node_group, node_key, node_value, node_desc, del_flg)
+		VALUES(#{nodeZK},#{nodeGroup}, #{nodeKey}, #{nodeValue}, #{nodeDesc}, '0')
+	</insert>
+	
+	<select id="selectByKey" parameterType="java.lang.String" resultMap="ConfNode">
+		SELECT <include refid="Base_Column_List" />
+		FROM CONF_NODE  t
+		WHERE   t.node_zk = #{nodeZK}
+		    AND t.node_group = #{nodeGroup}
+			AND t.node_key = #{nodeKey}
+			AND t.del_flg = '0'
+	</select>
+	
+	<update id="update" parameterType="com.polaris.conf.admin.core.model.ConfNode" >
+		UPDATE CONF_NODE 
+		SET node_value = #{nodeValue}
+			, node_desc = #{nodeDesc}
+		WHERE   node_zk = #{nodeZK}
+		    AND node_group = #{nodeGroup}
+			AND node_key = #{nodeKey}
+			AND del_flg = '0'
+	</update>
+	
+</mapper>

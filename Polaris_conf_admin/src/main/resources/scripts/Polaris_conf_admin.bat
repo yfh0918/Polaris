@@ -1,0 +1,1 @@
+%JAVA_HOME%\bin\java -Xmx128M -Xms128M -jar Polaris_conf_admin.jar

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.polaris</groupId>
+    <artifactId>Polaris_parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>Polaris_timer_parent</artifactId>
+  <packaging>pom</packaging>
+  <name>Polaris_timer_parent</name>
+  
+  <modules>
+	<module>Polaris_timer</module>
+	<module>Polaris_timer_api</module>
+  </modules>
+  
+  <dependencies>
+  
+ 	<!-- common -->
+	<dependency>
+		<groupId>com.polaris</groupId>
+		<artifactId>Polaris_comm</artifactId>
+	</dependency>
+	
+	
+  </dependencies>
+</project>

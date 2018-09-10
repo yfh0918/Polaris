@@ -1,0 +1,138 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <groupId>com.polaris</groupId>
+    <artifactId>Polaris_workflow_parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>Polaris_workflow_core</artifactId>
+  <packaging>jar</packaging>
+  <name>Polaris_workflow_core</name>
+
+  <dependencies>
+  
+  	  <dependency>
+		<groupId>com.polaris</groupId>
+		<artifactId>Polaris_workflow_api</artifactId>
+	  </dependency>
+  
+  	  <dependency>
+		<groupId>com.polaris</groupId>
+		<artifactId>Polaris_comm</artifactId>
+	  </dependency>
+	  <!-- activiti -->
+	  <dependency>
+		<groupId>org.activiti</groupId>
+		<artifactId>activiti-engine</artifactId>
+	  </dependency>
+	  <dependency>
+		<groupId>org.activiti</groupId>
+		<artifactId>activiti-spring</artifactId>
+	  </dependency>
+	  <dependency>
+	      <groupId>org.activiti</groupId>
+	      <artifactId>activiti-json-converter</artifactId>
+	  </dependency>
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-explorer</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.activiti</groupId>
+			<artifactId>activiti-modeler</artifactId>
+		</dependency>
+	  <dependency>
+	      <groupId>org.activiti</groupId>
+	      <artifactId>activiti-rest</artifactId>
+	  </dependency>
+	  <dependency>
+	      <groupId>org.activiti</groupId>
+	      <artifactId>activiti-diagram-rest</artifactId>
+	  </dependency>
+	  <dependency>
+	      <groupId>org.activiti</groupId>
+	      <artifactId>activiti-cxf</artifactId>
+	  </dependency>
+
+	<!--activiti -->
+	<dependency>
+		<groupId>org.infinispan</groupId>
+		<artifactId>infinispan-core</artifactId>
+	</dependency>
+
+	<!-- PERSISTENCE begin -->
+	<!-- hibernate -->
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-core</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-entitymanager</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate.javax.persistence</groupId>
+		<artifactId>hibernate-jpa-2.0-api</artifactId>
+	</dependency>
+
+	<!-- spring data access -->
+	<dependency>
+		<groupId>org.springframework.data</groupId>
+		<artifactId>spring-data-jpa</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-orm</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-jdbc</artifactId>
+	</dependency>
+
+    <dependency>
+		<groupId>com.google.guava</groupId>
+		<artifactId>guava</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.jodd</groupId>
+		<artifactId>jodd</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>joda-time</groupId>
+		<artifactId>joda-time</artifactId>
+	</dependency>
+
+    <!-- UUID -->
+    <dependency>
+        <groupId>com.fasterxml.uuid</groupId>
+        <artifactId>java-uuid-generator</artifactId>
+    </dependency>
+	<!-- GENERAL UTILS end -->
+	
+	<!-- activit5.17.0 和mybatis3.3.0有版本冲突，故降低mybatis的版本为3.2.5 -->
+	<dependency>
+		<groupId>org.mybatis</groupId>
+		<artifactId>mybatis</artifactId>
+		<version>3.2.5</version>
+	</dependency>
+  </dependencies>
+  
+  <build>
+	  <plugins>
+		<!-- Source attach plugin -->
+		<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+	  </plugins>
+   </build>
+</project>

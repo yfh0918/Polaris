@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ConfGroupMapper">
+	
+	<resultMap id="ConfGroup" type="com.polaris.conf.admin.core.model.ConfGroup" >
+		<result column="group_name" property="groupName" jdbcType="VARCHAR" />
+		<result column="group_title" property="groupTitle" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="Base_Column_List">
+		t.group_name,
+		t.group_title
+	</sql>
+
+	<select id="findAll" parameterType="java.util.Map" resultMap="ConfGroup">
+		SELECT <include refid="Base_Column_List" />
+		FROM CONF_GROUP  t
+		ORDER BY t.group_name ASC
+	</select>
+
+	<insert id="save" parameterType="com.polaris.conf.admin.core.model.ConfGroup" >
+		INSERT INTO CONF_GROUP(group_name, group_title)
+		VALUES(#{groupName}, #{groupTitle})
+	</insert>
+
+	<update id="update" parameterType="com.polaris.conf.admin.core.model.ConfGroup" >
+		UPDATE CONF_GROUP
+		SET group_title = #{groupTitle}
+		WHERE group_name = #{groupName}
+	</update>
+
+	<delete id="remove" parameterType="java.lang.String" >
+		DELETE FROM CONF_GROUP
+		WHERE group_name = #{groupName}
+	</delete>
+
+	<select id="load" parameterType="java.lang.String" resultMap="ConfGroup">
+		SELECT <include refid="Base_Column_List" />
+		FROM CONF_GROUP  t
+		WHERE group_name = #{groupName}
+	</select>
+	
+</mapper>
