@@ -79,3 +79,13 @@
 /Polaris_workflow/Polaris_workflow/.project
 /Polaris_workflow/Polaris_workflow/.settings
 /Polaris_workflow/Polaris_workflow/log
+/Polaris_cache/.gitignore
+/Polaris_comm/.gitignore
+/Polaris_conf/.gitignore
+/Polaris_conf_admin/.gitignore
+/Polaris_container/Polaris_container_http/target/.gitignore
+/Polaris_container/Polaris_container_http/target/git.properties
+/Polaris_container/Polaris_container_jetty/target/.gitignore
+/Polaris_container/Polaris_container_jetty/target/git.properties
+/Polaris_container/Polaris_container_tomcat/target/.gitignore
+/Polaris_container/Polaris_container_tomcat/target/git.properties
