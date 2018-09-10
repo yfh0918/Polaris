@@ -887,6 +887,13 @@
                 <version>3.0.3</version>
             </dependency>
 
+			<!-- mail -->
+			<dependency>
+			    <groupId>javax.mail</groupId>
+			    <artifactId>mail</artifactId>
+			    <version>1.5.0-b01</version>
+			</dependency>
+
         </dependencies>
     </dependencyManagement>
 
