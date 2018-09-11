@@ -10,7 +10,7 @@ import org.junit.Test;
 import com.polaris.gateway.util.WeightedRoundRobinScheduling;
 
 /**
- * @author:Winning
+ * @author:Tom.Yu
  *
  * Description:
  *

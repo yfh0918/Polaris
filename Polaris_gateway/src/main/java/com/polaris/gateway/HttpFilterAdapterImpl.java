@@ -36,7 +36,7 @@ import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.CharsetUtil;
 
 /**
- * @author:Winning
+ * @author:Tom.Yu
  *
  * Description:
  *

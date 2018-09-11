@@ -29,7 +29,7 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.proxy.Socks5ProxyHandler;
 
 /**
- * @author:Winning
+ * @author:Tom.Yu
  *
  * Description:
  *

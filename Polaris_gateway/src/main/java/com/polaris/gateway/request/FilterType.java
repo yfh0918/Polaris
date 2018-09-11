@@ -8,7 +8,7 @@ import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
 
 /**
- * @author:Winning
+ * @author:Tom.Yu
  *
  * Description:
  *

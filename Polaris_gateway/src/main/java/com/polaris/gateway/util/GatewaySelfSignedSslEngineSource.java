@@ -26,7 +26,7 @@ import net.lightbody.bmp.mitm.keys.ECKeyGenerator;
 import net.lightbody.bmp.mitm.keys.RSAKeyGenerator;
 
 /**
- * @author:Winning
+ * @author:Tom.Yu
  *
  * Description:
  *
@@ -36,7 +36,7 @@ public class GatewaySelfSignedSslEngineSource implements SslEngineSource {
 
     public static final String KeyStoreType_STR = "JKS";
     public static final String ALIAS = "gateway";
-    public static final String PASSWORD = "winning";
+    public static final String PASSWORD = "Tom.Yu";
     private static final String PROTOCOL = "TLS";
     public static final String crtFileName = "gateway.crt";
     public static final String jksKeyStoreFileName = "gateway.jks";
@@ -111,8 +111,8 @@ public class GatewaySelfSignedSslEngineSource implements SslEngineSource {
         }
         CertificateInfo certificateInfo = new CertificateInfo();
         certificateInfo.countryCode("CN");
-        certificateInfo.organization("tech-winning.com");
-        certificateInfo.email("yufenghua@tech-winning.com");
+        certificateInfo.organization("tech-Tom.Yu.com");
+        certificateInfo.email("yufenghua@tech-Tom.Yu.com");
         certificateInfo.commonName("Gateway Integration Certification Authority");
         DateTime dateTime = new DateTime();
         certificateInfo.notBefore(dateTime.minusDays(1).toDate());

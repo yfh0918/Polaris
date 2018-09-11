@@ -15,7 +15,7 @@ import com.polaris.gateway.request.FilterType;
 import com.polaris.comm.util.LogUtil;
 
 /**
- * @author:Winning
+ * @author:Tom.Yu
  *
  * Description:
  *

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * @author:Winning
+ * @author:Tom.Yu
  *
  * Description:
  *

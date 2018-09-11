@@ -22,7 +22,7 @@ import com.polaris.log.api.service.LogService;
  *  
  *
  * @version ver 3.0.0
- * @author Shanghai Kinstar Winning Software .co.ltd. Yang Hao
+ * @author Shanghai Kinstar Tom.Yu Software .co.ltd. Yang Hao
  * @since 作成日期：2017年11月10日（Yang Hao）<br/>
  *        改修日期：
 */

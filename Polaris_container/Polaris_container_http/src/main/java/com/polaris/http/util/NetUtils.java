@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.polaris.comm.util.LogUtil;
 
 /**
- * @author:Winning
+ * @author:Tom.Yu
  *
  * Description:
  *

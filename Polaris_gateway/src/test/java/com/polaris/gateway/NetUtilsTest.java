@@ -8,7 +8,7 @@ import com.polaris.http.util.NetUtils;
 
 
 /**
- * @author:Winning
+ * @author:Tom.Yu
  *
  * Description:
  *

@@ -15,7 +15,7 @@ import com.polaris.comm.Constant;
 public class EncryptUtil {
 	private static final LogUtil logger = LogUtil.getInstance(EncryptUtil.class);
 
-	private static String strDefaultKey = "winning";
+	private static String strDefaultKey = "Tom.Yu";
 	private Cipher encryptCipher = null;
 
 	private Cipher decryptCipher = null;

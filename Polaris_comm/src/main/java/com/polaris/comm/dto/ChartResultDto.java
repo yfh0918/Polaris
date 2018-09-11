@@ -12,7 +12,7 @@ import com.polaris.comm.dto.BaseDto;
  * 说明：图表类返回数据结构
  *
  * @version ver 4.0.0
- * @author Shanghai Kinstar Winning Software .co.ltd. XuChuanHou
+ * @author Shanghai Kinstar Tom.Yu Software .co.ltd. XuChuanHou
  * @since 作成日期：2017年8月22日（XuChuanHou）<br/>
  *        改修日期：
  */

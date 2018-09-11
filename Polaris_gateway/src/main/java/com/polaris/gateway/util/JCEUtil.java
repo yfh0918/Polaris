@@ -9,7 +9,7 @@ import java.util.Map;
 import com.polaris.comm.util.LogUtil;
 
 /**
- * @author:Winning
+ * @author:Tom.Yu
  *
  * Description:
  *
