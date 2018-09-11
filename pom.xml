@@ -12,7 +12,7 @@
         <resteasy-version>3.0.13.Final</resteasy-version>
         <spring_version>4.3.3.RELEASE</spring_version>
         <tomcat-version>8.5.5</tomcat-version>
-        <jetty-version>9.3.3.v20150827</jetty-version>
+        <jetty-version>9.4.12.v20180830</jetty-version>
         <activiti-version>5.17.0</activiti-version>
         <hibernate-version>4.2.5.Final</hibernate-version>
         <dubbo-version>2.5.9</dubbo-version>
@@ -266,10 +266,10 @@
 
             <!-- servlet and resteasy -->
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>2.5</version>
-            </dependency>
+			    <groupId>javax.servlet</groupId>
+			    <artifactId>javax.servlet-api</artifactId>
+			    <version>4.0.1</version>
+			</dependency>
             <dependency>
                 <groupId>javax.servlet.jsp</groupId>
                 <artifactId>jsp-api</artifactId>

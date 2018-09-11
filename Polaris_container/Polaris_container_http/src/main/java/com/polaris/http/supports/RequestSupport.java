@@ -139,7 +139,7 @@ public class RequestSupport {
 	
 	public static void main( String[] args ) throws Exception {
 		for (int i = 0; i < 10000; i++) {
-			String result = RequestSupport.sendRequest(Constant.METHOD_POST, "http://127.0.0.1:9005/rest/demo/test", null);
+			String result = RequestSupport.sendRequest(Constant.METHOD_POST, "http://127.0.0.1:9005/api/demo/getUserInfo", null);
 			Thread.sleep(10);
 			System.out.println(result);
 		}

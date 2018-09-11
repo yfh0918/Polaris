@@ -18,7 +18,10 @@
 			<groupId>com.polaris</groupId>
 			<artifactId>Polaris_comm</artifactId>
 		</dependency>
-
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		</dependency>
 		<dependency>
 		    <groupId>com.alibaba.csp</groupId>
 		    <artifactId>sentinel-dubbo-adapter</artifactId>

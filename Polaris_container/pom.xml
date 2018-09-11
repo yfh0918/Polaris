@@ -24,13 +24,12 @@
 		<groupId>com.polaris</groupId>
 		<artifactId>Polaris_comm</artifactId>
 	</dependency>
-	
   
 	<!-- servlet and resteasy -->
-	<dependency>  
-        <groupId>javax.servlet</groupId>  
-        <artifactId>servlet-api</artifactId>  
-	</dependency> 
+	<dependency>
+	    <groupId>javax.servlet</groupId>
+	    <artifactId>javax.servlet-api</artifactId>
+	</dependency>
 	<dependency>  
         <groupId>javax.annotation</groupId>  
         <artifactId>javax.annotation-api</artifactId>  

@@ -106,3 +106,13 @@
 /Polaris_workflow/Polaris_workflow/.gitignore
 /Polaris_workflow/Polaris_workflow_api/.gitignore
 /Polaris_workflow/Polaris_workflow_core/.gitignore
+/Polaris_distributed_lock/target/classes/.gitignore
+/Polaris_distributed_lock/target/git.properties
+/Polaris_log/Polaris_log_api/target/.gitignore
+/Polaris_log/Polaris_log_api/target/classes/.gitignore
+/Polaris_log/Polaris_log_api/target/git.properties
+/Polaris_log/Polaris_log_rest/target/.gitignore
+/Polaris_log/Polaris_log_rest/target/classes/.gitignore
+/Polaris_log/Polaris_log_rest/target/git.properties
+/Polaris_sentinel/target/.gitignore
+/Polaris_sentinel/target/git.properties
