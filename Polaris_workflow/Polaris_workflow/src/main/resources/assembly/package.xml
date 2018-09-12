@@ -19,13 +19,13 @@
 
          <!-- 把项目的配置文件，打包进zip文件的config目录 -->    
          <fileSet>  
-             <directory>${project.basedir}${file.separator}src${file.separator}main${file.separator}resources${file.separator}config</directory>  
+             <directory>${project.build.directory}${file.separator}classes${file.separator}config</directory>  
              <outputDirectory>config</outputDirectory>  
              <includes>  
                  <include>*.*</include>  
              </includes>  
          </fileSet>  
-         
+                  
          <!-- deployments的流程图 -->    
          <fileSet>  
              <directory>${project.basedir}${file.separator}src${file.separator}main${file.separator}resources${file.separator}deployments</directory>  
@@ -56,7 +56,7 @@
          
          <!-- 把git.properties打进zip包的根目录 -->  
          <fileSet>  
-             <directory>${project.basedir}${file.separator}target</directory>  
+             <directory>${project.build.directory}</directory>  
              <outputDirectory></outputDirectory>  
              <includes>  
                  <include>git.properties</include>  

@@ -18,7 +18,52 @@
         <dubbo-version>2.5.9</dubbo-version>
         <lucene-version>7.2.0</lucene-version>
     </properties>
-
+    <profiles>
+        <profile>
+            <!-- 本地开发环境 -->
+            <id>develop</id>
+            <properties>
+                <profiles.active>develop</profiles.active>
+            </properties>
+            <!-- 默认激活本环境 -->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <!-- 测试环境 -->
+            <id>test</id>
+            <properties>
+                <profiles.active>test</profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <!-- 预生产环境  -->
+            <id>preProuction</id>
+            <properties>
+                <profiles.active>preProuction</profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <!-- 生产环境 -->
+            <id>production</id>
+            <properties>
+                <profiles.active>production</profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+	<distributionManagement>
+        <repository>
+            <id>releases</id>
+            <name>Nexus Release Repository</name>
+            <url>http://10.2.16.29:8081/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://10.2.16.29:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
 	<modules>
         <module>Polaris_comm</module>
         <module>Polaris_container</module>
@@ -940,11 +985,12 @@
             <resource>
                 <targetPath>${project.build.directory}/classes</targetPath>
                 <directory>src/main/resources</directory>
-                <filtering>false</filtering>
+                <filtering>true</filtering>
                 <includes>
                     <include>**/*.*</include>
                 </includes>
                 <excludes>
+                	<exclude>config-*/</exclude>
                     <exclude>applicationContext.xml</exclude>
                     <exclude>assembly/</exclude>
                     <exclude>scripts/</exclude>
