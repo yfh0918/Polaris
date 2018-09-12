@@ -6,7 +6,7 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.polaris_conf_admin</groupId>
+  <groupId>com.polaris</groupId>
   <artifactId>Polaris_conf_admin</artifactId>
   <packaging>jar</packaging>
   <name>Polaris_conf_admin</name>
