@@ -1,11 +1,15 @@
 package com.polaris.container.jetty.listener;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.ServiceLoader;
 import java.util.Set;
 
+import javax.servlet.ServletContainerInitializer;
+import javax.servlet.ServletContext;
+
 import org.eclipse.jetty.util.component.LifeCycle;
+
+import com.polaris.comm.util.LogUtil;
 
 /**
  * Class Name : ServerHandler
@@ -17,25 +21,18 @@ import org.eclipse.jetty.util.component.LifeCycle;
 
 public class ServerHandlerListerner implements LifeCycle.Listener {
 	
+	private static final LogUtil logger = LogUtil.getInstance(ServerHandlerListerner.class);
 	/**
 	 * 服务器监听器集合
 	 */
 	private Set<ServerListener> serverListeners = null;
+	private final ServletContext sc;
+	private static ServerHandlerListerner instance = null;
+	private final ServiceLoader<ServletContainerInitializer> serviceLoader = ServiceLoader.load(ServletContainerInitializer.class);
 
-	private ServerHandlerListerner() {
+	private ServerHandlerListerner(ServletContext sc) {
+		this.sc = sc;
 		this.serverListeners = new HashSet<ServerListener>();
-	}
-
-	/**
-	 * 服务器状态变更响应
-	 * @param serverStatus 服务器状态
-	 */
-	public void onServerStatusChanged(int serverStatus) {
-		List<ServerListener> sls = new ArrayList<ServerListener>();
-		sls.addAll(this.serverListeners);
-		for (ServerListener sl : sls) {
-			sl.onServerStatusChanged(serverStatus);
-		}
 	}
 
 	/**
@@ -58,19 +55,15 @@ public class ServerHandlerListerner implements LifeCycle.Listener {
 	 * 获取单实例公共静态方法
 	 * @return 单实例
 	 */
-	public static ServerHandlerListerner getInstance() {
-		return Singletone.INSTANCE;
-	}
-
-	/**
-	 * 静态内部类实现单例
-	 *
-	 */
-	private static class Singletone {
-		/**
-		 * 单实例
-		 */
-		private static final ServerHandlerListerner INSTANCE = new ServerHandlerListerner();
+	public static ServerHandlerListerner getInstance(ServletContext sc) {
+		if (instance == null) {
+			synchronized(ServerHandlerListerner.class) {
+				if (instance == null) {
+					instance = new ServerHandlerListerner(sc);
+				}
+			}
+		}
+		return instance;
 	}
 	
 	/**
@@ -78,7 +71,13 @@ public class ServerHandlerListerner implements LifeCycle.Listener {
 	 * 启动中
 	 */
 	public void lifeCycleStarting(LifeCycle event) {
-		//启动中不需要任何信息
+		for (ServletContainerInitializer servletContainerInitializer : serviceLoader) {
+			try {
+				servletContainerInitializer.onStartup(null, this.sc);
+			} catch (Exception e) {
+				//nothing
+			}
+		}
 	}
 	
 	/**
@@ -86,10 +85,7 @@ public class ServerHandlerListerner implements LifeCycle.Listener {
 	 * 启动结束
 	 */
     public void lifeCycleStarted(LifeCycle event) {
-
-    	// 通知服务器状态改变
-		this.onServerStatusChanged(ServerListener.SERVER_STATUS_STARTED);
-
+    	logger.info("JettyServer启动成功！");
     }
     
 	/**
@@ -97,8 +93,7 @@ public class ServerHandlerListerner implements LifeCycle.Listener {
 	 * 异常
 	 */
     public void lifeCycleFailure(LifeCycle event,Throwable cause) {
-		// 通知服务器状态改变
-		this.onServerStatusChanged(ServerListener.SERVER_STATUS_ERROR);
+    	logger.info("JettyServer启动失败！");
     }
     
 	/**
@@ -114,8 +109,7 @@ public class ServerHandlerListerner implements LifeCycle.Listener {
 	 * 结束
 	 */
     public void lifeCycleStopped(LifeCycle event) {
-    	
-		// 通知服务器状态改变
-		this.onServerStatusChanged(ServerListener.SERVER_STATUS_STOPPED);
+    	logger.info("JettyServer已经停止！");
     }
+    
 }

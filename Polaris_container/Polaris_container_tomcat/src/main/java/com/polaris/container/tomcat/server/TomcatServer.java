@@ -9,14 +9,11 @@ import org.apache.catalina.core.StandardServer;
 import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http11.Http11NioProtocol;
-import org.apache.tomcat.util.descriptor.web.FilterDef;
-import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
-import com.polaris.http.filter.RequestFirstFilter;
 
 /**
  * Class Name : TomcatServer
@@ -79,17 +76,6 @@ public class TomcatServer {
 
             //加载上下文
             StandardContext standardContext = new StandardContext();
-            
-            //RequestFirstFilter加载
-            FilterDef filterDef = new FilterDef();
-            filterDef.setFilter(new RequestFirstFilter());
-            filterDef.setFilterName("RequestFirstFilter");
-            standardContext.addFilterDef(filterDef);
-            FilterMap filterMap = new FilterMap();
-            filterMap.addURLPattern("/*");
-            filterMap.setFilterName("RequestFirstFilter");
-            standardContext.addFilterMap(filterMap);
-
             
             //其他参数加载
             standardContext.setPath(contextPath);//contextPath

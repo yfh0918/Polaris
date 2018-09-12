@@ -3,9 +3,6 @@ package com.polaris.container.jetty.server;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.EnumSet;
-
-import javax.servlet.DispatcherType;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -15,7 +12,6 @@ import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
 import com.polaris.container.jetty.listener.ServerHandlerListerner;
-import com.polaris.http.filter.RequestFirstFilter;
 
 /**
  * Class Name : JettyServer
@@ -58,7 +54,6 @@ public class JettyServer {
 
             //定义context
             WebAppContext context = new WebAppContext();
-            context.addFilter(RequestFirstFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
             context.setDefaultsDescriptor("webdefault.xml");
             context.setContextPath(""); // Application访问路径
             String resourceBase = PropertyUtils.getFilePath("WebContent");
@@ -66,7 +61,7 @@ public class JettyServer {
             context.setResourceBase(resDir.getCanonicalPath());
 
             this.server.setHandler(context); // 将Application注册到服务器
-            this.server.addLifeCycleListener(ServerHandlerListerner.getInstance());//监听handler
+            this.server.addLifeCycleListener(ServerHandlerListerner.getInstance(context.getServletContext()));//监听handler
         } catch (IOException e) {
             logger.error(e);
         } 
