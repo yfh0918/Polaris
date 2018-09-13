@@ -3,9 +3,6 @@ package com.polaris.container.jetty.server;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.List;
-
-import javax.servlet.ServletContextListener;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -16,7 +13,6 @@ import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
 import com.polaris.container.jetty.listener.ServerHandlerLifeCycle;
 import com.polaris.container.jetty.listener.ServerHandlerListerner;
-import com.polaris.http.filter.RequestFirstFilterInitializer;
 
 /**
  * Class Name : JettyServer

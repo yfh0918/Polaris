@@ -1,13 +1,6 @@
 package com.polaris.container.tomcat.server;
 
 import java.io.File;
-import java.util.EventListener;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
 
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.core.AprLifecycleListener;
@@ -21,7 +14,6 @@ import org.apache.tomcat.util.scan.StandardJarScanner;
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
-import com.polaris.http.filter.RequestFirstFilterInitializer;
 
 /**
  * Class Name : TomcatServer
