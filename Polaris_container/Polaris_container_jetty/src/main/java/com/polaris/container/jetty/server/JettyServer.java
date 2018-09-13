@@ -3,6 +3,9 @@ package com.polaris.container.jetty.server;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.List;
+
+import javax.servlet.ServletContextListener;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -11,7 +14,9 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
+import com.polaris.container.jetty.listener.ServerHandlerLifeCycle;
 import com.polaris.container.jetty.listener.ServerHandlerListerner;
+import com.polaris.http.filter.RequestFirstFilterInitializer;
 
 /**
  * Class Name : JettyServer
@@ -59,15 +64,25 @@ public class JettyServer {
             String resourceBase = PropertyUtils.getFilePath("WebContent");
             File resDir = new File(resourceBase);
             context.setResourceBase(resDir.getCanonicalPath());
-
+            
+            //Listener
+            List<Class <? extends ServletContextListener>> listenerList = RequestFirstFilterInitializer.getListenerList();
+            for (Class <? extends ServletContextListener> listerClass : listenerList) {
+            	try {
+					context.addEventListener(listerClass.newInstance());
+				} catch (Exception e) {
+					//nothing
+				} 
+            }
             this.server.setHandler(context); // 将Application注册到服务器
-            this.server.addLifeCycleListener(ServerHandlerListerner.getInstance(context.getServletContext()));//监听handler
+            context.addBean(new ServerHandlerLifeCycle(context.getServletContext()),true);
+            this.server.addLifeCycleListener(ServerHandlerListerner.getInstance());//监听handler
         } catch (IOException e) {
             logger.error(e);
         } 
 
     }
-
+    
     /**
      * 获取单实例公共静态方法
      *

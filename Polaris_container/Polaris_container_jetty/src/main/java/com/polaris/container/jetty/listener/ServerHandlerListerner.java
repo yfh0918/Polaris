@@ -1,12 +1,6 @@
 package com.polaris.container.jetty.listener;
 
-import java.util.HashSet;
-import java.util.ServiceLoader;
-import java.util.Set;
-
-import javax.servlet.ServletContainerInitializer;
-import javax.servlet.ServletContext;
-
+import org.eclipse.jetty.util.component.AbstractLifeCycle.AbstractLifeCycleListener;
 import org.eclipse.jetty.util.component.LifeCycle;
 
 import com.polaris.comm.util.LogUtil;
@@ -19,47 +13,26 @@ import com.polaris.comm.util.LogUtil;
  *
  */
 
-public class ServerHandlerListerner implements LifeCycle.Listener {
+public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	
 	private static final LogUtil logger = LogUtil.getInstance(ServerHandlerListerner.class);
 	/**
 	 * 服务器监听器集合
 	 */
-	private Set<ServerListener> serverListeners = null;
-	private final ServletContext sc;
 	private static ServerHandlerListerner instance = null;
-	private final ServiceLoader<ServletContainerInitializer> serviceLoader = ServiceLoader.load(ServletContainerInitializer.class);
 
-	private ServerHandlerListerner(ServletContext sc) {
-		this.sc = sc;
-		this.serverListeners = new HashSet<ServerListener>();
-	}
-
-	/**
-	 * 添加服务器监听器
-	 * @param listener 服务器监听器
-	 */
-	public void addListener(ServerListener listener) {
-		this.serverListeners.add(listener);
-	}
-
-	/**
-	 * 移除服务器监听器
-	 * @param listener 服务器监听器
-	 */
-	public void rmvListener(ServerListener listener) {
-		this.serverListeners.remove(listener);
+	private ServerHandlerListerner() {
 	}
 
 	/**
 	 * 获取单实例公共静态方法
 	 * @return 单实例
 	 */
-	public static ServerHandlerListerner getInstance(ServletContext sc) {
+	public static ServerHandlerListerner getInstance() {
 		if (instance == null) {
 			synchronized(ServerHandlerListerner.class) {
 				if (instance == null) {
-					instance = new ServerHandlerListerner(sc);
+					instance = new ServerHandlerListerner();
 				}
 			}
 		}
@@ -71,13 +44,6 @@ public class ServerHandlerListerner implements LifeCycle.Listener {
 	 * 启动中
 	 */
 	public void lifeCycleStarting(LifeCycle event) {
-		for (ServletContainerInitializer servletContainerInitializer : serviceLoader) {
-			try {
-				servletContainerInitializer.onStartup(null, this.sc);
-			} catch (Exception e) {
-				//nothing
-			}
-		}
 	}
 	
 	/**
