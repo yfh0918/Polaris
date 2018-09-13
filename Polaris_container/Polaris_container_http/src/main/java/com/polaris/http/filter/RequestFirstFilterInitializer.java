@@ -15,10 +15,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 
+import org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap;
+import org.jboss.resteasy.plugins.spring.SpringContextLoaderListener;
+
 public class RequestFirstFilterInitializer implements  ServletContainerInitializer { 
 	private final String REQUEST_FIRST_FILTER = "RequestFirstFilter";
 	private final static Map<String, String> initParameterMap = new HashMap<>();
-	private final static List<Class <? extends ServletContextListener>> listenerList = new ArrayList<>();
+	private final static List<ServletContextListener> listenerList = new ArrayList<>();
 	private final static Map<String, Class <? extends Servlet>> servletClassMap = new HashMap<>();
 	private final static Map<String, String[]> servletUrlMap = new HashMap<>();
 	
@@ -28,8 +31,8 @@ public class RequestFirstFilterInitializer implements  ServletContainerInitializ
 		initParameterMap.put("contextConfigLocation", "classpath:META-INF\\spring\\applicationContext.xml");
 		
 		//listener
-		listenerList.add(org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap.class);
-		listenerList.add(org.jboss.resteasy.plugins.spring.SpringContextLoaderListener.class);
+		listenerList.add(new ResteasyBootstrap());
+		listenerList.add(new SpringContextLoaderListener());
 		
 		//servlet
 		String[] urls = {"/api/*","/rest/*"};
@@ -38,7 +41,7 @@ public class RequestFirstFilterInitializer implements  ServletContainerInitializ
 	}
 	
 	// jetty存在bug只能通过外部接口单独提供Listener
-	public static List<Class <? extends ServletContextListener>> getListenerList() {
+	public static List<ServletContextListener> getListenerList() {
 		return listenerList;
 	}
 
@@ -61,7 +64,7 @@ public class RequestFirstFilterInitializer implements  ServletContainerInitializ
         }
 
         //Listener
-        for (Class <? extends ServletContextListener> listerClass : listenerList) {
+        for (ServletContextListener listerClass : listenerList) {
         	servletContext.addListener(listerClass);
         }
 	} 
