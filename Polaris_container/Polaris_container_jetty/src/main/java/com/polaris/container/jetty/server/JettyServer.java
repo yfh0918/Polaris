@@ -65,11 +65,6 @@ public class JettyServer {
             File resDir = new File(resourceBase);
             context.setResourceBase(resDir.getCanonicalPath());
             
-            //Listener（jetty的监听只能在这里写，代码存在bug）
-            List<ServletContextListener> listenerList = RequestFirstFilterInitializer.getListenerList();
-            for (ServletContextListener listerClass : listenerList) {
-            	context.addEventListener(listerClass);
-            }
             this.server.setHandler(context); // 将Application注册到服务器
             context.addBean(new ServerHandlerLifeCycle(context.getServletContext()),true);
             this.server.addLifeCycleListener(ServerHandlerListerner.getInstance());//监听handler
