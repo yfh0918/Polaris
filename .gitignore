@@ -136,3 +136,6 @@
 /Polaris_log/Polaris_log_api/target/classes/com/polaris/log/api/exception/LogException.class
 /Polaris_log/Polaris_log_api/target/classes/com/polaris/log/api/service/LogService.class
 /Polaris_log/Polaris_log_rest/target/classes/com/polaris/log/rest/controller/LogController.class
+/Polaris_parent/.project
+/Polaris_parent/.settings/org.eclipse.core.resources.prefs
+/Polaris_parent/.settings/org.eclipse.m2e.core.prefs
