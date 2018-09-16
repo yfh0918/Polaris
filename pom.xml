@@ -8,7 +8,7 @@
     <name>Polaris</name>
     
 	<modules>
-	<module>Polaris_parent</module>
+		<module>Polaris_parent</module>
         <module>Polaris_comm</module>
         <module>Polaris_container</module>
         <module>Polaris_dubbo</module>
