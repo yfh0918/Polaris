@@ -106,7 +106,12 @@
 	        </dependency>   
 	        <dependency>
 	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_conf_admin</artifactId>
+	            <artifactId>Polaris_conf_zk</artifactId>
+	            <version>${project.version}</version>
+	        </dependency>   
+	        <dependency>
+	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_conf_zk_admin</artifactId>
 	            <version>${project.version}</version>
 	        </dependency>   
 	        <dependency>

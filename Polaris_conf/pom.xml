@@ -1,41 +1,30 @@
-﻿<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.polaris</groupId>
+    <artifactId>Polaris_parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>Polaris_conf</artifactId>
+  <packaging>pom</packaging>
+  <name>Polaris_conf</name>
+  
+  <modules>
+	<module>Polaris_conf_zk</module>
+	<module>Polaris_conf_zk_admin</module>
+  </modules>
+  
+  <dependencies>
+  
+ 	<!-- common -->
+	<dependency>
 		<groupId>com.polaris</groupId>
-		<artifactId>Polaris_parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>Polaris_conf</artifactId>
-	<packaging>jar</packaging>
-	<name>Polaris_conf</name>
-
-	<dependencies>
-	  	<dependency>
-			<groupId>com.polaris</groupId>
-			<artifactId>Polaris_comm</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.zookeeper</groupId>
-			<artifactId>zookeeper</artifactId>
-		</dependency>
-	  </dependencies>
+		<artifactId>Polaris_comm</artifactId>
+	</dependency>
+  
 	
-	<build>
-	  <plugins>
-		<!-- Source attach plugin -->
-		<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-	  </plugins>
-   </build>
+	
+  </dependencies>
 </project>

@@ -8,12 +8,11 @@
     <name>Polaris</name>
     
 	<modules>
-		<module>Polaris_parent</module>
+	<module>Polaris_parent</module>
         <module>Polaris_comm</module>
         <module>Polaris_container</module>
         <module>Polaris_dubbo</module>
         <module>Polaris_conf</module>
-        <module>Polaris_conf_admin</module>
         <module>Polaris_cache</module>
         <module>Polaris_sentinel</module>
         <module>Polaris_distributed_lock</module>

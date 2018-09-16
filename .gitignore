@@ -209,3 +209,14 @@
 /Polaris_workflow/Polaris_workflow_core/target/classes/com/polaris/workflow/util/WorkflowUtils.class
 /Polaris_workflow/Polaris_workflow_core/target/git.properties
 /Polaris_workflow/Polaris_workflow_core/target/test-classes/com/polaris/workflow/core/AppTest.class
+/Polaris_conf/Polaris_conf_zk/.classpath
+/Polaris_conf/Polaris_conf_zk/.gitignore
+/Polaris_conf/Polaris_conf_zk/.project
+/Polaris_conf/Polaris_conf_zk/.settings
+/Polaris_conf/Polaris_conf_zk/target
+/Polaris_conf/Polaris_conf_zk_admin/.classpath
+/Polaris_conf/Polaris_conf_zk_admin/.gitignore
+/Polaris_conf/Polaris_conf_zk_admin/.project
+/Polaris_conf/Polaris_conf_zk_admin/.settings
+/Polaris_conf/Polaris_conf_zk_admin/log
+/Polaris_conf/Polaris_conf_zk_admin/target
