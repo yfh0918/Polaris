@@ -189,4 +189,7 @@ public class Constant {
 	public static String PORT_NAME = "";
 	public static String PORT = "";
 	public static final String SLASH = "/";
+	
+	//请求内容
+	public static final String REQUEST_BODY = "requestBody";
 }
