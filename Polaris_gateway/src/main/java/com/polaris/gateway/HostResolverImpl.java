@@ -2,7 +2,6 @@ package com.polaris.gateway;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -13,14 +12,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.littleshoot.proxy.HostResolver;
 
 import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.LogUtil;
+import com.polaris.comm.thread.ServerCheckTask;
 import com.polaris.comm.util.PropertyUtils;
 import com.polaris.comm.util.WeightedRoundRobinScheduling;
 import com.polaris.gateway.util.PropertiesUtil;
@@ -32,11 +27,9 @@ import com.polaris.gateway.util.PropertiesUtil;
  *
  */
 public class HostResolverImpl implements HostResolver {
-	private static LogUtil logger = LogUtil.getInstance(HostResolverImpl.class);
     private volatile static HostResolverImpl singleton;
     private volatile Map<String, WeightedRoundRobinScheduling> serverMap = new ConcurrentHashMap<>();
     private volatile Map<String, String> uriMap = new ConcurrentHashMap<>();
-    private final HttpClient client = HttpClientBuilder.create().build();
     public static final String UPSTREAM = GatewayConstant.config + File.separator +"application_upstream.properties";
     private volatile long lastModified;
 
@@ -91,7 +84,9 @@ public class HostResolverImpl implements HostResolver {
     private HostResolverImpl() {
     	watchUpstream(true);//载入配置文件
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-        scheduledThreadPoolExecutor.scheduleAtFixedRate(new ServerCheckTask(), Integer.parseInt(ConfClient.get("gateway.fail.timeout")), Integer.parseInt(ConfClient.get("gateway.fail.timeout")), TimeUnit.SECONDS);
+        scheduledThreadPoolExecutor.scheduleAtFixedRate(new ServerCheckTask(serverMap), 
+        		Integer.parseInt(ConfClient.get("gateway.fail.timeout")), 
+        		Integer.parseInt(ConfClient.get("gateway.fail.timeout")), TimeUnit.SECONDS);
     }
     public static HostResolverImpl getSingleton() {
         if (singleton == null) {
@@ -134,43 +129,6 @@ public class HostResolverImpl implements HostResolver {
             }
         } else {
             return null;
-        }
-    }
-    
-    private class ServerCheckTask implements Runnable {
-        @Override
-        public void run() {
-            try {
-                for (Map.Entry<String, WeightedRoundRobinScheduling> entry : serverMap.entrySet()) {
-                    WeightedRoundRobinScheduling weightedRoundRobinScheduling = entry.getValue();
-                    List<WeightedRoundRobinScheduling.Server> delServers = new ArrayList<>();
-                    CloseableHttpResponse httpResponse = null;
-                    for (WeightedRoundRobinScheduling.Server server : weightedRoundRobinScheduling.unhealthilyServers) {
-                        HttpGet request = new HttpGet("http://" + server.getIp() + ":" + server.getPort());
-                        try {
-                            httpResponse = (CloseableHttpResponse) client.execute(request);
-                            weightedRoundRobinScheduling.healthilyServers.add(weightedRoundRobinScheduling.getServer(server.getIp(), server.getPort()));
-                            delServers.add(server);
-                            logger.info("domain host->{},ip->{},port->{} is healthy", entry.getKey(), server.getIp(), server.getPort());
-                        } catch (ConnectException e1) {
-                            logger.warn("domain host->{},ip->{},port->{} is unhealthy", entry.getKey(), server.getIp(), server.getPort());
-                        } catch (Exception e2) {
-                            weightedRoundRobinScheduling.healthilyServers.add(weightedRoundRobinScheduling.getServer(server.getIp(), server.getPort()));
-                            delServers.add(server);
-                            logger.info("domain host->{},ip->{},port->{} is healthy", server.getIp(), server.getPort());
-                        } finally {
-                            if (httpResponse != null) {
-                                httpResponse.close();
-                            }
-                        }
-                    }
-                    if (delServers.size() > 0) {
-                        weightedRoundRobinScheduling.unhealthilyServers.removeAll(delServers);
-                    }
-                }
-            } catch (Exception e) {
-                logger.error("server check task is error", e);
-            }
         }
     }
 }
