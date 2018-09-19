@@ -1,4 +1,4 @@
-package com.polaris.http.dto;
+package com.polaris.comm.dto;
 
 /**
  * @标题: Ftp.java

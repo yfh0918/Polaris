@@ -43,13 +43,13 @@ public class ServerCheckTask implements Runnable {
                         httpResponse = (CloseableHttpResponse) client.execute(request);
                         weightedRoundRobinScheduling.healthilyServers.add(weightedRoundRobinScheduling.getServer(server.getIp(), server.getPort()));
                         delServers.add(server);
-                        logger.info("domain host->{},ip->{},port->{} is healthy", entry.getKey(), server.getIp(), server.getPort());
+                        logger.info("ip->{},port->{} is healthy", server.getIp(), server.getPort());
                     } catch (ConnectException e1) {
-                        logger.warn("domain host->{},ip->{},port->{} is unhealthy", entry.getKey(), server.getIp(), server.getPort());
+                        logger.warn("ip->{},port->{} is unhealthy",  server.getIp(), server.getPort());
                     } catch (Exception e2) {
                         weightedRoundRobinScheduling.healthilyServers.add(weightedRoundRobinScheduling.getServer(server.getIp(), server.getPort()));
                         delServers.add(server);
-                        logger.info("domain host->{},ip->{},port->{} is healthy", server.getIp(), server.getPort());
+                        logger.info("ip->{},port->{} is healthy", server.getIp(), server.getPort());
                     } finally {
                         if (httpResponse != null) {
                             httpResponse.close();

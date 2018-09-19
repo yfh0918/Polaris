@@ -1,4 +1,4 @@
-package com.polaris.http.util;
+package com.polaris.comm.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,9 +11,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
-import com.polaris.comm.util.FileUtil;
-import com.polaris.comm.util.LogUtil;
-import com.polaris.http.dto.Ftp;
+import com.polaris.comm.dto.Ftp;
 
 /**
  * @标题: FtpUtil.java

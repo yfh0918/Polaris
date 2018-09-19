@@ -85,8 +85,8 @@ public class HostResolverImpl implements HostResolver {
     	watchUpstream(true);//载入配置文件
         ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
         scheduledThreadPoolExecutor.scheduleAtFixedRate(new ServerCheckTask(serverMap), 
-        		Integer.parseInt(ConfClient.get("gateway.fail.timeout")), 
-        		Integer.parseInt(ConfClient.get("gateway.fail.timeout")), TimeUnit.SECONDS);
+        		Integer.parseInt(ConfClient.get("gateway.fail.timeout", "60", false)), 
+        		Integer.parseInt(ConfClient.get("gateway.fail.timeout", "60", false)), TimeUnit.SECONDS);
     }
     public static HostResolverImpl getSingleton() {
         if (singleton == null) {
