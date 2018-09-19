@@ -21,7 +21,6 @@ import com.polaris.http.dto.Ftp;
  * @描述:
  * @作者: yanghao
  * @时间: Dec 21, 2015 10:40:44 PM
- * @版权: (c) 2015, 卫宁软件科技有限公司
  */
 public class FtpUtil {
     private static LogUtil logger = LogUtil.getInstance(FtpUtil.class);

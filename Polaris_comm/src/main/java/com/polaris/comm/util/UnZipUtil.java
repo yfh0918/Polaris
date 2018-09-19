@@ -1,10 +1,17 @@
 package com.polaris.comm.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Enumeration;
+
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipFile;
-
-import java.io.*;
-import java.util.Enumeration;
 
 /**
  * @标题: UnZipUtil.java
@@ -12,7 +19,6 @@ import java.util.Enumeration;
  * @描述:
  * @作者: yanghao
  * @时间: Dec 7, 2015 2:15:25 PM
- * @版权: (c) 2015, 卫宁软件科技有限公司
  */
 public class UnZipUtil {
 
@@ -174,5 +180,3 @@ public class UnZipUtil {
         }
     }
 }
-
-/* Copyright (C) 2016, 上海金仕达卫宁软件科技有限公司 Project, All Rights Reserved. */

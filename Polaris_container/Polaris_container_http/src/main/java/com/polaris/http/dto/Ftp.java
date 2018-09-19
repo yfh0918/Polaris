@@ -6,7 +6,6 @@ package com.polaris.http.dto;
  * @描述:
  * @作者: yanghao
  * @时间: Dec 7, 2015 9:57:49 AM
- * @版权: (c) 2015, 卫宁软件科技有限公司
  */
 public class Ftp {
 	private String ipAddr;// ip地址
