@@ -1,4 +1,4 @@
-package com.polaris.http.supports;
+package com.polaris.comm.supports;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import com.polaris.http.Constant;
+import com.polaris.comm.Constant;
 import com.polaris.comm.util.LogUtil;
 
 public class RequestSupport {
@@ -64,6 +64,8 @@ public class RequestSupport {
 					httpPost.addHeader(entry.getKey().toString(), entry.getValue().toString());
 				}  
 			}
+			httpPost.addHeader(LogUtil.TRACE_ID, Constant.getContext(LogUtil.TRACE_ID));
+			
 			logger.debug("param:" + EntityUtils.toString(urlEntity));
 			HttpResponse response = httpclient.execute(httpPost);
 
@@ -102,6 +104,8 @@ public class RequestSupport {
 					httpGet.addHeader(entry.getKey().toString(), entry.getValue().toString());
 				}  
 			}
+			httpGet.addHeader(LogUtil.TRACE_ID, Constant.getContext(LogUtil.TRACE_ID));
+
 			logger.debug("param:" + str);
 			HttpResponse response = httpclient.execute(httpGet);
 

@@ -8,8 +8,8 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.polaris.comm.Constant;
+import com.polaris.comm.supports.RequestWithCookieSupport;
 import com.polaris.comm.util.LogUtil;
-import com.polaris.http.supports.RequestWithCookieSupport;
 import com.polaris.timer.api.dto.TimerDto;
 
 //Job执行

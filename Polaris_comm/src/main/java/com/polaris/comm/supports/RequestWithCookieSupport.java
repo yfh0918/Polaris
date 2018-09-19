@@ -1,4 +1,4 @@
-package com.polaris.http.supports;
+package com.polaris.comm.supports;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import com.polaris.http.Constant;
+import com.polaris.comm.Constant;
 import com.polaris.comm.util.LogUtil;
 
 public class RequestWithCookieSupport {
@@ -87,6 +87,7 @@ public class RequestWithCookieSupport {
 					httpGet.addHeader(entry.getKey().toString(), entry.getValue().toString());
 				}  
 			}
+			httpGet.addHeader(LogUtil.TRACE_ID, Constant.getContext(LogUtil.TRACE_ID));
 			logger.debug("param:" + str);
 			HttpResponse response = httpClientWithCookieStore.execute(httpGet);
 
@@ -128,6 +129,7 @@ public class RequestWithCookieSupport {
 					httpPost.addHeader(entry.getKey().toString(), entry.getValue().toString());
 				}  
 			}
+			httpPost.addHeader(LogUtil.TRACE_ID, Constant.getContext(LogUtil.TRACE_ID));
 			logger.debug("param:" + EntityUtils.toString(urlEntity));
 			// 发送请求
 			CloseableHttpResponse response = httpClientWithCookieStore.execute(httpPost, context);
