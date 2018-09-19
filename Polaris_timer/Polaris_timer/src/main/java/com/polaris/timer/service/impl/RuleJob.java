@@ -8,7 +8,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import com.polaris.comm.Constant;
-import com.polaris.comm.supports.RequestWithCookieSupport;
+import com.polaris.comm.supports.HttpClientSupport;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.timer.api.dto.TimerDto;
 
@@ -17,7 +17,6 @@ public class RuleJob implements Job {
 
     //日志
     private final LogUtil logger = LogUtil.getInstance(RuleJob.class);
-    private static RequestWithCookieSupport requestSupport = RequestWithCookieSupport.instance();
 
     //执行
     @Override
@@ -29,12 +28,12 @@ public class RuleJob implements Job {
         
         try {
             //构造参数
-            Map<String, String> headerParameter = new HashMap<>();
+            Map<String, Object> headerParameter = new HashMap<>();
             headerParameter.put(Constant.USER_TOKEN, plan.getToken());
             headerParameter.put(Constant.REQUEST_TYPE, Constant.TOKEN_USER_TYPE);
 
             logger.info(plan.getName() + "开始执行");
-            String result = requestSupport.sendRequest(Constant.METHOD_POST ,(String) plan.getUrl(), null, headerParameter);
+            String result = HttpClientSupport.doPost((String) plan.getUrl(),  headerParameter);
             logger.info(plan.getName() + "执行结果：" + result);
             
         } catch (Exception e) {
