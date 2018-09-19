@@ -19,11 +19,11 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.littleshoot.proxy.HostResolver;
 
-import com.polaris.gateway.util.PropertiesUtil;
-import com.polaris.gateway.util.WeightedRoundRobinScheduling;
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
+import com.polaris.comm.util.WeightedRoundRobinScheduling;
+import com.polaris.gateway.util.PropertiesUtil;
 
 /**
  * @author:Tom.Yu

@@ -1,13 +1,11 @@
-package com.polaris.gateway;
+package com.polaris.comm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-
-import com.polaris.gateway.util.WeightedRoundRobinScheduling;
+import com.polaris.comm.util.WeightedRoundRobinScheduling;
 
 /**
  * @author:Tom.Yu
@@ -16,7 +14,6 @@ import com.polaris.gateway.util.WeightedRoundRobinScheduling;
  *
  */
 public class WeightedRoundRobinSchedulingTest {
-    @Test
     public void test1() {
         WeightedRoundRobinScheduling.Server s1 = new WeightedRoundRobinScheduling.Server("192.168.0.100", 80, 1);//3
         WeightedRoundRobinScheduling.Server s2 = new WeightedRoundRobinScheduling.Server("192.168.0.101", 80, 1);//2

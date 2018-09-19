@@ -1,4 +1,4 @@
-package com.polaris.gateway.util;
+package com.polaris.comm.util;
 
 import java.math.BigInteger;
 import java.util.HashMap;
