@@ -48,6 +48,8 @@ public class HttpClientSupport {
 
     private static Logger LOGGER = LoggerFactory.getLogger(HttpClientSupport.class);
     private static final String TRACE_ID = "traceId";
+    private static final String HTTP_PREFIX = "http://";
+    private static final String HTTPS_PREFIX = "https://";
 
 	private static Cache cache;
 	static {
@@ -289,7 +291,7 @@ public class HttpClientSupport {
     
     private static String loadbalance(String url) {
     	String returnUrl;
-    	Object urlObject = cache.get(url);
+    	Element urlObject = cache.get(url);
     	if (urlObject == null) {
     		synchronized(url.intern()){
     			urlObject = cache.get(url);
@@ -297,11 +299,33 @@ public class HttpClientSupport {
     				String[] serversInfo = url.split(",");
     				List<WeightedRoundRobinScheduling.Server> serverList = new ArrayList<>();
     				for (String serverInfo : serversInfo) {
+    					boolean httpPrefix = false;
+    					boolean httpsPrefix = false;
+    					if (serverInfo.toLowerCase().startsWith(HTTP_PREFIX)) {
+    						httpPrefix = true;
+    						serverInfo = serverInfo.substring(HTTP_PREFIX.length());
+    					}
+    					if (serverInfo.toLowerCase().startsWith(HTTPS_PREFIX)) {
+    						httpsPrefix = true;
+    						serverInfo = serverInfo.substring(HTTPS_PREFIX.length());
+    					}
     		            String[] si = serverInfo.split(":");
     		            if (si.length == 2) {
+    		            	if (httpPrefix) {
+    		            		si[0] = HTTP_PREFIX + si[0];
+    		            	}
+    		            	if (httpsPrefix) {
+    		            		si[0] = HTTPS_PREFIX + si[0];
+    		            	}
     		                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), 1);
     		                serverList.add(server);
     		            } else if (si.length == 3) {
+    		            	if (httpPrefix) {
+    		            		si[0] = HTTP_PREFIX + si[0];
+    		            	}
+    		            	if (httpsPrefix) {
+    		            		si[0] = HTTPS_PREFIX + si[0];
+    		            	}
     		                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2]));
     		                serverList.add(server);
     		            }
@@ -314,10 +338,13 @@ public class HttpClientSupport {
     			}
     		}
     	}
-    	Server server = ((WeightedRoundRobinScheduling)urlObject).getServer();
+    	Server server = ((WeightedRoundRobinScheduling)urlObject.getObjectValue()).getServer();
     	returnUrl = server.getIp() + ":" + server.getPort();
     	return returnUrl;
     }
 
+    public static void main(String[] args) {
+    	loadbalance("https://localhost:8080");
+    }
 }
 
