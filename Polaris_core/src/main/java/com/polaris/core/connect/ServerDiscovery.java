@@ -13,24 +13,33 @@ import com.polaris.comm.util.WeightedRoundRobinScheduling.Server;
 
 public class ServerDiscovery {
     private static Map<String, WeightedRoundRobinScheduling> serverMap = new ConcurrentHashMap<>();
+    private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = null;
     private static final String HTTP_PREFIX = "http://";
     private static final String HTTPS_PREFIX = "https://";
 
-    static {
-    	ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-        scheduledThreadPoolExecutor.scheduleAtFixedRate(new ServerCheckTask(serverMap), 
-        		Integer.parseInt(ConfClient.get("server.check.cycletime", "60", false)), 
-        		Integer.parseInt(ConfClient.get("server.check.cycletime", "60", false)), TimeUnit.SECONDS);
-    }
-    
-    public static String getUrl(String url) {
-    	String returnUrl;
-    	WeightedRoundRobinScheduling wrrs = serverMap.get(url);
+    public static String getUrl(String key) {
+    	String[] serversInfo = key.split(",");
+    	if (serversInfo.length == 1) {
+    		return key;
+    	}
+    	
+    	//初期化定时器
+		if (scheduledThreadPoolExecutor == null) {
+			synchronized(ServerDiscovery.class){
+				if (scheduledThreadPoolExecutor == null) {
+					scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
+			        scheduledThreadPoolExecutor.scheduleAtFixedRate(new ServerCheckTask(serverMap), 
+			        		Integer.parseInt(ConfClient.get("server.check.cycletime", "60", false)), 
+			        		Integer.parseInt(ConfClient.get("server.check.cycletime", "60", false)), TimeUnit.SECONDS);
+				}
+			}
+		}
+
+    	WeightedRoundRobinScheduling wrrs = serverMap.get(key);
     	if (wrrs == null) {
-    		synchronized(url.intern()){
-    			wrrs = serverMap.get(url);
+    		synchronized(key.intern()){
+    			wrrs = serverMap.get(key);
     			if (wrrs == null) {
-    				String[] serversInfo = url.split(",");
     				List<WeightedRoundRobinScheduling.Server> serverList = new ArrayList<>();
     				for (String serverInfo : serversInfo) {
     					String[] si = getRemoteAddress(serverInfo);
@@ -43,22 +52,24 @@ public class ServerDiscovery {
     		            }
     		        }
     				wrrs = new WeightedRoundRobinScheduling(serverList);
-    				serverMap.put(url, wrrs);
+    				serverMap.put(key, wrrs);
     			}
     		}
     	}
     	Server server = wrrs.getServer();
-    	returnUrl = server.getIp() + ":" + server.getPort();
-    	return returnUrl;
+    	return server.getIp() + ":" + server.getPort();
     }
     
     public static void connectionFail(String key, String url) {
+    	if (key.split(",").length == 1) {
+    		return;
+    	}
     	WeightedRoundRobinScheduling weightedRoundRobinScheduling = serverMap.get(key);
-    	String[] serversInfo = getRemoteAddress(url);
+    	String[] si = getRemoteAddress(url);
     	//只有一个有效服务地址，即使链接失败也不移除
     	if (weightedRoundRobinScheduling.healthilyServers.size() > 1) {
-            weightedRoundRobinScheduling.unhealthilyServers.add(weightedRoundRobinScheduling.getServer(serversInfo[0], Integer.parseInt(serversInfo[1])));
-            weightedRoundRobinScheduling.healthilyServers.remove(weightedRoundRobinScheduling.getServer(serversInfo[0], Integer.parseInt(serversInfo[1])));
+            weightedRoundRobinScheduling.unhealthilyServers.add(weightedRoundRobinScheduling.getServer(si[0], Integer.parseInt(si[1])));
+            weightedRoundRobinScheduling.healthilyServers.remove(weightedRoundRobinScheduling.getServer(si[0], Integer.parseInt(si[1])));
     	}
     }
     
