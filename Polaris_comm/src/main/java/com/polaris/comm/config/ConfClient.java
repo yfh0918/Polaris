@@ -1,15 +1,13 @@
 package com.polaris.comm.config;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.polaris.comm.Constant;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
 import com.polaris.comm.util.StringUtil;
-
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 /**
 *
@@ -28,12 +26,7 @@ public class ConfClient {
 	private static final LogUtil logger = LogUtil.getInstance(ConfClient.class);
 	private static String appName;
 
-	private static Cache cache;
-	static {
-		CacheManager manager = CacheManager.create();	// default use ehcche.xml under src
-		cache = new Cache(ConfClient.class.getName(), 10000, false, true, 1800, 1800);
-		manager.addCache(cache);
-	}
+	private static Map<String, String> cache = new HashMap<>();
 
 	/**
 	 * 更新或者增加配置信息(由conf_admin发起的更新)*
@@ -46,10 +39,10 @@ public class ConfClient {
 				synchronized(cache) {
 					if (cache.get(key)!=null) {
 						logger.info(">>>>>>>>>> conf: 更新配置: [{}:{}]", new Object[]{key, value});
-						cache.put(new Element(key, value));
+						cache.put(key, value);
 					} else {
 						logger.info(">>>>>>>>>> conf: 初始化配置: [{}:{}]", new Object[]{key, value});
-						cache.put(new Element(key, value));
+						cache.put(key, value);
 					}
 				}
 			}
@@ -74,9 +67,9 @@ public class ConfClient {
 	public static String get(String inputAppName, String key, String defaultVal, boolean isWatch) {
 		//从缓存获取数据
 		if (cache != null) {
-			Element element = cache.get(key);
-			if (element != null) {
-				return (String) element.getObjectValue();
+			String value = cache.get(key);
+			if (value != null) {
+				return value;
 			}
 		}
 		
@@ -155,7 +148,8 @@ public class ConfClient {
 				synchronized(cache) {
 					if (cache.get(key)!=null) {
 						logger.info(">>>>>>>>>> conf: 删除配置：key ", key);
-						return cache.remove(key);
+						cache.remove(key);
+						return true;
 					}
 				}
 			}

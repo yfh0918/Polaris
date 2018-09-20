@@ -8,10 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
@@ -37,30 +34,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.util.StringUtil;
-import com.polaris.comm.util.WeightedRoundRobinScheduling;
-import com.polaris.comm.util.WeightedRoundRobinScheduling.Server;
 
 public class HttpClientSupport {
 
     private static Logger LOGGER = LoggerFactory.getLogger(HttpClientSupport.class);
     private static final String TRACE_ID = "traceId";
-    private static final String HTTP_PREFIX = "http://";
-    private static final String HTTPS_PREFIX = "https://";
-    private static Map<String, WeightedRoundRobinScheduling> serverMap = new ConcurrentHashMap<>();
 
-    static {
-    	ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-        scheduledThreadPoolExecutor.scheduleAtFixedRate(new ServerCheckTask(serverMap), 
-        		Integer.parseInt(ConfClient.get("server.check.cycletime", "60", false)), 
-        		Integer.parseInt(ConfClient.get("server.check.cycletime", "60", false)), TimeUnit.SECONDS);
-    }
     
     public static String doGet(String orgurl, Map<String, Object> param) {
         CloseableHttpResponse response = null;
         CloseableHttpClient httpclient = HttpClients.createDefault();
-        String url = loadbalance(orgurl);
+        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
         try {
             URIBuilder builder = new URIBuilder(url);
             if (param != null) {
@@ -78,7 +63,7 @@ public class HttpClientSupport {
                 return EntityUtils.toString(response.getEntity(), "UTF-8");
             }
         } catch (Exception e) {
-        	connctionError(orgurl, url);
+        	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
             LOGGER.error("doGet 发起网络请求异常：{}", e.getMessage());
         } finally {
             try {
@@ -100,7 +85,7 @@ public class HttpClientSupport {
     public static String doPost(String orgurl, Map<String, Object> param) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         CloseableHttpResponse response = null;
-        String url = loadbalance(orgurl);
+        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
         try {
             HttpPost httpPost = new HttpPost(url);
             trace(httpPost);
@@ -117,7 +102,7 @@ public class HttpClientSupport {
             response = httpClient.execute(httpPost);
             return EntityUtils.toString(response.getEntity(), "utf-8");
         } catch (Exception e) {
-        	connctionError(orgurl, url);
+        	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
             LOGGER.error("doPost 发起网络请求异常：{}", e.getMessage());
         } finally {
             try {
@@ -138,7 +123,7 @@ public class HttpClientSupport {
         httpClientBuilder.setDefaultCookieStore(cookie);
         CloseableHttpClient closeableHttpClient = httpClientBuilder.build();
         CloseableHttpResponse response = null;
-        String url = loadbalance(orgurl);
+        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
         try {
             HttpPost httpPost = new HttpPost(url);
             trace(httpPost);
@@ -154,7 +139,7 @@ public class HttpClientSupport {
             response = closeableHttpClient.execute(httpPost);
             return EntityUtils.toString(response.getEntity(), "utf-8");
         } catch (Exception e) {
-        	connctionError(orgurl, url);
+        	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
             LOGGER.error("doPostCookie 发起网络请求异常：{}", e.getMessage());
         } finally {
             try {
@@ -177,7 +162,7 @@ public class HttpClientSupport {
     public static String doPostJson(String orgurl, String json, String lang) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         CloseableHttpResponse response = null;
-        String url = loadbalance(orgurl);
+        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
         try {
             if (StringUtil.isNotEmpty(lang)) {
             	url = url + "?lang=" + lang;
@@ -189,7 +174,7 @@ public class HttpClientSupport {
             response = httpClient.execute(httpPost);
             return EntityUtils.toString(response.getEntity(), "utf-8");
         } catch (Exception e) {
-        	connctionError(orgurl, url);
+        	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
             LOGGER.error("doPostJson 发起网络请求异常：{},url={},json={}", e.getMessage(),url,json);
         } finally {
             try {
@@ -206,7 +191,7 @@ public class HttpClientSupport {
     }
 
     public static void httpAsync(String orgurl, Map<String, Object> paramMap) {
-        String url = loadbalance(orgurl);
+        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
         String paramUrl = url;
         try {
             RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(30000).setConnectTimeout(30000)
@@ -238,13 +223,13 @@ public class HttpClientSupport {
             LOGGER.info("{}", httpResponse);
             httpclient.close();
         } catch (Exception e) {
-        	connctionError(orgurl, url);
+        	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
             LOGGER.error("httpAsync 发起网络请求异常：{}", e.getMessage());
         }
     }
 
     public static void httpAsyncJson(String orgurl, String json, String lang) {
-        String url = loadbalance(orgurl);
+        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
         try {
             RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(300000).setConnectTimeout(300000)
                 .build();
@@ -269,7 +254,7 @@ public class HttpClientSupport {
             LOGGER.debug("{}", httpResponse);
             httpclient.close();
         } catch (Exception e) {
-        	connctionError(orgurl, url);
+        	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
             LOGGER.error("httpAsyncJson 发起网络请求异常：{}", e.getMessage());
         }
     }
@@ -291,74 +276,6 @@ public class HttpClientSupport {
     	}
     }
     
-    private static String loadbalance(String url) {
-    	String returnUrl;
-    	WeightedRoundRobinScheduling wrrs = serverMap.get(url);
-    	if (wrrs == null) {
-    		synchronized(url.intern()){
-    			wrrs = serverMap.get(url);
-    			if (wrrs == null) {
-    				String[] serversInfo = url.split(",");
-    				List<WeightedRoundRobinScheduling.Server> serverList = new ArrayList<>();
-    				for (String serverInfo : serversInfo) {
-    					String[] si = getRemoteAddress(serverInfo);
-    		            if (si.length == 2) {
-     		                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), 1);
-    		                serverList.add(server);
-    		            } else if (si.length == 3) {
-    		                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2]));
-    		                serverList.add(server);
-    		            }
-    		        }
-    				wrrs = new WeightedRoundRobinScheduling(serverList);
-    				serverMap.put(url, wrrs);
-    			}
-    		}
-    	}
-    	Server server = wrrs.getServer();
-    	returnUrl = server.getIp() + ":" + server.getPort();
-    	return returnUrl;
-    }
-    
-    private static void connctionError(String orgurl, String url) {
-    	WeightedRoundRobinScheduling weightedRoundRobinScheduling = serverMap.get(orgurl);
-    	String[] serversInfo = getRemoteAddress(url);
-        weightedRoundRobinScheduling.unhealthilyServers.add(weightedRoundRobinScheduling.getServer(serversInfo[0], Integer.parseInt(serversInfo[1])));
-        weightedRoundRobinScheduling.healthilyServers.remove(weightedRoundRobinScheduling.getServer(serversInfo[0], Integer.parseInt(serversInfo[1])));
-    }
-    
-    private static String[] getRemoteAddress(String serverInfo) {
-		boolean httpPrefix = false;
-		boolean httpsPrefix = false;
-		if (serverInfo.toLowerCase().startsWith(HTTP_PREFIX)) {
-			httpPrefix = true;
-			serverInfo = serverInfo.substring(HTTP_PREFIX.length());
-		}
-		if (serverInfo.toLowerCase().startsWith(HTTPS_PREFIX)) {
-			httpsPrefix = true;
-			serverInfo = serverInfo.substring(HTTPS_PREFIX.length());
-		}
-        String[] si = serverInfo.split(":");
-        if (si.length == 2) {
-        	if (httpPrefix) {
-        		si[0] = HTTP_PREFIX + si[0];
-        	}
-        	if (httpsPrefix) {
-        		si[0] = HTTPS_PREFIX + si[0];
-        	}
-        } else if (si.length == 3) {
-        	if (httpPrefix) {
-        		si[0] = HTTP_PREFIX + si[0];
-        	}
-        	if (httpsPrefix) {
-        		si[0] = HTTPS_PREFIX + si[0];
-        	}
-        }
-        return si;
-    }
 
-    public static void main(String[] args) {
-    	loadbalance("https://localhost:8080");
-    }
 }
 
