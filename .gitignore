@@ -244,3 +244,8 @@
 /Polaris_workflow/Polaris_workflow_core/target/maven-archiver/pom.properties
 /Polaris_workflow/Polaris_workflow_core/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
 /Polaris_workflow/Polaris_workflow_core/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
+/Polaris_core/.gitignore
+/Polaris_core/.project
+/Polaris_core/.settings
+/Polaris_core/target
+/Polaris_core/.classpath

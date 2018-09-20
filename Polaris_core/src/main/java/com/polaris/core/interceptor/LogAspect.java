@@ -1,4 +1,4 @@
-package com.polaris.comm.interceptor;
+package com.polaris.core.interceptor;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 

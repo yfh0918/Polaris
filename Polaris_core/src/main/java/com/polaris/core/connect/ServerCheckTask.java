@@ -1,4 +1,4 @@
-package com.polaris.comm.thread;
+package com.polaris.core.connect;
 
 import java.net.ConnectException;
 import java.util.ArrayList;

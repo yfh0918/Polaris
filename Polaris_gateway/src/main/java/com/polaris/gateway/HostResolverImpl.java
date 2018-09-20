@@ -15,9 +15,9 @@ import java.util.concurrent.TimeUnit;
 import org.littleshoot.proxy.HostResolver;
 
 import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.thread.ServerCheckTask;
 import com.polaris.comm.util.PropertyUtils;
 import com.polaris.comm.util.WeightedRoundRobinScheduling;
+import com.polaris.core.connect.ServerCheckTask;
 import com.polaris.gateway.util.PropertiesUtil;
 
 /**

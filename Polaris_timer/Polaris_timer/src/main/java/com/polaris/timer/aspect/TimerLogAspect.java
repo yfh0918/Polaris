@@ -6,7 +6,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
-import com.polaris.comm.interceptor.LogAspect;
+import com.polaris.core.interceptor.LogAspect;
 import com.polaris.timer.api.exception.TimerException;
 
 @Component

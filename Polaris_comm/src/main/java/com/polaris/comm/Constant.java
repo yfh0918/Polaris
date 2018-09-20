@@ -155,7 +155,10 @@ public class Constant {
 	public final static String METHOD_POST = "POST";
 	public final static String UTF_CODE = "UTF-8";
 	public final static int CONNECT_MAX_TIME = 3000000;//连接的最大长度（单位毫秒）
-
+	
+	//请求内容
+	public static final String REQUEST_BODY = "requestBody";
+	
 	//构造函数
 	private static final InheritablePolarisThreadLocal<Map<String, String>> holder=new InheritablePolarisThreadLocal<Map<String,String>>(){
 		@Override protected Map<String,String>initialValue(){
@@ -189,7 +192,4 @@ public class Constant {
 	public static String PORT_NAME = "";
 	public static String PORT = "";
 	public static final String SLASH = "/";
-	
-	//请求内容
-	public static final String REQUEST_BODY = "requestBody";
 }

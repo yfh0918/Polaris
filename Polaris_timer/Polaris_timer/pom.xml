@@ -27,6 +27,10 @@
 		<groupId>com.polaris</groupId>
 		<artifactId>Polaris_dubbo</artifactId>
 	</dependency>
+	<dependency>
+        <groupId>com.polaris</groupId>
+        <artifactId>Polaris_core</artifactId>
+    </dependency>
   </dependencies>
   
   <build>

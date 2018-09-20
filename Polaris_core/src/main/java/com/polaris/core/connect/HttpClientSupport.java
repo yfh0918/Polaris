@@ -1,4 +1,4 @@
-package com.polaris.comm.supports;
+package com.polaris.core.connect;
 
 import java.io.IOException;
 import java.net.URI;
@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.comm.Constant;
 import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.thread.ServerCheckTask;
 import com.polaris.comm.util.StringUtil;
 import com.polaris.comm.util.WeightedRoundRobinScheduling;
 import com.polaris.comm.util.WeightedRoundRobinScheduling.Server;
