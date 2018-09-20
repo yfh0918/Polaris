@@ -16,7 +16,7 @@
 
 		<dependency>
 			<groupId>com.polaris</groupId>
-			<artifactId>Polaris_comm</artifactId>
+			<artifactId>Polaris_core</artifactId>
 		</dependency>
 		<dependency>
 		    <groupId>javax.servlet</groupId>
