@@ -19,6 +19,10 @@ public class WeightedRoundRobinScheduling {
     public CopyOnWriteArrayList<Server> healthilyServers; //健康服务器集合
     public CopyOnWriteArrayList<Server> unhealthilyServers = new CopyOnWriteArrayList<>(); //不健康服务器集合
     private Map<String, Server> serversMap = new HashMap<>();
+    
+	private String prefix;
+	private String suffix;
+
 
     /**
      * 返回最大公约数
@@ -136,5 +140,21 @@ public class WeightedRoundRobinScheduling {
         public void setWeight(int weight) {
             this.weight = weight;
         }
+
     }
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+
+	public String getSuffix() {
+		return suffix;
+	}
+
+	public void setSuffix(String suffix) {
+		this.suffix = suffix;
+	}
 }

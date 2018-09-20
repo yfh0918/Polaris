@@ -31,14 +31,8 @@ public class ServerCheckTask implements Runnable {
                 WeightedRoundRobinScheduling weightedRoundRobinScheduling = entry.getValue();
                 List<WeightedRoundRobinScheduling.Server> delServers = new ArrayList<>();
                 CloseableHttpResponse httpResponse = null;
-            	String url;
                 for (WeightedRoundRobinScheduling.Server server : weightedRoundRobinScheduling.unhealthilyServers) {
-                	if (!server.getIp().toLowerCase().startsWith("http://") && !server.getIp().toLowerCase().startsWith("https://") ) {
-                		url = "http://" + server.getIp() + ":" + server.getPort();
-                	} else {
-                		url = server.getIp() + ":" + server.getPort();
-                	}
-                    HttpGet request = new HttpGet(url);
+                    HttpGet request = new HttpGet("http://" + server.getIp() + ":" + server.getPort());
                     try {
                         httpResponse = (CloseableHttpResponse) client.execute(request);
                         weightedRoundRobinScheduling.healthilyServers.add(weightedRoundRobinScheduling.getServer(server.getIp(), server.getPort()));
