@@ -42,9 +42,9 @@
         </profile>
         <profile>
             <!-- 预生产环境  -->
-            <id>preProuction</id>
+            <id>pre</id>
             <properties>
-                <profiles.active>preProuction</profiles.active>
+                <profiles.active>pre</profiles.active>
             </properties>
         </profile>
         <profile>
