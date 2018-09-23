@@ -57,7 +57,8 @@ public class ConfNodeServiceImpl implements ConfNodeService {
 		if (ConfZkClient.getInstance() != null && ConfZkClient.getInstance().getState().equals(States.CONNECTED)) {
 			if (CollectionUtils.isNotEmpty(data)) {
 				for (ConfNode node: data) {
-					String realNodeValue = ConfZkClient.getPathDataByKey(node.getGroupKey());
+					String key = "default" +Constant.SLASH+ node.getNodeGroup() +Constant.SLASH + node.getNodeKey();
+					String realNodeValue = ConfZkClient.getPathDataByKey(key);
 					node.setNodeValueReal(realNodeValue);
 				}
 			}
@@ -170,11 +171,12 @@ public class ConfNodeServiceImpl implements ConfNodeService {
 			for (ConfNode node: data) {
 				
 				//获取zk节点值
-				String realNodeValue = ConfZkClient.getPathDataByKey(node.getGroupKey());
+				String key = "default" +Constant.SLASH+ node.getNodeGroup() +Constant.SLASH + node.getNodeKey();
+				String realNodeValue = ConfZkClient.getPathDataByKey(key);
 				
 				//删除
 				if ("1".equals(node.getDelFlg())) {
-					ConfZkClient.deletePathByKey(node.getGroupKey());
+					ConfZkClient.deletePathByKey(key);
 					confNodeDao.deleteByKey(nodeZK,node.getNodeGroup(), node.getNodeKey());//逻辑删除变成物理删除
                     logger.info("数据从db同步（删除）到zk： nodeZK={}, nodeGroup={}," +
                                     "nodeKey={},nodeValue={}", node.getNodeZK(),
@@ -185,7 +187,7 @@ public class ConfNodeServiceImpl implements ConfNodeService {
 				//将value为空的key从ZK中删除
 				if (node.getNodeValue() == null)
 				{
-					ConfZkClient.deletePathByKey(node.getGroupKey());
+					ConfZkClient.deletePathByKey(key);
                     logger.info("数据从db同步（value为空删除）到zk： nodeZK={}, nodeGroup={}," +
                                     "nodeKey={},nodeValue={}", node.getNodeZK(),
                             node.getNodeGroup(),node.getNodeKey(),node.getNodeValue());
@@ -194,7 +196,7 @@ public class ConfNodeServiceImpl implements ConfNodeService {
 				
 				//更新
 				if (realNodeValue != null && !realNodeValue.equals(node.getNodeValue())) {
-					ConfZkClient.setPathDataByKey(node.getGroupKey(), node.getNodeValue(), false);
+					ConfZkClient.setPathDataByKey(key, node.getNodeValue(), false);
                     logger.info("数据从db同步（更新）到zk： nodeZK={}, nodeGroup={}," +
                                     "nodeKey={},nodeValue={}", node.getNodeZK(),
                             node.getNodeGroup(),node.getNodeKey(),node.getNodeValue());
@@ -203,7 +205,7 @@ public class ConfNodeServiceImpl implements ConfNodeService {
 				
 				//新增
 				if (realNodeValue == null) {
-					ConfZkClient.setPathDataByKey(node.getGroupKey(), node.getNodeValue(), false);
+					ConfZkClient.setPathDataByKey(key, node.getNodeValue(), false);
                     logger.info("数据从db同步（新增）到zk： nodeZK={}, nodeGroup={}," +
                                     "nodeKey={},nodeValue={}", node.getNodeZK(),
                             node.getNodeGroup(),node.getNodeKey(),node.getNodeValue());

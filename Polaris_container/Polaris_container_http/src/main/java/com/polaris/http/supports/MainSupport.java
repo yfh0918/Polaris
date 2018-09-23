@@ -37,14 +37,24 @@ public class MainSupport extends com.polaris.comm.supports.MainSupport{
     */
     public static void startWebServer(String[] args) {
     	
-    	//log4j重新设定地址
-		configureAndWatch(WARCH_TIME);
-		
+    	//命名空间
+		String namespace = System.getProperty(Constant.NAMESPACE);
+		if (StringUtil.isNotEmpty(namespace)) {
+    		ConfClient.setNameSpace(namespace);
+		}
+
+    	//启动字符集
+    	System.setProperty("file.encoding", "UTF-8");
+    	        	
 		//端口号
 		String port = System.getProperty(Constant.SERVER_PORT);
 		if (StringUtil.isEmpty(port)) {
 			port = ConfClient.get(Constant.SERVER_PORT);
 		}
+
+    	//log4j重新设定地址
+		configureAndWatch(WARCH_TIME);
+		
 		
     	//不允许重复启动
     	if (!makeSingle(Constant.SERVER_PORT, port)) {

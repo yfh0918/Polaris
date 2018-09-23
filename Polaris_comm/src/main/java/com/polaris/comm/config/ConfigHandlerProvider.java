@@ -15,17 +15,31 @@ public  class ConfigHandlerProvider {
         return INSTANCE;
     }
 
-	public String getDataByKey(String key, boolean isWarch) {
+	public String getDataByKey(String nameSpace, String group, String key, boolean isWatch) {
 		for (ConfigHandler handler : serviceLoader) {
-			return handler.getDataByKey(key, isWarch);
+			return handler.getDataByKey(nameSpace, group, key, isWatch);
 		}
 		return null;
 	}
 
-	public List<String> getAllKeys(String appName) {
+	public List<String> getAllKeys(String nameSpace, String group) {
 		for (ConfigHandler handler : serviceLoader) {
-			return handler.getAllKeys(appName);
+			return handler.getAllKeys(nameSpace, group);
 		}
 		return null;
+	}
+	
+	public boolean deleteDataByKey(String nameSpace, String group, String key, boolean isWatch) {
+		for (ConfigHandler handler : serviceLoader) {
+			return handler.deleteDataByKey(nameSpace, group, key , isWatch);
+		}
+		return false;
+	}
+
+	public boolean setDataByKey(String nameSpace, String group, String key, String data, boolean isWatch) {
+		for (ConfigHandler handler : serviceLoader) {
+			return handler.setDataByKey(nameSpace, group, key, data, isWatch);
+		}
+		return false;
 	}
 }

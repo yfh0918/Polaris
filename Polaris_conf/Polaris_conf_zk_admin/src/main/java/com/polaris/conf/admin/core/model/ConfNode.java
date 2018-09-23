@@ -1,7 +1,5 @@
 package com.polaris.conf.admin.core.model;
 
-import com.polaris.config.zk.ConfZkClient;
-
 /**
  * 配置节点
  */
@@ -63,10 +61,6 @@ public class ConfNode {
 
 	public void setNodeDesc(String nodeDesc) {
 		this.nodeDesc = nodeDesc;
-	}
-
-	public String getGroupKey() {
-		return ConfZkClient.generateGroupKey(nodeGroup, nodeKey);
 	}
 
 	public String getNodeValueReal() {

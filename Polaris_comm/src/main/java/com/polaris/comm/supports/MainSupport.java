@@ -101,9 +101,6 @@ abstract public class MainSupport {
     	FileLock lock = null;
         try {
         	
-        	//启动字符集
-        	System.setProperty("file.encoding", "UTF-8");
-        	
         	//端口号和名称
         	Constant.PORT_NAME = portName;
         	Constant.PORT = port;

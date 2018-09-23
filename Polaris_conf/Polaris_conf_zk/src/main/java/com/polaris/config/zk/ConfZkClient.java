@@ -169,8 +169,8 @@ public class ConfZkClient implements Watcher {
 	 * @return ZnodeKey
 	 */
 	private static String pathToKey(String nodePath){
-		if (nodePath.lastIndexOf("/") > 0) {
-			return nodePath.substring(nodePath.lastIndexOf("/") + 1);
+		if (nodePath.lastIndexOf(Constant.SLASH) > 0) {
+			return nodePath.substring(nodePath.lastIndexOf(Constant.SLASH) + 1);
 		}
 		return null;
 	}
@@ -181,11 +181,7 @@ public class ConfZkClient implements Watcher {
 	 * @return znodePath
 	 */
 	private static String keyToPath(String nodeKey){
-		return Constant.CONF_DATA_PATH + "/" + nodeKey;
-	}
-
-	public static String generateGroupKey(String nodeGroup, String nodeKey){
-		return nodeGroup + "/" + nodeKey;
+		return Constant.CONF_DATA_PATH + Constant.SLASH + nodeKey;
 	}
 
 	/**
@@ -202,8 +198,8 @@ public class ConfZkClient implements Watcher {
 			Stat stat = getInstance().exists(path, false);
 			if (stat == null) {
 				//  valid parent, createWithParent if not exists
-				if (path.lastIndexOf("/") > 0) {
-					String parentPath = path.substring(0, path.lastIndexOf("/"));
+				if (path.lastIndexOf(Constant.SLASH) > 0) {
+					String parentPath = path.substring(0, path.lastIndexOf(Constant.SLASH));
 					Stat parentStat = getInstance().exists(parentPath, false);
 					if (parentStat == null) {
 						createWithParent(parentPath);
@@ -229,15 +225,16 @@ public class ConfZkClient implements Watcher {
 	 * delete path by key
 	 * @param key
 	 */
-	public static void deletePathByKey(String key){
-		deletePathByKey(key, true);
+	public static boolean deletePathByKey(String key){
+		return deletePathByKey(key, true);
 	}
-	public static void deletePathByKey(String key, boolean isWatch){
+	public static boolean deletePathByKey(String key, boolean isWatch){
 		String path = keyToPath(key);
 		try {
 			Stat stat = getInstance().exists(path, isWatch);
 			if (stat != null) {
 				getInstance().delete(path, stat.getVersion());
+				return true;
 			} else {
 				logger.info(">>>>>>>>>> zookeeper node path not found :{}", key);
 			}
@@ -246,6 +243,7 @@ public class ConfZkClient implements Watcher {
 		} catch (InterruptedException e) {
 			logger.error(e);
 		}
+		return false;
 	}
 
 	/**
@@ -254,10 +252,10 @@ public class ConfZkClient implements Watcher {
 	 * @param data
 	 * @return
 	 */
-	public static Stat setPathDataByKey(String key, String data) {
+	public static boolean setPathDataByKey(String key, String data) {
 		return setPathDataByKey(key, data, true);
 	}
-	public static Stat setPathDataByKey(String key, String data, boolean isWatch) {
+	public static boolean setPathDataByKey(String key, String data, boolean isWatch) {
 		String path = keyToPath(key);
 		try {
 			Stat stat = getInstance().exists(path, isWatch);
@@ -266,12 +264,13 @@ public class ConfZkClient implements Watcher {
 				stat = getInstance().exists(path, false);
 			}
 			if (data != null) {
-				return zooKeeper.setData(path, data.getBytes(Constant.UTF_CODE),stat.getVersion());
+				zooKeeper.setData(path, data.getBytes(Constant.UTF_CODE),stat.getVersion());
+				return true;
 			}
 		} catch (Exception e) {
 			logger.error(e);
 		}
-		return null;
+		return false;
 	}
 
 	/**

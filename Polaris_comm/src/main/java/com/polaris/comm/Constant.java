@@ -192,4 +192,5 @@ public class Constant {
 	public static String PORT_NAME = "";
 	public static String PORT = "";
 	public static final String SLASH = "/";
+	public static final String NAMESPACE="project.namespace";
 }

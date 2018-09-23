@@ -25,6 +25,7 @@ import com.polaris.comm.util.StringUtil;
 public class ConfClient {
 	private static final LogUtil logger = LogUtil.getInstance(ConfClient.class);
 	private static String appName;
+	private static String nameSpace = "default";
 
 	private static Map<String, String> cache = new HashMap<>();
 
@@ -54,7 +55,7 @@ public class ConfClient {
 	 * @return
 	 */
 	public static List<String> getAllKeys(){
-		return ConfigHandlerProvider.getInstance().getAllKeys(getAppName());
+		return ConfigHandlerProvider.getInstance().getAllKeys(nameSpace, appName);
 	}
 	
 	/**
@@ -73,9 +74,9 @@ public class ConfClient {
 			}
 		}
 		
-		//扩展配置点获取信息
+		//扩展配置点获取信息 
 		if (StringUtil.isNotEmpty(inputAppName)) {
-			String zkData = ConfigHandlerProvider.getInstance().getDataByKey(inputAppName+Constant.SLASH+key, isWatch);
+			String zkData = ConfigHandlerProvider.getInstance().getDataByKey(nameSpace, inputAppName, key, isWatch);
 			if (zkData!=null) {
 				update(key, zkData);//更新缓存
 				return zkData;
@@ -163,5 +164,7 @@ public class ConfClient {
 	public static void setAppName(String inputAppName) {
 		appName = inputAppName;
 	}
-	
+	public static void setNameSpace(String inputNameSpace) {
+		nameSpace = inputNameSpace;
+	}
 }
