@@ -60,9 +60,7 @@ public class ConfZkClient implements Watcher {
 	}
 
 	public static ZooKeeper getInstance(boolean refresh){
-		if (!setZkAddress()) {
-			return null;
-		}
+		setZkAddress();
 		if (zooKeeper==null || refresh) {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
@@ -75,7 +73,7 @@ public class ConfZkClient implements Watcher {
 								zooKeeper = null;
 							}
 						}
-						zooKeeper = new ZooKeeper(Constant.ZK_ADDRESS_CONF, 20000, new Watcher() {
+						zooKeeper = new ZooKeeper(Constant.CONFIG_ADDRESS, 20000, new Watcher() {
 							@Override
 							public void process(WatchedEvent watchedEvent) {
 								try {
@@ -137,21 +135,13 @@ public class ConfZkClient implements Watcher {
     * @Exception 
     * @since 
     */
-    private static boolean setZkAddress() {
+    private static void setZkAddress() {
     	
-    	String isMust = System.getProperty(Constant.ZK_CONF_MUST);
-    	Constant.ZK_ADDRESS_CONF = System.getProperty(Constant.ZK_NAME_CONF);
-		if (StringUtil.isNotEmpty(isMust) && 
-				"false".equals(isMust.toLowerCase()) &&
-				StringUtil.isEmpty(Constant.ZK_ADDRESS_CONF)) {
-			return false;
-		}
-		
     	//配置文件
-    	if (StringUtil.isEmpty(Constant.ZK_ADDRESS_CONF)) {
-    		throw new NullPointerException(Constant.ZK_NAME_CONF + " is null");
+    	Constant.CONFIG_ADDRESS = System.getProperty(Constant.CONFIG_ADDRESS_NAME);
+    	if (StringUtil.isEmpty(Constant.CONFIG_ADDRESS)) {
+    		throw new NullPointerException(Constant.CONFIG_ADDRESS + " is null");
     	}
-    	return true;
     }
 	    
 	/**
@@ -181,6 +171,9 @@ public class ConfZkClient implements Watcher {
 	 * @return znodePath
 	 */
 	private static String keyToPath(String nodeKey){
+		if (StringUtil.isEmpty(nodeKey)) {
+			return Constant.CONF_DATA_PATH;
+		}
 		return Constant.CONF_DATA_PATH + Constant.SLASH + nodeKey;
 	}
 
@@ -265,8 +258,8 @@ public class ConfZkClient implements Watcher {
 			}
 			if (data != null) {
 				zooKeeper.setData(path, data.getBytes(Constant.UTF_CODE),stat.getVersion());
-				return true;
 			}
+			return true;
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -295,6 +288,32 @@ public class ConfZkClient implements Watcher {
 		return  appsKey;
 	}
 
+	/**
+	 * get children from path
+	 * @param key
+	 * @return
+	 */
+	public static List<String> getChildren(String path){
+		return getChildren(path, true);
+	}
+	public static List<String>  getChildren(String path, boolean isWatch){
+		String temppath = keyToPath(path);
+		try {
+			Stat stat = getInstance().exists(temppath, isWatch);
+			if (stat != null) {
+				return getInstance().getChildren(temppath, isWatch);
+			} else {
+				logger.info(">>>>>>>>>> znodeKey[{}] not found.", temppath);
+			}
+		} catch (KeeperException e) {
+			logger.error(e);
+		} catch (InterruptedException e) {
+			logger.error(e);
+		}
+		return null;
+	}
+
+	
 	/**
 	 * get data from node
 	 * @param key

@@ -185,7 +185,7 @@ public class Constant {
 	}
 	
 	/**
-	 * conf data path in zk
+	 * 参数
      */
 	public static String localProp = "config" + File.separator + "application.properties";
 	public static String PROJECT_NAME = "project.name";
@@ -193,4 +193,9 @@ public class Constant {
 	public static String PORT = "";
 	public static final String SLASH = "/";
 	public static final String NAMESPACE="project.namespace";
+	
+	// 配置中心
+	public volatile static String CONFIG_ADDRESS;		// 配置中心：格式	ip1:port,ip2:port,ip3:port
+	public static final String CONFIG_ADDRESS_NAME = "config.registry.address";
+
 }
