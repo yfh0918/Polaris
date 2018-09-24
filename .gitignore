@@ -250,3 +250,10 @@
 /Polaris_core/target
 /Polaris_core/.classpath
 /Polaris_log/Polaris_log_rest/target
+/Polaris_conf/Polaris_conf_admin/.settings
+/Polaris_conf/Polaris_conf_admin/log
+/Polaris_conf/Polaris_conf_admin/target
+/Polaris_conf/Polaris_conf_admin/.classpath
+/Polaris_conf/Polaris_conf_admin/.gitignore
+/Polaris_conf/Polaris_conf_admin/.project
+/Polaris_parent/.settings

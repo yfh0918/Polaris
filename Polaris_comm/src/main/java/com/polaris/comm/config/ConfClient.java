@@ -55,7 +55,7 @@ public class ConfClient {
 	 * @return
 	 */
 	public static List<String> getAllKeys(){
-		return ConfigHandlerProvider.getInstance().getAllKeys(nameSpace, appName);
+		return ConfigHandlerProvider.getInstance().getAllKeys(nameSpace, appName, false);
 	}
 	
 	/**
@@ -76,10 +76,10 @@ public class ConfClient {
 		
 		//扩展配置点获取信息 
 		if (StringUtil.isNotEmpty(inputAppName)) {
-			String zkData = ConfigHandlerProvider.getInstance().getDataByKey(nameSpace, inputAppName, key, isWatch);
-			if (zkData!=null) {
-				update(key, zkData);//更新缓存
-				return zkData;
+			String data = ConfigHandlerProvider.getInstance().getKey(nameSpace, inputAppName, key, isWatch);
+			if (data!=null) {
+				update(key, data);//更新缓存
+				return data;
 			}
 		}
 		

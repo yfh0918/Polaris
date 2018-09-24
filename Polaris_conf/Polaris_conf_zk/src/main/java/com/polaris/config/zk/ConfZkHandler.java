@@ -25,32 +25,32 @@ public class ConfZkHandler implements ConfigHandler {
 		return ConfZkClient.getChildren(namespace, isWatch);
 	}
 	@Override
-	public boolean addGroupByNameSpace(String nameSpace, String group, boolean isWatch) {
+	public boolean addGroup(String nameSpace, String group, boolean isWatch) {
 		return ConfZkClient.setPathDataByKey(nameSpace + Constant.SLASH + group, null, isWatch);
 	}
 
 	@Override
-	public boolean deleteGroupByNameSpace(String nameSpace, String group, boolean isWatch) {
+	public boolean deleteGroup(String nameSpace, String group, boolean isWatch) {
 		return ConfZkClient.deletePathByKey(nameSpace + Constant.SLASH + group, isWatch);
 	}
 
 	@Override
-	public List<String> getAllKeys(String nameSpace, String group) {
-		return ConfZkClient.getAllKeyByAppName(nameSpace + Constant.SLASH + group);
+	public List<String> getAllKeys(String nameSpace, String group, boolean isWatch) {
+		return ConfZkClient.getAllKeyByAppName(nameSpace + Constant.SLASH + group, isWatch);
 	}
 
 	@Override
-	public String getDataByKey(String nameSpace, String group, String key, boolean isWatch) {
+	public String getKey(String nameSpace, String group, String key, boolean isWatch) {
 		return ConfZkClient.getPathDataByKey(nameSpace + Constant.SLASH + group+Constant.SLASH + key, isWatch);
 	}
 
 	@Override
-	public boolean deleteDataByKey(String nameSpace, String group, String key, boolean isWatch) {
+	public boolean deleteKey(String nameSpace, String group, String key, boolean isWatch) {
 		return ConfZkClient.deletePathByKey(nameSpace + Constant.SLASH + group+Constant.SLASH + key, isWatch);
 	}
 
 	@Override
-	public boolean setDataByKey(String nameSpace, String group, String key, String data, boolean isWatch) {
+	public boolean addKey(String nameSpace, String group, String key, String data, boolean isWatch) {
 		return ConfZkClient.setPathDataByKey(nameSpace + Constant.SLASH + group+Constant.SLASH + key, data, isWatch);
 	}
 

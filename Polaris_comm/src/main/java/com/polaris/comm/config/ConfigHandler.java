@@ -9,14 +9,14 @@ public interface ConfigHandler {
 	boolean deleteNameSpace(String nameSpace, boolean isWatch);
 
 	List<String> getAllGroups(String namespace, boolean isWatch);
-	boolean addGroupByNameSpace(String nameSpace, String group,  boolean isWatch);
-	boolean deleteGroupByNameSpace(String nameSpace, String group,  boolean isWatch);
+	boolean addGroup(String nameSpace, String group,  boolean isWatch);
+	boolean deleteGroup(String nameSpace, String group,  boolean isWatch);
 
-	List<String> getAllKeys(String nameSpace, String group);
+	List<String> getAllKeys(String nameSpace, String group,  boolean isWatch);
 
-	String getDataByKey(String nameSpace, String group, String key, boolean isWatch);
+	String getKey(String nameSpace, String group, String key, boolean isWatch);
 	
-	boolean deleteDataByKey(String nameSpace, String group, String key, boolean isWatch);
+	boolean deleteKey(String nameSpace, String group, String key, boolean isWatch);
 
-	boolean setDataByKey(String nameSpace, String group, String key, String data, boolean isWatch);
+	boolean addKey(String nameSpace, String group, String key, String data, boolean isWatch);
 }

@@ -271,13 +271,13 @@ public class ConfZkClient implements Watcher {
 	 * @param appName
 	 * @return
 	 */
-	public static List<String> getAllKeyByAppName(String appName){
+	public static List<String> getAllKeyByAppName(String appName, boolean isWatch){
         List<String> appsKey = new ArrayList<>();
 		try {
 			String path = keyToPath(appName);
-			Stat stat = getInstance().exists(path, false);
+			Stat stat = getInstance().exists(path, isWatch);
 			if (stat != null) {
-				appsKey = getInstance().getChildren(keyToPath(appName) ,false);
+				appsKey = getInstance().getChildren(keyToPath(appName) ,isWatch);
 				return appsKey;
 			}
 		} catch (KeeperException e) {
