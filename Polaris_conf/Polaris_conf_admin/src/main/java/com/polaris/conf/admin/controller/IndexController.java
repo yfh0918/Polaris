@@ -25,7 +25,7 @@ public class IndexController {
         if (!PermissionInterceptor.ifLogin(request)) {
             return "redirect:/toLogin";
         }
-        return "redirect:/conf";
+        return "redirect:/namespace";
     }
 
     @RequestMapping("/toLogin")

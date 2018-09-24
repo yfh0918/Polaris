@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.polaris.comm.util.StringUtil;
 import com.polaris.conf.admin.core.model.ConfGroup;
 import com.polaris.conf.admin.core.util.AdminSupport;
 import com.polaris.conf.admin.core.util.ReturnT;
@@ -20,13 +21,24 @@ import com.polaris.conf.admin.core.util.ReturnT;
 public class GroupController {
 	
 	@RequestMapping
-	public String index(Model model, String namespace) {
-
-		List<String> list = AdminSupport.getAllGroups(namespace);
-		model.addAttribute("list", list);
+	public String index(Model model) {
+		model.addAttribute("namespaceList", AdminSupport.getAllNameSpaces());
 		return "group/group.index";
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping("/findList")
+	@ResponseBody
+	public ReturnT<String> findList(String namespace){
+
+		if (StringUtil.isNotEmpty(namespace)) {
+			List<String> list = AdminSupport.getAllGroups(namespace);
+			return new ReturnT(list);
+		}
+		return ReturnT.SUCCESS;
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping("/save")
 	@ResponseBody
 	public ReturnT<String> save(ConfGroup group){
@@ -43,12 +55,13 @@ public class GroupController {
 			return new ReturnT<String>(500, "group已存在,请勿重复添加");
 		}
 		AdminSupport.addGroup(group.getNamespace(), group.getGroup());
-		
-		return ReturnT.SUCCESS;
+		list = AdminSupport.getAllGroups(group.getNamespace());
+		return new ReturnT(list);
 	}
 
 
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping("/remove")
 	@ResponseBody
 	public ReturnT<String> remove(ConfGroup group){
@@ -58,7 +71,8 @@ public class GroupController {
 		if (!result) {
 			return new ReturnT<String>(500, "该应用使用中, 不可删除");
 		}
-		return ReturnT.SUCCESS;
+		List<String> list = AdminSupport.getAllGroups(group.getNamespace());
+		return new ReturnT(list);
 	}
 
 }

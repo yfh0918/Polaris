@@ -29,31 +29,30 @@
 			<div class="row">
 				<div class="col-xs-12">
 					<div class="box">
+					
+						<div class="col-xs-3">
+	                        <div class="input-group">
+	                            <span class="input-group-addon">命名空间</span>
+	                            <select class="form-control" id="namespace" >
+									<option value="" ></option>
+									<#list namespaceList as namespace>
+										<option value="${namespace}" >${namespace}</option>
+									</#list>
+	                            </select>
+	                        </div>
+	                    </div>
+	                    
                         <div class="box-header">
-                            <h3 class="box-title">应用列表</h3>&nbsp;&nbsp;
                             <button class="btn btn-info btn-xs pull-left2 add" >+新增应用</button>
                         </div>
 			            <div class="box-body">
-			              	<table id="joblog_list" class="table table-bordered table-striped display" width="100%" >
+			              	<table id="group_list" class="table table-bordered table-striped display" width="100%" >
 				                <thead>
 					            	<tr>
-                                        <th name="groupName" >App Code</th>
-                                        <th name="groupTitle" >应用名</th>
+                                        <th name="group" >应用名</th>
 					                </tr>
 				                </thead>
-                                <tbody>
-								<#if list?exists && list?size gt 0>
-								<#list list as group>
-									<tr>
-                                        <td>${group.groupName}</td>
-                                        <td>${group.groupTitle}</td>
-										<td>
-                                            <button class="btn btn-warning btn-xs update" groupName="${group.groupName}" groupTitle="${group.groupTitle}" >编辑</button>
-                                            <button class="btn btn-danger btn-xs remove" groupName="${group.groupName}" >删除</button>
-										</td>
-									</tr>
-								</#list>
-								</#if>
+                                <tbody id = "groupbody">
 								</tbody>
 							</table>
 						</div>
@@ -72,43 +71,13 @@
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal form" role="form" >
-                        <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">App Code<font color="red">*</font></label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="groupName" placeholder="请输入“GroupName”" maxlength="100" ></div>
+                    	<div class="form-group">
+                            <label for="firstname" class="col-sm-2 control-label">命名空间</label>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="namespace" maxlength="100" readonly></div>
                         </div>
                         <div class="form-group">
                             <label for="lastname" class="col-sm-2 control-label">应用名<font color="red">*</font></label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="groupTitle" placeholder="请输入“应用名”" maxlength="100" ></div>
-                        </div>
-                        <hr>
-                        <div class="form-group">
-                            <div class="col-sm-offset-3 col-sm-6">
-                                <button type="submit" class="btn btn-primary"  >保存</button>
-                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 更新.模态框 -->
-    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog"  aria-hidden="true">
-        <div class="modal-dialog ">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" >编辑应用</h4>
-                </div>
-                <div class="modal-body">
-                    <form class="form-horizontal form" role="form" >
-                        <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">App Code<font color="red">*</font></label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="groupName" placeholder="请输入“GroupName”" maxlength="100" readonly></div>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastname" class="col-sm-2 control-label">应用名<font color="red">*</font></label>
-                            <div class="col-sm-10"><input type="text" class="form-control" name="groupTitle" placeholder="请输入“应用名”" maxlength="100" ></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" name="group" placeholder="请输入名称" maxlength="100" ></div>
                         </div>
                         <hr>
                         <div class="form-group">

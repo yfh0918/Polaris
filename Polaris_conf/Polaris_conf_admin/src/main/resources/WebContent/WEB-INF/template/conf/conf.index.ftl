@@ -30,10 +30,10 @@
                 <div class="row">
                     <div class="col-xs-3">
                         <div class="input-group">
-                            <span class="input-group-addon">ZK</span>
+                            <span class="input-group-addon">namespace</span>
                             <select class="form-control" id="nodeZK" >
-								<#list ConfNodeZK as zk>
-									<option value="${zk.zkName}" >${zk.zkName}</option>
+								<#list namespaceList as namespace>
+									<option value="${namespace}" >${namespace}</option>
 								</#list>
                             </select>
                         </div>

@@ -5,7 +5,7 @@ import java.io.File;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.polaris.comm.config.ConfClient;
-import com.polaris.http.factory.ContainerServerFactory;
+import com.polaris.http.supports.MainSupport;
 
 
 /**
@@ -26,7 +26,7 @@ public class Application
     					"config" + File.separator + "log4j.properties"));
     	
     	//启动
-    	ContainerServerFactory.newInstance(); 
+    	MainSupport.startWebServer(args);
     }
     
 

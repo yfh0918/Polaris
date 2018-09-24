@@ -1,29 +1,18 @@
+$(function() {
+
 	// remove
-	function remove(group){
-		alert(group);
+	$('.remove').on('click', function(){
+		var namespace = $(this).attr('namespace');
+
 		ComConfirm.show("确认删除应用?", function(){
 			$.ajax({
 				type : 'POST',
-				url : base_url + '/group/remove',
-				data : {"namespace":$('#namespace').val(), "group":group},
+				url : base_url + '/namespace/remove',
+				data : {"namespace":namespace},
 				dataType : "json",
 				success : function(data){
 					if (data.code == 200) {
-						//获取内容
-						var array = data.content;
-						
-						html = "";
-						for(var i=0;i<array.length;i++){
-							html = html +
-							'<tr>' +
-								'<td>'+array[i]+'</td>' +
-								'<td>' + 
-								'<button type="button" onclick="remove(' + array[i] + ')" >删除</button> ' +
-								'</td>' +
-							"</tr>"
-						}
-						
-						$("#groupbody").append(html);
+						window.location.reload();
 					} else {
 						if (data.msg) {
 							ComAlert.show(2, data.msg);
@@ -34,39 +23,7 @@
 				},
 			});
 		});
-	}
-
-$(function() {
-
-	$("#namespace").change(function(){
-		$.ajax({
-			type : 'POST',
-			url : base_url + '/group/findList',
-			data : {"namespace":$('#namespace').val()},
-			success : function(data){
-				//获取内容
-				var array = data.content;
-				
-				html = "";
-				for(var i=0;i<array.length;i++){
-					html = html +
-					'<tr>' +
-						'<td>'+array[i]+'</td>' +
-						'<td>' + 
-						'<button type="button" onclick="remove(' + array[i] + ')" >删除</button> ' +
-						'</td>' +
-					"</tr>"
-				}
-				
-				$("#groupbody").append(html);
-
-			}
-		});
 	});
-
-
-	
-
 
 	// jquery.validate 自定义校验 “英文字母开头，只含有英文字母、数字和下划线”
 	jQuery.validator.addMethod("myValid01", function(value, element) {
@@ -77,7 +34,6 @@ $(function() {
 	}, "限制以字母开头，由字母、数字和中划线组成");
 
 	$('.add').on('click', function(){
-		$("#addModal .form input[name='namespace']").val( $('#namespace').val() );
 		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
 	});
 	var addModalValidate = $("#addModal .form").validate({
@@ -85,16 +41,20 @@ $(function() {
 		errorClass : 'help-block',
 		focusInvalid : true,
 		rules : {
-			group : {
+			zkName : {
 				required : true,
 				rangelength:[1,100],
 				myValid01 : true
+			},
+			zkValue : {
+				required : true,
+				rangelength:[4, 100]
 			}
 		},
 		messages : {
-			group : {
+			namespace : {
 				required :"请输入名称",
-				rangelength:"长度限制为1~100",
+				rangelength:"名称长度限制为1~100",
 				myValid01: "限制以字母开头，由字母、数字和中划线组成"
 			}
 		},
@@ -109,25 +69,11 @@ $(function() {
 			element.parent('div').append(error);
 		},
 		submitHandler : function(form) {
-			$.post(base_url + "/group/save",  $("#addModal .form").serialize(), function(data, status) {
+			$.post(base_url + "/namespace/save",  $("#addModal .form").serialize(), function(data, status) {
 				if (data.code == "200") {
 					$('#addModal').modal('hide');
 					setTimeout(function () {
-						//获取内容
-						var array = data.content;
-						
-						html = "";
-						for(var i=0;i<array.length;i++){
-							html = html +
-							'<tr>' +
-								'<td>'+array[i]+'</td>' +
-								'<td>' + 
-								'<button type="button" onclick="remove(' + array[i] + ')" >删除</button> ' +
-								'</td>' +
-							"</tr>"
-						}
-						
-						$("#groupbody").append(html);
+						window.location.reload();
 					}, 315);
 				} else {
 					if (data.msg) {
@@ -145,4 +91,5 @@ $(function() {
 		$("#addModal .form .form-group").removeClass("has-error");
 	});
 
+	
 });

@@ -16,11 +16,11 @@
 			<groupId>com.polaris</groupId>
 			<artifactId>Polaris_container_jetty</artifactId>
 		</dependency>
-		<!-- 
+		
 		<dependency>
 			<groupId>com.polaris</groupId>
 			<artifactId>Polaris_conf_zk</artifactId>
-		</dependency> -->
+		</dependency> 
 		<!-- springframe start -->
 		<dependency>
 			<groupId>org.springframework</groupId>
