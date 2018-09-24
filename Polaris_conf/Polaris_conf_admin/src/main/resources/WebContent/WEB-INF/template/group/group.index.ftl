@@ -33,8 +33,7 @@
 						<div class="col-xs-3">
 	                        <div class="input-group">
 	                            <span class="input-group-addon">命名空间</span>
-	                            <select class="form-control" id="namespace" >
-									<option value="" ></option>
+	                            <select class="form-control" id="namespace_id" >
 									<#list namespaceList as namespace>
 										<option value="${namespace}" >${namespace}</option>
 									</#list>
@@ -46,14 +45,15 @@
                             <button class="btn btn-info btn-xs pull-left2 add" >+新增应用</button>
                         </div>
 			            <div class="box-body">
-			              	<table id="group_list" class="table table-bordered table-striped display" width="100%" >
+			              	<table id="group_list" class="table table-bordered table-hover table-responsive table-condensed" width="100%" >
 				                <thead>
 					            	<tr>
-                                        <th name="group" >应用名</th>
+                                        <th>应用名</th>
+                                        <th>操作</th>
 					                </tr>
 				                </thead>
-                                <tbody id = "groupbody">
-								</tbody>
+				                <tbody>
+				                </tbody>
 							</table>
 						</div>
 					</div>

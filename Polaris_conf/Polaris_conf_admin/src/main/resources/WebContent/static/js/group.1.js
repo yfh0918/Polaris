@@ -1,6 +1,65 @@
-	// remove
-	function remove(group){
-		alert(group);
+$(function() {
+	var namespace_id = "";
+	
+	// init date tables
+	var groupTable = $("#group_list").dataTable({
+		"paging": false, // 禁止分页
+		"deferRender": true,
+		"processing" : true,
+		"serverSide": true,
+		"ajax": {
+			"url": base_url + "/group/findList?namespace="+$('#namespace_id').val()
+		},
+		"searching": false,
+		"ordering": false,
+		//"scrollX": true,	// X轴滚动条，取消自适应
+		"columns": [
+			{ "data": 'group', "visible" : true},
+			{ "data": '操作' ,
+				"render": function ( data, type, row ) {
+					return function(){
+						// html
+						var html = '';
+						html = '<p id="'+ row.id +'" '+
+						' group="'+ row.group +'" '+
+						'>'+
+						'<button class="btn btn-danger btn-xs delete" type="button">删除</button>  '+
+						'</p>';
+						return html;
+					};
+				}
+			}
+		],
+		"language" : {
+			"sProcessing" : "处理中...",
+			"sLengthMenu" : "每页 _MENU_ 条记录",
+			"sZeroRecords" : "没有匹配结果",
+			"sInfo" : "",
+			"sInfoEmpty" : "无记录",
+			"sInfoFiltered" : "(由 _MAX_ 项结果过滤)",
+			"sInfoPostFix" : "",
+			"sSearch" : "搜索:",
+			"sUrl" : "",
+			"sEmptyTable" : "表中数据为空",
+			"sLoadingRecords" : "载入中...",
+			"sInfoThousands" : ",",
+			"oPaginate" : {
+				"sFirst" : "首页",
+				"sPrevious" : "上页",
+				"sNext" : "下页",
+				"sLast" : "末页"
+			},
+			"oAria" : {
+				"sSortAscending" : ": 以升序排列此列",
+				"sSortDescending" : ": 以降序排列此列"
+			}
+		}
+	});
+	
+	// 删除
+	$("#group_list").on('click', '.delete',function() {
+		var group = $(this).parent('p').attr("group");
+
 		ComConfirm.show("确认删除应用?", function(){
 			$.ajax({
 				type : 'POST',
@@ -9,21 +68,7 @@
 				dataType : "json",
 				success : function(data){
 					if (data.code == 200) {
-						//获取内容
-						var array = data.content;
-						
-						html = "";
-						for(var i=0;i<array.length;i++){
-							html = html +
-							'<tr>' +
-								'<td>'+array[i]+'</td>' +
-								'<td>' + 
-								'<button type="button" onclick="remove(' + array[i] + ')" >删除</button> ' +
-								'</td>' +
-							"</tr>"
-						}
-						
-						$("#groupbody").append(html);
+						groupTable.fnDraw();
 					} else {
 						if (data.msg) {
 							ComAlert.show(2, data.msg);
@@ -34,39 +79,12 @@
 				},
 			});
 		});
-	}
-
-$(function() {
-
-	$("#namespace").change(function(){
-		$.ajax({
-			type : 'POST',
-			url : base_url + '/group/findList',
-			data : {"namespace":$('#namespace').val()},
-			success : function(data){
-				//获取内容
-				var array = data.content;
-				
-				html = "";
-				for(var i=0;i<array.length;i++){
-					html = html +
-					'<tr>' +
-						'<td>'+array[i]+'</td>' +
-						'<td>' + 
-						'<button type="button" onclick="remove(' + array[i] + ')" >删除</button> ' +
-						'</td>' +
-					"</tr>"
-				}
-				
-				$("#groupbody").append(html);
-
-			}
-		});
 	});
-
-
 	
-
+	$("#namespace_id").change(function(){
+		namespace_id = $('#namespace_id').val();
+		groupTable.fnDraw();
+	});
 
 	// jquery.validate 自定义校验 “英文字母开头，只含有英文字母、数字和下划线”
 	jQuery.validator.addMethod("myValid01", function(value, element) {
@@ -111,24 +129,7 @@ $(function() {
 		submitHandler : function(form) {
 			$.post(base_url + "/group/save",  $("#addModal .form").serialize(), function(data, status) {
 				if (data.code == "200") {
-					$('#addModal').modal('hide');
-					setTimeout(function () {
-						//获取内容
-						var array = data.content;
-						
-						html = "";
-						for(var i=0;i<array.length;i++){
-							html = html +
-							'<tr>' +
-								'<td>'+array[i]+'</td>' +
-								'<td>' + 
-								'<button type="button" onclick="remove(' + array[i] + ')" >删除</button> ' +
-								'</td>' +
-							"</tr>"
-						}
-						
-						$("#groupbody").append(html);
-					}, 315);
+					groupTable.fnDraw();
 				} else {
 					if (data.msg) {
 						ComAlert.show(2, data.msg);

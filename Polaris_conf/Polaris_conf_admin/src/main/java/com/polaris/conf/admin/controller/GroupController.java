@@ -1,11 +1,15 @@
 package com.polaris.conf.admin.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.polaris.comm.util.StringUtil;
@@ -26,19 +30,29 @@ public class GroupController {
 		return "group/group.index";
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping("/findList")
 	@ResponseBody
-	public ReturnT<String> findList(String namespace){
-
+	public Map<String, Object> findList(@RequestParam("namespace") String namespace){
+		List<ConfGroup> result = new ArrayList<>();
 		if (StringUtil.isNotEmpty(namespace)) {
 			List<String> list = AdminSupport.getAllGroups(namespace);
-			return new ReturnT(list);
+			for (String group : list) {
+				ConfGroup confG = new ConfGroup();
+				confG.setGroup(group);
+				confG.setNamespace(namespace);
+				result.add(confG);
+			}
 		}
-		return ReturnT.SUCCESS;
+		
+		// package result
+		Map<String, Object> maps = new HashMap<String, Object>();
+		maps.put("data", result);
+		maps.put("recordsTotal", result.size());		// 鎬昏褰曟暟
+		maps.put("recordsFiltered", result.size());	
+				
+		return maps;
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping("/save")
 	@ResponseBody
 	public ReturnT<String> save(ConfGroup group){
@@ -55,13 +69,10 @@ public class GroupController {
 			return new ReturnT<String>(500, "group已存在,请勿重复添加");
 		}
 		AdminSupport.addGroup(group.getNamespace(), group.getGroup());
-		list = AdminSupport.getAllGroups(group.getNamespace());
-		return new ReturnT(list);
+		return ReturnT.SUCCESS;
 	}
 
 
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping("/remove")
 	@ResponseBody
 	public ReturnT<String> remove(ConfGroup group){
@@ -71,8 +82,8 @@ public class GroupController {
 		if (!result) {
 			return new ReturnT<String>(500, "该应用使用中, 不可删除");
 		}
-		List<String> list = AdminSupport.getAllGroups(group.getNamespace());
-		return new ReturnT(list);
+		
+		return ReturnT.SUCCESS;
 	}
 
 }
