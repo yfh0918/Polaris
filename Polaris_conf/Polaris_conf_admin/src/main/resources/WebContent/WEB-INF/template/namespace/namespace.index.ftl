@@ -31,6 +31,7 @@
 					<div class="box">
                         <div class="box-header">
                             <button class="btn btn-info btn-xs pull-left2 add" >+新增命名空间</button>
+                            <button class="btn btn-info btn-xs pull-left2 load" >+导入外部配置</button>
                         </div>
 			            <div class="box-body">
 			              	<table id="joblog_list" class="table table-bordered table-striped display" width="100%" >

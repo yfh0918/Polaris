@@ -78,7 +78,7 @@ $(function(){
 					for ( var i = 0; i <data.length; i++){
 						html = html + '<option value="'+data[i]+'" >'+data[i]+'</option>'
 					}
-					document.getElementById("group").innerHTML=html;
+					$("#group").html(html);
 					confTable.fnDraw();
 				}
 			);

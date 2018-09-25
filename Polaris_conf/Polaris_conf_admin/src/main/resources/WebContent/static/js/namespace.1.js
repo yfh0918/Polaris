@@ -33,6 +33,26 @@ $(function() {
 		return true;
 	}, "限制以字母开头，由字母、数字和中划线组成");
 
+	$('.load').on('click', function(){
+
+		$.ajax({
+			type : 'POST',
+			url : base_url + '/namespace/load',
+			success : function(data){
+				if (data.code == 200) {
+					window.location.reload();
+				} else {
+					if (data.msg) {
+						ComAlert.show(2, data.msg);
+					} else {
+						ComAlert.show(2, '导入配置失败');
+					}
+				}
+			},
+		});
+	
+	});
+
 	$('.add').on('click', function(){
 		$('#addModal').modal({backdrop: false, keyboard: false}).modal('show');
 	});

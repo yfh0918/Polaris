@@ -26,29 +26,37 @@ public class NameSpaceController {
 		return "namespace/namespace.index";
 	}
 	
+	@RequestMapping("/load")
+	@ResponseBody
+	@PermessionLimit
+	public ReturnT<String> load(){
+		boolean result = AdminSupport.loadProperties();
+		if (result) {
+			return ReturnT.SUCCESS;
+		}
+		return ReturnT.FAIL;
+	}
+	
 	@RequestMapping("/save")
 	@ResponseBody
 	@PermessionLimit
 	public ReturnT<String> save(String namespace){
-		synchronized (this){
-
-			// valid
-			if (StringUtil.isEmpty(namespace)) {
-				return new ReturnT<String>(500, "请输入namespace名称");
-			}
-			if (namespace.length() < 1 || namespace.length() > 100) {
-				return new ReturnT<String>(500, "namespace长度限制为1~100");
-			}
-
-			// valid repeat
-			List<String> list = AdminSupport.getAllNameSpaces();
-			if (list.contains(namespace)) {
-				return new ReturnT<String>(500, "namespace已存在,请勿重复添加");
-			}
-
-			AdminSupport.addNameSpace(namespace);
-			return ReturnT.SUCCESS;
+		// valid
+		if (StringUtil.isEmpty(namespace)) {
+			return new ReturnT<String>(500, "请输入命名空间名称");
 		}
+		if (namespace.length() < 1 || namespace.length() > 100) {
+			return new ReturnT<String>(500, "命名空间长度限制为1~100");
+		}
+
+		// valid repeat
+		List<String> list = AdminSupport.getAllNameSpaces();
+		if (list.contains(namespace)) {
+			return new ReturnT<String>(500, "命名空间已存在,请勿重复添加");
+		}
+
+		AdminSupport.addNameSpace(namespace);
+		return ReturnT.SUCCESS;
 	}
 	
 	@RequestMapping("/remove")
@@ -59,7 +67,7 @@ public class NameSpaceController {
 		// valid
 		boolean result = AdminSupport.deleteNameSpace(namespace);
 		if (!result) {
-			return new ReturnT<String>(500, "该namespace节点使用中, 不可删除");
+			return new ReturnT<String>(500, "该命名空间使用中, 不可删除");
 		}
 
 		return ReturnT.SUCCESS;
