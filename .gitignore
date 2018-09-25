@@ -257,3 +257,7 @@
 /Polaris_conf/Polaris_conf_admin/.gitignore
 /Polaris_conf/Polaris_conf_admin/.project
 /Polaris_parent/.settings
+/Polaris_conf/Polaris_conf_nacos/.classpath
+/Polaris_conf/Polaris_conf_nacos/.project
+/Polaris_conf/Polaris_conf_nacos/.settings
+/Polaris_conf/Polaris_conf_nacos/target

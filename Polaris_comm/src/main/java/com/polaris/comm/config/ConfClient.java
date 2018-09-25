@@ -167,4 +167,7 @@ public class ConfClient {
 	public static void setNameSpace(String inputNameSpace) {
 		nameSpace = inputNameSpace;
 	}
+	public static String getNameSpace() {
+		return nameSpace;
+	}
 }

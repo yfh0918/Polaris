@@ -22,7 +22,10 @@ public class AdminSupport {
 		try {
 			
 			// namespace
-			String path = PropertyUtils.getFilePath(Constant.CONSTANT_NAME_SPACE);
+			String path = System.getProperty(Constant.CONSTANT_NAME_SPACE_DEF);
+			if (StringUtil.isEmpty(path)) {
+				path = PropertyUtils.getFilePath(Constant.CONSTANT_NAME_SPACE);
+			}
 			File root = new File(path);
 			if (!root.exists() || !root.isDirectory()) {
 				logger.error(path + "is not exist !");
