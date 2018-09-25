@@ -139,4 +139,14 @@ public class AdminSupport {
 		}
 		return keys;
 	}
+	public static boolean addKey(String namespace, String group, String key, String data) {
+		return ConfigHandlerProvider.getInstance().addKey(namespace, group, key, data, false);
+	}
+	
+	public static boolean deleteKey(String namespace, String group, String key) {
+		return ConfigHandlerProvider.getInstance().deleteKey(namespace, group, key, false);
+	}
+	public static String getKey(String namespace, String group, String key) {
+		return ConfigHandlerProvider.getInstance().getKey(namespace, group, key, false);
+	}
 }

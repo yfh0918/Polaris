@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.polaris.comm.util.StringUtil;
+import com.polaris.conf.admin.controller.annotation.PermessionLimit;
 import com.polaris.conf.admin.core.util.AdminSupport;
 import com.polaris.conf.admin.core.util.ReturnT;
 
@@ -19,6 +20,7 @@ import com.polaris.conf.admin.core.util.ReturnT;
 public class NameSpaceController {
 	
 	@RequestMapping
+	@PermessionLimit
 	public String index(Model model) {
 		model.addAttribute("list", AdminSupport.getAllNameSpaces());
 		return "namespace/namespace.index";
@@ -26,6 +28,7 @@ public class NameSpaceController {
 	
 	@RequestMapping("/save")
 	@ResponseBody
+	@PermessionLimit
 	public ReturnT<String> save(String namespace){
 		synchronized (this){
 
@@ -50,6 +53,7 @@ public class NameSpaceController {
 	
 	@RequestMapping("/remove")
 	@ResponseBody
+	@PermessionLimit
 	public ReturnT<String> remove(String namespace){
 
 		// valid

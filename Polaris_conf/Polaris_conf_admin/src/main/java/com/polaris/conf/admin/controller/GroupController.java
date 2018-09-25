@@ -9,10 +9,10 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.polaris.comm.util.StringUtil;
+import com.polaris.conf.admin.controller.annotation.PermessionLimit;
 import com.polaris.conf.admin.core.model.ConfGroup;
 import com.polaris.conf.admin.core.util.AdminSupport;
 import com.polaris.conf.admin.core.util.ReturnT;
@@ -25,6 +25,7 @@ import com.polaris.conf.admin.core.util.ReturnT;
 public class GroupController {
 	
 	@RequestMapping
+	@PermessionLimit
 	public String index(Model model) {
 		model.addAttribute("namespaceList", AdminSupport.getAllNameSpaces());
 		return "group/group.index";
@@ -32,14 +33,15 @@ public class GroupController {
 
 	@RequestMapping("/findList")
 	@ResponseBody
-	public Map<String, Object> findList(@RequestParam("namespace") String namespace){
+	@PermessionLimit
+	public Map<String, Object> findList(ConfGroup group){
 		List<ConfGroup> result = new ArrayList<>();
-		if (StringUtil.isNotEmpty(namespace)) {
-			List<String> list = AdminSupport.getAllGroups(namespace);
-			for (String group : list) {
+		if (StringUtil.isNotEmpty(group.getNamespace())) {
+			List<String> list = AdminSupport.getAllGroups(group.getNamespace());
+			for (String groupV : list) {
 				ConfGroup confG = new ConfGroup();
-				confG.setGroup(group);
-				confG.setNamespace(namespace);
+				confG.setGroup(groupV);
+				confG.setNamespace(group.getNamespace());
 				result.add(confG);
 			}
 		}
@@ -55,6 +57,7 @@ public class GroupController {
 	
 	@RequestMapping("/save")
 	@ResponseBody
+	@PermessionLimit
 	public ReturnT<String> save(ConfGroup group){
 
 		// valid
@@ -75,6 +78,7 @@ public class GroupController {
 
 	@RequestMapping("/remove")
 	@ResponseBody
+	@PermessionLimit
 	public ReturnT<String> remove(ConfGroup group){
 
 		// valid

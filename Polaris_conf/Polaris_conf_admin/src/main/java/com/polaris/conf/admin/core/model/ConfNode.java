@@ -8,6 +8,7 @@ public class ConfNode {
 	private String namespace;		// namespace
 	private String group;		    // group of prop
 	private String key;	            // group of prop
+	private String value;
 	public String getNamespace() {
 		return namespace;
 	}
@@ -25,6 +26,12 @@ public class ConfNode {
 	}
 	public void setKey(String key) {
 		this.key = key;
+	}
+	public String getValue() {
+		return value;
+	}
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 }

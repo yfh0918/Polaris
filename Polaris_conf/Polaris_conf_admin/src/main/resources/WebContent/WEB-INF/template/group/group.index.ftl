@@ -34,6 +34,7 @@
 	                        <div class="input-group">
 	                            <span class="input-group-addon">命名空间</span>
 	                            <select class="form-control" id="namespace" >
+									<option value="" ></option>
 									<#list namespaceList as namespace>
 										<option value="${namespace}" >${namespace}</option>
 									</#list>
