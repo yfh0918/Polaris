@@ -16,8 +16,6 @@ import com.polaris.comm.util.WeightedRoundRobinScheduling.Server;
 public class ServerDiscovery {
     private static Map<String, WeightedRoundRobinScheduling> serverMap = new ConcurrentHashMap<>();
     private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = null;
-    private static final String HTTP_PREFIX = "http://";
-    private static final String HTTPS_PREFIX = "https://";
 
     public static String getUrl(String key) {
     	String[] serversInfo = key.split(",");
@@ -108,12 +106,12 @@ public class ServerDiscovery {
     
     private static List<String> getRemoteAddress(String serverInfo) {
 		List<String> serverList = new ArrayList<>(5);
-		if (serverInfo.toLowerCase().startsWith(HTTP_PREFIX)) {
-			serverList.add(HTTP_PREFIX);
-			serverInfo = serverInfo.substring(HTTP_PREFIX.length());
-		} else if (serverInfo.toLowerCase().startsWith(HTTPS_PREFIX)) {
-			serverList.add(HTTPS_PREFIX);
-			serverInfo = serverInfo.substring(HTTPS_PREFIX.length());
+		if (serverInfo.toLowerCase().startsWith(ServerDiscoveryHandlerProvider.HTTP_PREFIX)) {
+			serverList.add(ServerDiscoveryHandlerProvider.HTTP_PREFIX);
+			serverInfo = serverInfo.substring(ServerDiscoveryHandlerProvider.HTTP_PREFIX.length());
+		} else if (serverInfo.toLowerCase().startsWith(ServerDiscoveryHandlerProvider.HTTPS_PREFIX)) {
+			serverList.add(ServerDiscoveryHandlerProvider.HTTPS_PREFIX);
+			serverInfo = serverInfo.substring(ServerDiscoveryHandlerProvider.HTTPS_PREFIX.length());
 		} else {
 			serverList.add("");
 		}

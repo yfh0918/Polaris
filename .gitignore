@@ -261,3 +261,8 @@
 /Polaris_conf/Polaris_conf_nacos/.project
 /Polaris_conf/Polaris_conf_nacos/.settings
 /Polaris_conf/Polaris_conf_nacos/target
+/Polaris_naming/.classpath
+/Polaris_naming/.gitignore
+/Polaris_naming/.project
+/Polaris_naming/.settings
+/Polaris_naming/target

@@ -124,6 +124,12 @@
 	            <artifactId>Polaris_conf_admin</artifactId>
 	            <version>${project.version}</version>
 	        </dependency>   
+	       	<dependency>
+	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_naming</artifactId>
+	            <version>${project.version}</version>
+	        </dependency>   
+	        
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_cache</artifactId>

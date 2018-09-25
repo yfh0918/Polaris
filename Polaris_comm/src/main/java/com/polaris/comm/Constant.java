@@ -195,7 +195,10 @@ public class Constant {
 	public static final String NAMESPACE="project.namespace";
 	
 	// 配置中心
-	public volatile static String CONFIG_ADDRESS;		// 配置中心：格式	ip1:port,ip2:port,ip3:port
-	public static final String CONFIG_ADDRESS_NAME = "config.registry.address";
+	public volatile static String CONFIG_REGISTRY_ADDRESS;		// 配置中心：格式	ip1:port,ip2:port,ip3:port
+	public static final String CONFIG_REGISTRY_ADDRESS_NAME = "config.registry.address";
+	
+	// 注册中心
+	public static final String NAMING_REGISTRY_ADDRESS_NAME = "";
 
 }

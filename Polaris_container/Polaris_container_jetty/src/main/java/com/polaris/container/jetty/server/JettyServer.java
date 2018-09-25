@@ -111,6 +111,18 @@ public class JettyServer {
 
             //启动服务
             this.server.start();
+            
+            // add shutdown hook to stop server
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                public void run() {
+                    try {
+                    	server.stop();
+                    } catch (Exception e) {
+                        logger.error("failed to stop jetty.", e);
+                    }
+                }
+            });
+            
             this.server.join();
         } catch (Exception e) {
 

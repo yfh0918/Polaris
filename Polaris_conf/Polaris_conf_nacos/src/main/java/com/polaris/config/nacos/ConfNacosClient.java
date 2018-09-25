@@ -32,7 +32,7 @@ public class ConfNacosClient  {
 
 	private ConfNacosClient(String namespace) {
 		Properties properties = new Properties();
-		properties.put(PropertyKeyConst.SERVER_ADDR, Constant.CONFIG_ADDRESS);
+		properties.put(PropertyKeyConst.SERVER_ADDR, Constant.CONFIG_REGISTRY_ADDRESS);
 		properties.put(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
 		try {
 			configService = NacosFactory.createConfigService(properties);

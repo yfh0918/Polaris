@@ -2,8 +2,10 @@ package com.polaris.http.supports;
 
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.util.StringUtil;
+import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
 import com.polaris.http.Constant;
 import com.polaris.http.factory.ContainerServerFactory;
+import com.polaris.http.util.NetUtils;
 
 /**
 *
@@ -26,7 +28,7 @@ public class MainSupport extends com.polaris.comm.supports.MainSupport{
 	*/
 	private MainSupport() {}
 
-	
+	private static String port = null;
     
     /**
     * startWebServer(启动web容器)
@@ -47,7 +49,7 @@ public class MainSupport extends com.polaris.comm.supports.MainSupport{
     	System.setProperty("file.encoding", "UTF-8");
     	        	
 		//端口号
-		String port = System.getProperty(Constant.SERVER_PORT);
+		port = System.getProperty(Constant.SERVER_PORT);
 		if (StringUtil.isEmpty(port)) {
 			port = ConfClient.get(Constant.SERVER_PORT);
 		}
@@ -55,6 +57,15 @@ public class MainSupport extends com.polaris.comm.supports.MainSupport{
     	//log4j重新设定地址
 		configureAndWatch(WARCH_TIME);
 		
+		//注册服务
+		ServerDiscoveryHandlerProvider.getInstance().register(NetUtils.getLocalHost(), Integer.parseInt(port));
+		
+		// add shutdown hook to stop server
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+            	ServerDiscoveryHandlerProvider.getInstance().deregister(NetUtils.getLocalHost(), Integer.parseInt(port));
+            }
+        });
 		
     	//不允许重复启动
     	if (!makeSingle(Constant.SERVER_PORT, port)) {
