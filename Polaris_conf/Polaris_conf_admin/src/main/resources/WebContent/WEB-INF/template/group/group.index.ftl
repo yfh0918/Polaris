@@ -33,7 +33,7 @@
 						<div class="col-xs-3">
 	                        <div class="input-group">
 	                            <span class="input-group-addon">命名空间</span>
-	                            <select class="form-control" id="namespace_id" >
+	                            <select class="form-control" id="namespace" >
 									<#list namespaceList as namespace>
 										<option value="${namespace}" >${namespace}</option>
 									</#list>

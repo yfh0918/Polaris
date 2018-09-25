@@ -1,5 +1,4 @@
 $(function() {
-	var namespace_id = "";
 	
 	// init date tables
 	var groupTable = $("#group_list").dataTable({
@@ -8,7 +7,13 @@ $(function() {
 		"processing" : true,
 		"serverSide": true,
 		"ajax": {
-			"url": base_url + "/group/findList?namespace="+$('#namespace_id').val()
+			url: base_url + "/group/findList",
+			type:"post",
+			data : function ( d ) {
+				var obj = {};
+				obj.namespace = $('#namespace').val();
+				return obj;
+			}
 		},
 		"searching": false,
 		"ordering": false,
@@ -81,8 +86,7 @@ $(function() {
 		});
 	});
 	
-	$("#namespace_id").change(function(){
-		namespace_id = $('#namespace_id').val();
+	$("#namespace").change(function(){
 		groupTable.fnDraw();
 	});
 
@@ -130,6 +134,7 @@ $(function() {
 			$.post(base_url + "/group/save",  $("#addModal .form").serialize(), function(data, status) {
 				if (data.code == "200") {
 					groupTable.fnDraw();
+					$('#addModal').modal('hide');
 				} else {
 					if (data.msg) {
 						ComAlert.show(2, data.msg);
