@@ -35,12 +35,13 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 		return ServerDiscovery.getUrl(key);
 	}
 
-	public String[] getAllUrl(String key) {
+	public List<String> getAllUrl(String key) {
 		for (ServerDiscoveryHandler handler : serviceLoader) {
 			List<String> temp = getRemoteAddress(key);
-			String[] urls = handler.getAllUrls(temp.get(1));
-			for (int i0 = 0; i0 < urls.length; i0++) {
-				urls[i0] = temp.get(0) + urls[i0] + temp.get(2);
+			List<String> urls = handler.getAllUrls(temp.get(1));
+			for (int i0 = 0; i0 < urls.size(); i0++) {
+				String value = temp.get(0) + urls.get(i0) + temp.get(2);
+				urls.set(i0, value);
 			}
 			return urls;
 		}
