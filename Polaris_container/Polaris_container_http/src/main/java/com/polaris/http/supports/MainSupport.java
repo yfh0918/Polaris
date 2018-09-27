@@ -1,9 +1,8 @@
 package com.polaris.http.supports;
 
+import com.polaris.comm.Constant;
 import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.StringUtil;
 import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
-import com.polaris.http.Constant;
 import com.polaris.http.factory.ContainerServerFactory;
 import com.polaris.http.util.NetUtils;
 
@@ -28,7 +27,6 @@ public class MainSupport extends com.polaris.comm.supports.MainSupport{
 	*/
 	private MainSupport() {}
 
-	private static String port = null;
     
     /**
     * startWebServer(启动web容器)
@@ -39,36 +37,24 @@ public class MainSupport extends com.polaris.comm.supports.MainSupport{
     */
     public static void startWebServer(String[] args) {
     	
-    	//命名空间
-		String namespace = System.getProperty(Constant.NAMESPACE);
-		if (StringUtil.isNotEmpty(namespace)) {
-    		ConfClient.setNameSpace(namespace);
-		}
-
-    	//启动字符集
-    	System.setProperty("file.encoding", "UTF-8");
-    	        	
-		//端口号
-		port = System.getProperty(Constant.SERVER_PORT);
-		if (StringUtil.isEmpty(port)) {
-			port = ConfClient.get(Constant.SERVER_PORT);
-		}
-
+    	//参数初期化
+    	iniParameter();
+    	
     	//log4j重新设定地址
-		configureAndWatch(WARCH_TIME);
+		configureAndWatch(Constant.WARCH_TIME);
 		
 		//注册服务
-		ServerDiscoveryHandlerProvider.getInstance().register(NetUtils.getLocalHost(), Integer.parseInt(port));
+		ServerDiscoveryHandlerProvider.getInstance().register(NetUtils.getLocalHost(), Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, false)));
 		
 		// add shutdown hook to stop server
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
-            	ServerDiscoveryHandlerProvider.getInstance().deregister(NetUtils.getLocalHost(), Integer.parseInt(port));
+            	ServerDiscoveryHandlerProvider.getInstance().deregister(NetUtils.getLocalHost(), Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, false)));
             }
         });
 		
     	//不允许重复启动
-    	if (!makeSingle(Constant.SERVER_PORT, port)) {
+    	if (!makeSingle()) {
     		
         	//启动
         	ContainerServerFactory.newInstance();

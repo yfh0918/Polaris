@@ -11,7 +11,7 @@ import java.net.URLEncoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.polaris.http.Constant;
+import com.polaris.comm.Constant;
 import com.polaris.comm.util.LogUtil;
 
 public class DownloadUtil {

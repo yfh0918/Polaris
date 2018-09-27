@@ -6,7 +6,7 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import com.github.pagehelper.util.StringUtil;
-import com.polaris.http.Constant;
+import com.polaris.comm.Constant;
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.dto.ResultDto;
 import com.polaris.comm.util.LogUtil;

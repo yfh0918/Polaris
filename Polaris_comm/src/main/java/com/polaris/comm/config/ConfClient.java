@@ -1,7 +1,6 @@
 package com.polaris.comm.config;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.polaris.comm.Constant;
@@ -24,9 +23,6 @@ import com.polaris.comm.util.StringUtil;
 */
 public class ConfClient {
 	private static final LogUtil logger = LogUtil.getInstance(ConfClient.class);
-	private static String appName;
-	private static String nameSpace = "default";
-
 	private static Map<String, String> cache = new HashMap<>();
 
 	/**
@@ -50,13 +46,6 @@ public class ConfClient {
 		}
 	}
 
-	/**
-	 * 获取当前所有的key
-	 * @return
-	 */
-	public static List<String> getAllKeys(){
-		return ConfigHandlerProvider.getInstance().getAllKeys(nameSpace, appName, false);
-	}
 	
 	/**
 	* 获取配置信息
@@ -65,7 +54,7 @@ public class ConfClient {
 	* @Exception 
 	* @since 
 	*/
-	public static String get(String inputAppName, String key, String defaultVal, boolean isWatch) {
+	public static String get(String key, String defaultVal, boolean isWatch) {
 		//从缓存获取数据
 		if (cache != null) {
 			String value = cache.get(key);
@@ -75,17 +64,14 @@ public class ConfClient {
 		}
 		
 		//扩展配置点获取信息 
-		if (StringUtil.isNotEmpty(inputAppName)) {
-			String data = ConfigHandlerProvider.getInstance().getKey(nameSpace, inputAppName, key, isWatch);
-			if (data!=null) {
-				update(key, data);//更新缓存
-				return data;
-			}
+		String data = ConfigHandlerProvider.getInstance().getKey(key, isWatch);
+		if (data!=null) {
+			update(key, data);//更新缓存
+			return data;
 		}
 		
-		//最后从本地配置文件获取
 		try {
-			String propertyValue = PropertyUtils.readData(Constant.localProp, key, false);
+			String propertyValue = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, key, false);
 			if (propertyValue != null) {
 				update(key, propertyValue);
 				return propertyValue;
@@ -93,6 +79,7 @@ public class ConfClient {
 		} catch (Exception ex) {
 			//nothing
 		}
+
 		try {
 			String propertyValue = PropertyUtils.readData("config","application", "properties", key, false);
 			if (propertyValue != null) {
@@ -126,14 +113,8 @@ public class ConfClient {
 	public static String get(String key, boolean isWatch) {
 		return get(key, "", isWatch);
 	}
-	public static String get(String key, String defaultVal) {
-		return get(getAppName(), key, defaultVal, true);
-	}
-	public static String get(String key, String defaultVal,boolean isWatch) {
-		return get(getAppName(), key, defaultVal, isWatch);
-	}
-	public static String get(String inputAppName, String key, String defaultVal) {
-		return 	get(inputAppName, key, defaultVal, true);
+	public static String get(String key, String defaultValue) {
+		return get(key, defaultValue, true);
 	}
 	
 	/**
@@ -158,16 +139,22 @@ public class ConfClient {
 		return false;
 	}
 	
-	public static String getAppName() {
-		return appName;
-	}
 	public static void setAppName(String inputAppName) {
-		appName = inputAppName;
+		cache.put(Constant.PROJECT_NAME, inputAppName);
 	}
-	public static void setNameSpace(String inputNameSpace) {
-		nameSpace = inputNameSpace;
+	public static String getAppName() {
+		return cache.get(Constant.PROJECT_NAME);
+	}
+	public static String getConfigRegistryAddress() {
+		return cache.get(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
 	}
 	public static String getNameSpace() {
-		return nameSpace;
+		return cache.get(Constant.PROJECR_NAMESPACE_NAME);
+	}
+	public static String getCluster() {
+		return cache.get(Constant.PROJECR_CLUSTER_NAME);
+	}
+	public static String getEnv() {
+		return cache.get(Constant.PROJECT_ENV_NAME);
 	}
 }

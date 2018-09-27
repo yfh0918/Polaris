@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.polaris.http.Constant;
+import com.polaris.comm.Constant;
 
 
 public class SessionUtil {

@@ -1,8 +1,6 @@
 package com.polaris.dubbo.supports;
 
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.StringUtil;
-import com.polaris.dubbo.Constant;
+import com.polaris.comm.Constant;
 
 /**
 *
@@ -34,26 +32,14 @@ public class MainSupport extends com.polaris.comm.supports.MainSupport{
     */
     public static void startDubboServer(String[] args) {
     	
-    	//命名空间
-		String namespace = System.getProperty(Constant.NAMESPACE);
-		if (StringUtil.isNotEmpty(namespace)) {
-    		ConfClient.setNameSpace(namespace);
-		}
-
-    	//启动字符集
-    	System.setProperty("file.encoding", "UTF-8");
+    	//参数初期化
+    	iniParameter();
     	
-		//端口号
-		String port = System.getProperty(Constant.DUBBO_APP_PORT);
-    	if (StringUtil.isEmpty(port)) {
-    		port = ConfClient.get(Constant.DUBBO_APP_PORT);
-    	}
-		
-		//log4j重新设定地址
-		configureAndWatch(WARCH_TIME);
+    	//log4j重新设定地址
+		configureAndWatch(Constant.WARCH_TIME);
 		
     	//不允许重复启动
-    	if (!makeSingle(Constant.DUBBO_APP_PORT, port)) {
+    	if (!makeSingle()) {
 
 			//启动
 			com.alibaba.dubbo.container.Main.main(args);

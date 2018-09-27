@@ -7,11 +7,11 @@ import java.util.List;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 
-import com.polaris.comm.config.ConfigHandlerProvider;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
 import com.polaris.comm.util.StringUtil;
 import com.polaris.conf.admin.Constant;
+import com.polaris.config.zk.ConfZkClient;
 
 public class AdminSupport {
 	private static LogUtil logger = LogUtil.getInstance(AdminSupport.class);
@@ -57,7 +57,7 @@ public class AdminSupport {
 									   while (ite.hasNext()) {
 										   isLoad = true;
 										   String key = ite.next();
-										   String value = ConfigHandlerProvider.getInstance().getKey(name1, name2, key, false);
+										   String value = ConfZkClient.getPathDataByKey(name1 + Constant.SLASH + name2+Constant.SLASH + key, false);
 										   if (StringUtil.isEmpty(value)) {
 											   Object object = config.getProperty(key);
 											   if (object == null) {
@@ -79,7 +79,7 @@ public class AdminSupport {
 											   } else {
 												   tempV = object.toString();
 											   }
-											   ConfigHandlerProvider.getInstance().addKey(name1, name2, key, tempV, false);
+											   ConfZkClient.setPathDataByKey(name1 + Constant.SLASH + name2+Constant.SLASH + key, tempV, false);
 										   }
 									   }
 								}
@@ -104,7 +104,7 @@ public class AdminSupport {
 	}
 	
 	public static List<String> getAllNameSpaces() {
-		List<String> namespaceList = ConfigHandlerProvider.getInstance().getAllNameSpaces(false);
+		List<String> namespaceList = ConfZkClient.getChildren("", false);
 		if (namespaceList == null) {
 			namespaceList = new ArrayList<>();
 		}
@@ -112,15 +112,15 @@ public class AdminSupport {
 	}
 	
 	public static void addNameSpace(String namespace) {
-		ConfigHandlerProvider.getInstance().addNameSpace(namespace, false);
+		ConfZkClient.setPathDataByKey(namespace, null, false);
 	}
 	
 	public static boolean deleteNameSpace(String namespace) {
-		return ConfigHandlerProvider.getInstance().deleteNameSpace(namespace, false);
+		return ConfZkClient.deletePathByKey(namespace, false);
 	}
 	
 	public static List<String> getAllGroups(String namespace) {
-		List<String> groups = ConfigHandlerProvider.getInstance().getAllGroups(namespace, false);
+		List<String> groups = ConfZkClient.getChildren(namespace, false);
 		if (groups == null) {
 			groups = new ArrayList<>();
 		}
@@ -128,28 +128,28 @@ public class AdminSupport {
 	}
 	
 	public static boolean addGroup(String namespace, String group) {
-		return ConfigHandlerProvider.getInstance().addGroup(namespace, group, false);
+		return ConfZkClient.setPathDataByKey(namespace + Constant.SLASH + group, null, false);
 	}
 	
 	public static boolean deleteGroup(String namespace, String group) {
-		return ConfigHandlerProvider.getInstance().deleteGroup(namespace, group, false);
+		return ConfZkClient.deletePathByKey(namespace + Constant.SLASH + group, false);
 	}
 	
 	public static List<String> getAllKeys(String namespace, String group) {
-		List<String> keys = ConfigHandlerProvider.getInstance().getAllKeys(namespace,group, false);
+		List<String> keys = ConfZkClient.getAllKeyByAppName(namespace + Constant.SLASH + group, false);
 		if (keys == null) {
 			keys = new ArrayList<>();
 		}
 		return keys;
 	}
 	public static boolean addKey(String namespace, String group, String key, String data) {
-		return ConfigHandlerProvider.getInstance().addKey(namespace, group, key, data, false);
+		return ConfZkClient.setPathDataByKey(namespace + Constant.SLASH + group+Constant.SLASH + key, data, false);
 	}
 	
 	public static boolean deleteKey(String namespace, String group, String key) {
-		return ConfigHandlerProvider.getInstance().deleteKey(namespace, group, key, false);
+		return ConfZkClient.deletePathByKey(namespace + Constant.SLASH + group+Constant.SLASH + key, false);
 	}
 	public static String getKey(String namespace, String group, String key) {
-		return ConfigHandlerProvider.getInstance().getKey(namespace, group, key, false);
+		return ConfZkClient.getPathDataByKey(namespace + Constant.SLASH + group+Constant.SLASH + key, false);
 	}
 }

@@ -10,9 +10,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.core.Ordered;
 import org.springframework.util.StringValueResolver;
 
-import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.config.EncryptPropertyPlaceholderConfigurer;
 import com.polaris.comm.util.EncryptUtil;
 import com.polaris.comm.util.LogUtil;
 
@@ -49,19 +46,7 @@ public class ConfPropertyPlaceholderConfigurer extends EncryptPropertyPlaceholde
 					
 					String startValue = buf.substring(0, startIndex - placeholderPrefix.length());
 					String endValue = buf.substring(endIndex + placeholderSuffix.length());
-					
-					//获取应用名称
-					if (Constant.PROJECT_NAME.equals(key)) {
-						zkValue = ConfClient.getAppName();
-					
-					//DUBBO端口号
-					} else if (Constant.PORT_NAME.equals(key)) {
-						zkValue = Constant.PORT;
-						
-					//其他参数
-					} else {
-						zkValue = ConfClient.get(key,false);//启动参数无需wartch
-					}
+					zkValue = ConfClient.get(key,false);//启动参数无需wartch
 					buf = new StringBuilder();
 					buf.append(startValue);
 					logger.info(">>>>>>>>>>> polaris_conf resolved placeholder '" + key + "' to value [" + zkValue + "]");

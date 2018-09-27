@@ -22,7 +22,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	public NacosServerDiscovery() {
         Properties properties = new Properties();
         properties.setProperty(PropertyKeyConst.SERVER_ADDR, ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME));
-        properties.setProperty(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
+        properties.setProperty(PropertyKeyConst.NAMESPACE, ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false));
         try {
 			naming = NamingFactory.createNamingService(properties);
 		} catch (NacosException e) {
@@ -35,7 +35,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	public String getUrl(String key) {
 		// TODO Auto-generated method stub
 		try {
-	        String cluster = ConfClient.get(Constant.INSTANCE_CONSUMER_CLUSTER, Constant.INSTANCE_CLUSTER_DEFAULT, false);
+	        String cluster = ConfClient.get(Constant.PROJECT_CONSUMER_CLUSTER, Constant.DEFAULT_VALUE, false);
 	        List<String> clusters = Arrays.asList(cluster.split(","));
 			Instance instance = naming.selectOneHealthyInstance(key,clusters);
 			return instance.toInetAddr();
@@ -49,7 +49,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	public List<String> getAllUrls(String key) {
 		// TODO Auto-generated method stub
 		try {
-	        String cluster = ConfClient.get(Constant.INSTANCE_CONSUMER_CLUSTER, Constant.INSTANCE_CLUSTER_DEFAULT, false);
+	        String cluster = ConfClient.get(Constant.PROJECT_CONSUMER_CLUSTER, Constant.DEFAULT_VALUE, false);
 	        List<String> clusters = Arrays.asList(cluster.split(","));
 			List<Instance> instances = naming.selectInstances(key, clusters, true);
 			List<String> urls = new ArrayList<>();
@@ -74,11 +74,11 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 			Instance instance = new Instance();
 	        instance.setIp(ip);
 	        instance.setPort(port);
-	        double weight = Double.parseDouble(ConfClient.get(Constant.INSTANCE_REGISTRY_WEIGHT, Constant.INSTANCE_WEIGHT_DEFAULT, false));
+	        double weight = Double.parseDouble(ConfClient.get(Constant.PROJECT_WEIGHT, Constant.PROJECT_WEIGHT_DEFAULT, false));
 	        instance.setWeight(weight);
-	        String cluster = ConfClient.get(Constant.INSTANCE_REGISTRY_CLUSTER, Constant.INSTANCE_CLUSTER_DEFAULT, false);
+	        String cluster = ConfClient.get(Constant.PROJECR_CLUSTER_NAME, Constant.DEFAULT_VALUE, false);
 	        instance.setCluster(new Cluster(cluster));
-			naming.registerInstance(ConfClient.getAppName(), instance);
+			naming.registerInstance(ConfClient.get(Constant.PROJECT_NAME, false), instance);
 			
 		} catch (NacosException e) {
 			logger.error(e);
@@ -88,8 +88,8 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	@Override
 	public void deregister(String ip, int port) {
 		 try {
-	        String cluster = ConfClient.get(Constant.INSTANCE_REGISTRY_CLUSTER, Constant.INSTANCE_CLUSTER_DEFAULT, false);
-			naming.deregisterInstance(ConfClient.getAppName(), ip, port,cluster);
+	        String cluster = ConfClient.get(Constant.PROJECR_CLUSTER_NAME, Constant.DEFAULT_VALUE, false);
+			naming.deregisterInstance(ConfClient.get(Constant.PROJECT_NAME, false), ip, port,cluster);
 		} catch (NacosException e) {
 			logger.error(e);
 		}

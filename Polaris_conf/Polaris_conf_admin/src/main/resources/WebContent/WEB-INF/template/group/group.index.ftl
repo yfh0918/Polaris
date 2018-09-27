@@ -32,7 +32,7 @@
 					
 						<div class="col-xs-3">
 	                        <div class="input-group">
-	                            <span class="input-group-addon">命名空间</span>
+	                            <span class="input-group-addon">环境</span>
 	                            <select class="form-control" id="namespace" >
 									<option value="" ></option>
 									<#list namespaceList as namespace>

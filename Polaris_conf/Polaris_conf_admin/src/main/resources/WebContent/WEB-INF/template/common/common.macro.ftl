@@ -87,7 +87,7 @@
 			<!-- sidebar menu: : style can be found in sidebar.less -->
 			<ul class="sidebar-menu">
 				<li class="header">常用模块</li>
-                <li class="nav-click" ><a href="${request.contextPath}/namespace"><i class="fa fa-circle-o text-red"></i> <span>命名空间管理</span></a></li>
+                <li class="nav-click" ><a href="${request.contextPath}/namespace"><i class="fa fa-circle-o text-red"></i> <span>环境管理</span></a></li>
                 <li class="nav-click" ><a href="${request.contextPath}/group"><i class="fa fa-circle-o text-red"></i> <span>应用管理</span></a></li>
 				<li class="nav-click" ><a href="${request.contextPath}/conf"><i class="fa fa-circle-o text-red"></i> <span>配置管理</span></a></li>
 			</ul>

@@ -20,7 +20,7 @@
 	<div class="content-wrapper">
 		<!-- Content Header (Page header) -->
 		<section class="content-header">
-			<h1>命名空间管理</h1>
+			<h1>环境管理</h1>
 		</section>
 
 		<!-- Main content -->
@@ -30,7 +30,7 @@
 				<div class="col-xs-12">
 					<div class="box">
                         <div class="box-header">
-                            <button class="btn btn-info btn-xs pull-left2 add" >+新增命名空间</button>
+                            <button class="btn btn-info btn-xs pull-left2 add" >+新增环境</button>
                             <button class="btn btn-info btn-xs pull-left2 load" >+导入外部配置</button>
                         </div>
 			            <div class="box-body">
@@ -65,7 +65,7 @@
         <div class="modal-dialog ">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title" >新增命名空间</h4>
+                    <h4 class="modal-title" >新增环境</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal form" role="form" >

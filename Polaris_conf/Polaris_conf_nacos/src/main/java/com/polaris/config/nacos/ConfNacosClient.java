@@ -10,6 +10,7 @@ import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.util.LogUtil;
+import com.polaris.comm.util.StringUtil;
 
 
 
@@ -31,8 +32,12 @@ public class ConfNacosClient  {
 	}
 
 	private ConfNacosClient(String namespace) {
+		//配置文件
+    	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
+    		throw new NullPointerException(Constant.CONFIG_REGISTRY_ADDRESS_NAME + " is null");
+    	}
 		Properties properties = new Properties();
-		properties.put(PropertyKeyConst.SERVER_ADDR, Constant.CONFIG_REGISTRY_ADDRESS);
+		properties.put(PropertyKeyConst.SERVER_ADDR, ConfClient.getConfigRegistryAddress());
 		properties.put(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
 		try {
 			configService = NacosFactory.createConfigService(properties);

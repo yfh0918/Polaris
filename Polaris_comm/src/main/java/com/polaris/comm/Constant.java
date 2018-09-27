@@ -184,21 +184,38 @@ public class Constant {
 		holder.remove();
 	}
 	
+	public static final String SLASH = "/";
+	public static final String DEFAULT_VALUE = "default";
+	public static final long WARCH_TIME = 30000L;
+
 	/**
 	 * 参数
      */
-	public static String localProp = "config" + File.separator + "application.properties";
+	public static String PROJECT_CONFIG_FILE = "config" + File.separator + "application.properties";
+	
+	// 应用名称
+	public static String PROJECT_ENV_NAME = "project.env";
+
+	// 应用名称
 	public static String PROJECT_NAME = "project.name";
-	public static String PORT_NAME = "";
-	public static String PORT = "";
-	public static final String SLASH = "/";
-	public static final String NAMESPACE="project.namespace";
+	
+	// server端口号和注册中心
+	public static String SERVER_PORT_NAME = "server.port";
+	public static final String NAMING_REGISTRY_ADDRESS_NAME = "name.registry.address";
+
+	// dubbo端口号 和注册中心
+	public static final String DUBBO_PROTOCOL_PORT_NAME = "dubbo.protocol.port";
+	public static final String DUBBO_REGISTRY_ADDRESS_NAME = "dubbo.registry.address";
+
+
+	// 命名空间
+	public static final String PROJECR_NAMESPACE_NAME="project.namespace";
+	
+	// 集群名称
+	public static final String PROJECR_CLUSTER_NAME = "project.cluster";
 	
 	// 配置中心
-	public volatile static String CONFIG_REGISTRY_ADDRESS;		// 配置中心：格式	ip1:port,ip2:port,ip3:port
 	public static final String CONFIG_REGISTRY_ADDRESS_NAME = "config.registry.address";
 	
-	// 注册中心
-	public static final String NAMING_REGISTRY_ADDRESS_NAME = "";
 
 }

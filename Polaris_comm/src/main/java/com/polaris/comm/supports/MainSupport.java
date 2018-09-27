@@ -40,7 +40,104 @@ abstract public class MainSupport {
 	private static final String log4j_profix = "log4j.";
 	private static final String log4j = log4j_profix + "properties";
 
-	public static final long WARCH_TIME = 30000L;
+	
+    /**
+    * iniParameter(初期的参数配置)
+    * @param 
+    * @return 
+    * @Exception 
+    * @since 
+    */
+	public static void iniParameter() {
+		
+		//配置中心
+		String conf = System.getProperty(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
+		if (StringUtil.isEmpty(conf)) {
+			try {
+				conf = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, Constant.CONFIG_REGISTRY_ADDRESS_NAME, false);
+			} catch (Exception e) {}
+		}
+		if (StringUtil.isNotEmpty(conf)) {
+			ConfClient.update(Constant.CONFIG_REGISTRY_ADDRESS_NAME, conf);
+		}
+		
+		//环境（production, pre,dev,pre etc）
+		String env = System.getProperty(Constant.PROJECT_ENV_NAME);
+		if (StringUtil.isEmpty(env)) {
+			try {
+				env = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, Constant.PROJECT_ENV_NAME, false);
+			} catch (Exception e) {}
+		}
+		if (StringUtil.isNotEmpty(env)) {
+			ConfClient.update(Constant.PROJECT_ENV_NAME, env);
+		} else {
+			ConfClient.update(Constant.PROJECT_ENV_NAME, Constant.DEFAULT_VALUE);
+		}
+		
+		//工程名称
+		String project = System.getProperty(Constant.PROJECT_NAME);
+		if (StringUtil.isEmpty(project)) {
+			try {
+				project = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, Constant.PROJECT_NAME, false);
+			} catch (Exception e) {}
+		}
+		if (StringUtil.isNotEmpty(project)) {
+			ConfClient.update(Constant.PROJECT_NAME, project);
+		}
+		
+		//命名空间
+		String namespace = System.getProperty(Constant.PROJECR_NAMESPACE_NAME);
+		if (StringUtil.isEmpty(project)) {
+			try {
+				namespace = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, Constant.PROJECR_NAMESPACE_NAME, false);
+			} catch (Exception e) {}
+		}
+		if (StringUtil.isNotEmpty(namespace)) {
+			ConfClient.update(Constant.PROJECR_NAMESPACE_NAME, namespace);
+		} else {
+			ConfClient.update(Constant.PROJECR_NAMESPACE_NAME, Constant.DEFAULT_VALUE);
+		}
+		
+		//集群名称
+		String cluster = System.getProperty(Constant.PROJECR_CLUSTER_NAME);
+		if (StringUtil.isEmpty(project)) {
+			try {
+				cluster = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, Constant.PROJECR_CLUSTER_NAME, false);
+			} catch (Exception e) {}
+		}
+		if (StringUtil.isNotEmpty(cluster)) {
+			ConfClient.update(Constant.PROJECR_CLUSTER_NAME, cluster);
+		} else {
+			ConfClient.update(Constant.PROJECR_CLUSTER_NAME, Constant.DEFAULT_VALUE);
+		}
+		
+		//服务端口
+		String serverport = System.getProperty(Constant.SERVER_PORT_NAME);
+		if (StringUtil.isNotEmpty(serverport)) {
+			ConfClient.update(Constant.SERVER_PORT_NAME, serverport);
+		}
+		//注册中心
+		String name = System.getProperty(Constant.NAMING_REGISTRY_ADDRESS_NAME);
+		if (StringUtil.isNotEmpty(name)) {
+			ConfClient.update(Constant.NAMING_REGISTRY_ADDRESS_NAME, name);
+		}
+		
+		//dubbo服务端口
+		String dubboport = System.getProperty(Constant.DUBBO_PROTOCOL_PORT_NAME);
+		if (StringUtil.isNotEmpty(dubboport)) {
+			ConfClient.update(Constant.DUBBO_PROTOCOL_PORT_NAME, dubboport);
+		}
+		//dubbo注册中心
+		String dubboname = System.getProperty(Constant.DUBBO_REGISTRY_ADDRESS_NAME);
+		if (StringUtil.isNotEmpty(dubboname)) {
+			ConfClient.update(Constant.DUBBO_REGISTRY_ADDRESS_NAME, dubboname);
+		}
+		
+    	//启动字符集
+    	System.setProperty("file.encoding", "UTF-8");
+	}
+	
+	
 	
     /**
     * configureAndWatch(日志配置以及监控)
@@ -94,19 +191,19 @@ abstract public class MainSupport {
     * @Exception 
     * @since 
     */
-    public static boolean makeSingle(String portName, String port) {
+    public static boolean makeSingle() {
     	boolean result = false;
     	RandomAccessFile raf = null;
     	FileChannel channel = null;
     	FileLock lock = null;
         try {
         	
-        	//端口号和名称
-        	Constant.PORT_NAME = portName;
-        	Constant.PORT = port;
-        	
         	//获取应用名称和端口号
-        	String name = ConfClient.getAppName();
+        	String name = ConfClient.get(Constant.PROJECT_NAME, false);
+        	String port = ConfClient.get(Constant.SERVER_PORT_NAME, false);
+        	if (StringUtil.isEmpty(port)) {
+        		port = ConfClient.get(Constant.DUBBO_PROTOCOL_PORT_NAME, false);
+        	}
         	if (StringUtil.isEmpty(port)) {
         		throw new NullPointerException("the port is null");
         	}

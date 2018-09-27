@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 
 import com.github.pagehelper.util.StringUtil;
-import com.polaris.http.Constant;
+import com.polaris.comm.Constant;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.UuidUtil;
 

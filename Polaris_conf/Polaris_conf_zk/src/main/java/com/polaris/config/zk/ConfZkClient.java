@@ -73,7 +73,7 @@ public class ConfZkClient implements Watcher {
 								zooKeeper = null;
 							}
 						}
-						zooKeeper = new ZooKeeper(Constant.CONFIG_REGISTRY_ADDRESS, 20000, new Watcher() {
+						zooKeeper = new ZooKeeper(ConfClient.getConfigRegistryAddress(), 20000, new Watcher() {
 							@Override
 							public void process(WatchedEvent watchedEvent) {
 								try {
@@ -138,9 +138,8 @@ public class ConfZkClient implements Watcher {
     private static void setZkAddress() {
     	
     	//配置文件
-    	Constant.CONFIG_REGISTRY_ADDRESS = System.getProperty(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
-    	if (StringUtil.isEmpty(Constant.CONFIG_REGISTRY_ADDRESS)) {
-    		throw new NullPointerException(Constant.CONFIG_REGISTRY_ADDRESS + " is null");
+    	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
+    		throw new NullPointerException(Constant.CONFIG_REGISTRY_ADDRESS_NAME + " is null");
     	}
     }
 	    
