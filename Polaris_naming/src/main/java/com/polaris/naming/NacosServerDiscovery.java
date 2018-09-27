@@ -1,7 +1,6 @@
 package com.polaris.naming;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -21,8 +20,8 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	NamingService naming;
 	public NacosServerDiscovery() {
         Properties properties = new Properties();
-        properties.setProperty(PropertyKeyConst.SERVER_ADDR, ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME));
-        properties.setProperty(PropertyKeyConst.NAMESPACE, ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false));
+        properties.setProperty(PropertyKeyConst.SERVER_ADDR, ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false));
+        properties.setProperty(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
         try {
 			naming = NamingFactory.createNamingService(properties);
 		} catch (NacosException e) {
@@ -35,9 +34,9 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	public String getUrl(String key) {
 		// TODO Auto-generated method stub
 		try {
-	        String cluster = ConfClient.get(Constant.PROJECT_CONSUMER_CLUSTER, Constant.DEFAULT_VALUE, false);
-	        List<String> clusters = Arrays.asList(cluster.split(","));
-			Instance instance = naming.selectOneHealthyInstance(key,clusters);
+//	        String cluster = ConfClient.getCluster();
+//	        List<String> clusters = Arrays.asList(cluster.split(","));
+			Instance instance = naming.selectOneHealthyInstance(key);
 			return instance.toInetAddr();
 		} catch (NacosException e) {
 			logger.error(e);
@@ -49,9 +48,9 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	public List<String> getAllUrls(String key) {
 		// TODO Auto-generated method stub
 		try {
-	        String cluster = ConfClient.get(Constant.PROJECT_CONSUMER_CLUSTER, Constant.DEFAULT_VALUE, false);
-	        List<String> clusters = Arrays.asList(cluster.split(","));
-			List<Instance> instances = naming.selectInstances(key, clusters, true);
+//	        String cluster = ConfClient.getCluster();
+//	        List<String> clusters = Arrays.asList(cluster.split(","));
+			List<Instance> instances = naming.selectInstances(key,  true);
 			List<String> urls = new ArrayList<>();
 			for (Instance instance : instances) {
 				urls.add(instance.toInetAddr());
@@ -76,9 +75,9 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	        instance.setPort(port);
 	        double weight = Double.parseDouble(ConfClient.get(Constant.PROJECT_WEIGHT, Constant.PROJECT_WEIGHT_DEFAULT, false));
 	        instance.setWeight(weight);
-	        String cluster = ConfClient.get(Constant.PROJECR_CLUSTER_NAME, Constant.DEFAULT_VALUE, false);
+	        String cluster = ConfClient.getCluster();
 	        instance.setCluster(new Cluster(cluster));
-			naming.registerInstance(ConfClient.get(Constant.PROJECT_NAME, false), instance);
+			naming.registerInstance(ConfClient.getAppName(), instance);
 			
 		} catch (NacosException e) {
 			logger.error(e);
@@ -88,12 +87,25 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	@Override
 	public void deregister(String ip, int port) {
 		 try {
-	        String cluster = ConfClient.get(Constant.PROJECR_CLUSTER_NAME, Constant.DEFAULT_VALUE, false);
-			naming.deregisterInstance(ConfClient.get(Constant.PROJECT_NAME, false), ip, port,cluster);
+	        String cluster = ConfClient.getCluster();
+			naming.deregisterInstance(ConfClient.getAppName(), ip, port,cluster);
 		} catch (NacosException e) {
 			logger.error(e);
 		}
 	}
+	
+	public static void main( String[] args ) throws Exception
+    {
+		Properties properties = new Properties();
+        properties.setProperty(PropertyKeyConst.SERVER_ADDR, "127.0.0.1:8848");
+        properties.setProperty(PropertyKeyConst.NAMESPACE, "default");
+		NamingService naming = NamingFactory.createNamingService(properties);
+		for (int i0 = 0; i0 < 1000; i0++) {
+			Instance instance = naming.selectOneHealthyInstance("mwclg-sso");
+			System.out.println(instance.toInetAddr());
+		}
+		
+    }
 
 
 }
