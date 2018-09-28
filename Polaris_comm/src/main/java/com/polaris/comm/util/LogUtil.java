@@ -60,7 +60,7 @@ public class LogUtil {
 	}
 
 	public static String getModuleId() {
-		return ConfClient.get(Constant.PROJECT_NAME, false);
+		return ConfClient.getAppName();
 	}
 
 	public void debug(String message) {  
