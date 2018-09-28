@@ -10,7 +10,7 @@
 	<packaging>jar</packaging>
 	<name>Polaris_sentinel</name>
 	<properties>
-        <sentinel-version>0.2.0-SNAPSHOT</sentinel-version>
+        <sentinel-version>0.2.0</sentinel-version>
 	</properties>
 	<dependencies>
 
