@@ -57,7 +57,7 @@ public class TomcatServer {
             	resDir.mkdirs();
             }
             String catalina_home = resDir.getCanonicalPath();
-            String contextPath = "";
+            String contextPath = ConfClient.get("server.contextPath","");
             String docBase = "";
 
             //设置工作目录
