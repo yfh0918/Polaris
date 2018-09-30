@@ -1,7 +1,7 @@
 package com.polaris.comm.config;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.polaris.comm.Constant;
 import com.polaris.comm.util.LogUtil;
@@ -23,7 +23,7 @@ import com.polaris.comm.util.StringUtil;
 */
 public class ConfClient {
 	private static final LogUtil logger = LogUtil.getInstance(ConfClient.class);
-	private static Map<String, String> cache = new HashMap<>();
+	private static Map<String, String> cache = new ConcurrentHashMap<>();
 
 	/**
 	 * 更新或者增加配置信息(由conf_admin发起的更新)*
@@ -31,17 +31,13 @@ public class ConfClient {
      * 如果要更新zk请参见 {@link ConfZkClient#setPathDataByKey} 方法
 	 * */
 	public static void update(String key, String value) {
-		if (cache != null) {
-			if (StringUtil.isNotEmpty(key)) {
-				synchronized(cache) {
-					if (cache.get(key)!=null) {
-						logger.info(">>>>>>>>>> conf: 更新配置: [{}:{}]", new Object[]{key, value});
-						cache.put(key, value);
-					} else {
-						logger.info(">>>>>>>>>> conf: 初始化配置: [{}:{}]", new Object[]{key, value});
-						cache.put(key, value);
-					}
-				}
+		if (StringUtil.isNotEmpty(key)) {
+			if (cache.get(key)!=null) {
+				logger.info(">>>>>>>>>> conf: 更新配置: [{}:{}]", new Object[]{key, value});
+				cache.put(key, value);
+			} else {
+				logger.info(">>>>>>>>>> conf: 初始化配置: [{}:{}]", new Object[]{key, value});
+				cache.put(key, value);
 			}
 		}
 	}
@@ -56,11 +52,9 @@ public class ConfClient {
 	*/
 	public static String get(String key, String defaultVal, boolean isWatch) {
 		//从缓存获取数据
-		if (cache != null) {
-			String value = cache.get(key);
-			if (value != null) {
-				return value;
-			}
+		String value = cache.get(key);
+		if (value != null) {
+			return value;
 		}
 		
 		//扩展配置点获取信息 
@@ -107,6 +101,29 @@ public class ConfClient {
 	* @Exception 
 	* @since 
 	*/
+	public static String[] getExtensionProperties() {
+		String files = cache.get(Constant.PROJECT_CONFIG_EXTENSION_FILE_NAME);
+		try {
+			if (files == null) {
+				cache.put(Constant.PROJECT_CONFIG_FILE, files);
+				files = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, Constant.PROJECT_CONFIG_EXTENSION_FILE_NAME, false);
+			}
+			if (StringUtil.isNotEmpty(files)) {
+				return files.split(",");
+			}
+		} catch (Exception ex) {
+			//nothing
+		}
+		return null;
+	}
+	
+	/**
+	* 获取配置信息
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
 	public static String get(String key) {
 		return get(key, "", true);
 	}
@@ -125,15 +142,11 @@ public class ConfClient {
 	* @since 
 	*/
 	public static boolean remove(String key) {
-		if (cache != null) {
-			if (StringUtil.isNotEmpty(key)) {
-				synchronized(cache) {
-					if (cache.get(key)!=null) {
-						logger.info(">>>>>>>>>> conf: 删除配置：key ", key);
-						cache.remove(key);
-						return true;
-					}
-				}
+		if (StringUtil.isNotEmpty(key)) {
+			if (cache.get(key)!=null) {
+				logger.info(">>>>>>>>>> conf: 删除配置：key ", key);
+				cache.remove(key);
+				return true;
 			}
 		}
 		return false;

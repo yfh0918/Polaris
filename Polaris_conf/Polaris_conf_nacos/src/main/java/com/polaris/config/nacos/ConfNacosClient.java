@@ -1,9 +1,11 @@
 package com.polaris.config.nacos;
 
-import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.stereotype.Component;
 
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.PropertyKeyConst;
@@ -15,22 +17,22 @@ import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.StringUtil;
 
 
-
-public class ConfNacosClient  {
+@Component
+public class ConfNacosClient implements ApplicationListener<ContextRefreshedEvent> { 
 	
 	private static final LogUtil logger = LogUtil.getInstance(ConfNacosClient.class, false);
-	private static final Map<String, ConfNacosClient> clientMap = new ConcurrentHashMap<>();
+	private static ConfNacosClient INSTANCE;
 	private ConfigService configService;
 
 	public static ConfNacosClient getInstance(String namespace){
-		if (clientMap.get(namespace) == null) {
-			synchronized(namespace.intern()) {
-				if (clientMap.get(namespace) == null) {
-					clientMap.put(namespace, new ConfNacosClient(namespace));
+		if (INSTANCE == null) {
+			synchronized(ConfNacosClient.class) {
+				if (INSTANCE == null) {
+					INSTANCE = new ConfNacosClient(namespace);
 				}
 			}
 		}
-		return clientMap.get(namespace);
+		return INSTANCE;
 	}
 
 	private ConfNacosClient(String namespace) {
@@ -43,30 +45,52 @@ public class ConfNacosClient  {
 		properties.put(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
 		try {
 			configService = NacosFactory.createConfigService(properties);
+			
+			//addListener
+			String[] files = ConfClient.getExtensionProperties();
+			if (files != null) {
+				for (String dataId : files) {
+					addListener(dataId);
+				}
+			}
+			
 		} catch (NacosException e) {
 			logger.error(e);
 		}
+		
 	}
 	
-	public String getConfig(String dataId, String group, boolean isWatch) {
-		try {
-			String content = configService.getConfig(dataId, group, 5000);
-			if (isWatch) {
-				configService.addListener(dataId, group, new Listener() {
-					@Override
-					public void receiveConfigInfo(String configInfo) {
-						ConfClient.update(dataId, configInfo);
-					}
-
-					@Override
-					public Executor getExecutor() {
-						return null;
-					}
-				});
-			}
-			return content;
-		} catch (NacosException ex) {
-			return null;
-		}
+	public String getConfig(String key) {
+		return null;
 	}
+	
+	private void addListener(String dataId) throws NacosException {
+		StringBuilder group = new StringBuilder();
+		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
+			group.append(ConfClient.getEnv());
+			group.append("-");
+		}
+		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
+			group.append(ConfClient.getCluster());
+			group.append("-");
+		}
+		group.append(ConfClient.getAppName());
+		configService.addListener(dataId, group.toString(), new Listener() {
+			@Override
+			public void receiveConfigInfo(String configInfo) {
+				System.out.println("recieve:" + configInfo);
+			}
+
+			@Override
+			public Executor getExecutor() {
+				return null;
+			}
+		});
+	}
+
+	@Override
+	public void onApplicationEvent(ContextRefreshedEvent event) {
+		ConfNacosClient.getInstance(ConfClient.getNameSpace());
+	}
+	
 }

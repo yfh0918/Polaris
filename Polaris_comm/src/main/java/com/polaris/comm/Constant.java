@@ -192,6 +192,7 @@ public class Constant {
 	 * 参数
      */
 	public static String PROJECT_CONFIG_FILE = "config" + File.separator + "application.properties";
+	public static String PROJECT_CONFIG_EXTENSION_FILE_NAME = "project.config.extension.filename";
 	
 	// 应用名称
 	public static String PROJECT_ENV_NAME = "project.env";
