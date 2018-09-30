@@ -70,9 +70,7 @@ abstract public class MainSupport {
 		}
 		if (StringUtil.isNotEmpty(env)) {
 			ConfClient.update(Constant.PROJECT_ENV_NAME, env);
-		} else {
-			ConfClient.update(Constant.PROJECT_ENV_NAME, Constant.DEFAULT_VALUE);
-		}
+		} 
 		
 		//工程名称
 		String project = System.getProperty(Constant.PROJECT_NAME);
@@ -107,9 +105,7 @@ abstract public class MainSupport {
 		}
 		if (StringUtil.isNotEmpty(cluster)) {
 			ConfClient.update(Constant.PROJECR_CLUSTER_NAME, cluster);
-		} else {
-			ConfClient.update(Constant.PROJECR_CLUSTER_NAME, Constant.DEFAULT_VALUE);
-		}
+		} 
 		
 		//服务端口
 		String serverport = System.getProperty(Constant.SERVER_PORT_NAME);
