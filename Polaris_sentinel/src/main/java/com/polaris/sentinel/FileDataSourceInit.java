@@ -93,9 +93,6 @@ public class FileDataSourceInit implements InitFunc {
         	system.createNewFile();
         }
 
-		// 设置监控日志路径
-        System.setProperty("user.home", PropertyUtils.getAppPath() +File.separator + "sentinel");
-
         // data source for FlowRule
         ReadableDataSource<String, List<FlowRule>> flowRuleDataSource = new FileRefreshableDataSource<>(
         	flow, source -> JSON.parseObject(source, new TypeReference<List<FlowRule>>() {})

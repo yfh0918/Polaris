@@ -156,18 +156,18 @@ public class ConfClient {
 		cache.put(Constant.PROJECT_NAME, inputAppName);
 	}
 	public static String getAppName() {
-		return cache.get(Constant.PROJECT_NAME);
+		return cache.get(Constant.PROJECT_NAME) == null ? "" : cache.get(Constant.PROJECT_NAME);
 	}
 	public static String getConfigRegistryAddress() {
-		return cache.get(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
+		return cache.get(Constant.CONFIG_REGISTRY_ADDRESS_NAME) == null ? "" : cache.get(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
 	}
 	public static String getNameSpace() {
-		return cache.get(Constant.PROJECR_NAMESPACE_NAME);
+		return cache.get(Constant.PROJECR_NAMESPACE_NAME) == null ? "" : cache.get(Constant.PROJECR_NAMESPACE_NAME);
 	}
 	public static String getCluster() {
-		return cache.get(Constant.PROJECR_CLUSTER_NAME);
+		return cache.get(Constant.PROJECR_CLUSTER_NAME) == null ? "" : cache.get(Constant.PROJECR_CLUSTER_NAME);
 	}
 	public static String getEnv() {
-		return cache.get(Constant.PROJECT_ENV_NAME);
+		return cache.get(Constant.PROJECT_ENV_NAME) == null ? "" : cache.get(Constant.PROJECT_ENV_NAME);
 	}
 }

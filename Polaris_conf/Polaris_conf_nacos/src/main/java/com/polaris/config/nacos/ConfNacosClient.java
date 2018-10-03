@@ -75,10 +75,11 @@ public class ConfNacosClient implements ApplicationListener<ContextRefreshedEven
 			group.append("-");
 		}
 		group.append(ConfClient.getAppName());
+		loadLocalCacheFromNacos(configService.getConfig(dataId, group.toString(), 5000L));
 		configService.addListener(dataId, group.toString(), new Listener() {
 			@Override
 			public void receiveConfigInfo(String configInfo) {
-				System.out.println("recieve:" + configInfo);
+				loadLocalCacheFromNacos(configInfo);
 			}
 
 			@Override
@@ -86,6 +87,10 @@ public class ConfNacosClient implements ApplicationListener<ContextRefreshedEven
 				return null;
 			}
 		});
+	}
+	
+	private void loadLocalCacheFromNacos(String propertyContent) {
+		System.out.println(propertyContent);
 	}
 
 	@Override

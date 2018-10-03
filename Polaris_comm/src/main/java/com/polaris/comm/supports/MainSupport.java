@@ -129,8 +129,12 @@ abstract public class MainSupport {
 			ConfClient.update(Constant.DUBBO_REGISTRY_ADDRESS_NAME, dubboname);
 		}
 		
-    	//启动字符集
+    	// 启动字符集
     	System.setProperty("file.encoding", "UTF-8");
+    	
+		// user.home
+        System.setProperty("user.home", PropertyUtils.getAppPath());
+
 	}
 	
 	
