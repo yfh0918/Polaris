@@ -28,11 +28,11 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
     }
 
 	public String getUrl(String key) {
+		List<String> temp = getRemoteAddress(key);
 		for (ServerDiscoveryHandler handler : serviceLoader) {
-			List<String> temp = getRemoteAddress(key);
 			return temp.get(0) + handler.getUrl(temp.get(1)) + temp.get(2);
 		}
-		return ServerDiscovery.getUrl(key);
+		return temp.get(0) + ServerDiscovery.getUrl(temp.get(1)) + temp.get(2);
 	}
 
 	public List<String> getAllUrl(String key) {
@@ -49,11 +49,13 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 	}
 
 	public void connectionFail(String key, String url) {
+		List<String> temp = getRemoteAddress(key);
+		List<String> temp2 = getRemoteAddress(url);
 		for (ServerDiscoveryHandler handler : serviceLoader) {
-			handler.connectionFail(key, url);
+			handler.connectionFail(temp.get(1), temp2.get(1));
 			return;
 		}
-		ServerDiscovery.connectionFail(key, url);
+		ServerDiscovery.connectionFail(temp.get(1), temp2.get(1));
 	}
 	
 	private List<String> getRemoteAddress(String serverInfo) {
@@ -79,10 +81,13 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
     }
 	
 	public static void main(String[] args) {
-		List<String> url = ServerDiscoveryHandlerProvider.getInstance().getRemoteAddress("http://localhost:8080/test/tesaa/afad");
-		url = ServerDiscoveryHandlerProvider.getInstance().getRemoteAddress("http://localhost:8080");
-		url = ServerDiscoveryHandlerProvider.getInstance().getRemoteAddress("localhost:8080/test/tesaa/afad");
-		url = ServerDiscoveryHandlerProvider.getInstance().getRemoteAddress("localhost:8080");
-		System.out.println(url);
+		String key = "http://localhost:8080,localhost:8081/test/tesaa/afad";
+		for (int i0 = 0; i0 < 10; i0++) {
+			System.out.println(ServerDiscoveryHandlerProvider.INSTANCE.getUrl(key));
+		}
+		ServerDiscoveryHandlerProvider.INSTANCE.connectionFail(key, "http://localhost:8080/test/tesaa/afad");
+		for (int i0 = 0; i0 < 10; i0++) {
+			System.out.println(ServerDiscoveryHandlerProvider.INSTANCE.getUrl(key));
+		}
     }
 }

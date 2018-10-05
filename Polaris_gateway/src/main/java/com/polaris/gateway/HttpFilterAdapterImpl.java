@@ -15,7 +15,7 @@ import com.polaris.comm.Constant;
 import com.polaris.comm.dto.ResultDto;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.UuidUtil;
-import com.polaris.comm.util.WeightedRoundRobinScheduling;
+import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
 import com.polaris.gateway.request.HttpRequestFilter;
 import com.polaris.gateway.request.HttpRequestFilterChain;
 import com.polaris.gateway.response.HttpResponseFilterChain;
@@ -150,14 +150,12 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             Field field = ClientToProxyConnection.class.getDeclaredField("currentServerConnection");
             field.setAccessible(true);
             ProxyToServerConnection proxyToServerConnection = (ProxyToServerConnection) field.get(clientToProxyConnection);
-   		 	String remoteHostName = proxyToServerConnection.getRemoteAddress().getAddress().getHostAddress();
-            int remoteHostPort = proxyToServerConnection.getRemoteAddress().getPort();
-            
+            String remoteIp = proxyToServerConnection.getRemoteAddress().getAddress().getHostAddress();
+            int remotePort = proxyToServerConnection.getRemoteAddress().getPort();
+            String remoteUrl = remoteIp + ":" + remotePort;
             String serverHostAndPort = proxyToServerConnection.getServerHostAndPort();
             String port = serverHostAndPort.substring(serverHostAndPort.indexOf(":")+1);
-            WeightedRoundRobinScheduling weightedRoundRobinScheduling = HostResolverImpl.getSingleton().getServers(port);
-            weightedRoundRobinScheduling.unhealthilyServers.add(weightedRoundRobinScheduling.getServer(remoteHostName, remoteHostPort));
-            weightedRoundRobinScheduling.healthilyServers.remove(weightedRoundRobinScheduling.getServer(remoteHostName, remoteHostPort));
+            ServerDiscoveryHandlerProvider.getInstance().connectionFail(HostResolverImpl.getSingleton().getServers(port), remoteUrl);
         } catch (Exception e) {
             logger.error("connection of proxy->server is failed", e);
         } finally {
