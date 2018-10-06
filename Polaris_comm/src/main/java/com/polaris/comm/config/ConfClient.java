@@ -51,19 +51,14 @@ public class ConfClient {
 	* @since 
 	*/
 	public static String get(String key, String defaultVal, boolean isWatch) {
-		//从缓存获取数据
+		
+		//从缓存中存在直接缓存中获取
 		String value = cache.get(key);
 		if (value != null) {
 			return value;
 		}
 		
-		//扩展配置点获取信息 
-		String data = ConfigHandlerProvider.getInstance().getKey(key, isWatch);
-		if (data!=null) {
-			update(key, data);//更新缓存
-			return data;
-		}
-		
+		//config/application.properties配置最优先
 		try {
 			String propertyValue = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, key, false);
 			if (propertyValue != null) {
@@ -74,6 +69,14 @@ public class ConfClient {
 			//nothing
 		}
 
+		//扩展配置点获取信息 
+		String data = ConfigHandlerProvider.getInstance().getKey(key, isWatch);
+		if (data!=null) {
+			update(key, data);//更新缓存
+			return data;
+		}
+
+		// 最后兜底 config/application-xxx.properties
 		try {
 			String propertyValue = PropertyUtils.readData("config","application", "properties", key, false);
 			if (propertyValue != null) {

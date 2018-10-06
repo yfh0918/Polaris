@@ -24,18 +24,18 @@ public class ConfNacosClient implements ApplicationListener<ContextRefreshedEven
 	private static ConfNacosClient INSTANCE;
 	private ConfigService configService;
 
-	public static ConfNacosClient getInstance(String namespace){
+	public static ConfNacosClient getInstance(){
 		if (INSTANCE == null) {
 			synchronized(ConfNacosClient.class) {
 				if (INSTANCE == null) {
-					INSTANCE = new ConfNacosClient(namespace);
+					INSTANCE = new ConfNacosClient();
 				}
 			}
 		}
 		return INSTANCE;
 	}
 
-	private ConfNacosClient(String namespace) {
+	private ConfNacosClient() {
 		//配置文件
     	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
     		throw new NullPointerException(Constant.CONFIG_REGISTRY_ADDRESS_NAME + " is null");
@@ -95,7 +95,7 @@ public class ConfNacosClient implements ApplicationListener<ContextRefreshedEven
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
-		ConfNacosClient.getInstance(ConfClient.getNameSpace());
+		ConfNacosClient.getInstance();
 	}
 	
 }

@@ -1,16 +1,7 @@
 package com.polaris.comm.supports;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
-import java.lang.management.ManagementFactory;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.log4j.PropertyConfigurator;
 
@@ -191,155 +182,155 @@ abstract public class MainSupport {
     * @Exception 
     * @since 
     */
-    public static boolean makeSingle() {
-    	boolean result = false;
-    	RandomAccessFile raf = null;
-    	FileChannel channel = null;
-    	FileLock lock = null;
-        try {
-        	
-        	//获取应用名称和端口号
-        	String name = ConfClient.get(Constant.PROJECT_NAME, false);
-        	String port = ConfClient.get(Constant.SERVER_PORT_NAME, false);
-        	if (StringUtil.isEmpty(port)) {
-        		port = ConfClient.get(Constant.DUBBO_PROTOCOL_PORT_NAME, false);
-        	}
-        	if (StringUtil.isEmpty(port)) {
-        		throw new NullPointerException("the port is null");
-        	}
-        	String key = name + port;
-            String fileName = System.getProperty("java.io.tmpdir") + key;
-            
-            // 在临时文件夹创建一个临时文件，锁住这个文件用来保证应用程序只有一个实例被创建.
-            File pinfile = new File(fileName);
-            pinfile.delete();
-            if(!pinfile.createNewFile()){
-            	logger.error("创建文件 失败!");
-            }
-            File sf = new File(fileName+ ".single");
-            sf.delete();
-            if(!sf.createNewFile()){
-            	logger.error("创建文件 失败!");
-            }
-            raf = new RandomAccessFile(sf, "rw");
-            channel = raf.getChannel();
-            lock = channel.tryLock();
-            if (lock == null) {
-            	result = true; 
-            	logger.error("端口号 ："+port+"已经被占用");
-            }
-            
-            //记录pin
-            if (!result) {
-                String runtimeName = ManagementFactory.getRuntimeMXBean().getName();    
-                String pid = runtimeName.split("@")[0];
-            	PropertyUtils.writeData(fileName, "pid", pid, true);                
-            }
-        } catch (Exception e) {
-        	logger.error("makeSingle异常", e);
-        }
-        
-        return result;
-    }
+//    public static boolean makeSingle() {
+//    	boolean result = false;
+//    	RandomAccessFile raf = null;
+//    	FileChannel channel = null;
+//    	FileLock lock = null;
+//        try {
+//        	
+//        	//获取应用名称和端口号
+//        	String name = ConfClient.get(Constant.PROJECT_NAME, false);
+//        	String port = ConfClient.get(Constant.SERVER_PORT_NAME, false);
+//        	if (StringUtil.isEmpty(port)) {
+//        		port = ConfClient.get(Constant.DUBBO_PROTOCOL_PORT_NAME, false);
+//        	}
+//        	if (StringUtil.isEmpty(port)) {
+//        		throw new NullPointerException("the port is null");
+//        	}
+//        	String key = name + port;
+//            String fileName = System.getProperty("java.io.tmpdir") + key;
+//            
+//            // 在临时文件夹创建一个临时文件，锁住这个文件用来保证应用程序只有一个实例被创建.
+//            File pinfile = new File(fileName);
+//            pinfile.delete();
+//            if(!pinfile.createNewFile()){
+//            	logger.error("创建文件 失败!");
+//            }
+//            File sf = new File(fileName+ ".single");
+//            sf.delete();
+//            if(!sf.createNewFile()){
+//            	logger.error("创建文件 失败!");
+//            }
+//            raf = new RandomAccessFile(sf, "rw");
+//            channel = raf.getChannel();
+//            lock = channel.tryLock();
+//            if (lock == null) {
+//            	result = true; 
+//            	logger.error("端口号 ："+port+"已经被占用");
+//            }
+//            
+//            //记录pin
+//            if (!result) {
+//                String runtimeName = ManagementFactory.getRuntimeMXBean().getName();    
+//                String pid = runtimeName.split("@")[0];
+//            	PropertyUtils.writeData(fileName, "pid", pid, true);                
+//            }
+//        } catch (Exception e) {
+//        	logger.error("makeSingle异常", e);
+//        }
+//        
+//        return result;
+//    }
     
     
-    /**
-    * getPidListFromJps(根据JPS命令获取pid列表)
-    * @param 
-    * @return 
-    * @Exception 
-    * @since 
-    */
-    public static List<String> getPidListFromJps(String jdkpath) {
-    	List<String> result = new ArrayList<>();
-    	try {
-    		String cmd = jdkpath + File.separator + "bin" + File.separator + "jps -l";
-            Process p = Runtime.getRuntime().exec(cmd);
-            InputStream is = p.getInputStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            String line;
-            while ((line = reader.readLine()) != null) {
-            	result.add(line);
-            }
-            p.waitFor();
-            is.close();
-            reader.close();
-            p.destroy();
-            
-    	} catch (Exception ex) {
-           	logger.error("getPidListFromJps异常", ex);
-    	} 
-    	return result;
-    }
-    
-    
-    /**
-    * getPidFromJps(根据JPS命令获取pid)
-    * @param 
-    * @return 
-    * @Exception 
-    * @since 
-    */
-    public static String getPidFromJps(List<String> pidList, String key) {
-    	if (pidList == null || pidList.isEmpty()) {
-    		return null;
-    	}
-    	String result = null;
-    	for (String pid : pidList) {
-    		if (pid != null && pid.contains(key)) {
-        		result = pid.substring(0, pid.indexOf(' '));
-        		break;
-        	}
-    	}
-    	return result;
-    }
-    
-    
-    /**
-    * getPidFromFile(根据文件命令获取pid)
-    * @param 
-    * @return 
-    * @Exception 
-    * @since 
-    */
-    public static String getPidFromFile(String key) {
-        RandomAccessFile raf = null;
-        FileChannel channel = null;
-        FileLock lock = null;
- 
-        String fileName = System.getProperty("java.io.tmpdir") + key;
-        try {
-            // 在临时文件夹创建一个临时文件，锁住这个文件用来保证应用程序只有一个实例被创建.
-            File sf = new File(fileName+ ".single");
-            raf = new RandomAccessFile(sf, "rw");
-            channel = raf.getChannel();
-            lock = channel.tryLock();
-            
-            //正在使用返回pid
-            if (lock == null) {
-            	return PropertyUtils.readData(fileName, "pid", true);             
-            } 
-        } catch (Exception e) {
-           	logger.error("getPidFromFile异常", e);
-        } finally {
-        	if (lock != null) {
-        		try {
-                	lock.release();
-        		} catch (Exception ex) {
-                   	logger.error("getPidFromFile异常", ex);
-        		}
-            	lock = null;
-            }
-        	if (raf != null) {
-        		try {
-        			raf.close();
-        		} catch (Exception ex) {
-                   	logger.error("getPidFromFile异常", ex);
-        		}
-        		raf = null;
-            }
-        }
-        
-        return null;
-    }
+//    /**
+//    * getPidListFromJps(根据JPS命令获取pid列表)
+//    * @param 
+//    * @return 
+//    * @Exception 
+//    * @since 
+//    */
+//    public static List<String> getPidListFromJps(String jdkpath) {
+//    	List<String> result = new ArrayList<>();
+//    	try {
+//    		String cmd = jdkpath + File.separator + "bin" + File.separator + "jps -l";
+//            Process p = Runtime.getRuntime().exec(cmd);
+//            InputStream is = p.getInputStream();
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//            	result.add(line);
+//            }
+//            p.waitFor();
+//            is.close();
+//            reader.close();
+//            p.destroy();
+//            
+//    	} catch (Exception ex) {
+//           	logger.error("getPidListFromJps异常", ex);
+//    	} 
+//    	return result;
+//    }
+//    
+//    
+//    /**
+//    * getPidFromJps(根据JPS命令获取pid)
+//    * @param 
+//    * @return 
+//    * @Exception 
+//    * @since 
+//    */
+//    public static String getPidFromJps(List<String> pidList, String key) {
+//    	if (pidList == null || pidList.isEmpty()) {
+//    		return null;
+//    	}
+//    	String result = null;
+//    	for (String pid : pidList) {
+//    		if (pid != null && pid.contains(key)) {
+//        		result = pid.substring(0, pid.indexOf(' '));
+//        		break;
+//        	}
+//    	}
+//    	return result;
+//    }
+//    
+//    
+//    /**
+//    * getPidFromFile(根据文件命令获取pid)
+//    * @param 
+//    * @return 
+//    * @Exception 
+//    * @since 
+//    */
+//    public static String getPidFromFile(String key) {
+//        RandomAccessFile raf = null;
+//        FileChannel channel = null;
+//        FileLock lock = null;
+// 
+//        String fileName = System.getProperty("java.io.tmpdir") + key;
+//        try {
+//            // 在临时文件夹创建一个临时文件，锁住这个文件用来保证应用程序只有一个实例被创建.
+//            File sf = new File(fileName+ ".single");
+//            raf = new RandomAccessFile(sf, "rw");
+//            channel = raf.getChannel();
+//            lock = channel.tryLock();
+//            
+//            //正在使用返回pid
+//            if (lock == null) {
+//            	return PropertyUtils.readData(fileName, "pid", true);             
+//            } 
+//        } catch (Exception e) {
+//           	logger.error("getPidFromFile异常", e);
+//        } finally {
+//        	if (lock != null) {
+//        		try {
+//                	lock.release();
+//        		} catch (Exception ex) {
+//                   	logger.error("getPidFromFile异常", ex);
+//        		}
+//            	lock = null;
+//            }
+//        	if (raf != null) {
+//        		try {
+//        			raf.close();
+//        		} catch (Exception ex) {
+//                   	logger.error("getPidFromFile异常", ex);
+//        		}
+//        		raf = null;
+//            }
+//        }
+//        
+//        return null;
+//    }
 }

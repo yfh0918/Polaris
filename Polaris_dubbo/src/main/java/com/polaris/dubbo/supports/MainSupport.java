@@ -38,12 +38,8 @@ public class MainSupport extends com.polaris.comm.supports.MainSupport{
     	//log4j重新设定地址
 		configureAndWatch(Constant.WARCH_TIME);
 		
-    	//不允许重复启动
-    	if (!makeSingle()) {
-
-			//启动
-			com.alibaba.dubbo.container.Main.main(args);
-		} 
+		//启动
+		com.alibaba.dubbo.container.Main.main(args);
     }
     
 }

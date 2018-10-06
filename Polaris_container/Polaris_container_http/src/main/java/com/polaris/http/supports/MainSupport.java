@@ -53,11 +53,7 @@ public class MainSupport extends com.polaris.comm.supports.MainSupport{
             }
         });
 		
-    	//不允许重复启动
-    	if (!makeSingle()) {
-    		
-        	//启动
-        	ContainerServerFactory.newInstance();
-    	} 
+    	//启动
+    	ContainerServerFactory.newInstance();
     }
 }
