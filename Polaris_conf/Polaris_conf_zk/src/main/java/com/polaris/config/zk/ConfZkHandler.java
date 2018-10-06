@@ -6,7 +6,7 @@ import com.polaris.comm.config.ConfigHandler;
 public class ConfZkHandler implements ConfigHandler {
 
 	@Override
-	public String getKey(String key, boolean isWatch) {
+	public String getValue(String key, boolean isWatch) {
 		return ConfZkClient.getPathDataByKey(ConfClient.getNameSpace() + Constant.SLASH + ConfClient.getAppName()+Constant.SLASH + key, isWatch);
 	}
 }

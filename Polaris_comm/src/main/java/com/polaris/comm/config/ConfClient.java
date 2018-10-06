@@ -5,7 +5,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.polaris.comm.Constant;
 import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.PropertyUtils;
 import com.polaris.comm.util.StringUtil;
 
 /**
@@ -25,16 +24,14 @@ public class ConfClient {
 	private static final LogUtil logger = LogUtil.getInstance(ConfClient.class);
 	private static Map<String, String> cache = new ConcurrentHashMap<>();
 
-	/**
-	 * 更新或者增加配置信息(由conf_admin发起的更新)*
-	 * 该方法只更新当前缓存，不更新zk。
-     * 如果要更新zk请参见 {@link ConfZkClient#setPathDataByKey} 方法
-	 * */
 	public static void update(String key, String value) {
 		if (StringUtil.isNotEmpty(key)) {
-			if (cache.get(key)!=null) {
-				logger.info(">>>>>>>>>> conf: 更新配置: [{}:{}]", new Object[]{key, value});
-				cache.put(key, value);
+			String content = cache.get(key);
+			if (content!=null) {
+				if (!content.equals(value)) {
+					logger.info(">>>>>>>>>> conf: 更新配置: [{}:{}]", new Object[]{key, value});
+					cache.put(key, value);
+				}
 			} else {
 				logger.info(">>>>>>>>>> conf: 初始化配置: [{}:{}]", new Object[]{key, value});
 				cache.put(key, value);
@@ -58,35 +55,13 @@ public class ConfClient {
 			return value;
 		}
 		
-		//config/application.properties配置最优先
-		try {
-			String propertyValue = PropertyUtils.readData(Constant.PROJECT_PROPERTY, key, false);
-			if (propertyValue != null) {
-				update(key, propertyValue);
-				return propertyValue;
-			}
-		} catch (Exception ex) {
-			//nothing
-		}
-
 		//扩展配置点获取信息 
-		String data = ConfigHandlerProvider.getInstance().getKey(key, isWatch);
+		String data = ConfigHandlerProvider.getInstance().getValue(key, isWatch);
 		if (data!=null) {
 			update(key, data);//更新缓存
 			return data;
 		}
 
-		// 最后兜底 config/application-xxx.properties
-		try {
-			String propertyValue = PropertyUtils.readData(Constant.CONFIG,"application", "properties", key, false);
-			if (propertyValue != null) {
-				update(key, propertyValue);
-				return propertyValue;
-			}
-		} catch (Exception ex) {
-			//nothing
-		}
-		
 		//默认值
 		if (StringUtil.isNotEmpty(defaultVal)) {
 			update(key, defaultVal);
@@ -98,27 +73,20 @@ public class ConfClient {
 	}
 	
 	/**
-	* 获取配置信息
+	* 获取配置文件内容
 	* @param 
 	* @return 
 	* @Exception 
 	* @since 
 	*/
-	public static String[] getExtensionProperties() {
-		String files = cache.get(Constant.PROJECT_EXTENSION_PROPERTIES);
-		try {
-			if (files == null) {
-				files = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_EXTENSION_PROPERTIES, false);
-			}
-			if (StringUtil.isNotEmpty(files)) {
-				cache.put(Constant.PROJECT_EXTENSION_PROPERTIES, files);
-				return files.split(",");
-			}
-		} catch (Exception ex) {
-			//nothing
-		}
-		return null;
+	public static String getFileContent(String fileName) {
+		return ConfigHandlerProvider.getInstance().getFileContent(fileName);
 	}
+	//增加文件是否修改的监听
+	public static void addListener(String fileName, ConfListener listener) {
+		ConfigHandlerProvider.getInstance().addListener(fileName, listener);
+	}
+
 	
 	/**
 	* 获取配置信息

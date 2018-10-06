@@ -221,5 +221,8 @@ public class Constant {
 	
 	// 日志
 	public static final String LOG4J = "log4j.properties";
+	
+	//换行
+	public static final String LINE_SEP = System.getProperty("line.separator");
 
 }

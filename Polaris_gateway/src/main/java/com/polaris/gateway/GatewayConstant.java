@@ -21,8 +21,6 @@ public class GatewayConstant {
         DENY,//表示该页面不允许在 frame 中展示,即便是在相同域名的页面中嵌套也不允许.
         SAMEORIGIN//表示该页面可以在相同域名页面的 frame 中展示.
     }
-    public static final String config = "config";
-    public static final String log4j = "log4j.properties";
     public static int AcceptorThreads = Integer.parseInt(ConfClient.get("gateway.acceptorThreads"));
     public static int ClientToProxyWorkerThreads = Integer.parseInt(ConfClient.get("gateway.clientToProxyWorkerThreads"));
     public static int ProxyToServerWorkerThreads = Integer.parseInt(ConfClient.get("gateway.proxyToServerWorkerThreads"));

@@ -1,7 +1,6 @@
 package com.polaris.gateway.support;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.List;
 
@@ -14,16 +13,15 @@ import org.littleshoot.proxy.HttpProxyServerBootstrap;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 import org.littleshoot.proxy.impl.ThreadPoolConfiguration;
 
-import com.polaris.gateway.GatewayConstant;
-import com.polaris.gateway.HostResolverImpl;
-import com.polaris.gateway.HttpFilterAdapterImpl;
-import com.polaris.gateway.HttpFilterChain;
-import com.polaris.gateway.util.ConfUtil;
-import com.polaris.gateway.util.GatewaySelfSignedSslEngineSource;
+import com.polaris.comm.Constant;
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.supports.MainSupport;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
+import com.polaris.gateway.GatewayConstant;
+import com.polaris.gateway.HostResolverImpl;
+import com.polaris.gateway.HttpFilterAdapterImpl;
+import com.polaris.gateway.util.GatewaySelfSignedSslEngineSource;
 import com.polaris.http.util.NetUtils;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -40,35 +38,19 @@ public class ApplicationSupport {
     		 @Override  
              public void run() { 
     			 
-    			//日志
-    			PropertyConfigurator.configure(MainSupport.class.getClassLoader().getResourceAsStream(GatewayConstant.config + File.separator + GatewayConstant.log4j));
     			long lastModified = 0l;
-				try {
-	    			lastModified = new File(PropertyUtils.getFilePath(GatewayConstant.config + File.separator + GatewayConstant.log4j)).lastModified();
-				} catch (IOException e1) {
-					logger.error(e1);
-				}
-				
 				//动态监测
                  while(true){  
                 	try {
-						Thread.sleep(warchTime);
-						long tempLastModified = new File(PropertyUtils.getFilePath(GatewayConstant.config + File.separator + GatewayConstant.log4j)).lastModified();
+						long tempLastModified = new File(PropertyUtils.getFilePath(Constant.CONFIG + File.separator + Constant.LOG4J)).lastModified();
 						
 						//修改日志
 						if (lastModified != tempLastModified) {
 							lastModified = tempLastModified;
-							PropertyConfigurator.configure(MainSupport.class.getClassLoader().getResourceAsStream(GatewayConstant.config + File.separator + GatewayConstant.log4j));
+							PropertyConfigurator.configure(MainSupport.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + Constant.LOG4J));
 						}
 						
-						//代理的IP是否发生变化
-						HostResolverImpl.getSingleton().watchUpstream(false);
-						
-						//过滤文件是否变更
-						ConfUtil.watchFilterType(false);
-						
-						//过滤器变更
-						HttpFilterChain.watchFilters();
+						Thread.sleep(warchTime);
 					} catch (Exception e) {
 						logger.error(e);
 					}

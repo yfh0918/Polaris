@@ -20,14 +20,15 @@ import io.netty.handler.codec.http.HttpResponse;
 public class HttpResponseFilterChain extends HttpFilterChain {
 
     public synchronized static void addFilter(HttpResponseFilter filter) {
-		if (!GatewayConstant.OFF.equals(ConfClient.get(HttpFilterEnum.getSwitch(filter.getClass())))) {
-			responseFilters.add(filter);
-	        Collections.sort(responseFilters, new HttpFilterCompare());
-		}
+		responseFilters.add(filter);
+        Collections.sort(responseFilters, new HttpFilterCompare());
     }
 
     public static void doFilter(HttpRequest originalRequest, HttpResponse httpResponse) {
         for (HttpResponseFilter filter : responseFilters) {
+        	if (GatewayConstant.OFF.equals(ConfClient.get(HttpFilterEnum.getSwitch(filter.getClass())))) {
+        		continue;
+        	}
             filter.doFilter(originalRequest, httpResponse);
         }
     }

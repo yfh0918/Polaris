@@ -24,14 +24,15 @@ import io.netty.handler.codec.http.HttpRequest;
 public class HttpRequestFilterChain extends HttpFilterChain{
 
     public synchronized static void addFilter(HttpRequestFilter filter) {
-		if (!GatewayConstant.OFF.equals(ConfClient.get(HttpFilterEnum.getSwitch(filter.getClass())))) {
-	        requestFilters.add(filter);
-	        Collections.sort(requestFilters, new HttpFilterCompare());
-		}
+        requestFilters.add(filter);
+        Collections.sort(requestFilters, new HttpFilterCompare());
     }
 
     public static ImmutablePair<Boolean, HttpRequestFilter> doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
         for (HttpRequestFilter filter : requestFilters) {
+        	if (GatewayConstant.OFF.equals(ConfClient.get(HttpFilterEnum.getSwitch(filter.getClass())))) {
+        		continue;
+        	}
             boolean result = filter.doFilter(originalRequest, httpObject, channelHandlerContext);
             if (result && filter.isBlacklist()) {
                 return new ImmutablePair<>(true, filter);

@@ -1,9 +1,8 @@
 package com.polaris.gateway;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,9 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.littleshoot.proxy.HostResolver;
 
 import com.github.pagehelper.util.StringUtil;
-import com.polaris.comm.util.PropertyUtils;
+import com.polaris.comm.Constant;
+import com.polaris.comm.config.ConfClient;
+import com.polaris.comm.config.ConfListener;
 import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
-import com.polaris.gateway.util.PropertiesUtil;
 
 /**
  * @author:Tom.Yu
@@ -25,27 +25,31 @@ public class HostResolverImpl implements HostResolver {
     private volatile static HostResolverImpl singleton;
     private volatile Map<String, String> serverMap = new ConcurrentHashMap<>();
     private volatile Map<String, String> uriMap = new ConcurrentHashMap<>();
-    public static final String UPSTREAM = GatewayConstant.config + File.separator +"application_upstream.properties";
-    private volatile long lastModified;
+    public static final String UPSTREAM = "application_upstream.properties";
+    //private volatile String content;
 
     //载入需要代理的IP(需要动态代理)
-    public void watchUpstream(boolean isAlways) {
-		long currentFileModified;
-		try {
-			currentFileModified = new File(PropertyUtils.getFilePath(UPSTREAM)).lastModified();
-		} catch (IOException e) {
-			currentFileModified = -1l;
-		}
-    	if (!isAlways) {
-    		if (currentFileModified == lastModified) {
-    			return;
-    		}
+    private void loadUpstream(String content) {
+    	if (StringUtil.isEmpty(content)) {
+    		return;
     	}
-    	lastModified = currentFileModified;
 
     	Map<String, String> tempServerMap = new ConcurrentHashMap<>();
     	Map<String, String> tempUriMap = new ConcurrentHashMap<>();
-    	Map<String, String> servers = PropertiesUtil.getProperty(UPSTREAM);
+    	Map<String, String> servers = new HashMap<>();
+    	String[] contents = content.split(Constant.LINE_SEP);
+		for (String detail : contents) {
+			int index = detail.indexOf("=");
+			if (index >= 0) {
+				String key = detail.substring(0, index).trim();
+				String value = "";
+				if (index < detail.length()) {
+					value = detail.substring(index + 1).trim();
+				}
+				servers.put(key, value);
+			}
+			
+		}
         for (Map.Entry<String, String> entry : servers.entrySet()) {
             String hostInfo = entry.getKey();
             
@@ -70,7 +74,14 @@ public class HostResolverImpl implements HostResolver {
     
     //构造函数（单例）
     private HostResolverImpl() {
-    	watchUpstream(true);//载入配置文件
+    	loadUpstream(ConfClient.getFileContent(UPSTREAM));//载入配置文件
+    	ConfClient.addListener(UPSTREAM, new ConfListener() {
+			@Override
+			public void receive(String content) {
+				loadUpstream(content);
+			}
+    		
+    	});
     }
     public static HostResolverImpl getSingleton() {
         if (singleton == null) {
