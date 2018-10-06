@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ServiceLoader;
 
 import com.github.pagehelper.util.StringUtil;
+import com.polaris.comm.Constant;
 import com.polaris.comm.util.PropertyUtils;
 
 public  class ConfigHandlerProvider {
@@ -28,7 +29,7 @@ public  class ConfigHandlerProvider {
 		if (files != null) {
 			for (String filename : files) {
 				try {
-					String propertyValue = PropertyUtils.readData("config" + File.separator + filename, key, false);
+					String propertyValue = PropertyUtils.readData(Constant.CONFIG + File.separator + filename, key, false);
 					if (propertyValue != null) {
 						return propertyValue;
 					}

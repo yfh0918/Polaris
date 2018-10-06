@@ -27,9 +27,6 @@ import com.polaris.comm.util.StringUtil;
 abstract public class MainSupport {
 	
 	private static final LogUtil logger =  LogUtil.getInstance(MainSupport.class);
-	private static final String config = "config";
-	private static final String log4j_profix = "log4j.";
-	private static final String log4j = log4j_profix + "properties";
 
 	
     /**
@@ -45,7 +42,7 @@ abstract public class MainSupport {
 		String conf = System.getProperty(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
 		if (StringUtil.isEmpty(conf)) {
 			try {
-				conf = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, Constant.CONFIG_REGISTRY_ADDRESS_NAME, false);
+				conf = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.CONFIG_REGISTRY_ADDRESS_NAME, false);
 			} catch (Exception e) {}
 		}
 		if (StringUtil.isNotEmpty(conf)) {
@@ -56,7 +53,7 @@ abstract public class MainSupport {
 		String env = System.getProperty(Constant.PROJECT_ENV_NAME);
 		if (StringUtil.isEmpty(env)) {
 			try {
-				env = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, Constant.PROJECT_ENV_NAME, false);
+				env = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_ENV_NAME, false);
 			} catch (Exception e) {}
 		}
 		if (StringUtil.isNotEmpty(env)) {
@@ -67,7 +64,7 @@ abstract public class MainSupport {
 		String project = System.getProperty(Constant.PROJECT_NAME);
 		if (StringUtil.isEmpty(project)) {
 			try {
-				project = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, Constant.PROJECT_NAME, false);
+				project = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_NAME, false);
 			} catch (Exception e) {}
 		}
 		if (StringUtil.isNotEmpty(project)) {
@@ -78,7 +75,7 @@ abstract public class MainSupport {
 		String namespace = System.getProperty(Constant.PROJECR_NAMESPACE_NAME);
 		if (StringUtil.isEmpty(project)) {
 			try {
-				namespace = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, Constant.PROJECR_NAMESPACE_NAME, false);
+				namespace = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECR_NAMESPACE_NAME, false);
 			} catch (Exception e) {}
 		}
 		if (StringUtil.isNotEmpty(namespace)) {
@@ -91,7 +88,7 @@ abstract public class MainSupport {
 		String cluster = System.getProperty(Constant.PROJECR_CLUSTER_NAME);
 		if (StringUtil.isEmpty(project)) {
 			try {
-				cluster = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, Constant.PROJECR_CLUSTER_NAME, false);
+				cluster = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECR_CLUSTER_NAME, false);
 			} catch (Exception e) {}
 		}
 		if (StringUtil.isNotEmpty(cluster)) {
@@ -143,7 +140,7 @@ abstract public class MainSupport {
              public void run() {
                  String fileName = null;
 				 try {
-					fileName = PropertyUtils.getFilePath(config + File.separator + log4j);
+					fileName = PropertyUtils.getFilePath(Constant.CONFIG + File.separator + Constant.LOG4J);
 				 } catch (IOException e) {
 					logger.error(e);
 				 }
@@ -154,7 +151,7 @@ abstract public class MainSupport {
                         long tempLastModified = file.lastModified();
                         if (lastModified != tempLastModified) {
                             lastModified = tempLastModified;
-                            PropertyConfigurator.configure(MainSupport.class.getClassLoader().getResourceAsStream(config + File.separator + log4j));
+                            PropertyConfigurator.configure(MainSupport.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + Constant.LOG4J));
                         }
 						Thread.sleep(warchTime);
 					} catch (InterruptedException e) {

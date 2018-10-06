@@ -60,7 +60,7 @@ public class ConfClient {
 		
 		//config/application.properties配置最优先
 		try {
-			String propertyValue = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, key, false);
+			String propertyValue = PropertyUtils.readData(Constant.PROJECT_PROPERTY, key, false);
 			if (propertyValue != null) {
 				update(key, propertyValue);
 				return propertyValue;
@@ -78,7 +78,7 @@ public class ConfClient {
 
 		// 最后兜底 config/application-xxx.properties
 		try {
-			String propertyValue = PropertyUtils.readData("config","application", "properties", key, false);
+			String propertyValue = PropertyUtils.readData(Constant.CONFIG,"application", "properties", key, false);
 			if (propertyValue != null) {
 				update(key, propertyValue);
 				return propertyValue;
@@ -105,13 +105,13 @@ public class ConfClient {
 	* @since 
 	*/
 	public static String[] getExtensionProperties() {
-		String files = cache.get(Constant.PROJECT_CONFIG_EXTENSION_FILE_NAME);
+		String files = cache.get(Constant.PROJECT_EXTENSION_PROPERTIES);
 		try {
 			if (files == null) {
-				cache.put(Constant.PROJECT_CONFIG_FILE, files);
-				files = PropertyUtils.readData(Constant.PROJECT_CONFIG_FILE, Constant.PROJECT_CONFIG_EXTENSION_FILE_NAME, false);
+				files = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_EXTENSION_PROPERTIES, false);
 			}
 			if (StringUtil.isNotEmpty(files)) {
+				cache.put(Constant.PROJECT_EXTENSION_PROPERTIES, files);
 				return files.split(",");
 			}
 		} catch (Exception ex) {

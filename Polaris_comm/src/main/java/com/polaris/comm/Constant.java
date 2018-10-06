@@ -191,8 +191,9 @@ public class Constant {
 	/**
 	 * 参数
      */
-	public static String PROJECT_CONFIG_FILE = "config" + File.separator + "application.properties";
-	public static String PROJECT_CONFIG_EXTENSION_FILE_NAME = "project.config.extension.filename";
+	public static String CONFIG = "config";
+	public static String PROJECT_PROPERTY = CONFIG + File.separator + "application.properties";
+	public static String PROJECT_EXTENSION_PROPERTIES = "project.extension.properties";
 	
 	// 应用名称
 	public static String PROJECT_ENV_NAME = "project.env";
@@ -218,5 +219,7 @@ public class Constant {
 	// 配置中心
 	public static final String CONFIG_REGISTRY_ADDRESS_NAME = "config.registry.address";
 	
+	// 日志
+	public static final String LOG4J = "log4j.properties";
 
 }
