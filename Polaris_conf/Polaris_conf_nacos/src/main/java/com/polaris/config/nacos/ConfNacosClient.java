@@ -41,15 +41,6 @@ public class ConfNacosClient {
 		properties.put(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
 		try {
 			configService = NacosFactory.createConfigService(properties);
-			
-			//addListener
-			String[] files = ConfigHandlerProvider.getExtensionProperties();
-			if (files != null) {
-				for (String dataId : files) {
-					addListener(dataId, null);
-				}
-			}
-			
 		} catch (NacosException e) {
 			logger.error(e);
 		}
@@ -59,8 +50,23 @@ public class ConfNacosClient {
 	public String getConfig(String key) {
 		String group = getGroup();
 		try {
-			String value = configService.getConfig(key, group, 5000);
-			return value;
+			//addListener
+			String[] files = ConfigHandlerProvider.getExtensionProperties();
+			if (files != null) {
+				for (String dataId : files) {
+					String propertyContent = configService.getConfig(dataId, group, 5000);
+					if (StringUtil.isNotEmpty(propertyContent)) {
+						String[] contents = propertyContent.split(Constant.LINE_SEP);
+						for (String content : contents) {
+							String[] keyvalue = ConfigHandlerProvider.getKeyValue(content);
+							if (keyvalue != null && keyvalue[0].equals(key)) {
+								return keyvalue[1];
+							}
+						}
+					}
+					
+				}
+			}
 		} catch (NacosException e) {
 			logger.error(e);
 		}
@@ -86,9 +92,7 @@ public class ConfNacosClient {
 				public void receiveConfigInfo(String configInfo) {
 					if (listener != null) {
 						listener.receive(configInfo);
-					} else {
-						loadLocalCacheFromNacos(configInfo);
-					}
+					} 
 				}
 
 				@Override
@@ -100,25 +104,7 @@ public class ConfNacosClient {
 			logger.error(e);
 		}
 	}
-	
-	//监听到的发生变化的配置更新到本地缓存
-	private void loadLocalCacheFromNacos(String propertyContent) {
-		if (StringUtil.isNotEmpty(propertyContent)) {
-			String[] contents = propertyContent.split(Constant.LINE_SEP);
-			for (String content : contents) {
-				int index = content.indexOf("=");
-				if (index >= 0) {
-					String key = content.substring(0, index).trim();
-					String value = "";
-					if (index < content.length()) {
-						value = content.substring(index + 1).trim();
-					}
-					ConfClient.update(key, value);
-				}
-				
-			}
-		}
-	}
+
 
 	private String getGroup() {
 		StringBuilder group = new StringBuilder();

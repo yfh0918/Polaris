@@ -6,6 +6,5 @@ public interface ConfigHandler {
 		return null;
 	}
 	default void addListener(String fileName, ConfListener listener) {
-		
 	}
 }

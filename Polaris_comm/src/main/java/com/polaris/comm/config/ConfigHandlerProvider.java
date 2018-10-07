@@ -17,6 +17,31 @@ public  class ConfigHandlerProvider {
     private final ServiceLoader<ConfigHandler> serviceLoader = ServiceLoader.load(ConfigHandler.class);
     
     private static final ConfigHandlerProvider INSTANCE = new ConfigHandlerProvider();
+    
+    private ConfigHandlerProvider() {
+    	//addListener
+		String[] files = ConfigHandlerProvider.getExtensionProperties();
+		if (files != null) {
+			for (String dataId : files) {
+				addListener(dataId, new ConfListener() {
+					@Override
+					public void receive(String propertyContent) {
+						// TODO Auto-generated method stub
+						if (StringUtil.isNotEmpty(propertyContent)) {
+							String[] contents = propertyContent.split(Constant.LINE_SEP);
+							for (String content : contents) {
+								String[] keyvalue = getKeyValue(content);
+								if (keyvalue != null) {
+									ConfClient.update(keyvalue[0], keyvalue[1]);
+								}
+							}
+						}
+					}
+					
+				});
+			}
+		}
+    }
 
     public static ConfigHandlerProvider getInstance() {
         return INSTANCE;
@@ -125,6 +150,17 @@ public  class ConfigHandlerProvider {
 			}
 		} catch (Exception ex) {
 			//nothing
+		}
+		return null;
+	}
+	
+	public static String[] getKeyValue(String line) {
+		if (StringUtil.isNotEmpty(line)) {
+			String[] keyvalue = line.split("=");
+			if (keyvalue.length == 1) {
+				return new String[] {keyvalue[0],""};
+			}
+			return keyvalue;
 		}
 		return null;
 	}

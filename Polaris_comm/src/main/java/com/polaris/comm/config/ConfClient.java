@@ -106,7 +106,7 @@ public class ConfClient {
 	}
 	
 	/**
-	* 删除配置信息(由conf_admin发起的删除)
+	* 删除配置信息
 	* @param 
 	* @return 
 	* @Exception 
