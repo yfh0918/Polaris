@@ -18,6 +18,7 @@ public  class ConfigHandlerProvider {
     
     private static final ConfigHandlerProvider INSTANCE = new ConfigHandlerProvider();
     
+    // 监听所有扩展的文件
     private ConfigHandlerProvider() {
     	//addListener
 		String[] files = ConfigHandlerProvider.getExtensionProperties();
@@ -46,7 +47,16 @@ public  class ConfigHandlerProvider {
     public static ConfigHandlerProvider getInstance() {
         return INSTANCE;
     }
-
+	
+	//监听
+	public void addListener(String fileName, ConfListener listener) {
+		//扩展点
+		for (ConfigHandler handler : serviceLoader) {
+			handler.addListener(fileName, listener);
+		}
+	}
+	
+    // 获取key,value
 	public String getValue(String key, boolean isWatch) {
 		
 		//配置最优先
@@ -96,13 +106,7 @@ public  class ConfigHandlerProvider {
 		return null;
 	}
 	
-	public void addListener(String fileName, ConfListener listener) {
-		//扩展点
-		for (ConfigHandler handler : serviceLoader) {
-			handler.addListener(fileName, listener);
-		}
-	}
-	
+	//获取整个文件的内容
 	public String getFileContent(String fileName) {
 		
 		//扩展点
@@ -158,9 +162,9 @@ public  class ConfigHandlerProvider {
 		if (StringUtil.isNotEmpty(line)) {
 			String[] keyvalue = line.split("=");
 			if (keyvalue.length == 1) {
-				return new String[] {keyvalue[0],""};
+				return new String[] {keyvalue[0].trim(),""};
 			}
-			return keyvalue;
+			return new String[] {keyvalue[0].trim(),keyvalue[1].trim()};
 		}
 		return null;
 	}

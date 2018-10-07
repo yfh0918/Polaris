@@ -30,7 +30,6 @@ public class ConfNacosClient {
 		}
 		return INSTANCE;
 	}
-
 	private ConfNacosClient() {
 		//配置文件
     	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
@@ -47,6 +46,7 @@ public class ConfNacosClient {
 		
 	}
 	
+	// 获取key,value
 	public String getConfig(String key) {
 		String group = getGroup();
 		try {
@@ -73,6 +73,7 @@ public class ConfNacosClient {
 		return null;
 	}
 	
+	// 获取整个文件的内容
 	public String getFileContent(String fileName) {
 		String group = getGroup();
 		String content = null;
@@ -84,6 +85,7 @@ public class ConfNacosClient {
 		return content;
 	}
 	
+	// 监听需要关注的内容
 	public void addListener(String dataId, ConfListener listener) {
 		String group = getGroup();
 		try {
@@ -105,7 +107,7 @@ public class ConfNacosClient {
 		}
 	}
 
-
+	// 获取分组信息
 	private String getGroup() {
 		StringBuilder group = new StringBuilder();
 		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
