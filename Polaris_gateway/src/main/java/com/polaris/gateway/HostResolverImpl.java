@@ -25,8 +25,7 @@ public class HostResolverImpl implements HostResolver {
     private volatile static HostResolverImpl singleton;
     private volatile Map<String, String> serverMap = new ConcurrentHashMap<>();
     private volatile Map<String, String> uriMap = new ConcurrentHashMap<>();
-    public static final String UPSTREAM = "application_upstream.properties";
-    //private volatile String content;
+    public static final String UPSTREAM = "upstream.txt";
 
     //载入需要代理的IP(需要动态代理)
     private void loadUpstream(String content) {

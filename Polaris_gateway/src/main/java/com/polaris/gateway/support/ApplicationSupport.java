@@ -12,12 +12,14 @@ import org.littleshoot.proxy.HttpFiltersSourceAdapter;
 import org.littleshoot.proxy.HttpProxyServerBootstrap;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 import org.littleshoot.proxy.impl.ThreadPoolConfiguration;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.polaris.comm.Constant;
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.supports.MainSupport;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
+import com.polaris.comm.util.SpringUtil;
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.HostResolverImpl;
 import com.polaris.gateway.HttpFilterAdapterImpl;
@@ -63,7 +65,12 @@ public class ApplicationSupport {
     }
     
     //启动网关应用
-    public static void startGateway() {
+    @SuppressWarnings("resource")
+	public static void startGateway() {
+    	
+    	MainSupport.iniParameter();
+    	MainSupport.configureAndWatch(60000);
+    	new ClassPathXmlApplicationContext(SpringUtil.SPRING_PATH);
     	
         ThreadPoolConfiguration threadPoolConfiguration = new ThreadPoolConfiguration();
         threadPoolConfiguration.withAcceptorThreads(GatewayConstant.AcceptorThreads);
@@ -73,7 +80,7 @@ public class ApplicationSupport {
         InetSocketAddress inetSocketAddress = new InetSocketAddress(Integer.parseInt(GatewayConstant.SERVER_PORT));
         HttpProxyServerBootstrap httpProxyServerBootstrap = DefaultHttpProxyServer.bootstrap()
                 .withAddress(inetSocketAddress);
-        boolean proxy_tls = !GatewayConstant.OFF.equals(ConfClient.get("gateway.tls"));
+        boolean proxy_tls = !GatewayConstant.OFF.equals(ConfClient.get("server.tls"));
         
         //反向代理模式
         logger.info("反向代理模式开启");

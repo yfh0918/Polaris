@@ -21,10 +21,10 @@ public class GatewayConstant {
         DENY,//表示该页面不允许在 frame 中展示,即便是在相同域名的页面中嵌套也不允许.
         SAMEORIGIN//表示该页面可以在相同域名页面的 frame 中展示.
     }
-    public static int AcceptorThreads = Integer.parseInt(ConfClient.get("gateway.acceptorThreads"));
-    public static int ClientToProxyWorkerThreads = Integer.parseInt(ConfClient.get("gateway.clientToProxyWorkerThreads"));
-    public static int ProxyToServerWorkerThreads = Integer.parseInt(ConfClient.get("gateway.proxyToServerWorkerThreads"));
-    public static final String SERVER_PORT = ConfClient.get("gateway.serverPort");
+    public static int AcceptorThreads = Integer.parseInt(ConfClient.get("server.acceptorThreads"));
+    public static int ClientToProxyWorkerThreads = Integer.parseInt(ConfClient.get("server.clientToProxyWorkerThreads"));
+    public static int ProxyToServerWorkerThreads = Integer.parseInt(ConfClient.get("server.proxyToServerWorkerThreads"));
+    public static final String SERVER_PORT = ConfClient.get("server.port");
     public static X_Frame_Options X_Frame_Option = X_Frame_Options.SAMEORIGIN;
     public static final String X_Forwarded_For = "X-Forwarded-For";
     public static final String X_Real_IP = "X-Real-IP";
