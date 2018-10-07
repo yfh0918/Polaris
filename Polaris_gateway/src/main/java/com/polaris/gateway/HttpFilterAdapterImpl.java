@@ -76,7 +76,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	
         	//存在异常的直接进入response过滤器
             httpResponse = createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(e));
-            logger.error("client's request failed", e.getCause());
+            logger.error("client's request failed", e);
             
         } finally {
         	

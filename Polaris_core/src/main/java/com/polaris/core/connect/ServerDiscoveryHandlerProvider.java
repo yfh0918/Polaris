@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import com.polaris.comm.util.StringUtil;
+
 public class ServerDiscoveryHandlerProvider {
 private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoader.load(ServerDiscoveryHandler.class);
 	public static final String HTTP_PREFIX = "http://";
@@ -30,7 +32,10 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 	public String getUrl(String key) {
 		List<String> temp = getRemoteAddress(key);
 		for (ServerDiscoveryHandler handler : serviceLoader) {
-			return temp.get(0) + handler.getUrl(temp.get(1)) + temp.get(2);
+			String url = handler.getUrl(temp.get(1));
+			if (StringUtil.isNotEmpty(url)) {
+				return temp.get(0) + url + temp.get(2);
+			}
 		}
 		return temp.get(0) + ServerDiscovery.getUrl(temp.get(1)) + temp.get(2);
 	}

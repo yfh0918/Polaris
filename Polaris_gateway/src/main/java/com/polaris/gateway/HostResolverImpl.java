@@ -2,7 +2,6 @@ package com.polaris.gateway;
 
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,6 +12,7 @@ import com.github.pagehelper.util.StringUtil;
 import com.polaris.comm.Constant;
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.config.ConfListener;
+import com.polaris.comm.config.ConfigHandlerProvider;
 import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
 
 /**
@@ -35,38 +35,16 @@ public class HostResolverImpl implements HostResolver {
 
     	Map<String, String> tempServerMap = new ConcurrentHashMap<>();
     	Map<String, String> tempUriMap = new ConcurrentHashMap<>();
-    	Map<String, String> servers = new HashMap<>();
     	String[] contents = content.split(Constant.LINE_SEP);
+        int port = 7000;
 		for (String detail : contents) {
-			int index = detail.indexOf("=");
-			if (index >= 0) {
-				String key = detail.substring(0, index).trim();
-				String value = "";
-				if (index < detail.length()) {
-					value = detail.substring(index + 1).trim();
-				}
-				servers.put(key, value);
+			String[] keyvalue = ConfigHandlerProvider.getKeyValue(detail);
+			if (keyvalue != null) {
+				tempServerMap.put(String.valueOf(port), keyvalue[1]);
+				tempUriMap.put(keyvalue[0], String.valueOf(port));
+				port++;
 			}
-			
 		}
-        for (Map.Entry<String, String> entry : servers.entrySet()) {
-            String hostInfo = entry.getKey();
-            
-            if (hostInfo.startsWith(GatewayConstant.PORT) || GatewayConstant.DEFAULT.equals(hostInfo)) {
-            	
-            	//不是默认的端口号(key=7001, value=192.168.5.101:7720,192.168.5.101:7721)
-            	if (hostInfo.startsWith(GatewayConstant.PORT)) {
-            		tempServerMap.put(hostInfo.substring(GatewayConstant.PORT.length()), entry.getValue());
-            	} else {
-            		
-            		//默认的端口号(key=9090, value=192.168.5.101:9090,192.168.5.101:9001)
-            		tempServerMap.put(GatewayConstant.SERVER_PORT, entry.getValue());
-            	}
-            	
-            } else {
-            	tempUriMap.put(hostInfo, entry.getValue());
-            }
-        }
     	serverMap = tempServerMap;
     	uriMap = tempUriMap;
     }
@@ -106,7 +84,14 @@ public class HostResolverImpl implements HostResolver {
         		
         	}    	
         }
-    	return GatewayConstant.SERVER_PORT;
+    	
+    	// default
+    	if (uriMap.containsKey(GatewayConstant.DEFAULT)) {
+    		return uriMap.get(GatewayConstant.DEFAULT);
+    	}
+    	
+    	//异常
+    	throw new NullPointerException("url is null");
     }
 
     @Override

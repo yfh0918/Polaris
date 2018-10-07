@@ -32,12 +32,11 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	
 	@Override
 	public String getUrl(String key) {
-		// TODO Auto-generated method stub
 		try {
-//	        String cluster = ConfClient.getCluster();
-//	        List<String> clusters = Arrays.asList(cluster.split(","));
 			Instance instance = naming.selectOneHealthyInstance(key);
-			return instance.toInetAddr();
+			if (instance != null) {
+				return instance.toInetAddr();
+			}
 		} catch (NacosException e) {
 			logger.error(e);
 		}
@@ -46,14 +45,13 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 
 	@Override
 	public List<String> getAllUrls(String key) {
-		// TODO Auto-generated method stub
 		try {
-//	        String cluster = ConfClient.getCluster();
-//	        List<String> clusters = Arrays.asList(cluster.split(","));
 			List<Instance> instances = naming.selectInstances(key,  true);
 			List<String> urls = new ArrayList<>();
-			for (Instance instance : instances) {
-				urls.add(instance.toInetAddr());
+			if (instances != null && instances.size() > 0) {
+				for (Instance instance : instances) {
+					urls.add(instance.toInetAddr());
+				}
 			}
 			return urls;
 		} catch (NacosException e) {
@@ -106,6 +104,5 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		}
 		
     }
-
 
 }
