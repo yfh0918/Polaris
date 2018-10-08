@@ -12,6 +12,7 @@ import com.alibaba.nacos.api.naming.pojo.Cluster;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.util.LogUtil;
+import com.polaris.comm.util.StringUtil;
 import com.polaris.core.connect.ServerDiscoveryHandler;
 
 
@@ -21,7 +22,9 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	public NacosServerDiscovery() {
         Properties properties = new Properties();
         properties.setProperty(PropertyKeyConst.SERVER_ADDR, ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false));
-        properties.setProperty(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
+        if (StringUtil.isNotEmpty(ConfClient.getNameSpace())) {
+            properties.setProperty(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
+        }
         try {
 			naming = NamingFactory.createNamingService(properties);
 		} catch (NacosException e) {
@@ -96,7 +99,6 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
     {
 		Properties properties = new Properties();
         properties.setProperty(PropertyKeyConst.SERVER_ADDR, "127.0.0.1:8848");
-        properties.setProperty(PropertyKeyConst.NAMESPACE, "default");
 		NamingService naming = NamingFactory.createNamingService(properties);
 		for (int i0 = 0; i0 < 1000; i0++) {
 			Instance instance = naming.selectOneHealthyInstance("mwclg-sso");

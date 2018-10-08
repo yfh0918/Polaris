@@ -80,9 +80,7 @@ abstract public class MainSupport {
 		}
 		if (StringUtil.isNotEmpty(namespace)) {
 			ConfClient.update(Constant.PROJECR_NAMESPACE_NAME, namespace);
-		} else {
-			ConfClient.update(Constant.PROJECR_NAMESPACE_NAME, Constant.DEFAULT_VALUE);
-		}
+		} 
 		
 		//集群名称
 		String cluster = System.getProperty(Constant.PROJECR_CLUSTER_NAME);

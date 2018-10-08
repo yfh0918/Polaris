@@ -37,7 +37,9 @@ public class ConfNacosClient {
     	}
 		Properties properties = new Properties();
 		properties.put(PropertyKeyConst.SERVER_ADDR, ConfClient.getConfigRegistryAddress());
-		properties.put(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
+		if (StringUtil.isNotEmpty(ConfClient.getNameSpace())) {
+			properties.put(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
+		}
 		try {
 			configService = NacosFactory.createConfigService(properties);
 		} catch (NacosException e) {
