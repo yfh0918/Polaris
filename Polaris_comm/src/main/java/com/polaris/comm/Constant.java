@@ -203,6 +203,7 @@ public class Constant {
 	
 	// server端口号和注册中心
 	public static String SERVER_PORT_NAME = "server.port";
+	public static String NAME_REGISTRY_SWITCH = "name.registry.switch";
 	public static final String NAMING_REGISTRY_ADDRESS_NAME = "name.registry.address";
 
 	// dubbo端口号 和注册中心
@@ -224,5 +225,9 @@ public class Constant {
 	
 	//换行
 	public static final String LINE_SEP = System.getProperty("line.separator");
+	
+	//开关
+	public static final String SWITCH_ON = "on";
+	public static final String SWITCH_OFF = "off";
 
 }
