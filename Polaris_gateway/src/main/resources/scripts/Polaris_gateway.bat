@@ -1,1 +1,1 @@
-%JAVA_HOME%\bin\java -Xmx512M -Xms128M -jar Polaris_gateway.jar
+java -XX:+HeapDumpOnOutOfMemoryError -XX:-RestrictContended -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Xmx1024M -Xms128M -jar Polaris_gateway.jar
