@@ -20,6 +20,10 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	private static final LogUtil logger = LogUtil.getInstance(NacosServerDiscovery.class, false);
 	NamingService naming;
 	public NacosServerDiscovery() {
+		//配置文件
+    	if (StringUtil.isEmpty(ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false))) {
+    		throw new NullPointerException(Constant.NAMING_REGISTRY_ADDRESS_NAME + " is null");
+    	}
         Properties properties = new Properties();
         properties.setProperty(PropertyKeyConst.SERVER_ADDR, ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false));
         if (StringUtil.isNotEmpty(ConfClient.getNameSpace())) {
@@ -29,6 +33,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 			naming = NamingFactory.createNamingService(properties);
 		} catch (NacosException e) {
 			logger.error(e);
+			throw new IllegalArgumentException(Constant.NAMING_REGISTRY_ADDRESS_NAME + ":"+ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false) + " is not correct ");
 		}
 
 	}

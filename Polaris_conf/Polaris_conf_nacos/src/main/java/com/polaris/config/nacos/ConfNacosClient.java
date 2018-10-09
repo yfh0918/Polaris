@@ -44,6 +44,7 @@ public class ConfNacosClient {
 			configService = NacosFactory.createConfigService(properties);
 		} catch (NacosException e) {
 			logger.error(e);
+			throw new IllegalArgumentException(Constant.CONFIG_REGISTRY_ADDRESS_NAME + ":"+ConfClient.getConfigRegistryAddress()+" is not correct ");
 		}
 		
 	}
