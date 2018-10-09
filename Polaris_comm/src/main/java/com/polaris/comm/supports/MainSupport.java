@@ -163,7 +163,7 @@ abstract public class MainSupport {
     	run.setName("ConfigureAndWatch Thread");
     	run.start();
     	try {
-			Thread.sleep(1000);//阻塞主线程1秒
+			Thread.sleep(100);//阻塞主线程100毫秒
 		} catch (InterruptedException e) {
 			logger.error(e);
 			Thread.currentThread().interrupt();
