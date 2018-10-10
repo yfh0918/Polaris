@@ -17,11 +17,15 @@
 
 
     <dependencies>
-      <!-- 
+      
         <dependency>
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_conf_nacos</artifactId>
-        </dependency>   -->
+        </dependency>   
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_naming</artifactId>
+        </dependency>   
         <dependency>
             <groupId>org.littleshoot</groupId>
             <artifactId>littleproxy</artifactId>

@@ -20,6 +20,7 @@ import com.polaris.comm.supports.MainSupport;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
 import com.polaris.comm.util.SpringUtil;
+import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.HostResolverImpl;
 import com.polaris.gateway.HttpFilterAdapterImpl;
@@ -72,6 +73,18 @@ public class ApplicationSupport {
     	MainSupport.configureAndWatch(60000);
     	new ClassPathXmlApplicationContext(SpringUtil.SPRING_PATH);
     	
+    	//注册服务
+		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON, false))) {
+			ServerDiscoveryHandlerProvider.getInstance().register(NetUtils.getLocalHost(), Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, false)));
+			
+			// add shutdown hook to stop server
+	        Runtime.getRuntime().addShutdownHook(new Thread() {
+	            public void run() {
+	            	ServerDiscoveryHandlerProvider.getInstance().deregister(NetUtils.getLocalHost(), Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, false)));
+	            }
+	        });
+		}
+    			
         ThreadPoolConfiguration threadPoolConfiguration = new ThreadPoolConfiguration();
         threadPoolConfiguration.withAcceptorThreads(GatewayConstant.AcceptorThreads);
         threadPoolConfiguration.withClientToProxyWorkerThreads(GatewayConstant.ClientToProxyWorkerThreads);
