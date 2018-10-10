@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Properties;
 
 import com.alibaba.nacos.api.PropertyKeyConst;
-import com.alibaba.nacos.api.exception.NacosException;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Cluster;
@@ -31,7 +30,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
         }
         try {
 			naming = NamingFactory.createNamingService(properties);
-		} catch (NacosException e) {
+		} catch (Exception e) {
 			logger.error(e);
 			throw new IllegalArgumentException(Constant.NAMING_REGISTRY_ADDRESS_NAME + ":"+ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false) + " is not correct ");
 		}
@@ -45,8 +44,8 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 			if (instance != null) {
 				return instance.toInetAddr();
 			}
-		} catch (NacosException e) {
-			logger.error(e);
+		} catch (Exception e) {
+			//logger.error(e);
 		}
 		return null;
 	}
@@ -62,8 +61,8 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 				}
 			}
 			return urls;
-		} catch (NacosException e) {
-			logger.error(e);
+		} catch (Exception e) {
+			//logger.error(e);
 		}
 		return null;
 	}
@@ -85,7 +84,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	        instance.setCluster(new Cluster(cluster));
 			naming.registerInstance(ConfClient.getAppName(), instance);
 			
-		} catch (NacosException e) {
+		} catch (Exception e) {
 			logger.error(e);
 		}
 	}
@@ -95,7 +94,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		 try {
 	        String cluster = ConfClient.getCluster();
 			naming.deregisterInstance(ConfClient.getAppName(), ip, port,cluster);
-		} catch (NacosException e) {
+		} catch (Exception e) {
 			logger.error(e);
 		}
 	}
