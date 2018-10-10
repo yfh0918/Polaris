@@ -32,10 +32,19 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 	public String getUrl(String key) {
 		List<String> temp = getRemoteAddress(key);
 		for (ServerDiscoveryHandler handler : serviceLoader) {
+			// 单个IP或者多IP不走注册中心
+			if (temp.get(1).contains(":")) {
+				break;
+			}
+			
+			// 走注册中心
 			String url = handler.getUrl(temp.get(1));
 			if (StringUtil.isNotEmpty(url)) {
 				return temp.get(0) + url + temp.get(2);
 			}
+			
+			//只走第一个注册中心
+			break;
 		}
 		return temp.get(0) + ServerDiscovery.getUrl(temp.get(1)) + temp.get(2);
 	}
@@ -43,12 +52,24 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 	public List<String> getAllUrl(String key) {
 		for (ServerDiscoveryHandler handler : serviceLoader) {
 			List<String> temp = getRemoteAddress(key);
+			
+			// 单个IP或者多IP不走注册中心
+			if (temp.get(1).contains(":")) {
+				List<String> urlList = new ArrayList<>();
+				String[] ips = temp.get(1).split(",");
+				for (int i0 = 0; i0 < ips.length; i0++) {
+					urlList.add(temp.get(0) + ips[i0] + temp.get(2));
+				}
+				return urlList;
+			}
+			
+			// 走注册中心
 			List<String> urls = handler.getAllUrls(temp.get(1));
 			for (int i0 = 0; i0 < urls.size(); i0++) {
 				String value = temp.get(0) + urls.get(i0) + temp.get(2);
 				urls.set(i0, value);
 			}
-			return urls;
+			return urls;			
 		}
 		return null;
 	}

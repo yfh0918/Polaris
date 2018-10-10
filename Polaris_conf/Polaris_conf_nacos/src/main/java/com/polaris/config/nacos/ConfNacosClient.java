@@ -17,8 +17,8 @@ import com.polaris.comm.util.StringUtil;
 public class ConfNacosClient { 
 	
 	private static final LogUtil logger = LogUtil.getInstance(ConfNacosClient.class, false);
-	private static ConfNacosClient INSTANCE;
-	private ConfigService configService;
+	private volatile static ConfNacosClient INSTANCE;
+	private volatile ConfigService configService;
 
 	public static ConfNacosClient getInstance(){
 		if (INSTANCE == null) {
@@ -33,8 +33,12 @@ public class ConfNacosClient {
 	private ConfNacosClient() {
 		//配置文件
     	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
-    		throw new NullPointerException(Constant.CONFIG_REGISTRY_ADDRESS_NAME + " is null");
+    		return;
     	}
+    	iniConfNacos();
+	}
+	
+	private void iniConfNacos() {
 		Properties properties = new Properties();
 		properties.put(PropertyKeyConst.SERVER_ADDR, ConfClient.getConfigRegistryAddress());
 		if (StringUtil.isNotEmpty(ConfClient.getNameSpace())) {
@@ -46,11 +50,22 @@ public class ConfNacosClient {
 			logger.error(e);
 			throw new IllegalArgumentException(Constant.CONFIG_REGISTRY_ADDRESS_NAME + ":"+ConfClient.getConfigRegistryAddress()+" is not correct ");
 		}
-		
 	}
 	
 	// 获取key,value
 	public String getConfig(String key) {
+		//配置文件
+    	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
+    		return null;
+    	}
+    	if (configService == null) {
+    		synchronized(this) {
+    			if (configService == null) {
+    				iniConfNacos();
+    			}
+    		}
+    	}
+    	
 		String group = getGroup();
 		try {
 			//addListener
@@ -78,6 +93,18 @@ public class ConfNacosClient {
 	
 	// 获取整个文件的内容
 	public String getFileContent(String fileName) {
+		//配置文件
+    	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
+    		return null;
+    	}
+    	if (configService == null) {
+    		synchronized(this) {
+    			if (configService == null) {
+    				iniConfNacos();
+    			}
+    		}
+    	}
+    	
 		String group = getGroup();
 		String content = null;
 		try {
@@ -90,6 +117,18 @@ public class ConfNacosClient {
 	
 	// 监听需要关注的内容
 	public void addListener(String dataId, ConfListener listener) {
+		//配置文件
+    	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
+    		return;
+    	}
+    	if (configService == null) {
+    		synchronized(this) {
+    			if (configService == null) {
+    				iniConfNacos();
+    			}
+    		}
+    	}
+    	
 		String group = getGroup();
 		try {
 			configService.addListener(dataId, group.toString(), new Listener() {

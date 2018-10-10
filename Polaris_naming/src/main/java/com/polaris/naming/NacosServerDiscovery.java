@@ -17,13 +17,16 @@ import com.polaris.core.connect.ServerDiscoveryHandler;
 
 public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	private static final LogUtil logger = LogUtil.getInstance(NacosServerDiscovery.class, false);
-	NamingService naming;
+	private volatile NamingService naming;
 	public NacosServerDiscovery() {
-		//配置文件
     	if (StringUtil.isEmpty(ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false))) {
-    		throw new NullPointerException(Constant.NAMING_REGISTRY_ADDRESS_NAME + " is null");
+    		return;
     	}
-        Properties properties = new Properties();
+    	iniNacosServer();
+	}
+	
+	private void iniNacosServer() {
+		Properties properties = new Properties();
         properties.setProperty(PropertyKeyConst.SERVER_ADDR, ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false));
         if (StringUtil.isNotEmpty(ConfClient.getNameSpace())) {
             properties.setProperty(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
@@ -34,24 +37,51 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 			logger.error(e);
 			throw new IllegalArgumentException(Constant.NAMING_REGISTRY_ADDRESS_NAME + ":"+ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false) + " is not correct ");
 		}
-
 	}
 	
 	@Override
 	public String getUrl(String key) {
+		
+		//判断是否可以获取有效URL
+		if (StringUtil.isEmpty(ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false))) {
+			return null;
+		}
+		if (naming == null) {
+			synchronized(this) {
+				if (naming == null) {
+					iniNacosServer();
+				}
+			}
+		} 
+		
+		//获取有效URL
 		try {
 			Instance instance = naming.selectOneHealthyInstance(key);
 			if (instance != null) {
 				return instance.toInetAddr();
 			}
 		} catch (Exception e) {
-			//logger.error(e);
+			logger.error(e);
 		}
 		return null;
 	}
 
 	@Override
 	public List<String> getAllUrls(String key) {
+		
+		//判断是否可以获取有效URL
+		if (StringUtil.isEmpty(ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false))) {
+			return null;
+		}
+		if (naming == null) {
+			synchronized(this) {
+				if (naming == null) {
+					iniNacosServer();
+				}
+			}
+		} 
+				
+		//获取有效URL
 		try {
 			List<Instance> instances = naming.selectInstances(key,  true);
 			List<String> urls = new ArrayList<>();
@@ -62,7 +92,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 			}
 			return urls;
 		} catch (Exception e) {
-			//logger.error(e);
+			logger.error(e);
 		}
 		return null;
 	}
@@ -74,6 +104,9 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 
 	@Override
 	public void register(String ip, int port) {
+		if (naming == null) {
+			return;
+		}
 		 try {
 			Instance instance = new Instance();
 	        instance.setIp(ip);
@@ -83,7 +116,6 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	        String cluster = ConfClient.getCluster();
 	        instance.setCluster(new Cluster(cluster));
 			naming.registerInstance(ConfClient.getAppName(), instance);
-			
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -91,6 +123,9 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 
 	@Override
 	public void deregister(String ip, int port) {
+		if (naming == null) {
+			return;
+		}
 		 try {
 	        String cluster = ConfClient.getCluster();
 			naming.deregisterInstance(ConfClient.getAppName(), ip, port,cluster);
