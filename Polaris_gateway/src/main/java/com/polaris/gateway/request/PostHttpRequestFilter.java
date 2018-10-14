@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.util.ConfUtil;
+import com.polaris.gateway.util.RequestUtil;
 import com.polaris.comm.util.LogUtil;
 
 import io.netty.buffer.Unpooled;
@@ -48,6 +49,10 @@ public class PostHttpRequestFilter extends HttpRequestFilter {
                     }
 
                     if (contentBody != null) {
+                    	String[] kv = contentBody.split("=");
+                        if (kv.length == 2) {
+                        	RequestUtil.setPostParameter(kv[0].trim(), kv[1].trim());
+                        }
                         List<Pattern> postPatternList = ConfUtil.getPattern(FilterType.POST.name());
                         for (Pattern pattern : postPatternList) {
                             Matcher matcher = pattern.matcher(contentBody.toLowerCase());

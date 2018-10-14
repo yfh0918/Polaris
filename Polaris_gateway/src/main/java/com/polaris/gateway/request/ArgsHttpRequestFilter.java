@@ -6,9 +6,10 @@ import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Service;
 
+import com.polaris.comm.util.LogUtil;
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.util.ConfUtil;
-import com.polaris.comm.util.LogUtil;
+import com.polaris.gateway.util.RequestUtil;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -45,6 +46,7 @@ public class ArgsHttpRequestFilter extends HttpRequestFilter {
                     for (String arg : args) {
                         String[] kv = arg.split("=");
                         if (kv.length == 2) {
+                        	RequestUtil.setQueryString(kv[0].trim(), kv[1].trim());
                             for (Pattern pat : ConfUtil.getPattern(FilterType.ARGS.name())) {
                                 Matcher matcher = pat.matcher(kv[1].toLowerCase());
                                 if (matcher.find()) {

@@ -20,6 +20,7 @@ import com.polaris.gateway.request.HttpRequestFilter;
 import com.polaris.gateway.request.HttpRequestFilterChain;
 import com.polaris.gateway.response.HttpResponseFilterChain;
 import com.polaris.gateway.support.HttpRequestFilterSupport;
+import com.polaris.gateway.util.RequestUtil;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -58,11 +59,10 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	
         	//Trace
         	if (httpObject instanceof HttpRequest) {
-        		Constant.removeContext();
-            	Constant.setContext(LogUtil.TRACE_ID, UuidUtil.generateUuid());
+        		RequestUtil.remove();
         		HttpRequest httpRequest = (HttpRequest) httpObject;
         		replaceHost(httpRequest);
-        		httpRequest.headers().set(LogUtil.TRACE_ID, Constant.getContext(LogUtil.TRACE_ID));
+        		httpRequest.headers().set(LogUtil.TRACE_ID, UuidUtil.generateUuid());
         	}
         	
         	//进入request过滤器
@@ -82,12 +82,12 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	
         	//请求出错需要清空上下文
         	if (httpResponse != null) {
-        		Constant.removeContext();//先清空后载入
+        		RequestUtil.remove();//先清空后载入
         	} else {
         		
         		//请求结束的时候也要清空上下文
             	if (httpObject instanceof HttpContent) {
-            		Constant.removeContext();//先清空后载入
+            		RequestUtil.remove();//先清空后载入
             	}
         	}
         }
@@ -103,7 +103,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	try {
                 ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR)));
         	} finally {
-        		Constant.removeContext();
+        		RequestUtil.remove();
         	}
         } 
     }
@@ -123,7 +123,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     		
     		//返回成功
     		if (!(httpObject instanceof HttpResponse)) {
-    			Constant.removeContext();
+    			RequestUtil.remove();
     		}
     	}
     }
@@ -159,7 +159,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         } catch (Exception e) {
             logger.error("connection of proxy->server is failed", e);
         } finally {
-        	Constant.removeContext();
+        	RequestUtil.remove();
         }
     }
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.util.ConfUtil;
+import com.polaris.gateway.util.RequestUtil;
 import com.polaris.comm.util.LogUtil;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -34,6 +35,10 @@ public class CookieHttpRequestFilter extends HttpRequestFilter {
             if (headerValues.size() > 0 && headerValues.get(0) != null) {
                 String[] cookies = headerValues.get(0).split(";");
                 for (String cookie : cookies) {
+                	String[] kv = cookie.split("=");
+                    if (kv.length == 2) {
+                    	RequestUtil.setCookie(kv[0].trim(), kv[1].trim());
+                    }
                     for (Pattern pat : ConfUtil.getPattern(FilterType.COOKIE.name())) {
                         Matcher matcher = pat.matcher(cookie.toLowerCase());
                         if (matcher.find()) {
