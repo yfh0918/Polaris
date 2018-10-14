@@ -27,7 +27,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
-import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
@@ -59,10 +58,8 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	
         	//Trace
         	if (httpObject instanceof HttpRequest) {
-        		RequestUtil.remove();
         		HttpRequest httpRequest = (HttpRequest) httpObject;
         		replaceHost(httpRequest);
-        		httpRequest.headers().set(LogUtil.TRACE_ID, UuidUtil.generateUuid());
         	}
         	
         	//进入request过滤器
@@ -78,19 +75,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             httpResponse = createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(e));
             logger.error("client's request failed", e);
             
-        } finally {
-        	
-        	//请求出错需要清空上下文
-        	if (httpResponse != null) {
-        		RequestUtil.remove();//先清空后载入
-        	} else {
-        		
-        		//请求结束的时候也要清空上下文
-            	if (httpObject instanceof HttpContent) {
-            		RequestUtil.remove();//先清空后载入
-            	}
-        	}
-        }
+        } 
         
         //返回
         return httpResponse;
@@ -100,32 +85,20 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     public void proxyToServerResolutionSucceeded(String serverHostAndPort,
                                                  InetSocketAddress resolvedRemoteAddress) {
         if (resolvedRemoteAddress == null) {
-        	try {
-                ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR)));
-        	} finally {
-        		RequestUtil.remove();
-        	}
+            ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR)));
         } 
     }
 
     //进入resoponse过滤器
     @Override
     public HttpObject proxyToClientResponse(HttpObject httpObject) {
-    	try {
-            if (httpObject instanceof HttpResponse) {
-            	HttpResponseFilterChain.doFilter(originalRequest, (HttpResponse) httpObject);
-            	if (((HttpResponse) httpObject).status().code() == HttpResponseStatus.BAD_GATEWAY.code()) {
-                    ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR)));
-            	}
-            }
-            return httpObject;
-    	} finally {
-    		
-    		//返回成功
-    		if (!(httpObject instanceof HttpResponse)) {
-    			RequestUtil.remove();
-    		}
-    	}
+        if (httpObject instanceof HttpResponse) {
+        	HttpResponseFilterChain.doFilter(originalRequest, (HttpResponse) httpObject);
+        	if (((HttpResponse) httpObject).status().code() == HttpResponseStatus.BAD_GATEWAY.code()) {
+                ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR)));
+        	}
+        }
+        return httpObject;
     }
 
     //下游的服务器连接成功
@@ -158,9 +131,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             ServerDiscoveryHandlerProvider.getInstance().connectionFail(HostResolverImpl.getSingleton().getServers(port), remoteUrl);
         } catch (Exception e) {
             logger.error("connection of proxy->server is failed", e);
-        } finally {
-        	RequestUtil.remove();
-        }
+        } 
     }
 
     //创建resoponse(中途退出错误的场合)
@@ -188,11 +159,14 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     
     //替换host
     private void replaceHost(HttpRequest httpRequest) {
+		RequestUtil.remove();
     	String host = httpRequest.headers().get(GatewayConstant.HOST);
 		httpRequest.headers().remove(GatewayConstant.HOST);
 		String uri = httpRequest.uri();
 		String port = HostResolverImpl.getSingleton().getPort(uri);
 		httpRequest.headers().add(GatewayConstant.HOST, 
 				host.replace(GatewayConstant.SERVER_PORT, port));
+		httpRequest.headers().set(LogUtil.TRACE_ID, UuidUtil.generateUuid());
+
     }
 }
