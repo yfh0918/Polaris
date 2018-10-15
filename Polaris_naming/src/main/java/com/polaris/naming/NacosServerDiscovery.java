@@ -61,7 +61,6 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 				return instance.toInetAddr();
 			}
 		} catch (Exception e) {
-			logger.error(e);
 		}
 		return null;
 	}
@@ -92,7 +91,6 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 			}
 			return urls;
 		} catch (Exception e) {
-			logger.error(e);
 		}
 		return null;
 	}
