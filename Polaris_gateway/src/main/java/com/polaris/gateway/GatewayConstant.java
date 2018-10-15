@@ -1,5 +1,7 @@
 package com.polaris.gateway;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 
@@ -29,15 +31,20 @@ public class GatewayConstant {
     public static final String X_Forwarded_For = "X-Forwarded-For";
     public static final String X_Real_IP = "X-Real-IP";
     public static final String OFF = "off";
-    public static final String GATEWAY_CACHE_NAME = "Polaris_gateway";
     
     public static final String HOST = "Host";
-    public static final String PORT = "PORT_";
     public static final String DEFAULT="default";
 
     public static String getRealIp(HttpRequest httpRequest, ChannelHandlerContext channelHandlerContext) {
         List<String> headerValues = getHeaderValues(httpRequest, X_Real_IP);
-        return headerValues.get(0);
+        String ip = headerValues.get(0);
+        if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
+            try {
+                ip = InetAddress.getLocalHost().getHostAddress();
+            } catch (UnknownHostException unknownhostexception) {
+            }
+        }
+        return ip;
     }
 
     /**
