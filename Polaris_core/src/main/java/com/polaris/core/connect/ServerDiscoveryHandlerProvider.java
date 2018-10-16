@@ -32,8 +32,9 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 	public String getUrl(String key) {
 		List<String> temp = getRemoteAddress(key);
 		for (ServerDiscoveryHandler handler : serviceLoader) {
+			
 			// 单个IP或者多IP不走注册中心
-			if (temp.get(1).contains(":")) {
+			if (isSkip(temp.get(1))) {
 				break;
 			}
 			
@@ -54,7 +55,7 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 			List<String> temp = getRemoteAddress(key);
 			
 			// 单个IP或者多IP不走注册中心
-			if (temp.get(1).contains(":")) {
+			if (isSkip(temp.get(1))) {
 				List<String> urlList = new ArrayList<>();
 				String[] ips = temp.get(1).split(",");
 				for (int i0 = 0; i0 < ips.length; i0++) {
@@ -105,6 +106,18 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 		}
         return serverList;
     }
+	private boolean isSkip(String key) {
+		if (key.toLowerCase().startsWith("www.")) {
+			return true;
+		}
+		if (key.toLowerCase().endsWith(".com") || key.toLowerCase().endsWith(".cn")) {
+			return true;
+		}
+		if (key.contains(",") || key.contains(":")) {
+			return true;
+		}
+		return false;
+	}
 	
 	public static void main(String[] args) {
 		String key = "http://localhost:8080,localhost:8081/test/tesaa/afad";
