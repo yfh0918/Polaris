@@ -50,7 +50,7 @@ public class ArgsHttpRequestFilter extends HttpRequestFilter {
                             for (Pattern pat : ConfUtil.getPattern(FilterType.ARGS.name())) {
                                 Matcher matcher = pat.matcher(kv[1].toLowerCase());
                                 if (matcher.find()) {
-                                    hackLog(logger, GatewayConstant.getRealIp(httpRequest, channelHandlerContext), FilterType.ARGS.name(), pat.toString());
+                                    hackLog(logger, GatewayConstant.getRealIp(httpRequest), FilterType.ARGS.name(), pat.toString());
                                     return true;
                                 }
                             }

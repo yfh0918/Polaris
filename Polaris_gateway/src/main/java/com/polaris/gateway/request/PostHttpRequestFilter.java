@@ -57,7 +57,7 @@ public class PostHttpRequestFilter extends HttpRequestFilter {
                         for (Pattern pattern : postPatternList) {
                             Matcher matcher = pattern.matcher(contentBody.toLowerCase());
                             if (matcher.find()) {
-                                hackLog(logger, GatewayConstant.getRealIp(originalRequest, ctx), FilterType.POST.name(), pattern.toString());
+                                hackLog(logger, GatewayConstant.getRealIp(originalRequest), FilterType.POST.name(), pattern.toString());
                                 return true;
                             }
                         }
@@ -66,7 +66,7 @@ public class PostHttpRequestFilter extends HttpRequestFilter {
                             String fileExt = fileMatcher.group(3);
                             for (Pattern pat : ConfUtil.getPattern(FilterType.FILE.name())) {
                                 if (pat.matcher(fileExt).matches()) {
-                                    hackLog(logger, GatewayConstant.getRealIp(originalRequest, ctx), FilterType.POST.name(), filePattern.toString());
+                                    hackLog(logger, GatewayConstant.getRealIp(originalRequest), FilterType.POST.name(), filePattern.toString());
                                     return true;
                                 }
                             }

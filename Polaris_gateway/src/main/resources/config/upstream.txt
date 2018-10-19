@@ -1,8 +1,6 @@
-#ENGINEV4
-/ENGINEV4=192.168.1.130:7300:1,192.168.2.130:7321:1
-
-#MMAP
-/MMAP=192.168.3.130:7300:1,192.168.4.130:7321:1
-
-#default
-default=192.168.5.130:7300
+/resource=mwclg-static
+/mwclgcommerce=mwclg-commerce
+/paygateway=mwclg-pay
+/mwclgadmin=mwclg-admin
+/mwclgapp=mwclg-app
+default=mwclg-web

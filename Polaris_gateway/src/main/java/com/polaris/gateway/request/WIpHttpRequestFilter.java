@@ -35,9 +35,9 @@ public class WIpHttpRequestFilter extends HttpRequestFilter {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
             for (Pattern pat : ConfUtil.getPattern(FilterType.WIP.name())) {
-                Matcher matcher = pat.matcher(GatewayConstant.getRealIp(httpRequest, channelHandlerContext));
+                Matcher matcher = pat.matcher(GatewayConstant.getRealIp(httpRequest));
                 if (matcher.find()) {
-                    hackLog(logger, GatewayConstant.getRealIp(httpRequest, channelHandlerContext), FilterType.WIP.name(), pat.toString());
+                    hackLog(logger, GatewayConstant.getRealIp(httpRequest), FilterType.WIP.name(), pat.toString());
                     return true;
                 }
             }

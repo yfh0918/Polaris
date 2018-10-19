@@ -7,7 +7,7 @@ public class Application {
     public static void main(String[] args) {
     	
     	//载入spring
-    	ConfClient.setAppName("Polaris_gateway");
+    	ConfClient.setAppName("mwclg-gateway");
 
     	//启动网关应用
     	ApplicationSupport.startGateway();

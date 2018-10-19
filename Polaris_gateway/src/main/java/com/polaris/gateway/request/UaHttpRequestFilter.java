@@ -34,7 +34,7 @@ public class UaHttpRequestFilter extends HttpRequestFilter {
                 for (Pattern pat : ConfUtil.getPattern(FilterType.UA.name())) {
                     Matcher matcher = pat.matcher(headerValues.get(0));
                     if (matcher.find()) {
-                        hackLog(logger, GatewayConstant.getRealIp(httpRequest, channelHandlerContext), FilterType.UA.name(), pat.toString());
+                        hackLog(logger, GatewayConstant.getRealIp(httpRequest), FilterType.UA.name(), pat.toString());
                         return true;
                     }
                 }

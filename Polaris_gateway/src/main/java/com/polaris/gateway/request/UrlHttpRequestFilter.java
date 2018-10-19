@@ -39,7 +39,7 @@ public class UrlHttpRequestFilter extends HttpRequestFilter {
             for (Pattern pat : ConfUtil.getPattern(FilterType.URL.name())) {
                 Matcher matcher = pat.matcher(url);
                 if (matcher.find()) {
-                    hackLog(logger, GatewayConstant.getRealIp(httpRequest, channelHandlerContext), FilterType.URL.name(), pat.toString());
+                    hackLog(logger, GatewayConstant.getRealIp(httpRequest), FilterType.URL.name(), pat.toString());
                     return true;
                 }
             }

@@ -51,19 +51,19 @@ public class ScannerHttpRequestFilter extends HttpRequestFilter {
             Matcher matcher3 = pattern3.matcher(httpRequest.uri());
 
             if (acunetixAspect || acunetixAspectPassword || acunetixAspectQueries) {
-                hackLog(logger, GatewayConstant.getRealIp(httpRequest, channelHandlerContext), "scanner", "Acunetix Web Vulnerability");
+                hackLog(logger, GatewayConstant.getRealIp(httpRequest), "scanner", "Acunetix Web Vulnerability");
                 return true;
             } else if (xScanMemo || xRequestMemo || xRequestManagerMemo || xWIPP) {
-                hackLog(logger, GatewayConstant.getRealIp(httpRequest, channelHandlerContext), "scanner", "HP WebInspect");
+                hackLog(logger, GatewayConstant.getRealIp(httpRequest), "scanner", "HP WebInspect");
                 return true;
             } else if (matcher1.find()) {
-                hackLog(logger, GatewayConstant.getRealIp(httpRequest, channelHandlerContext), "scanner", "Appscan");
+                hackLog(logger, GatewayConstant.getRealIp(httpRequest), "scanner", "Appscan");
                 return true;
             } else if (matcher2) {
-                hackLog(logger, GatewayConstant.getRealIp(httpRequest, channelHandlerContext), "scanner", "Bugscan");
+                hackLog(logger, GatewayConstant.getRealIp(httpRequest), "scanner", "Bugscan");
                 return true;
             } else if (matcher3.find()) {
-                hackLog(logger, GatewayConstant.getRealIp(httpRequest, channelHandlerContext), "scanner", "Netsparker");
+                hackLog(logger, GatewayConstant.getRealIp(httpRequest), "scanner", "Netsparker");
                 return true;
             }
         }

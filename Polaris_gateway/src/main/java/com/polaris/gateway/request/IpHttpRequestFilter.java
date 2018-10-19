@@ -29,12 +29,12 @@ public class IpHttpRequestFilter extends HttpRequestFilter {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
-            String realIp = GatewayConstant.getRealIp(httpRequest, channelHandlerContext);
+            String realIp = GatewayConstant.getRealIp(httpRequest);
 
             for (Pattern pat : ConfUtil.getPattern(FilterType.IP.name())) {
                 Matcher matcher = pat.matcher(realIp);
                 if (matcher.find()) {
-                    hackLog(logger, GatewayConstant.getRealIp(httpRequest, channelHandlerContext), FilterType.IP.name(), pat.toString());
+                    hackLog(logger, GatewayConstant.getRealIp(httpRequest), FilterType.IP.name(), pat.toString());
                     return true;
                 }
             }

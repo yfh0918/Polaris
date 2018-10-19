@@ -8,7 +8,6 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.polaris.comm.config.ConfClient;
 
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpMessage;
 import io.netty.handler.codec.http.HttpRequest;
 
@@ -26,7 +25,6 @@ public class GatewayConstant {
     public static int AcceptorThreads = Integer.parseInt(ConfClient.get("server.acceptorThreads"));
     public static int ClientToProxyWorkerThreads = Integer.parseInt(ConfClient.get("server.clientToProxyWorkerThreads"));
     public static int ProxyToServerWorkerThreads = Integer.parseInt(ConfClient.get("server.proxyToServerWorkerThreads"));
-    public static final String SERVER_PORT = ConfClient.get("server.port");
     public static X_Frame_Options X_Frame_Option = X_Frame_Options.SAMEORIGIN;
     public static final String X_Forwarded_For = "X-Forwarded-For";
     public static final String X_Real_IP = "X-Real-IP";
@@ -35,7 +33,7 @@ public class GatewayConstant {
     public static final String HOST = "Host";
     public static final String DEFAULT="default";
 
-    public static String getRealIp(HttpRequest httpRequest, ChannelHandlerContext channelHandlerContext) {
+    public static String getRealIp(HttpRequest httpRequest) {
         List<String> headerValues = getHeaderValues(httpRequest, X_Real_IP);
         String ip = headerValues.get(0);
         if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {

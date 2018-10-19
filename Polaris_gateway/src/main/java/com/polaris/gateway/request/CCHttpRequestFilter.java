@@ -70,7 +70,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
-            String realIp = GatewayConstant.getRealIp((DefaultHttpRequest) httpObject, channelHandlerContext);
+            String realIp = GatewayConstant.getRealIp((DefaultHttpRequest) httpObject);
             RateLimiter rateLimiter = null;
             try {
                 rateLimiter = (RateLimiter) loadingCache.get(realIp);
@@ -96,12 +96,12 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
                     return false;
                 } else {
                 	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR));
-                    hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject, channelHandlerContext), "cc", ConfClient.get("gateway.cc.rate"));
+                    hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", ConfClient.get("gateway.cc.rate"));
                     return true;
                 }
             } else {
             	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR));
-                hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject, channelHandlerContext), "cc", ConfClient.get("gateway.cc.rate"));
+                hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", ConfClient.get("gateway.cc.rate"));
                 return true;
             }
         }

@@ -90,7 +90,7 @@ public class ApplicationSupport {
         threadPoolConfiguration.withClientToProxyWorkerThreads(GatewayConstant.ClientToProxyWorkerThreads);
         threadPoolConfiguration.withProxyToServerWorkerThreads(GatewayConstant.ProxyToServerWorkerThreads);
 
-        InetSocketAddress inetSocketAddress = new InetSocketAddress(Integer.parseInt(GatewayConstant.SERVER_PORT));
+        InetSocketAddress inetSocketAddress = new InetSocketAddress(Integer.parseInt(ConfClient.get("server.port")));
         HttpProxyServerBootstrap httpProxyServerBootstrap = DefaultHttpProxyServer.bootstrap()
                 .withAddress(inetSocketAddress);
         boolean proxy_tls = !GatewayConstant.OFF.equals(ConfClient.get("server.tls"));

@@ -43,7 +43,7 @@ public class WUrlHttpRequestFilter extends HttpRequestFilter {
             for (Pattern pat : ConfUtil.getPattern(FilterType.WURL.name())) {
                 Matcher matcher = pat.matcher(url);
                 if (matcher.find()) {
-                    hackLog(logger, GatewayConstant.getRealIp(httpRequest, channelHandlerContext), FilterType.WURL.name(), pat.toString());
+                    hackLog(logger, GatewayConstant.getRealIp(httpRequest), FilterType.WURL.name(), pat.toString());
                     return true;
                 }
             }

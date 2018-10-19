@@ -42,7 +42,7 @@ public class CookieHttpRequestFilter extends HttpRequestFilter {
                     for (Pattern pat : ConfUtil.getPattern(FilterType.COOKIE.name())) {
                         Matcher matcher = pat.matcher(cookie.toLowerCase());
                         if (matcher.find()) {
-                            hackLog(logger, GatewayConstant.getRealIp(httpRequest, channelHandlerContext), FilterType.COOKIE.name(), pat.toString());
+                            hackLog(logger, GatewayConstant.getRealIp(httpRequest), FilterType.COOKIE.name(), pat.toString());
                             return true;
                         }
                     }

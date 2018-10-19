@@ -12,6 +12,7 @@ import org.littleshoot.proxy.impl.ClientToProxyConnection;
 import org.littleshoot.proxy.impl.ProxyToServerConnection;
 
 import com.polaris.comm.Constant;
+import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.dto.ResultDto;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.UuidUtil;
@@ -55,13 +56,20 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     	
         HttpResponse httpResponse = null;
         try {
-        	
-        	//Trace
+        	        	
+        	//转化HOST
         	if (httpObject instanceof HttpRequest) {
+        		RequestUtil.remove();
         		HttpRequest httpRequest = (HttpRequest) httpObject;
         		replaceHost(httpRequest);
         	}
         	
+        	//TraceId
+        	if (httpObject instanceof HttpRequest) {
+        		HttpRequest httpRequest = (HttpRequest) httpObject;
+        		httpRequest.headers().set(LogUtil.TRACE_ID, UuidUtil.generateUuid());
+        	}
+
         	//进入request过滤器
             ImmutablePair<Boolean, HttpRequestFilter> immutablePair = HttpRequestFilterChain.doFilter(originalRequest, httpObject, ctx);
             
@@ -159,14 +167,14 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     
     //替换host
     private void replaceHost(HttpRequest httpRequest) {
-		RequestUtil.remove();
     	String host = httpRequest.headers().get(GatewayConstant.HOST);
+    	if (!host.contains(":")) {
+    		host = host + ":" + ConfClient.get("server.port");
+    	}
 		httpRequest.headers().remove(GatewayConstant.HOST);
 		String uri = httpRequest.uri();
 		String port = HostResolverImpl.getSingleton().getPort(uri);
 		httpRequest.headers().add(GatewayConstant.HOST, 
-				host.replace(GatewayConstant.SERVER_PORT, port));
-		httpRequest.headers().set(LogUtil.TRACE_ID, UuidUtil.generateUuid());
-
+				host.replace(ConfClient.get("server.port"), port));
     }
 }
