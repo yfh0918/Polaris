@@ -10,8 +10,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <resteasy-version>3.0.13.Final</resteasy-version>
-        <spring_version>4.3.3.RELEASE</spring_version>
-        <tomcat-version>8.5.5</tomcat-version>
+        <spring_version>4.3.20.RELEASE</spring_version>
+        <tomcat-version>8.5.34</tomcat-version>
         <jetty-version>9.4.12.v20180830</jetty-version>
         <activiti-version>5.17.0</activiti-version>
         <hibernate-version>4.2.5.Final</hibernate-version>
@@ -279,7 +279,7 @@
 			<dependency>
 			    <groupId>cn.hutool</groupId>
 			    <artifactId>hutool-all</artifactId>
-			    <version>4.1.7</version>
+			    <version>4.1.18</version>
 			</dependency>
 
             <dependency>
@@ -639,17 +639,17 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>2.6.1</version>
+                <version>2.9.7</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
-                <version>2.6.1</version>
+                <version>2.9.7</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.6.1</version>
+                <version>2.9.7</version>
             </dependency>
 
             <!-- freemarker -->
