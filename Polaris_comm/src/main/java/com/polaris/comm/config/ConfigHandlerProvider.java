@@ -6,42 +6,30 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.pagehelper.util.StringUtil;
 import com.polaris.comm.Constant;
+import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
 
 public  class ConfigHandlerProvider {
 
-    private final ServiceLoader<ConfigHandler> serviceLoader = ServiceLoader.load(ConfigHandler.class);
+	private static final LogUtil logger = LogUtil.getInstance(ConfigHandlerProvider.class);
+	
+    private static final ServiceLoader<ConfigHandler> serviceLoader = ServiceLoader.load(ConfigHandler.class);
     
     private static final ConfigHandlerProvider INSTANCE = new ConfigHandlerProvider();
     
+	private static volatile Map<String, Map<String, String>> cacheFileMap = new ConcurrentHashMap<>();
+
     // 监听所有扩展的文件
     private ConfigHandlerProvider() {
-    	//addListener
-		String[] files = ConfigHandlerProvider.getExtensionProperties();
-		if (files != null) {
-			for (String dataId : files) {
-				addListener(dataId, new ConfListener() {
-					@Override
-					public void receive(String propertyContent) {
-						// TODO Auto-generated method stub
-						if (StringUtil.isNotEmpty(propertyContent)) {
-							String[] contents = propertyContent.split(Constant.LINE_SEP);
-							for (String content : contents) {
-								String[] keyvalue = getKeyValue(content);
-								if (keyvalue != null) {
-									ConfClient.update(keyvalue[0], keyvalue[1]);
-								}
-							}
-						}
-					}
-					
-				});
-			}
-		}
     }
 
     public static ConfigHandlerProvider getInstance() {
@@ -57,65 +45,148 @@ public  class ConfigHandlerProvider {
 	}
 	
     // 获取key,value
-	public String getValue(String key, boolean isWatch) {
+	public String getValue(String key, String fileName, boolean isWatch) {
 		
-		//配置最优先
-		try {
-			String propertyValue = PropertyUtils.readData(Constant.PROJECT_PROPERTY, key, false);
-			if (propertyValue != null) {
-				return propertyValue;
-			}
-		} catch (Exception ex) {
-			//nothing
+		// 缓存获取
+		Map<String, String> cache = cacheFileMap.get(fileName);
+		if (cache != null && cache.containsKey(key)) {
+			return cache.get(key);
 		}
 
 		// 扩展点
 		for (ConfigHandler handler : serviceLoader) {
-			String result = handler.getValue(key, isWatch);
+			String result = handler.getValue(key, fileName, isWatch);
 			if (StringUtil.isNotEmpty(result)) {
+				updateCache(key, result, fileName);
 				return result;
 			}
 		}
 		
-		// 扩展文件
-		String[] files = getExtensionProperties();
-		if (files != null) {
-			for (String filename : files) {
-				try {
-					String propertyValue = PropertyUtils.readData(Constant.CONFIG + File.separator + filename, key, false);
-					if (propertyValue != null) {
-						return propertyValue;
-					}
-				} catch (Exception ex) {
-					//nothing
-				}
-			}
-		}
-		
-		// 兜底
+		// 本地配置（默认文件）
 		try {
-			String propertyValue = PropertyUtils.readData(Constant.CONFIG,"application", "properties", key, false);
+			String propertyValue = PropertyUtils.readData(Constant.CONFIG + File.separator + fileName, key, false);
 			if (propertyValue != null) {
+				updateCache(key, propertyValue, fileName);
 				return propertyValue;
 			}
 		} catch (Exception ex) {
 			//nothing
 		}
 		
-
+		return null;
+	}
+	
+	/**
+	* 获取配置信息
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
+	public List<String> getAllProperties() {
+		//扩展点
+		for (ConfigHandler handler : serviceLoader) {
+			List<String> properties = handler.getAllPropertyFiles();
+			if (properties != null) {
+				return properties;
+			}
+			
+		}
+		
+		//从本地获取
+		List<String> allFiles = new ArrayList<>();
+		allFiles.add(Constant.DEFAULT_CONFIG_NAME);
+		String[] extendFiles = getExtensionLocalProperties();
+		if (extendFiles != null) {
+			allFiles.addAll(Arrays.asList(extendFiles));
+		}
+		return allFiles;
+	}
+	public static String[] getExtensionLocalProperties() {
+		try {
+			//从本地获取
+			String files = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_EXTENSION_PROPERTIES, false);
+			return files.split(",");
+		} catch (Exception ex) {
+			//nothing
+		}
+		return null;
+	}
+	
+	public static void removeCache(String fileName) {
+		Map<String, String> cache = cacheFileMap.get(fileName);
+		if (cache != null) {
+			logger.info(">>>>>>>>>> conf: 删除配置：file:{} ", fileName);
+			cacheFileMap.remove(fileName);
+		}
+	}
+	public static void removeCache(String key, String fileName) {
+		Map<String, String> cache = cacheFileMap.get(fileName);
+		if (cache != null) {
+			logger.info(">>>>>>>>>> conf: 删除配置：file:{}, key:{} ", fileName, key);
+			cache.remove(key);
+		}
+	}
+	
+	public static void updateCache(String fileName, Map<String, String> cache) {
+		logger.info(">>>>>>>>>> conf: 跟新配置：file:{}", fileName);
+		cacheFileMap.put(fileName, cache);
+	}
+	public static void updateCache(String key, String value, String fileName) {
+		Map<String, String> cache = cacheFileMap.get(fileName);
+		boolean isAdd = false;
+		if (cache == null) {
+			synchronized(fileName.intern()) {
+				cache = cacheFileMap.get(fileName);
+				if (cache == null) {
+					cache = new ConcurrentHashMap<>();
+					cacheFileMap.put(fileName, cache);
+					isAdd = true;
+				}
+				
+			}
+		}
+		if (cache.get(key) == null) {
+			isAdd = true;
+		}
+		if (isAdd) {
+			logger.info(">>>>>>>>>> conf: 新增配置：file:{}, key:{} , value:{}", fileName, key, value);
+		} else {
+			logger.info(">>>>>>>>>> conf: 更新配置：file:{}, key:{} , value:{}", fileName, key, value);
+		}
+		cache.put(key, value);
+	}
+	
+	public static String[] getKeyValue(String line) {
+		if (StringUtil.isNotEmpty(line)) {
+			String[] keyvalue = line.split("=");
+			if (keyvalue.length == 1) {
+				return new String[] {keyvalue[0].trim(),""};
+			}
+			return new String[] {keyvalue[0].trim(),keyvalue[1].trim()};
+		}
+		return null;
+	}
+	
+	//配置中心
+	public static String getConfigRegistryAddress() {
+		String conf = System.getProperty(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
+		if (StringUtil.isNotEmpty(conf)) {
+			return conf;
+		}
+		try {
+			String propertyValue = PropertyUtils.readData(Constant.CONFIG + File.separator + Constant.DEFAULT_CONFIG_NAME, Constant.CONFIG_REGISTRY_ADDRESS_NAME, false);
+			if (propertyValue != null) {
+				return propertyValue;
+			}
+		} catch (Exception ex) {
+			//nothing
+		}
 		return null;
 	}
 	
 	//获取整个文件的内容
-	public String getFileContent(String fileName) {
-		
-		//扩展点
-		for (ConfigHandler handler : serviceLoader) {
-			String content = handler.getFileContent(fileName);
-			if (StringUtil.isNotEmpty(content)) {
-				return content;
-			}
-		}
+	public static String getLocalFileContent(String fileName) {
 		
 		//本地文件
 		try (InputStream inputStream = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + fileName)) {
@@ -135,38 +206,6 @@ public  class ConfigHandlerProvider {
         } catch (IOException e) {
         	//nothing
         }
-		
 		return null;
 	}
-	
-	/**
-	* 获取配置信息
-	* @param 
-	* @return 
-	* @Exception 
-	* @since 
-	*/
-	public static String[] getExtensionProperties() {
-		try {
-			String files = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_EXTENSION_PROPERTIES, false);
-			if (StringUtil.isNotEmpty(files)) {
-				return files.split(",");
-			}
-		} catch (Exception ex) {
-			//nothing
-		}
-		return null;
-	}
-	
-	public static String[] getKeyValue(String line) {
-		if (StringUtil.isNotEmpty(line)) {
-			String[] keyvalue = line.split("=");
-			if (keyvalue.length == 1) {
-				return new String[] {keyvalue[0].trim(),""};
-			}
-			return new String[] {keyvalue[0].trim(),keyvalue[1].trim()};
-		}
-		return null;
-	}
-
 }

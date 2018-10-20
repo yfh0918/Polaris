@@ -1,25 +1,24 @@
 package com.polaris.gateway;
 
-import com.github.pagehelper.util.StringUtil;
-import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.config.ConfListener;
-import com.polaris.comm.config.ConfigHandlerProvider;
-import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
-import org.littleshoot.proxy.HostResolver;
-
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.littleshoot.proxy.HostResolver;
+
+import com.github.pagehelper.util.StringUtil;
+import com.polaris.comm.Constant;
+import com.polaris.comm.config.ConfClient;
+import com.polaris.comm.config.ConfListener;
+import com.polaris.comm.config.ConfigHandlerProvider;
+import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
+
 /**
  * @author:Tom.Yu Description:
  */
 public class HostResolverImpl implements HostResolver {
-
-//    private static final Logger LOGGER = LoggerFactory.getLogger(HostResolverImpl.class);
 
     private volatile static HostResolverImpl singleton;
     private volatile Map<String, String> serverMap = new ConcurrentHashMap<>();
@@ -50,14 +49,21 @@ public class HostResolverImpl implements HostResolver {
 
     //构造函数（单例）
     private HostResolverImpl() {
-        loadUpstream(ConfClient.getFileContent(UPSTREAM));//载入配置文件
+        
         ConfClient.addListener(UPSTREAM, new ConfListener() {
             @Override
             public void receive(String content) {
                 loadUpstream(content);
             }
-
         });
+        try {
+			Thread.sleep(100);
+			if (serverMap.size() == 0) {
+		        loadUpstream(ConfigHandlerProvider.getLocalFileContent(UPSTREAM));//载入配置文件
+			}
+		} catch (InterruptedException e) {
+			//nothing
+		}
     }
 
     public static HostResolverImpl getSingleton() {

@@ -1,11 +1,8 @@
 package com.polaris.comm.config;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 
 import com.polaris.comm.Constant;
-import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.StringUtil;
 
 /**
 *
@@ -21,25 +18,7 @@ import com.polaris.comm.util.StringUtil;
 *
 */
 public class ConfClient {
-	private static final LogUtil logger = LogUtil.getInstance(ConfClient.class);
-	private static Map<String, String> cache = new ConcurrentHashMap<>();
 
-	public static void update(String key, String value) {
-		if (StringUtil.isNotEmpty(key)) {
-			String content = cache.get(key);
-			if (content!=null) {
-				if (!content.equals(value)) {
-					logger.info(">>>>>>>>>> conf: 更新配置: [{}:{}]", new Object[]{key, value});
-					cache.put(key, value);
-				}
-			} else {
-				logger.info(">>>>>>>>>> conf: 初始化配置: [{}:{}]", new Object[]{key, value});
-				cache.put(key, value);
-			}
-		}
-	}
-
-	
 	/**
 	* 获取配置信息
 	* @param 
@@ -49,39 +28,18 @@ public class ConfClient {
 	*/
 	public static String get(String key, String defaultVal, boolean isWatch) {
 		
-		//从缓存中存在直接缓存中获取
-		String value = cache.get(key);
-		if (value != null) {
-			return value;
+		//获取所有文件
+		List<String> allProperties = ConfigHandlerProvider.getInstance().getAllProperties();
+		for (String file : allProperties) {
+			String value = ConfigHandlerProvider.getInstance().getValue(key, file, isWatch);
+			if (value != null) {
+				return value;
+			}
 		}
-		
-		//扩展配置点获取信息 
-		String data = ConfigHandlerProvider.getInstance().getValue(key, isWatch);
-		if (data!=null) {
-			update(key, data);//更新缓存
-			return data;
-		}
-
-		//默认值
-		if (StringUtil.isNotEmpty(defaultVal)) {
-			update(key, defaultVal);
-		} else {
-			logger.warn(">>>>>>>>>> conf: 参数{}获取失败", key);
-		}
-		
 		return defaultVal;
 	}
 	
-	/**
-	* 获取配置文件内容
-	* @param 
-	* @return 
-	* @Exception 
-	* @since 
-	*/
-	public static String getFileContent(String fileName) {
-		return ConfigHandlerProvider.getInstance().getFileContent(fileName);
-	}
+
 	//增加文件是否修改的监听
 	public static void addListener(String fileName, ConfListener listener) {
 		ConfigHandlerProvider.getInstance().addListener(fileName, listener);
@@ -105,40 +63,21 @@ public class ConfClient {
 		return get(key, defaultValue, true);
 	}
 	
-	/**
-	* 删除配置信息
-	* @param 
-	* @return 
-	* @Exception 
-	* @since 
-	*/
-	public static boolean remove(String key) {
-		if (StringUtil.isNotEmpty(key)) {
-			if (cache.get(key)!=null) {
-				logger.info(">>>>>>>>>> conf: 删除配置：key ", key);
-				cache.remove(key);
-				return true;
-			}
-		}
-		return false;
-	}
-	
+	@SuppressWarnings("static-access")
 	public static void setAppName(String inputAppName) {
-		cache.put(Constant.PROJECT_NAME, inputAppName);
+		ConfigHandlerProvider.getInstance().updateCache(Constant.PROJECT_NAME, inputAppName, Constant.DEFAULT_CONFIG_NAME);
 	}
 	public static String getAppName() {
-		return cache.get(Constant.PROJECT_NAME) == null ? "" : cache.get(Constant.PROJECT_NAME);
-	}
-	public static String getConfigRegistryAddress() {
-		return cache.get(Constant.CONFIG_REGISTRY_ADDRESS_NAME) == null ? "" : cache.get(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
+		return get(Constant.PROJECT_NAME) == null ? "" : get(Constant.PROJECT_NAME);
 	}
 	public static String getNameSpace() {
-		return cache.get(Constant.PROJECR_NAMESPACE_NAME) == null ? "" : cache.get(Constant.PROJECR_NAMESPACE_NAME);
+		return get(Constant.PROJECR_NAMESPACE_NAME) == null ? "" : get(Constant.PROJECR_NAMESPACE_NAME);
 	}
 	public static String getCluster() {
-		return cache.get(Constant.PROJECR_CLUSTER_NAME) == null ? "" : cache.get(Constant.PROJECR_CLUSTER_NAME);
+		return get(Constant.PROJECR_CLUSTER_NAME) == null ? "" : get(Constant.PROJECR_CLUSTER_NAME);
 	}
 	public static String getEnv() {
-		return cache.get(Constant.PROJECT_ENV_NAME) == null ? "" : cache.get(Constant.PROJECT_ENV_NAME);
+		return get(Constant.PROJECT_ENV_NAME) == null ? "" : get(Constant.PROJECT_ENV_NAME);
 	}
+	
 }

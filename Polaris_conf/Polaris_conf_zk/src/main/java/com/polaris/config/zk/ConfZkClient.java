@@ -14,7 +14,7 @@ import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
-import com.polaris.comm.config.ConfClient;
+import com.polaris.comm.config.ConfigHandlerProvider;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.StringUtil;
 
@@ -73,7 +73,8 @@ public class ConfZkClient implements Watcher {
 								zooKeeper = null;
 							}
 						}
-						zooKeeper = new ZooKeeper(ConfClient.getConfigRegistryAddress(), 20000, new Watcher() {
+						zooKeeper = new ZooKeeper(ConfigHandlerProvider.getConfigRegistryAddress(), 20000, new Watcher() {
+							@SuppressWarnings("static-access")
 							@Override
 							public void process(WatchedEvent watchedEvent) {
 								try {
@@ -95,11 +96,11 @@ public class ConfZkClient implements Watcher {
 										// add One-time trigger
 										zooKeeper.exists(path, true);
 										if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
-											ConfClient.remove(key);
+											ConfigHandlerProvider.getInstance().removeCache(key, Constant.DEFAULT_CONFIG_NAME);
 										} else if (watchedEvent.getType() == Event.EventType.NodeDataChanged || 
 												watchedEvent.getType() == Event.EventType.NodeCreated) {
 											String data = getPathData(path, false);
-											ConfClient.update(key, data);
+											ConfigHandlerProvider.getInstance().updateCache(key, data, Constant.DEFAULT_CONFIG_NAME);
 										} 
 									}
 								} catch (KeeperException e) {
@@ -138,7 +139,7 @@ public class ConfZkClient implements Watcher {
     private static void setZkAddress() {
     	
     	//配置文件
-    	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
+    	if (StringUtil.isEmpty(ConfigHandlerProvider.getConfigRegistryAddress())) {
     		throw new NullPointerException(Constant.CONFIG_REGISTRY_ADDRESS_NAME + " is null");
     	}
     }

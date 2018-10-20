@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
+import com.polaris.comm.config.ConfigHandlerProvider;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
 import com.polaris.comm.util.StringUtil;
@@ -36,83 +36,54 @@ abstract public class MainSupport {
     * @Exception 
     * @since 
     */
+	@SuppressWarnings("static-access")
 	public static void iniParameter() {
-		
-		//配置中心
-		String conf = System.getProperty(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
-		if (StringUtil.isEmpty(conf)) {
-			try {
-				conf = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.CONFIG_REGISTRY_ADDRESS_NAME, false);
-			} catch (Exception e) {}
-		}
-		if (StringUtil.isNotEmpty(conf)) {
-			ConfClient.update(Constant.CONFIG_REGISTRY_ADDRESS_NAME, conf);
-		}
-		
+				
 		//环境（production, pre,dev,pre etc）
 		String env = System.getProperty(Constant.PROJECT_ENV_NAME);
-		if (StringUtil.isEmpty(env)) {
-			try {
-				env = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_ENV_NAME, false);
-			} catch (Exception e) {}
-		}
 		if (StringUtil.isNotEmpty(env)) {
-			ConfClient.update(Constant.PROJECT_ENV_NAME, env);
+			ConfigHandlerProvider.getInstance().updateCache(Constant.PROJECT_ENV_NAME, env, Constant.DEFAULT_CONFIG_NAME);
 		} 
 		
 		//工程名称
 		String project = System.getProperty(Constant.PROJECT_NAME);
-		if (StringUtil.isEmpty(project)) {
-			try {
-				project = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_NAME, false);
-			} catch (Exception e) {}
-		}
 		if (StringUtil.isNotEmpty(project)) {
-			ConfClient.update(Constant.PROJECT_NAME, project);
+			ConfigHandlerProvider.getInstance().updateCache(Constant.PROJECT_NAME, project, Constant.DEFAULT_CONFIG_NAME);
 		}
 		
 		//命名空间
 		String namespace = System.getProperty(Constant.PROJECR_NAMESPACE_NAME);
-		if (StringUtil.isEmpty(project)) {
-			try {
-				namespace = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECR_NAMESPACE_NAME, false);
-			} catch (Exception e) {}
-		}
 		if (StringUtil.isNotEmpty(namespace)) {
-			ConfClient.update(Constant.PROJECR_NAMESPACE_NAME, namespace);
+			ConfigHandlerProvider.getInstance().updateCache(Constant.PROJECR_NAMESPACE_NAME, namespace, Constant.DEFAULT_CONFIG_NAME);
 		} 
 		
 		//集群名称
 		String cluster = System.getProperty(Constant.PROJECR_CLUSTER_NAME);
-		if (StringUtil.isEmpty(project)) {
-			try {
-				cluster = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECR_CLUSTER_NAME, false);
-			} catch (Exception e) {}
-		}
 		if (StringUtil.isNotEmpty(cluster)) {
-			ConfClient.update(Constant.PROJECR_CLUSTER_NAME, cluster);
+			ConfigHandlerProvider.getInstance().updateCache(Constant.PROJECR_CLUSTER_NAME, cluster, Constant.DEFAULT_CONFIG_NAME);
 		} 
 		
 		//服务端口
 		String serverport = System.getProperty(Constant.SERVER_PORT_NAME);
 		if (StringUtil.isNotEmpty(serverport)) {
-			ConfClient.update(Constant.SERVER_PORT_NAME, serverport);
+			ConfigHandlerProvider.getInstance().updateCache(Constant.SERVER_PORT_NAME, serverport, Constant.DEFAULT_CONFIG_NAME);
 		}
+		
 		//注册中心
 		String name = System.getProperty(Constant.NAMING_REGISTRY_ADDRESS_NAME);
 		if (StringUtil.isNotEmpty(name)) {
-			ConfClient.update(Constant.NAMING_REGISTRY_ADDRESS_NAME, name);
+			ConfigHandlerProvider.getInstance().updateCache(Constant.NAMING_REGISTRY_ADDRESS_NAME, name, Constant.DEFAULT_CONFIG_NAME);
 		}
 		
 		//dubbo服务端口
 		String dubboport = System.getProperty(Constant.DUBBO_PROTOCOL_PORT_NAME);
 		if (StringUtil.isNotEmpty(dubboport)) {
-			ConfClient.update(Constant.DUBBO_PROTOCOL_PORT_NAME, dubboport);
+			ConfigHandlerProvider.getInstance().updateCache(Constant.DUBBO_PROTOCOL_PORT_NAME, dubboport, Constant.DEFAULT_CONFIG_NAME);
 		}
 		//dubbo注册中心
 		String dubboname = System.getProperty(Constant.DUBBO_REGISTRY_ADDRESS_NAME);
 		if (StringUtil.isNotEmpty(dubboname)) {
-			ConfClient.update(Constant.DUBBO_REGISTRY_ADDRESS_NAME, dubboname);
+			ConfigHandlerProvider.getInstance().updateCache(Constant.DUBBO_REGISTRY_ADDRESS_NAME, dubboname, Constant.DEFAULT_CONFIG_NAME);
 		}
 		
     	// 启动字符集
