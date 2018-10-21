@@ -38,7 +38,7 @@ public class ConfNacosClient {
 	}
 	private ConfNacosClient() {
 		//配置文件
-    	if (StringUtil.isEmpty(ConfigHandlerProvider.getConfigRegistryAddress())) {
+    	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
     		return;
     	}
     	iniConfNacos();
@@ -46,7 +46,7 @@ public class ConfNacosClient {
 	
 	private void iniConfNacos() {
 		Properties properties = new Properties();
-		properties.put(PropertyKeyConst.SERVER_ADDR, ConfigHandlerProvider.getConfigRegistryAddress());
+		properties.put(PropertyKeyConst.SERVER_ADDR, ConfClient.getConfigRegistryAddress());
 		if (StringUtil.isNotEmpty(ConfClient.getNameSpace())) {
 			properties.put(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
 		}
@@ -54,12 +54,6 @@ public class ConfNacosClient {
 		try {
 			configService = NacosFactory.createConfigService(properties);
 	
-			//扩展文件
-			String[] extendFiles = ConfigHandlerProvider.getExtensionLocalProperties();
-			if (extendFiles != null) {
-				loadExtendFiles(extendFiles);
-			}
-
 			//application.properties
 			addListener(Constant.DEFAULT_CONFIG_NAME, new ConfListener() {
 				@Override
@@ -89,10 +83,17 @@ public class ConfNacosClient {
 					}
 				}
 			});
+			
+			//扩展文件
+			String[] extendFiles = ConfigHandlerProvider.getExtensionLocalProperties();
+			if (extendFiles != null) {
+				loadExtendFiles(extendFiles);
+			}
+
 		
 		} catch (NacosException e) {
 			logger.error(e);
-			throw new IllegalArgumentException(Constant.CONFIG_REGISTRY_ADDRESS_NAME + ":"+ConfigHandlerProvider.getConfigRegistryAddress()+" is not correct ");
+			throw new IllegalArgumentException(Constant.CONFIG_REGISTRY_ADDRESS_NAME + ":"+ConfClient.getConfigRegistryAddress()+" is not correct ");
 		}
 	}
 	
@@ -117,7 +118,7 @@ public class ConfNacosClient {
 					}
 				}
 			});
-	 }
+	    }
 	}
 	
 	//获取所有的配置文件
@@ -128,7 +129,7 @@ public class ConfNacosClient {
 	// 获取key,value
 	public String getConfig(String key, String fileName) {
 		//配置文件
-    	if (StringUtil.isEmpty(ConfigHandlerProvider.getConfigRegistryAddress())) {
+    	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
     		return null;
     	}
     	if (configService == null) {
@@ -161,7 +162,7 @@ public class ConfNacosClient {
 	// 监听需要关注的内容
 	public void addListener(String dataId, ConfListener listener) {
 		//配置文件
-    	if (StringUtil.isEmpty(ConfigHandlerProvider.getConfigRegistryAddress())) {
+    	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
     		return;
     	}
     	if (configService == null) {

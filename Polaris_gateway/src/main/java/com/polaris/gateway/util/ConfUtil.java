@@ -33,15 +33,10 @@ public class ConfUtil {
     			}
         		
         	});
-        	try {
-    			Thread.sleep(100);
-    			if (confMap.get(filterType.name()) == null) {
-                	String content = ConfigHandlerProvider.getLocalFileContent(filterType.getFileName());
-                	loadPatters(filterType.name(), content);
-    			}
-    		} catch (InterruptedException e) {
-    			//nothing
-    		}
+			if (confMap.get(filterType.name()) == null) {
+            	String content = ConfigHandlerProvider.getLocalFileContent(filterType.getFileName());
+            	loadPatters(filterType.name(), content);
+			}
     	}
     }
 

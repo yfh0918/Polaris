@@ -56,13 +56,8 @@ public class HostResolverImpl implements HostResolver {
                 loadUpstream(content);
             }
         });
-        try {
-			Thread.sleep(100);
-			if (serverMap.size() == 0) {
-		        loadUpstream(ConfigHandlerProvider.getLocalFileContent(UPSTREAM));//载入配置文件
-			}
-		} catch (InterruptedException e) {
-			//nothing
+		if (serverMap.size() == 0) {
+	        loadUpstream(ConfigHandlerProvider.getLocalFileContent(UPSTREAM));//载入配置文件
 		}
     }
 

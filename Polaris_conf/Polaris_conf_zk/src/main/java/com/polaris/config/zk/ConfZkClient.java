@@ -14,6 +14,7 @@ import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
+import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.config.ConfigHandlerProvider;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.StringUtil;
@@ -73,7 +74,7 @@ public class ConfZkClient implements Watcher {
 								zooKeeper = null;
 							}
 						}
-						zooKeeper = new ZooKeeper(ConfigHandlerProvider.getConfigRegistryAddress(), 20000, new Watcher() {
+						zooKeeper = new ZooKeeper(ConfClient.getConfigRegistryAddress(), 20000, new Watcher() {
 							@SuppressWarnings("static-access")
 							@Override
 							public void process(WatchedEvent watchedEvent) {
@@ -139,7 +140,7 @@ public class ConfZkClient implements Watcher {
     private static void setZkAddress() {
     	
     	//配置文件
-    	if (StringUtil.isEmpty(ConfigHandlerProvider.getConfigRegistryAddress())) {
+    	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
     		throw new NullPointerException(Constant.CONFIG_REGISTRY_ADDRESS_NAME + " is null");
     	}
     }

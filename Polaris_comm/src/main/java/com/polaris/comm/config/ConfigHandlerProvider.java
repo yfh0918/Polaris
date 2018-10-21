@@ -167,24 +167,7 @@ public  class ConfigHandlerProvider {
 		}
 		return null;
 	}
-	
-	//配置中心
-	public static String getConfigRegistryAddress() {
-		String conf = System.getProperty(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
-		if (StringUtil.isNotEmpty(conf)) {
-			return conf;
-		}
-		try {
-			String propertyValue = PropertyUtils.readData(Constant.CONFIG + File.separator + Constant.DEFAULT_CONFIG_NAME, Constant.CONFIG_REGISTRY_ADDRESS_NAME, false);
-			if (propertyValue != null) {
-				return propertyValue;
-			}
-		} catch (Exception ex) {
-			//nothing
-		}
-		return null;
-	}
-	
+		
 	//获取整个文件的内容
 	public static String getLocalFileContent(String fileName) {
 		
@@ -208,4 +191,5 @@ public  class ConfigHandlerProvider {
         }
 		return null;
 	}
+
 }
