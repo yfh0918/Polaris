@@ -49,16 +49,17 @@ public class HostResolverImpl implements HostResolver {
 
     //构造函数（单例）
     private HostResolverImpl() {
-        
+       
+    	//先获取
+    	loadUpstream(ConfClient.getConfigValue(UPSTREAM));
+    	
+    	//后监听
         ConfClient.addListener(UPSTREAM, new ConfListener() {
             @Override
             public void receive(String content) {
                 loadUpstream(content);
             }
         });
-		if (serverMap.size() == 0) {
-	        loadUpstream(ConfigHandlerProvider.getLocalFileContent(UPSTREAM));//载入配置文件
-		}
     }
 
     public static HostResolverImpl getSingleton() {

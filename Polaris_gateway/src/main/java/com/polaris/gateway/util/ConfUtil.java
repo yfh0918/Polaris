@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 import com.polaris.comm.Constant;
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.config.ConfListener;
-import com.polaris.comm.config.ConfigHandlerProvider;
 import com.polaris.comm.util.StringUtil;
 import com.polaris.gateway.request.FilterType;
 
@@ -26,6 +25,11 @@ public class ConfUtil {
     static {
     	//第一次加载
     	for (FilterType filterType : FilterType.values()) {
+    		
+    		//先获取
+    		loadPatters(filterType.name(), ConfClient.getConfigValue(filterType.getFileName()));
+    		
+    		//后监听
         	ConfClient.addListener(filterType.getFileName(), new ConfListener() {
     			@Override
     			public void receive(String content) {
@@ -33,10 +37,6 @@ public class ConfUtil {
     			}
         		
         	});
-			if (confMap.get(filterType.name()) == null) {
-            	String content = ConfigHandlerProvider.getLocalFileContent(filterType.getFileName());
-            	loadPatters(filterType.name(), content);
-			}
     	}
     }
 
