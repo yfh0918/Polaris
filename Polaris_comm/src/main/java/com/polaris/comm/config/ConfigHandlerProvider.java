@@ -33,6 +33,15 @@ public  class ConfigHandlerProvider {
         return INSTANCE;
     }
 	
+    //获取文件
+	public String getConfig(String fileName) {
+		//扩展点
+		for (ConfigHandler handler : serviceLoader) {
+			return handler.getConfig(fileName);
+		}
+		return getLocalFileContent(fileName);
+	}
+	
 	//监听
 	public void addListener(String fileName, ConfListener listener) {
 		//扩展点

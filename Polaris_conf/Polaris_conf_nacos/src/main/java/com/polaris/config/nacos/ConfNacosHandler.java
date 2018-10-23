@@ -11,6 +11,11 @@ public class ConfNacosHandler implements ConfigHandler {
 	}
 	
 	@Override
+	public String getConfig(String fileName) {
+		return ConfNacosClient.getInstance().getConfig(fileName);
+	}
+
+	@Override
 	public void addListener(String fileName, ConfListener listener) {
 		ConfNacosClient.getInstance().addListener(fileName, listener);
 	}

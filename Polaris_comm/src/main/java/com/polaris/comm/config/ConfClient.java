@@ -63,6 +63,11 @@ public class ConfClient {
 	}
 	
 
+	//获取配置文件
+	public static String getConfigValue(String fileName) {
+		return ConfigHandlerProvider.getInstance().getConfig(fileName);
+	}
+
 	//增加文件是否修改的监听
 	public static void addListener(String fileName, ConfListener listener) {
 		ConfigHandlerProvider.getInstance().addListener(fileName, listener);

@@ -118,6 +118,31 @@ public class ConfNacosClient {
 		return null;
 	}
 	
+	// 获取文件内容
+	public String getConfig(String fileName) {
+		//配置文件
+    	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
+    		return null;
+    	}
+    	if (configService == null) {
+    		synchronized(this) {
+    			if (configService == null) {
+    				iniConfNacos();
+    			}
+    		}
+    	}
+    	
+		String group = getGroup();
+		try {
+			String propertyContent = configService.getConfig(fileName, group, 5000);
+			return propertyContent;
+
+		} catch (NacosException e) {
+			logger.error(e);
+		}
+		return null;
+	}
+	
 	// 监听需要关注的内容
 	public void addListener(String dataId, ConfListener listener) {
 		//配置文件
