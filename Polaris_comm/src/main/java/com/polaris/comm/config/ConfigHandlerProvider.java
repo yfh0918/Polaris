@@ -37,7 +37,10 @@ public  class ConfigHandlerProvider {
 	public String getConfig(String fileName) {
 		//扩展点
 		for (ConfigHandler handler : serviceLoader) {
-			return handler.getConfig(fileName);
+			String config = handler.getConfig(fileName);
+			if (StringUtil.isNotEmpty(config)) {
+				return config;
+			}
 		}
 		return getLocalFileContent(fileName);
 	}
