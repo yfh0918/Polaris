@@ -19,7 +19,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	private static final LogUtil logger = LogUtil.getInstance(NacosServerDiscovery.class, false);
 	private volatile NamingService naming;
 	public NacosServerDiscovery() {
-    	if (StringUtil.isEmpty(ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false))) {
+    	if (StringUtil.isEmpty(ConfClient.getNamingRegistryAddress())) {
     		return;
     	}
     	iniNacosServer();
@@ -27,7 +27,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	
 	private void iniNacosServer() {
 		Properties properties = new Properties();
-        properties.setProperty(PropertyKeyConst.SERVER_ADDR, ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false));
+        properties.setProperty(PropertyKeyConst.SERVER_ADDR, ConfClient.getNamingRegistryAddress());
         if (StringUtil.isNotEmpty(ConfClient.getNameSpace())) {
             properties.setProperty(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
         }
@@ -35,7 +35,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 			naming = NamingFactory.createNamingService(properties);
 		} catch (Exception e) {
 			logger.error(e);
-			throw new IllegalArgumentException(Constant.NAMING_REGISTRY_ADDRESS_NAME + ":"+ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false) + " is not correct ");
+			throw new IllegalArgumentException(Constant.NAMING_REGISTRY_ADDRESS_NAME + ":"+ConfClient.getNamingRegistryAddress() + " is not correct ");
 		}
 	}
 	
@@ -43,7 +43,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	public String getUrl(String key) {
 		
 		//判断是否可以获取有效URL
-		if (StringUtil.isEmpty(ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false))) {
+		if (StringUtil.isEmpty(ConfClient.getNamingRegistryAddress())) {
 			return null;
 		}
 		if (naming == null) {
@@ -69,7 +69,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	public List<String> getAllUrls(String key) {
 		
 		//判断是否可以获取有效URL
-		if (StringUtil.isEmpty(ConfClient.get(Constant.NAMING_REGISTRY_ADDRESS_NAME, false))) {
+		if (StringUtil.isEmpty(ConfClient.getNamingRegistryAddress())) {
 			return null;
 		}
 		if (naming == null) {

@@ -6,9 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,12 +50,14 @@ public  class ConfigHandlerProvider {
 			return cache.get(key);
 		}
 
-		// 扩展点
-		for (ConfigHandler handler : serviceLoader) {
-			String result = handler.getValue(key, fileName, isWatch);
-			if (StringUtil.isNotEmpty(result)) {
-				updateCache(key, result, fileName);
-				return result;
+		// 扩展点(application.properties除外)
+		if (!Constant.DEFAULT_CONFIG_NAME.equals(fileName)) {
+			for (ConfigHandler handler : serviceLoader) {
+				String result = handler.getValue(key, fileName, isWatch);
+				if (StringUtil.isNotEmpty(result)) {
+					updateCache(key, result, fileName);
+					return result;
+				}
 			}
 		}
 		
@@ -83,26 +82,7 @@ public  class ConfigHandlerProvider {
 	* @Exception 
 	* @since 
 	*/
-	public List<String> getAllProperties() {
-		//扩展点
-		for (ConfigHandler handler : serviceLoader) {
-			List<String> properties = handler.getAllPropertyFiles();
-			if (properties != null) {
-				return properties;
-			}
-			
-		}
-		
-		//从本地获取
-		List<String> allFiles = new ArrayList<>();
-		allFiles.add(Constant.DEFAULT_CONFIG_NAME);
-		String[] extendFiles = getExtensionLocalProperties();
-		if (extendFiles != null) {
-			allFiles.addAll(Arrays.asList(extendFiles));
-		}
-		return allFiles;
-	}
-	public static String[] getExtensionLocalProperties() {
+	public static String[] getExtensionProperties() {
 		try {
 			//从本地获取
 			String files = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_EXTENSION_PROPERTIES, false);

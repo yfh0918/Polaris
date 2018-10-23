@@ -39,18 +39,11 @@ abstract public class MainSupport {
 	@SuppressWarnings("static-access")
 	public static void iniParameter() {
 		
-		//配置中心(只能通过 -D或者application.properties文件配置)
+		//配置中心
 		String config = System.getProperty(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
-		if (StringUtil.isEmpty(config)) {
-			try {
-				String propertyValue = PropertyUtils.readData(Constant.CONFIG + File.separator + Constant.DEFAULT_CONFIG_NAME, Constant.CONFIG_REGISTRY_ADDRESS_NAME, false);
-				if (propertyValue != null) {
-					System.setProperty(Constant.CONFIG_REGISTRY_ADDRESS_NAME, propertyValue);
-				}
-			} catch (Exception ex) {
-				//nothing
-			}
-		}
+		if (StringUtil.isNotEmpty(config)) {
+			ConfigHandlerProvider.getInstance().updateCache(Constant.PROJECT_ENV_NAME, config, Constant.DEFAULT_CONFIG_NAME);
+		} 
 		
 		//环境（production, pre,dev,pre etc）
 		String env = System.getProperty(Constant.PROJECT_ENV_NAME);

@@ -1,8 +1,6 @@
 package com.polaris.config.nacos;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
@@ -24,7 +22,6 @@ public class ConfNacosClient {
 	private static final LogUtil logger = LogUtil.getInstance(ConfNacosClient.class, false);
 	private volatile static ConfNacosClient INSTANCE;
 	private volatile ConfigService configService;
-	private volatile List<String> allPropertyFiles;
 
 	public static ConfNacosClient getInstance(){
 		if (INSTANCE == null) {
@@ -50,42 +47,11 @@ public class ConfNacosClient {
 		if (StringUtil.isNotEmpty(ConfClient.getNameSpace())) {
 			properties.put(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
 		}
-		allPropertyFiles = new ArrayList<>();
 		try {
 			configService = NacosFactory.createConfigService(properties);
-	
-			//application.properties
-			addListener(Constant.DEFAULT_CONFIG_NAME, new ConfListener() {
-				@Override
-				public void receive(String propertyContent) {
-					// TODO Auto-generated method stub
-					if (StringUtil.isNotEmpty(propertyContent)) {
-						String[] contents = propertyContent.split(Constant.LINE_SEP);
-						Map<String, String> cache = new HashMap<>();
-						for (String content : contents) {
-							String[] keyvalue = ConfigHandlerProvider.getKeyValue(content);
-							if (keyvalue != null) {
-								cache.put(keyvalue[0], keyvalue[1]);
-							}
-						}
-						ConfigHandlerProvider.updateCache(Constant.DEFAULT_CONFIG_NAME, cache);
-						if (!allPropertyFiles.contains(Constant.DEFAULT_CONFIG_NAME)) {
-							allPropertyFiles.add(Constant.DEFAULT_CONFIG_NAME);
-						}
-						
-						//先获取自己
-						String extendCacheNames = cache.get(Constant.PROJECT_EXTENSION_PROPERTIES);
-						String[] extendFiles;
-						if (StringUtil.isEmpty(extendCacheNames)) {
-							extendFiles = ConfigHandlerProvider.getExtensionLocalProperties();
-							loadExtendFiles(extendFiles);
-						} 
-					}
-				}
-			});
 			
 			//扩展文件
-			String[] extendFiles = ConfigHandlerProvider.getExtensionLocalProperties();
+			String[] extendFiles = ConfigHandlerProvider.getExtensionProperties();
 			if (extendFiles != null) {
 				loadExtendFiles(extendFiles);
 			}
@@ -112,20 +78,13 @@ public class ConfNacosClient {
 							}
 						}
 						ConfigHandlerProvider.updateCache(file, cache);
-						if (!allPropertyFiles.contains(file)) {
-							allPropertyFiles.add(file);
-						}
 					}
 				}
 			});
 	    }
 	}
 	
-	//获取所有的配置文件
-	public List<String> getAllPropertyFiles() {
-		return allPropertyFiles;
-	}
-	
+
 	// 获取key,value
 	public String getConfig(String key, String fileName) {
 		//配置文件

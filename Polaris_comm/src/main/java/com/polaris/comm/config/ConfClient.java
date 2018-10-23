@@ -1,7 +1,5 @@
 package com.polaris.comm.config;
 
-import java.util.List;
-
 import com.polaris.comm.Constant;
 import com.polaris.comm.util.StringUtil;
 
@@ -19,6 +17,7 @@ import com.polaris.comm.util.StringUtil;
 *
 */
 public class ConfClient {
+	
 	
 	/**
 	* 获取配置信息
@@ -39,10 +38,16 @@ public class ConfClient {
 	@SuppressWarnings("static-access")
 	public static String get(String key, String defaultVal, boolean isWatch) {
 		
-		//获取所有文件
-		List<String> allProperties = ConfigHandlerProvider.getInstance().getAllProperties();
+		//application.properties
+		String value = ConfigHandlerProvider.getInstance().getValue(key, Constant.DEFAULT_CONFIG_NAME, isWatch);
+		if (value != null) {
+			return value;
+		}
+		
+		//扩展文件
+		String[] allProperties = ConfigHandlerProvider.getInstance().getExtensionProperties();
 		for (String file : allProperties) {
-			String value = ConfigHandlerProvider.getInstance().getValue(key, file, isWatch);
+			value = ConfigHandlerProvider.getInstance().getValue(key, file, isWatch);
 			if (value != null) {
 				return value;
 			}
@@ -68,19 +73,29 @@ public class ConfClient {
 		ConfigHandlerProvider.getInstance().updateCache(Constant.PROJECT_NAME, inputAppName, Constant.DEFAULT_CONFIG_NAME);
 	}
 	public static String getAppName() {
-		return get(Constant.PROJECT_NAME) == null ? "" : get(Constant.PROJECT_NAME);
+		String appName = ConfigHandlerProvider.getInstance().getValue(Constant.PROJECT_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		return appName == null ? "" :appName;
 	}
 	public static String getConfigRegistryAddress() {
-		return System.getProperty(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
+		String config = ConfigHandlerProvider.getInstance().getValue(Constant.CONFIG_REGISTRY_ADDRESS_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		return config == null ? "" :config;
 	}
 	public static String getNameSpace() {
-		return get(Constant.PROJECR_NAMESPACE_NAME) == null ? "" : get(Constant.PROJECR_NAMESPACE_NAME);
+		String namespace = ConfigHandlerProvider.getInstance().getValue(Constant.PROJECR_NAMESPACE_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		return namespace == null ? "" :namespace;
 	}
 	public static String getCluster() {
-		return get(Constant.PROJECR_CLUSTER_NAME) == null ? "" : get(Constant.PROJECR_CLUSTER_NAME);
+		String cluster = ConfigHandlerProvider.getInstance().getValue(Constant.PROJECR_CLUSTER_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		return cluster == null ? "" :cluster;
 	}
 	public static String getEnv() {
-		return get(Constant.PROJECT_ENV_NAME) == null ? "" : get(Constant.PROJECT_ENV_NAME);
+		String env = ConfigHandlerProvider.getInstance().getValue(Constant.PROJECT_ENV_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		return env == null ? "" :env;
 	}
+	public static String getNamingRegistryAddress() {
+		String naming = ConfigHandlerProvider.getInstance().getValue(Constant.NAMING_REGISTRY_ADDRESS_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		return naming == null ? "" :naming;
+	}
+
 	
 }
