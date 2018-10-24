@@ -101,6 +101,18 @@ public class ConfClient {
 		String naming = ConfigHandlerProvider.getInstance().getValue(Constant.NAMING_REGISTRY_ADDRESS_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		return naming == null ? "" :naming;
 	}
-
-	
+	public static long getUuidWorkId() {
+		String workId = ConfigHandlerProvider.getInstance().getValue(Constant.UUID_WORKID, Constant.DEFAULT_CONFIG_NAME, false);
+		if (StringUtil.isEmpty(workId)) {
+			return 0l;
+		}
+		return Long.parseLong(workId.trim());
+	}
+	public static long getUuidDatacenterId() {
+		String datacenterId = ConfigHandlerProvider.getInstance().getValue(Constant.UUID_DATACENTERID, Constant.DEFAULT_CONFIG_NAME, false);
+		if (StringUtil.isEmpty(datacenterId)) {
+			return 0l;
+		}
+		return Long.parseLong(datacenterId.trim());
+	}	
 }

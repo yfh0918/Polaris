@@ -32,9 +32,7 @@ public class UuidUtil {
      * @return
      */
     public static long generateLongUuid() {
-    	long workerId = Long.parseLong(ConfClient.get("uuid.wokerId", "0", false)); 
-    	long datacenterId = Long.parseLong(ConfClient.get("uuid.datacenterId", "0", false)); 
-    	SnowflakeIdWorker idWorker = new SnowflakeIdWorker(workerId, datacenterId);
+    	SnowflakeIdWorker idWorker = new SnowflakeIdWorker(ConfClient.getUuidWorkId(), ConfClient.getUuidDatacenterId());
     	return idWorker.nextId();
     }
 

@@ -231,5 +231,9 @@ public class Constant {
 	//开关
 	public static final String SWITCH_ON = "on";
 	public static final String SWITCH_OFF = "off";
+	
+	//随机数
+	public static final String UUID_WORKID = "uuid.wokerId";
+	public static final String UUID_DATACENTERID="uuid.datacenterId";
 
 }
