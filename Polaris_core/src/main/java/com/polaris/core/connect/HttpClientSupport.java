@@ -21,7 +21,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -161,6 +160,10 @@ public class HttpClientSupport {
 
     public static String doPostJson(String orgurl, String json, String lang) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
+		RequestConfig requestConfig = RequestConfig.custom()  
+					.setConnectTimeout(30000).setConnectionRequestTimeout(30000)  
+					.setSocketTimeout(30000).build();  
+
         CloseableHttpResponse response = null;
         String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
         try {
@@ -169,10 +172,14 @@ public class HttpClientSupport {
             }
             HttpPost httpPost = new HttpPost(url);
             trace(httpPost);
-            StringEntity entity = new StringEntity(json, ContentType.APPLICATION_JSON);
-            httpPost.setEntity(entity);
-            response = httpClient.execute(httpPost);
-            return EntityUtils.toString(response.getEntity(), "utf-8");
+            
+            httpPost.setConfig(requestConfig);
+			StringEntity entity = new StringEntity(json, Charset.forName("UTF-8"));
+			entity.setContentEncoding("UTF-8");
+			entity.setContentType("application/json");
+			httpPost.setEntity(entity);
+			response = httpClient.execute(httpPost);
+			return EntityUtils.toString(response.getEntity(), "utf-8");
         } catch (Exception e) {
         	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
             LOGGER.error("doPostJson 发起网络请求异常：{},url={},json={}", e.getMessage(),url,json);
