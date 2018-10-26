@@ -152,6 +152,9 @@ public  class ConfigHandlerProvider {
 	public static String[] getKeyValue(String line) {
 		if (StringUtil.isNotEmpty(line)) {
 			String[] keyvalue = line.split("=");
+			if (keyvalue.length == 0) {
+				return new String[] {"",""};
+			}
 			if (keyvalue.length == 1) {
 				return new String[] {keyvalue[0].trim(),""};
 			}
