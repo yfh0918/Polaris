@@ -1,5 +1,6 @@
 package com.polaris.gateway;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -34,14 +35,14 @@ public class GatewayConstant {
     public static final String DEFAULT="default";
 
     public static String getRealIp(HttpRequest httpRequest) {
-        List<String> headerValues = getHeaderValues(httpRequest, X_Real_IP);
-        String ip = headerValues.get(0);
-        if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
-            try {
-                ip = InetAddress.getLocalHost().getHostAddress();
-            } catch (UnknownHostException unknownhostexception) {
-            }
-        }
+    	try {
+			return getIpAddress(httpRequest);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    List<String> headerValues = getHeaderValues(httpRequest, X_Real_IP);
+	    String ip = headerValues.get(0);
         return ip;
     }
 
@@ -63,5 +64,51 @@ public class GatewayConstant {
             }
         }
         return list;
+    }
+    
+    /**
+     * 获取请求主机IP地址,如果通过代理进来，则透过防火墙获取真实IP地址;
+     *
+     * @param request
+     * @return
+     * @throws IOException
+     */
+    public static String getIpAddress(HttpRequest request) throws IOException {
+        // 获取请求主机IP地址,如果通过代理进来，则透过防火墙获取真实IP地址
+
+        String ip = request.headers().get("X-Forwarded-For");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.headers().get("Proxy-Client-IP");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.headers().get("WL-Proxy-Client-IP");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.headers().get("HTTP_CLIENT_IP");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.headers().get("HTTP_X_FORWARDED_FOR");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            	ip = GatewayConstant.getRealIp(request);
+            }
+            if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
+                try {
+                    ip = InetAddress.getLocalHost().getHostAddress();
+                } catch (UnknownHostException unknownhostexception) {
+                }
+            }
+        } else if (ip.length() > 15) {
+            String[] ips = ip.split(",");
+            for (int index = 0; index < ips.length; index++) {
+                String strIp = (String) ips[index];
+                if (!("unknown".equalsIgnoreCase(strIp))) {
+                    ip = strIp;
+                    break;
+                }
+            }
+        }
+        return ip;
     }
 }
