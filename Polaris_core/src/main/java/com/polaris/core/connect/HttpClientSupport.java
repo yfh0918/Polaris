@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
@@ -21,6 +20,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -29,15 +29,14 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.polaris.comm.Constant;
+import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.StringUtil;
 
 public class HttpClientSupport {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(HttpClientSupport.class);
+    private static LogUtil LOGGER = LogUtil.getInstance(HttpClientSupport.class);
     private static final String TRACE_ID = "traceId";
 
     
@@ -225,10 +224,46 @@ public class HttpClientSupport {
             final HttpGet request = new HttpGet(paramUrl);
             request.setHeader("Connection", "close");
             trace(request);
-            Future<HttpResponse> execute = httpclient.execute(request, null);
-            HttpResponse httpResponse = execute.get();
-            LOGGER.info("{}", httpResponse);
-            httpclient.close();
+            
+            httpclient.execute(request, new FutureCallback<HttpResponse>() {
+                public void completed(final HttpResponse response) {
+                	LOGGER.info("{}", response);
+                	try {
+                		httpclient.close();
+                	} catch (Exception e) {
+                		// TODO Auto-generated catch block
+                		e.printStackTrace();
+                	}
+                }
+
+                public void failed(final Exception ex) {
+                	LOGGER.error(ex);
+                	try {
+                		httpclient.notifyAll();
+                		httpclient.close();
+                	} catch (Exception e) {
+                		// TODO Auto-generated catch block
+                		e.printStackTrace();
+                	}
+                }
+
+                public void cancelled() {
+                	LOGGER.info("request is cancelled");
+                	try {
+                		httpclient.close();
+                	} catch (Exception e) {
+                		// TODO Auto-generated catch block
+                		e.printStackTrace();
+                	}
+                }
+
+            });
+            
+            
+//            Future<HttpResponse> execute = httpclient.execute(request, null);
+//            HttpResponse httpResponse = execute.get();
+//            LOGGER.info("{}", httpResponse);
+//            httpclient.close();
         } catch (Exception e) {
         	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
             LOGGER.error("httpAsync 发起网络请求异常：{}", e.getMessage());
@@ -256,10 +291,43 @@ public class HttpClientSupport {
             entity.setContentEncoding("UTF-8");
             entity.setContentType("application/json");
             request.setEntity(entity);
-            Future<HttpResponse> execute = httpclient.execute(request, null);
-            HttpResponse httpResponse = execute.get();
-            LOGGER.debug("{}", httpResponse);
-            httpclient.close();
+            httpclient.execute(request, new FutureCallback<HttpResponse>() {
+                public void completed(final HttpResponse response) {
+                	LOGGER.info("{}", response);
+                	try {
+                		httpclient.close();
+                	} catch (Exception e) {
+                		// TODO Auto-generated catch block
+                		e.printStackTrace();
+                	}
+                }
+
+                public void failed(final Exception ex) {
+                	LOGGER.error(ex);
+                	try {
+                		httpclient.notifyAll();
+                		httpclient.close();
+                	} catch (Exception e) {
+                		// TODO Auto-generated catch block
+                		e.printStackTrace();
+                	}
+                }
+
+                public void cancelled() {
+                	LOGGER.info("request is cancelled");
+                	try {
+                		httpclient.close();
+                	} catch (Exception e) {
+                		// TODO Auto-generated catch block
+                		e.printStackTrace();
+                	}
+                }
+
+            });
+//            Future<HttpResponse> execute = httpclient.execute(request, null);
+//            HttpResponse httpResponse = execute.get();
+//            LOGGER.debug("{}", httpResponse);
+//            httpclient.close();
         } catch (Exception e) {
         	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
             LOGGER.error("httpAsyncJson 发起网络请求异常：{}", e.getMessage());
