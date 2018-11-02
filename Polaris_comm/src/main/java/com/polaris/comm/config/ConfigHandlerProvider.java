@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -164,14 +165,32 @@ public  class ConfigHandlerProvider {
 	}
 		
 	//获取整个文件的内容
+	@SuppressWarnings("rawtypes")
 	public static String getLocalFileContent(String fileName) {
 		
-		//本地文件
+		// propertyies
+		if (fileName.toLowerCase().endsWith(".properties")) {
+			StringBuffer buffer = new StringBuffer();
+			try (InputStream in = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + fileName)) {
+	            Properties p = new Properties();
+	            p.load(in);
+	            for (Map.Entry entry : p.entrySet()) {
+	                String key = (String) entry.getKey();
+	                buffer.append(key + "=" + entry.getValue());
+	                buffer.append(Constant.LINE_SEP);
+	            }
+	        } catch (IOException e) {
+	           // nothing;
+	        }
+			return buffer.toString();
+		}
+		
+		// 非propertyies
 		try (InputStream inputStream = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + fileName)) {
 			InputStreamReader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
 			BufferedReader bf= new BufferedReader(reader);
 			StringBuffer buffer = new StringBuffer();
-	        String line = bf.readLine();
+			String line = bf.readLine();
 	        while (line != null) {
 	        	buffer.append(line);
 	            line = bf.readLine();
@@ -186,5 +205,5 @@ public  class ConfigHandlerProvider {
         }
 		return null;
 	}
-
+	
 }
