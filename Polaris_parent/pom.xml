@@ -1074,27 +1074,17 @@
 
         <pluginManagement>
             <plugins>
-
-				<!-- 编码 -->
-				<plugin> 
-				    <groupId>org.apache.maven.plugins</groupId> 
-				    <artifactId>maven-resources-plugin</artifactId> 
-				    <version>2.4</version> 
-				    <configuration> 
-				        <encoding>UTF-8</encoding> 
-				    </configuration> 
-				</plugin>
-
                 <!-- 打包jar文件时，配置manifest文件，加入lib包的jar依赖 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>2.4</version>
                     <configuration>
+                    	<encoding>UTF-8</encoding>
                         <archive>
                             <addMavenDescriptor>false</addMavenDescriptor>
                             <manifest>
-                                <mainClass>com.polaris.Application</mainClass>
+                                <mainClass>Application</mainClass>
                                 <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
                                 <useUniqueVersions>false</useUniqueVersions>
                                 <addClasspath>true</addClasspath>
@@ -1142,6 +1132,7 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
 
