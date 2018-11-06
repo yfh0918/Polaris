@@ -171,10 +171,10 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     	if (!host.contains(":")) {
     		host = host + ":" + ConfClient.get("server.port");
     	}
+    	String oldPort = host.substring(host.indexOf(":") + 1);
 		httpRequest.headers().remove(GatewayConstant.HOST);
 		String uri = httpRequest.uri();
 		String port = HostResolverImpl.getSingleton().getPort(uri);
-		httpRequest.headers().add(GatewayConstant.HOST, 
-				host.replace(ConfClient.get("server.port"), port));
+		httpRequest.headers().add(GatewayConstant.HOST, host.replace(oldPort, port));
     }
 }
