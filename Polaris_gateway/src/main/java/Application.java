@@ -1,4 +1,4 @@
-package com.polaris;
+
 
 import com.polaris.comm.config.ConfClient;
 import com.polaris.gateway.support.ApplicationSupport;
