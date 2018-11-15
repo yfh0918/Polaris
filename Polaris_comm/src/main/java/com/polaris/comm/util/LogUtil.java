@@ -228,7 +228,7 @@ public class LogUtil extends ExtendedLoggerWrapper {
     }  
   
     private void forcedLog(Level level, Object message, Throwable t) { 
-    	logger.logIfEnabled(FQCN, level, null, getMessage(message.toString(), level), t);
+    	logger.logIfEnabled(FQCN, level, null, getMessage(message, level), t);
     }  
   
     private String format(String pattern, Object... arguments) {
@@ -282,7 +282,13 @@ public class LogUtil extends ExtendedLoggerWrapper {
 	}
 
 	//日志输出
-	private Object getMessage(String str, Level level) {
+	private Object getMessage(Object strO, Level level) {
+		String str = null;
+		if (strO != null) {
+			str = strO.toString();
+		} else {
+			str = "";
+		}
 
 		// 保存log
 		if (isCollect) {
