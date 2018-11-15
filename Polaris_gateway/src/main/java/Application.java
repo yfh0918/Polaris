@@ -4,6 +4,7 @@ import com.polaris.comm.config.ConfClient;
 import com.polaris.gateway.support.ApplicationSupport;
 
 public class Application {
+	
     public static void main(String[] args) {
     	
     	//载入spring

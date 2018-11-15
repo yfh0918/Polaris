@@ -1,6 +1,10 @@
 package com.polaris.comm.config;
 
+import java.io.File;
+import java.io.IOException;
+
 import com.polaris.comm.Constant;
+import com.polaris.comm.util.PropertyUtils;
 import com.polaris.comm.util.StringUtil;
 
 /**
@@ -18,6 +22,14 @@ import com.polaris.comm.util.StringUtil;
 */
 public class ConfClient {
 	
+	static {
+		try {
+			System.setProperty("log4j.configurationFile", PropertyUtils.getFilePath(Constant.CONFIG + File.separator + Constant.LOG4J));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	/**
 	* 获取配置信息

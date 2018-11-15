@@ -1,7 +1,5 @@
 package com.polaris.dubbo.supports;
 
-import com.polaris.comm.Constant;
-
 /**
 *
 * 项目名称：Polaris_comm
@@ -35,9 +33,6 @@ public class MainSupport extends com.polaris.comm.supports.MainSupport{
     	//参数初期化
     	iniParameter();
     	
-    	//log4j重新设定地址
-		configureAndWatch(Constant.WARCH_TIME);
-		
 		//启动
 		com.alibaba.dubbo.container.Main.main(args);
     }

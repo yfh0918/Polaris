@@ -1,13 +1,7 @@
 package com.polaris.comm.supports;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.log4j.PropertyConfigurator;
-
 import com.polaris.comm.Constant;
 import com.polaris.comm.config.ConfigHandlerProvider;
-import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.PropertyUtils;
 import com.polaris.comm.util.StringUtil;
 
@@ -25,9 +19,6 @@ import com.polaris.comm.util.StringUtil;
 *
 */
 abstract public class MainSupport {
-	
-	private static final LogUtil logger =  LogUtil.getInstance(MainSupport.class);
-
 	
     /**
     * iniParameter(初期的参数配置)
@@ -99,51 +90,4 @@ abstract public class MainSupport {
         System.setProperty("user.home", PropertyUtils.getAppPath());
 
 	}
-	
-	
-	
-    /**
-    * configureAndWatch(日志配置以及监控)
-    * @param 
-    * @return 
-    * @Exception 
-    * @since 
-    */
-    public static void configureAndWatch(long warchTime){
-    	Thread run = new Thread(new Runnable(){
-    		 @Override  
-             public void run() {
-                 String fileName = null;
-				 try {
-					fileName = PropertyUtils.getFilePath(Constant.CONFIG + File.separator + Constant.LOG4J);
-				 } catch (IOException e) {
-					logger.error(e);
-				 }
-                 File file = new File(fileName);
-    			 long lastModified = 0L;
-                 while(true){  
-                	try {
-                        long tempLastModified = file.lastModified();
-                        if (lastModified != tempLastModified) {
-                            lastModified = tempLastModified;
-                            PropertyConfigurator.configure(MainSupport.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + Constant.LOG4J));
-                        }
-						Thread.sleep(warchTime);
-					} catch (InterruptedException e) {
-						logger.error(e);
-						Thread.currentThread().interrupt();
-					} 
-                 }
-             }  
-    	});
-    	run.setDaemon(true);//守护线程
-    	run.setName("ConfigureAndWatch Thread");
-    	run.start();
-    	try {
-			Thread.sleep(100);//阻塞主线程100毫秒
-		} catch (InterruptedException e) {
-			logger.error(e);
-			Thread.currentThread().interrupt();
-		}
-    }  
 }

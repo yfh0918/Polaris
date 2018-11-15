@@ -7,16 +7,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.spi.LoggingEvent;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.spi.AbstractLogger;
+import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 import org.slf4j.helpers.MessageFormatter;
 
 import com.polaris.comm.Constant;
 import com.polaris.comm.config.ConfClient;
 
-public class LogUtil {
+public class LogUtil extends ExtendedLoggerWrapper {
 
-	private final org.apache.log4j.Logger logger; 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3449587413645986565L;
+
+	private final ExtendedLoggerWrapper  logger; 
 	
 	public static final String YEAR_MONTH_DAY_TIME = "yyyy-MM-dd HH:mm:ss";
 	
@@ -24,23 +32,27 @@ public class LogUtil {
 	public static final String PARENT_ID = "parentId";// 调用关系ID
 	public static final String MODULE_ID = "moduleId";// 本模块ID
 	public static final String LOG_SEPARATOR = "->";// 分割符号
-
+	private static final String FQCN = LogUtil.class.getName();
 	private boolean isCollect = true;//
 
-	private LogUtil(Class<?> clazz, boolean isCollect) {
+	private LogUtil(final Logger logger) {
+		super((AbstractLogger) logger, logger.getName(), logger.getMessageFactory());
+		this.logger = this;
+	}
+	
+	private LogUtil(final Logger logger, boolean isCollect) {
+		this(logger);
 		this.isCollect = isCollect;
-		logger =  org.apache.log4j.Logger.getLogger(clazz);
 	}
 
-	private LogUtil() {
-		logger = org.apache.log4j.Logger.getRootLogger(); 
-	}
 
 	public static LogUtil getInstance(Class<?> cls) {
-		return new LogUtil(cls, true);
+		final Logger wrapped = LogManager.getLogger(cls);
+		return new LogUtil(wrapped);
 	}
 	public static LogUtil getInstance(Class<?> cls, boolean isCollect) {
-		return new LogUtil(cls, isCollect);
+		final Logger wrapped = LogManager.getLogger(cls);
+		return new LogUtil(wrapped, isCollect);
 	}
 
 	public static String getTraceId() {
@@ -65,168 +77,164 @@ public class LogUtil {
 
 	public void debug(String message) {  
         if (logger.isDebugEnabled()) {  
-            forcedLog(logger, Level.DEBUG, message);  
+            forcedLog(Level.DEBUG, message);  
         }  
     }  
   
     public void debug(String message, Throwable t) {  
         if (logger.isDebugEnabled()) {  
-            forcedLog(logger, Level.DEBUG, message, t);  
+            forcedLog(Level.DEBUG, message, t);  
         }  
     }  
   
     public void debug(Throwable t) {  
         if (logger.isDebugEnabled()) {  
-            forcedLog(logger, Level.DEBUG, t.getMessage() == null ? t.toString() : t.getMessage(), t);  
+            forcedLog(Level.DEBUG, t.getMessage() == null ? t.toString() : t.getMessage(), t);  
         }  
     }
     
     public void debug(String pattern, Object... arguments) {  
         if (logger.isDebugEnabled()) {  
-            forcedLog(logger, Level.DEBUG, format(pattern, arguments));  
+            forcedLog(Level.DEBUG, format(pattern, arguments));  
         }  
     }  
     public void debug(String pattern, Throwable t, Object... arguments) {  
         if (logger.isDebugEnabled()) {  
-            forcedLog(logger, Level.DEBUG, format(pattern, arguments), t);  
+            forcedLog(Level.DEBUG, format(pattern, arguments), t);  
         }  
     }  
     
 	public void info(String message) {  
         if (logger.isInfoEnabled()) {  
-            forcedLog(logger, Level.INFO, message);  
+            forcedLog(Level.INFO, message);  
         }  
     }  
   
     public void info(Throwable t) {  
         if (logger.isInfoEnabled()) {  
-            forcedLog(logger, Level.INFO, t.getMessage() == null ? t.toString() : t.getMessage(), t);  
+            forcedLog(Level.INFO, t.getMessage() == null ? t.toString() : t.getMessage(), t);  
         }  
     }
     
     public void info(String message, Throwable t) {  
         if (logger.isInfoEnabled()) {  
-            forcedLog(logger, Level.INFO, message, t);  
+            forcedLog(Level.INFO, message, t);  
         }  
     }  
   
     public void info(String pattern, Object... arguments) {  
         if (logger.isInfoEnabled()) {  
-            forcedLog(logger, Level.INFO, format(pattern, arguments));  
+            forcedLog(Level.INFO, format(pattern, arguments));  
         }  
     }  
     public void info(String pattern, Throwable t, Object... arguments) {  
         if (logger.isInfoEnabled()) {  
-            forcedLog(logger, Level.INFO, format(pattern, arguments), t);  
+            forcedLog(Level.INFO, format(pattern, arguments), t);  
         }  
     }
 
 
 	public void trace(String message) {  
         if (logger.isTraceEnabled()) {  
-            forcedLog(logger, Level.TRACE, message);  
+            forcedLog(Level.TRACE, message);  
         }  
     }  
   
     public void trace(Throwable t) {  
         if (logger.isTraceEnabled()) {  
-            forcedLog(logger, Level.TRACE, t.getMessage() == null ? t.toString() : t.getMessage(), t);  
+            forcedLog(Level.TRACE, t.getMessage() == null ? t.toString() : t.getMessage(), t);  
         }  
     } 
     
     public void trace(String message, Throwable t) {  
         if (logger.isTraceEnabled()) {  
-            forcedLog(logger, Level.TRACE, message, t);  
+            forcedLog(Level.TRACE, message, t);  
         }  
     }  
   
     public void trace(String pattern, Object... arguments) {  
         if (logger.isTraceEnabled()) {  
-            forcedLog(logger, Level.TRACE, format(pattern, arguments));  
+            forcedLog(Level.TRACE, format(pattern, arguments));  
         }  
     }  
     public void trace(String pattern, Throwable t, Object... arguments) {  
         if (logger.isTraceEnabled()) {  
-            forcedLog(logger, Level.TRACE, format(pattern, arguments), t);  
+            forcedLog(Level.TRACE, format(pattern, arguments), t);  
         }  
     }
     
 	public void warn(String message) {  
-		if (logger.isEnabledFor(Level.WARN)) {  
-            forcedLog(logger, Level.WARN, message);  
+		if (logger.isEnabled(Level.WARN)) {  
+            forcedLog(Level.WARN, message);  
         }  
     }  
 
     public void warn(Throwable t) {  
-    	if (logger.isEnabledFor(Level.WARN)) {  
-            forcedLog(logger, Level.WARN, t.getMessage() == null ? t.toString() : t.getMessage(), t);  
+    	if (logger.isEnabled(Level.WARN)) {  
+            forcedLog(Level.WARN, t.getMessage() == null ? t.toString() : t.getMessage(), t);  
         }  
     } 
     
     public void warn(String message, Throwable t) {  
-    	if (logger.isEnabledFor(Level.WARN)) {  
-            forcedLog(logger, Level.WARN, message, t);  
+    	if (logger.isEnabled(Level.WARN)) {  
+            forcedLog(Level.WARN, message, t);  
         }  
     }  
   
     public void warn(String pattern, Object... arguments) {  
-        if (logger.isEnabledFor(Level.WARN)) {  
-            forcedLog(logger, Level.WARN, format(pattern, arguments));  
+    	
+        if (logger.isEnabled(Level.WARN)) {  
+            forcedLog(Level.WARN, format(pattern, arguments));  
         }  
     }  
     public void warn(String pattern, Throwable t, Object... arguments) {  
-    	if (logger.isEnabledFor(Level.WARN)) {  
-            forcedLog(logger, Level.WARN, format(pattern, arguments), t);  
+    	if (logger.isEnabled(Level.WARN)) {  
+            forcedLog(Level.WARN, format(pattern, arguments), t);  
         }  
     }
 
 
 	public void error(String message) {  
-		if (logger.isEnabledFor(Level.ERROR)) {  
-            forcedLog(logger, Level.ERROR, message);  
+		if (logger.isEnabled(Level.ERROR)) {  
+            forcedLog(Level.ERROR, message);  
         }  
     }  
 
     public void error(Throwable t) {  
-    	if (logger.isEnabledFor(Level.ERROR)) {  
-            forcedLog(logger, Level.ERROR, t.getMessage() == null ? t.toString() : t.getMessage(), t);  
+    	if (logger.isEnabled(Level.ERROR)) {  
+            forcedLog(Level.ERROR, t.getMessage() == null ? t.toString() : t.getMessage(), t);  
         }  
     } 
     
     public void error(String message, Throwable t) {  
-    	if (logger.isEnabledFor(Level.ERROR)) {  
-            forcedLog(logger, Level.ERROR, message, t);  
+    	if (logger.isEnabled(Level.ERROR)) {  
+            forcedLog(Level.ERROR, message, t);  
         }  
     }  
   
     public void error(String pattern, Object... arguments) {  
-        if (logger.isEnabledFor(Level.ERROR)) {  
-            forcedLog(logger, Level.ERROR, format(pattern, arguments));  
+        if (logger.isEnabled(Level.ERROR)) {  
+            forcedLog(Level.ERROR, format(pattern, arguments));  
         }  
     }  
     public void error(String pattern, Throwable t, Object... arguments) {  
-    	if (logger.isEnabledFor(Level.ERROR)) {  
-            forcedLog(logger, Level.ERROR, format(pattern, arguments), t);  
+    	if (logger.isEnabled(Level.ERROR)) {  
+            forcedLog(Level.ERROR, format(pattern, arguments), t);  
         }  
     }
 	
-	private void forcedLog(org.apache.log4j.Logger logger, Level level, Object message) { 
-		forcedLog(logger, level, message, null);
+	private void forcedLog(Level level, Object message) { 
+		forcedLog(level, message, null);
     }  
   
-    private void forcedLog(org.apache.log4j.Logger logger, Level level, Object message, Throwable t) {  
-        logger.callAppenders(new LoggingEvent(FQCN, logger, level, getMessage(message.toString(), level), t));  
+    private void forcedLog(Level level, Object message, Throwable t) { 
+    	logger.logIfEnabled(FQCN, level, null, getMessage(message.toString(), level), t);
     }  
   
     private String format(String pattern, Object... arguments) {
         return MessageFormatter.arrayFormat(pattern, arguments).getMessage();  
     }  
   
-    private static final String FQCN;  
-  
-    static {  
-        FQCN = LogUtil.class.getName();  
-    }  
 
 	//日志埋点和收集（需要自定义类型）
 	@SuppressWarnings("unchecked")
@@ -251,7 +259,7 @@ public class LogUtil {
 			if (queue != null) {
 				
 				//默认info级别以上输出日志
-				if (level.toInt() >= getLevel(ConfClient.get("log.collect.level", "info"))) {
+				if (level.intLevel() >= getLevel(ConfClient.get("log.collect.level", "info"))) {
 					
 					// 构造logDto
 					SimpleDateFormat sdf = new SimpleDateFormat(YEAR_MONTH_DAY_TIME);
@@ -309,24 +317,24 @@ public class LogUtil {
 	//转化日志等级
 	private int getLevel(String levelStr) {
 		if (StringUtil.isEmpty(levelStr)) {
-			return org.apache.log4j.Level.INFO_INT;
+			return Level.INFO.intLevel();
 		}
-		if (levelStr.toUpperCase().equals(org.apache.log4j.Level.TRACE.toString())) {
-			return org.apache.log4j.Level.TRACE_INT;
+		if (levelStr.toUpperCase().equals(Level.TRACE.toString())) {
+			return Level.INFO.intLevel();
 		}
-		if (levelStr.toUpperCase().equals(org.apache.log4j.Level.ERROR.toString())) {
-			return org.apache.log4j.Level.ERROR_INT;
+		if (levelStr.toUpperCase().equals(Level.ERROR.toString())) {
+			return Level.ERROR.intLevel();
 		}
-		if (levelStr.toUpperCase().equals(org.apache.log4j.Level.WARN.toString())) {
-			return org.apache.log4j.Level.WARN_INT;
+		if (levelStr.toUpperCase().equals(Level.WARN.toString())) {
+			return Level.WARN.intLevel();
 		}
-		if (levelStr.toUpperCase().equals(org.apache.log4j.Level.INFO.toString())) {
-			return org.apache.log4j.Level.INFO_INT;
+		if (levelStr.toUpperCase().equals(Level.INFO.toString())) {
+			return Level.INFO.intLevel();
 		}
-		if (levelStr.toUpperCase().equals(org.apache.log4j.Level.DEBUG.toString())) {
-			return org.apache.log4j.Level.DEBUG_INT;
+		if (levelStr.toUpperCase().equals(Level.DEBUG.toString())) {
+			return Level.DEBUG.intLevel();
 		}
-		return org.apache.log4j.Level.TRACE_INT;
+		return Level.INFO.intLevel();
 	}
 
 }

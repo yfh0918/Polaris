@@ -1,10 +1,8 @@
 package com.polaris.gateway.support;
 
-import java.io.File;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.littleshoot.proxy.ActivityTrackerAdapter;
 import org.littleshoot.proxy.FlowContext;
 import org.littleshoot.proxy.HttpFilters;
@@ -18,7 +16,6 @@ import com.polaris.comm.Constant;
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.supports.MainSupport;
 import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.PropertyUtils;
 import com.polaris.comm.util.SpringUtil;
 import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
 import com.polaris.gateway.GatewayConstant;
@@ -34,43 +31,11 @@ public class ApplicationSupport {
 	
 	private static LogUtil logger = LogUtil.getInstance(ApplicationSupport.class);
 	
-    //启动线程监控日志，upsteam文件变化
-    public static void configureAndWatch(long warchTime){
-    	Thread run = new Thread(new Runnable(){
-    		
-    		 @Override  
-             public void run() { 
-    			 
-    			long lastModified = 0l;
-				//动态监测
-                 while(true){  
-                	try {
-						long tempLastModified = new File(PropertyUtils.getFilePath(Constant.CONFIG + File.separator + Constant.LOG4J)).lastModified();
-						
-						//修改日志
-						if (lastModified != tempLastModified) {
-							lastModified = tempLastModified;
-							PropertyConfigurator.configure(MainSupport.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + Constant.LOG4J));
-						}
-						
-						Thread.sleep(warchTime);
-					} catch (Exception e) {
-						logger.error(e);
-					}
-                 }  
-             }  
-    	});
-    	run.setDaemon(true);//守护线程
-    	run.setName("ConfigureAndWatch Thread");
-    	run.start();
-    }
-    
     //启动网关应用
     @SuppressWarnings("resource")
 	public static void startGateway() {
     	
     	MainSupport.iniParameter();
-    	MainSupport.configureAndWatch(60000);
     	new ClassPathXmlApplicationContext(SpringUtil.SPRING_PATH);
     	
     	//注册服务

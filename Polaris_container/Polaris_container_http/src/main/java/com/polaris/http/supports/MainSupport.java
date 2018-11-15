@@ -40,9 +40,6 @@ public class MainSupport extends com.polaris.comm.supports.MainSupport{
     	//参数初期化
     	iniParameter();
     	
-    	//log4j重新设定地址
-		configureAndWatch(Constant.WARCH_TIME);
-		
 		//注册服务
 		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON, false))) {
 			ServerDiscoveryHandlerProvider.getInstance().register(NetUtils.getLocalHost(), Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, false)));
