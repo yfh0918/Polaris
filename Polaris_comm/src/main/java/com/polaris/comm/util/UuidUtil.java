@@ -13,8 +13,13 @@ public class UuidUtil {
 
     //幂等性Key
     public static final String IDEMPOTENCY = "idempotency";
+    private static volatile SnowflakeIdWorker idWorker;
 
     private UuidUtil() {
+    }
+    
+    static {
+    	idWorker = new SnowflakeIdWorker(ConfClient.getUuidWorkId(), ConfClient.getUuidDatacenterId());
     }
 
     /**
@@ -32,7 +37,6 @@ public class UuidUtil {
      * @return
      */
     public static long generateLongUuid() {
-    	SnowflakeIdWorker idWorker = new SnowflakeIdWorker(ConfClient.getUuidWorkId(), ConfClient.getUuidDatacenterId());
     	return idWorker.nextId();
     }
 
