@@ -44,11 +44,14 @@ public final class RequestUtil {
 	        }else{  
 	            value=ov.toString();  
 	        }
-	        if (parameterMap.get(key) != null) {
-	        	parameterMap.put(key, parameterMap.get(key).toString() + "|polaris|" + value);//自定义分割协议
-	        } else {
-	        	parameterMap.put(key, value);
+	        if (StringUtil.isNotEmpty(value)) {
+	        	if (parameterMap.get(key) != null) {
+		        	parameterMap.put(key, parameterMap.get(key).toString() + "|polaris|" + value);//自定义分割协议
+		        } else {
+		        	parameterMap.put(key, value);
+		        }
 	        }
+	        
 	    } 
 	    
 	    //载入map
