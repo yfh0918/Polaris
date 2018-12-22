@@ -90,6 +90,23 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     }
     
     @Override
+    public HttpResponse proxyToServerRequest(HttpObject httpObject) {
+    	//TraceId
+    	if (httpObject instanceof HttpRequest) {
+    		HttpRequest httpRequest = (HttpRequest) httpObject;
+    		String host = httpRequest.headers().get(GatewayConstant.HOST);
+        	if (!host.contains(":")) {
+        		host = host + ":" + ConfClient.get("server.port");
+        	}
+        	String oldPort = host.substring(host.indexOf(":") + 1);
+    		httpRequest.headers().remove(GatewayConstant.HOST);
+    		httpRequest.headers().add(GatewayConstant.HOST, host.replace(oldPort, ConfClient.get("server.port")));
+    	}
+
+        return null;
+    }
+    
+    @Override
     public void proxyToServerResolutionSucceeded(String serverHostAndPort,
                                                  InetSocketAddress resolvedRemoteAddress) {
         if (resolvedRemoteAddress == null) {
