@@ -58,10 +58,12 @@ public class ConfClient {
 		
 		//扩展文件
 		String[] allProperties = ConfigHandlerProvider.getInstance().getExtensionProperties();
-		for (String file : allProperties) {
-			value = ConfigHandlerProvider.getInstance().getValue(key, file, isWatch);
-			if (value != null) {
-				return value;
+		if (allProperties != null) {
+			for (String file : allProperties) {
+				value = ConfigHandlerProvider.getInstance().getValue(key, file, isWatch);
+				if (value != null) {
+					return value;
+				}
 			}
 		}
 		

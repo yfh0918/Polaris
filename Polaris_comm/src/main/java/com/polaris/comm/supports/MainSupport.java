@@ -33,7 +33,7 @@ abstract public class MainSupport {
 		//配置中心
 		String config = System.getProperty(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
 		if (StringUtil.isNotEmpty(config)) {
-			ConfigHandlerProvider.getInstance().updateCache(Constant.PROJECT_ENV_NAME, config, Constant.DEFAULT_CONFIG_NAME);
+			ConfigHandlerProvider.getInstance().updateCache(Constant.CONFIG_REGISTRY_ADDRESS_NAME, config, Constant.DEFAULT_CONFIG_NAME);
 		} 
 		
 		//环境（production, pre,dev,pre etc）
