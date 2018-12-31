@@ -182,11 +182,11 @@ public class ConfNacosClient {
 		StringBuilder group = new StringBuilder();
 		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
 			group.append(ConfClient.getEnv());
-			group.append("-");
+			group.append(":");
 		}
 		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
 			group.append(ConfClient.getCluster());
-			group.append("-");
+			group.append(":");
 		}
 		group.append(ConfClient.getAppName());
 		return group.toString();
