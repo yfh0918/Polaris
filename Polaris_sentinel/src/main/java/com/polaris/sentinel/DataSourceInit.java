@@ -41,9 +41,9 @@ public class DataSourceInit implements InitFunc {
 		System.setProperty("project.name", ConfClient.getAppName());
 		
 		//获取类型参数
-		String datasource = System.getProperty("polaris.sentinel.datasource");
+		String datasource = System.getProperty("csp.sentinel.datasource");
 		if (StringUtil.isEmpty(datasource)) {
-			datasource = ConfClient.get("polaris.sentinel.datasource", false);
+			datasource = ConfClient.get("csp.sentinel.datasource", false);
 			if (StringUtil.isEmpty(datasource)) {
 				datasource = "nacos";
 			}
