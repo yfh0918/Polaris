@@ -67,16 +67,16 @@ public class FileDataSourceInit {
         	degrade, source -> JSON.parseObject(source, new TypeReference<List<DegradeRule>>() {})
         );
         DegradeRuleManager.register2Property(degradeRuleDataSource.getProperty());
-        WritableDataSource<List<DegradeRule>> degradeRuleWriteDataSource = new FileWritableDataSource<>(flow, source -> JSON.toJSONString(source));
+        WritableDataSource<List<DegradeRule>> degradeRuleWriteDataSource = new FileWritableDataSource<>(degrade, source -> JSON.toJSONString(source));
         WritableDataSourceRegistry.registerDegradeDataSource(degradeRuleWriteDataSource);
 
 
         // data source for SystemRule
         ReadableDataSource<String, List<SystemRule>> systemRuleDataSource = new FileRefreshableDataSource<>(
-        		degrade, source -> JSON.parseObject(source, new TypeReference<List<SystemRule>>() {})
+        		system, source -> JSON.parseObject(source, new TypeReference<List<SystemRule>>() {})
         );
         SystemRuleManager.register2Property(systemRuleDataSource.getProperty());
-        WritableDataSource<List<SystemRule>> systemRuleWriteDataSource = new FileWritableDataSource<>(flow, source -> JSON.toJSONString(source));
+        WritableDataSource<List<SystemRule>> systemRuleWriteDataSource = new FileWritableDataSource<>(system, source -> JSON.toJSONString(source));
         WritableDataSourceRegistry.registerSystemDataSource(systemRuleWriteDataSource);
 	}
 }
