@@ -10,7 +10,7 @@
 	<packaging>jar</packaging>
 	<name>Polaris_sentinel</name>
 	<properties>
-        <sentinel-version>0.2.0</sentinel-version>
+        <sentinel-version>1.4.0</sentinel-version>
 	</properties>
 	<dependencies>
 
@@ -24,17 +24,17 @@
 		</dependency>
 		<dependency>
 		    <groupId>com.alibaba.csp</groupId>
-		    <artifactId>sentinel-dubbo-adapter</artifactId>
-		    <version>${sentinel-version}</version>
-		</dependency>
-		<dependency>
-		    <groupId>com.alibaba.csp</groupId>
 		    <artifactId>sentinel-transport-simple-http</artifactId>
 		    <version>${sentinel-version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>com.alibaba.csp</groupId>
 		    <artifactId>sentinel-web-servlet</artifactId>
+		    <version>${sentinel-version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.alibaba.csp</groupId>
+		    <artifactId>sentinel-datasource-nacos</artifactId>
 		    <version>${sentinel-version}</version>
 		</dependency>					
 	</dependencies>
