@@ -1,10 +1,5 @@
 package com.polaris.sentinel;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import com.alibaba.csp.sentinel.adapter.servlet.callback.UrlCleaner;
-import com.alibaba.csp.sentinel.adapter.servlet.callback.WebCallbackManager;
 import com.alibaba.csp.sentinel.init.InitFunc;
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.util.StringUtil;
@@ -45,41 +40,10 @@ public class DataSourceInit implements InitFunc {
 		}
 		System.setProperty("project.name", ConfClient.getAppName());
 		
-		//过滤
-		Set<String> staticSet = new HashSet<>();
-		staticSet.add(".css");
-		staticSet.add(".js");
-		staticSet.add(".jpg");
-		staticSet.add(".png");
-		staticSet.add(".ico");
-		staticSet.add(".gif");
-		staticSet.add(".properties");
-		String fileTypes = ConfClient.get("csp.sentinel.filter.fileType", false);
-		if (StringUtil.isNotEmpty(fileTypes)) {
-			String[] types = fileTypes.split("\\|");
-			for (String type : types) {
-				staticSet.add(type);
-			}
-		}
-		String staticString = staticSet.toString();
 
-		//url过滤
-		WebCallbackManager.setUrlCleaner(new UrlCleaner() {
-			@Override
-			public String clean(String originUrl) {
-				if (originUrl != null) {
-					int index = originUrl.lastIndexOf(".");
-					if (index > -1) {
-						String suffix = originUrl.substring(index).toLowerCase();
-						if (staticSet.contains(suffix)) {
-							return staticString;
-						}
-					}
-				}
-				
-				return originUrl;
-			}
-		});
+		//web过滤
+		WebFilterInit webFilterInit = new WebFilterInit();
+		webFilterInit.init();
 		
 		//获取类型参数
 		String datasource = System.getProperty("csp.sentinel.datasource");
