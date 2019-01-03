@@ -41,6 +41,10 @@ public class HttpClientSupport {
 
     
     public static String doGet(String orgurl, Map<String, Object> param) {
+        return doGet(orgurl, param, null);
+    }
+    
+    public static String doGet(String orgurl, Map<String, Object> param, Map<String, Object> header) {
         CloseableHttpResponse response = null;
         CloseableHttpClient httpclient = HttpClients.createDefault();
         String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
@@ -54,6 +58,12 @@ public class HttpClientSupport {
 
             URI uri = builder.build();
             HttpGet httpGet = new HttpGet(uri);
+            if (header != null) {
+                for (String key : header.keySet()) {
+                	httpGet.addHeader(key, String.valueOf(header.get(key)));
+                }
+            }
+            
             trace(httpGet);
             response = httpclient.execute(httpGet);
             // 判断返回状态是否为200
@@ -81,11 +91,20 @@ public class HttpClientSupport {
     }
 
     public static String doPost(String orgurl, Map<String, Object> param) {
+        return doPost(orgurl, param, null);
+    }
+    
+    public static String doPost(String orgurl, Map<String, Object> param, Map<String, Object> header) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         CloseableHttpResponse response = null;
         String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
         try {
             HttpPost httpPost = new HttpPost(url);
+            if (header != null) {
+                for (String key : header.keySet()) {
+                	httpPost.addHeader(key, String.valueOf(header.get(key)));
+                }
+            }
             trace(httpPost);
             // 创建参数列表
             if (param != null) {
@@ -258,12 +277,6 @@ public class HttpClientSupport {
                 }
 
             });
-            
-            
-//            Future<HttpResponse> execute = httpclient.execute(request, null);
-//            HttpResponse httpResponse = execute.get();
-//            LOGGER.info("{}", httpResponse);
-//            httpclient.close();
         } catch (Exception e) {
         	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
             LOGGER.error("httpAsync 发起网络请求异常：{}", e.getMessage());
@@ -324,10 +337,6 @@ public class HttpClientSupport {
                 }
 
             });
-//            Future<HttpResponse> execute = httpclient.execute(request, null);
-//            HttpResponse httpResponse = execute.get();
-//            LOGGER.debug("{}", httpResponse);
-//            httpclient.close();
         } catch (Exception e) {
         	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
             LOGGER.error("httpAsyncJson 发起网络请求异常：{}", e.getMessage());
