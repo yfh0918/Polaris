@@ -36,6 +36,8 @@ public class HostResolverImpl implements HostResolver {
         String[] contents = content.split(Constant.LINE_SEP);
         int port = 7000;
         for (String detail : contents) {
+        	detail = detail.replace("\n", "");
+        	detail = detail.replace("\r", "");
             String[] keyvalue = ConfigHandlerProvider.getKeyValue(detail);
             if (keyvalue != null) {
                 tempServerMap.put(String.valueOf(port), keyvalue[1]);

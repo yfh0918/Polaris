@@ -101,6 +101,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	String oldPort = host.substring(host.indexOf(":") + 1);
     		httpRequest.headers().remove(GatewayConstant.HOST);
     		httpRequest.headers().add(GatewayConstant.HOST, host.replace(oldPort, ConfClient.get("server.port")));
+    		httpRequest.headers().remove(GatewayConstant.X_Real_IP);
     	}
 
         return null;

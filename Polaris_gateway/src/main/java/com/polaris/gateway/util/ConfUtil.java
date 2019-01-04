@@ -53,6 +53,8 @@ public class ConfUtil {
     	List<Pattern> patterns = new ArrayList<>();
     	for (String conf : contents) {
     		if (StringUtil.isNotEmpty(conf)) {
+    			conf = conf.replace("\n", "");
+    			conf = conf.replace("\r", "");
     			Pattern pattern = Pattern.compile(conf);
                 patterns.add(pattern);
     		}
