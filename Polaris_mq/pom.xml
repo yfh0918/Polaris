@@ -15,16 +15,19 @@
 			<groupId>com.polaris</groupId>
 			<artifactId>Polaris_core</artifactId>
 		</dependency>
-		<!-- activemq -->
-       <dependency>
-		    <groupId>org.apache.activemq</groupId>
-		    <artifactId>activemq-core</artifactId>
+        <!-- activemq -->
+        <dependency>
+		  <groupId>org.apache.activemq</groupId>
+		  <artifactId>activemq-all</artifactId>
+		  <version>5.15.8</version>
 		</dependency>
+
 		<!-- kafka -->
-		<dependency>
-		    <groupId>org.apache.kafka</groupId>
-		    <artifactId>kafka_2.10</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.10</artifactId>
+            <version>0.10.2.1</version>
+        </dependency>
     </dependencies>
 
     <build>
