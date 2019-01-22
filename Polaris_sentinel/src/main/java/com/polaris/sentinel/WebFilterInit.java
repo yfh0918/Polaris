@@ -19,30 +19,31 @@ public class WebFilterInit {
 		staticSet.add(".ico");
 		staticSet.add(".gif");
 		staticSet.add(".properties");
-		String fileTypes = ConfClient.get("csp.sentinel.filter.fileType", false);
-		if (StringUtil.isNotEmpty(fileTypes)) {
-			String[] types = fileTypes.split("\\|");
-			for (String type : types) {
-				staticSet.add(type);
-			}
-		}
-		String staticString = staticSet.toString();
-		
-		//rest风格的URI需要统合，比如/user/1,user/2,user/3,etc统合成/user/*
-		Set<String> restUriSet = new HashSet<>();
-		String restUri = ConfClient.get("csp.sentinel.filter.restUri", false);
-		if (StringUtil.isNotEmpty(restUri)) {
-			String[] uris = restUri.split("\\|");
-			for (String uri : uris) {
-				restUriSet.add(uri);
-			}
-		}
 
 		//url过滤
 		WebCallbackManager.setUrlCleaner(new UrlCleaner() {
 			@Override
 			public String clean(String originUrl) {
 				if (originUrl != null) {
+					
+					String fileTypes = ConfClient.get("csp.sentinel.filter.fileType", false);
+					if (StringUtil.isNotEmpty(fileTypes)) {
+						String[] types = fileTypes.split("\\|");
+						for (String type : types) {
+							staticSet.add(type);
+						}
+					}
+					String staticString = staticSet.toString();
+					
+					//rest风格的URI需要统合，比如/user/1,user/2,user/3,etc统合成/user/*
+					Set<String> restUriSet = new HashSet<>();
+					String restUri = ConfClient.get("csp.sentinel.filter.restUri", false);
+					if (StringUtil.isNotEmpty(restUri)) {
+						String[] uris = restUri.split("\\|");
+						for (String uri : uris) {
+							restUriSet.add(uri);
+						}
+					}
 					
 					//静态资源,比如css,js等统一规整
 					int index = originUrl.lastIndexOf(".");
