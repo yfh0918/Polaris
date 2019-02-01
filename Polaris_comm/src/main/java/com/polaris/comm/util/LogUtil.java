@@ -16,7 +16,6 @@ import org.slf4j.helpers.MessageFormatter;
 
 import com.polaris.comm.Constant;
 import com.polaris.comm.config.ConfClient;
-
 public class LogUtil extends ExtendedLoggerWrapper {
 
 	/**
@@ -274,7 +273,7 @@ public class LogUtil extends ExtendedLoggerWrapper {
 					logMap.put("trace_id", getTraceId());
 					logMap.put("module_id", getModuleId());
 					logMap.put("parent_id", getParentId());
-					logMap.put("remoteAddr", NetUtils.LOCALHOST);
+					logMap.put("remoteAddr", NetUtils.getLocalHost());
 					queue.offer(logMap);
 				}
 			}
