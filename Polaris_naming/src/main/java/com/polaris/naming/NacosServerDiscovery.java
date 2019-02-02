@@ -7,7 +7,6 @@ import java.util.Properties;
 import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
-import com.alibaba.nacos.api.naming.pojo.Cluster;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.util.LogUtil;
@@ -111,8 +110,9 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	        instance.setPort(port);
 	        double weight = Double.parseDouble(ConfClient.get(Constant.PROJECT_WEIGHT, Constant.PROJECT_WEIGHT_DEFAULT, false));
 	        instance.setWeight(weight);
-	        String cluster = ConfClient.getCluster();
-	        instance.setCluster(new Cluster(cluster));
+	        String clusterName = ConfClient.getCluster();
+	        //instance.setCluster(new Cluster(cluster));
+	        instance.setClusterName(clusterName);
 			naming.registerInstance(ConfClient.getAppName(), instance);
 		} catch (Exception e) {
 			logger.error(e);

@@ -10,6 +10,11 @@
 	<packaging>jar</packaging>
 	<name>Polaris_naming</name>
 
+    <properties>
+        <!-- nacos -->
+        <nacos.version>0.8.0</nacos.version>
+    </properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.polaris</groupId>
@@ -18,7 +23,7 @@
 		<dependency>
 			<groupId>com.alibaba.nacos</groupId>
 			<artifactId>nacos-client</artifactId>
-			<version>0.4.0</version>
+			<version>${nacos.version}</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>logback-classic</artifactId>
@@ -33,12 +38,12 @@
 		<dependency>
 			<groupId>com.alibaba.nacos</groupId>
 			<artifactId>nacos-common</artifactId>
-			<version>0.4.0</version>
+			<version>${nacos.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.alibaba.nacos</groupId>
 			<artifactId>nacos-api</artifactId>
-			<version>0.4.0</version>
+			<version>${nacos.version}</version>
 		</dependency>
 	</dependencies>
 
