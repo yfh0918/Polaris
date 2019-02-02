@@ -21,9 +21,6 @@
         <module>Polaris_filter</module>
         <module>Polaris_gateway</module>
         <module>Polaris_mq</module>
-        <module>Polaris_log</module>
-        <module>Polaris_timer</module>
-        <module>Polaris_workflow</module>
     </modules>
  
 </project>
