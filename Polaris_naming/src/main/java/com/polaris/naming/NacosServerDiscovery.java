@@ -39,7 +39,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	}
 	
 	@Override
-	public String getUrl(String key) {
+	public String getUrl(String key, List<String> clusters) {
 		
 		//判断是否可以获取有效URL
 		if (StringUtil.isEmpty(ConfClient.getNamingRegistryAddress())) {
@@ -55,7 +55,12 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		
 		//获取有效URL
 		try {
-			Instance instance = naming.selectOneHealthyInstance(key);
+			Instance instance = null;
+			if (clusters != null && clusters.size() > 0) {
+				instance = naming.selectOneHealthyInstance(key, clusters);
+			} else {
+				instance = naming.selectOneHealthyInstance(key);
+			}
 			if (instance != null) {
 				return instance.toInetAddr();
 			}
@@ -63,9 +68,14 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		}
 		return null;
 	}
+	
+	@Override
+	public String getUrl(String key) {
+		return getUrl(key, null);
+	}
 
 	@Override
-	public List<String> getAllUrls(String key) {
+	public List<String> getAllUrls(String key, List<String> clusters) {
 		
 		//判断是否可以获取有效URL
 		if (StringUtil.isEmpty(ConfClient.getNamingRegistryAddress())) {
@@ -81,7 +91,13 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 				
 		//获取有效URL
 		try {
-			List<Instance> instances = naming.selectInstances(key,  true);
+			List<Instance> instances = null;
+			if (clusters != null && clusters.size() > 0) {
+				instances = naming.selectInstances(key,  clusters, true);
+			} else {
+				instances = naming.selectInstances(key,  true);
+			}
+
 			List<String> urls = new ArrayList<>();
 			if (instances != null && instances.size() > 0) {
 				for (Instance instance : instances) {
@@ -92,6 +108,10 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		} catch (Exception e) {
 		}
 		return null;
+	}
+	@Override
+	public List<String> getAllUrls(String key) {
+		return getAllUrls(key, null);
 	}
 
 	@Override
