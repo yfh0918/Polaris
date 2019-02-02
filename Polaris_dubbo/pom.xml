@@ -10,6 +10,10 @@
 	<packaging>jar</packaging>
 	<name>Polaris_dubbo</name>
 
+    <properties>
+        <dubbo-version>2.6.5</dubbo-version>
+    </properties>
+    
 	<dependencies>
 
 	  	<dependency>
@@ -17,17 +21,35 @@
 			<artifactId>Polaris_core</artifactId>
 		</dependency>
 	  
-		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>dubbo</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.zookeeper</groupId>
-			<artifactId>zookeeper</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.101tec</groupId>
-			<artifactId>zkclient</artifactId>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>dubbo</artifactId>
+            <version>${dubbo-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.netty</groupId>
+                    <artifactId>netty</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        
+        <!-- Dubbo Nacos registry dependency -->
+	    <dependency>
+	        <groupId>com.alibaba</groupId>
+	        <artifactId>dubbo-registry-nacos</artifactId>
+	        <version>0.0.2</version>
+	    </dependency>
+	   	<dependency>
+			<groupId>com.polaris</groupId>
+			<artifactId>Polaris_naming</artifactId>
 		</dependency>
 					
 	</dependencies>

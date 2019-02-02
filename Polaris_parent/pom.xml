@@ -15,7 +15,6 @@
         <jetty-version>9.4.12.v20180830</jetty-version>
         <activiti-version>5.17.0</activiti-version>
         <hibernate-version>4.2.5.Final</hibernate-version>
-        <dubbo-version>2.5.9</dubbo-version>
         <lucene-version>7.2.0</lucene-version>
         <!-- cxf -->
         <cxf.version>2.7.13</cxf.version>
@@ -815,25 +814,7 @@
                 <artifactId>javassist</artifactId>
                 <version>3.20.0-GA</version>
             </dependency>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>dubbo</artifactId>
-                <version>${dubbo-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.springframework</groupId>
-                        <artifactId>spring</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.jboss.netty</groupId>
-                        <artifactId>netty</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
+
             <dependency>
                 <groupId>org.apache.zookeeper</groupId>
                 <artifactId>zookeeper</artifactId>
