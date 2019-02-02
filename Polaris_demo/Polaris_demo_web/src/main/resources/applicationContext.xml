@@ -12,38 +12,27 @@
            http://code.alibabatech.com/schema/dubbo/dubbo.xsd "
 	default-init-method="init" default-lazy-init="false"
 	default-destroy-method="destroy">
-	
-	<!-- 注解扫描 -->
-	<context:annotation-config/>
-	<aop:aspectj-autoproxy/> 
-	<context:component-scan base-package="com.polaris" />
+
+	<!-- 注解注入 -->
+	<context:component-scan base-package="com.polaris">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
 	
 	<!-- 读入配置文件 -->
 	<bean id="propertyConfigurer" class="com.polaris.comm.config.ConfPropertyPlaceholderConfigurer">  
         <property name="fileEncoding" value="utf-8" /> 
     </bean>
-    
-	<!-- 提供方应用信息，用于计算依赖关系，不要与消费方一样 --> 
+
+	<!-- consumer application name -->  
 	<dubbo:application name="${project.name}">
 		<dubbo:parameter key="qos.enable" value="false"></dubbo:parameter>
-	</dubbo:application>
-    
+	</dubbo:application>   
+  
     <!-- 注册地址 -->  
-    <dubbo:registry address="${dubbo.registry.address}" check="false" />  
-
-    <!-- 用dubbo协议在20880端口暴露服务 ，注意不能与其他服务端口相同  -->
-    <dubbo:protocol name="dubbo" port="${dubbo.protocol.port}" dispatcher="all" threadpool="${dubbo.protocol.threadpool}" threads="${dubbo.protocol.threads}" accepts="${dubbo.protocol.accepts}" />
-    
-    <!-- 从注册中心发现监控中心地址，否则直连监控中心  
-    <dubbo:monitor protocol="registry" />
-     -->
-     
-    <!-- 服务提供方的参数设定 -->
-    <dubbo:provider connections="${dubbo.provider.connections}" timeout="${dubbo.provider.timeout}" retries="${dubbo.provider.retries}" />
+    <dubbo:registry address="${dubbo.registry.address}" check="false"/>  
     
     <!-- 服务消费放方的参数设定 -->
     <dubbo:consumer check="false" />
+    <dubbo:reference interface="com.polaris.demo.api.service.DemoEntryIF" id="demoEntryIF" version="1.0.0" />
     
-    <!-- 注解方式扫描dubbo服务 --> 
-    <dubbo:annotation package="com.polaris" />
 </beans>

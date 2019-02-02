@@ -50,7 +50,9 @@
 	<tx:annotation-driven transaction-manager="transactionManager" />
 
 	<!-- 提供方应用信息，用于计算依赖关系，不要与消费方一样 -->
-	<dubbo:application name="${project.name}" />
+	<dubbo:application name="${project.name}">
+		<dubbo:parameter key="qos.enable" value="false"></dubbo:parameter>
+	</dubbo:application>
 
 	<!-- 注册地址 -->
 	<dubbo:registry address="${dubbo.registry.address}"

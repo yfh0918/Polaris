@@ -1,0 +1,67 @@
+<assembly>
+	 <id>bin</id>  
+     <!-- 最终打包成一个用于发布的zip文件 -->  
+     <formats>  
+         <format>zip</format>  
+     </formats>  
+   
+     <!-- Adds dependencies to zip package under lib directory -->  
+     <dependencySets>  
+         <dependencySet>  
+         	 <outputFileNameMapping> ${artifact.artifactId}-${artifact.baseVersion}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
+             <useProjectArtifact>false</useProjectArtifact>  
+             <outputDirectory>lib</outputDirectory>  
+             <unpack>false</unpack>  
+         </dependencySet>  
+     </dependencySets> 
+     
+     <fileSets>  
+           
+         <!-- 把项目的配置文件，打包进zip文件的config目录 -->    
+         <fileSet>  
+             <directory>${project.basedir}${file.separator}src${file.separator}main${file.separator}resources${file.separator}config</directory>  
+             <outputDirectory>config</outputDirectory>  
+             <includes>  
+                 <include>*.*</include>  
+             </includes>  
+         </fileSet>  
+         
+         <!-- webcontent  --> 
+         <fileSet>  
+             <directory>${project.basedir}${file.separator}src${file.separator}main${file.separator}resources${file.separator}WebContent</directory>  
+             <outputDirectory>WebContent</outputDirectory>  
+             <includes>  
+                 <include>**</include>  
+             </includes>  
+         </fileSet>  
+           
+         <!-- 把项目的脚本文件目录（ src/main/resources/scripts ）中的启动脚本文件，打包进zip文件的跟目录 -->  
+         <fileSet>  
+             <directory>${project.basedir}${file.separator}src${file.separator}main${file.separator}resources${file.separator}scripts</directory>  
+             <outputDirectory></outputDirectory>  
+             <includes>  
+                 <include>*.*</include>  
+             </includes>  
+         </fileSet>  
+  
+         <!-- 把项目自己编译出来的jar文件，打包进zip文件的根目录 -->  
+         <fileSet>  
+             <directory>${project.build.directory}</directory>  
+             <outputDirectory></outputDirectory>  
+             <includes>  
+                 <include>*.jar</include>  
+             </includes>  
+         </fileSet>  
+         
+         <!-- 把git.properties打进zip包的根目录 -->  
+         <fileSet>  
+             <directory>${project.basedir}${file.separator}target</directory>  
+             <outputDirectory></outputDirectory>  
+             <includes>  
+                 <include>git.properties</include>  
+             </includes>  
+         </fileSet> 
+         
+     </fileSets> 
+
+</assembly>

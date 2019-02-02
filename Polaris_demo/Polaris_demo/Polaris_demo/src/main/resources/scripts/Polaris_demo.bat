@@ -1,0 +1,1 @@
+%JAVA_HOME%\bin\java -Dcsp.sentinel.api.port=9000 -Dcsp.sentinel.dashboard.server=localhost:8080 -Dproject.name=Polaris_demo -Ddubbo.shutdown.hook=true -Xmx512M -Xms128M -jar Polaris_demo.jar
