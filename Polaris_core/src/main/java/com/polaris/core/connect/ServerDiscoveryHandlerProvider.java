@@ -29,7 +29,11 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 		}
     }
 
-	public String getUrl(String key) {
+    public String getUrl(String key) {
+		return getUrl(key, null);
+	}
+    
+	public String getUrl(String key, List<String> clusters) {
 		List<String> temp = getRemoteAddress(key);
 		for (ServerDiscoveryHandler handler : serviceLoader) {
 			
@@ -39,7 +43,7 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 			}
 			
 			// 走注册中心
-			String url = handler.getUrl(temp.get(1));
+			String url = handler.getUrl(temp.get(1), clusters);
 			if (StringUtil.isNotEmpty(url)) {
 				return temp.get(0) + url + temp.get(2);
 			}
@@ -51,6 +55,11 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 	}
 
 	public List<String> getAllUrl(String key) {
+		
+		return getAllUrl(key, null);
+	}
+	
+	public List<String> getAllUrl(String key, List<String> clusters) {
 		for (ServerDiscoveryHandler handler : serviceLoader) {
 			List<String> temp = getRemoteAddress(key);
 			
@@ -65,7 +74,7 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 			}
 			
 			// 走注册中心
-			List<String> urls = handler.getAllUrls(temp.get(1));
+			List<String> urls = handler.getAllUrls(temp.get(1), clusters);
 			for (int i0 = 0; i0 < urls.size(); i0++) {
 				String value = temp.get(0) + urls.get(i0) + temp.get(2);
 				urls.set(i0, value);
