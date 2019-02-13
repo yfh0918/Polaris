@@ -3,6 +3,8 @@ package com.polaris.demo.core.entry;
 import org.springframework.stereotype.Service;
 
 import com.polaris.comm.adapter.ServiceAdapter;
+import com.polaris.comm.util.EncryptUtil;
+import com.polaris.comm.util.StringUtil;
 import com.polaris.demo.api.dto.DemoDto;
 import com.polaris.demo.api.service.DemoEntryIF;
 import com.polaris.demo.core.service.TestService;
@@ -35,6 +37,23 @@ public class DemoEntry implements DemoEntryIF {
         TestService testService = ServiceAdapter.findServiceImpl(TestService.class);
         return testService.test(dto);
 
+    }
+    
+	/**
+	 * Main主函数输出加密结果
+	 * 
+	 * @param args
+	 * @return
+	 */
+	public static void main(String[] args) throws Exception { 
+		String value = System.getProperty("value");
+		if (StringUtil.isEmpty(value)) {
+			System.out.println("请输入需要加密的字符串 -Dvalue=xxxxxxx");
+			return;
+		}
+		EncryptUtil en = EncryptUtil.getInstance();
+		String result = en.encrypt(EncryptUtil.START_WITH, value);
+		System.out.println(result);
     }
 
 }
