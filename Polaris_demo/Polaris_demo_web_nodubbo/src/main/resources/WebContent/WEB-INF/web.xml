@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	version="3.1">
+
+	<display-name>Polaris_demo_web_nodubbo</display-name>
+	
+	<!-- context   -->  
+	<context-param>    
+	    <param-name>resteasy.providers</param-name>    
+	    <param-value>com.polaris.http.exception.RestExceptionHandler</param-value>    
+	</context-param>
+	<context-param>  
+	    <param-name>contextConfigLocation</param-name>  
+	    <param-value>classpath:META-INF\spring\applicationContext.xml</param-value>  
+	</context-param> 
+		 
+	<!-- Start Resteasy   -->  
+	<listener>  
+	    <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>  
+	</listener> 
+
+	<!-- load Spring Context  --> 
+	<listener>  
+    	<listener-class>org.jboss.resteasy.plugins.spring.SpringContextLoaderListener</listener-class>  
+	</listener> 
+	  
+	<!-- RestEasy请求分发Servlet -->
+	<servlet>
+		<servlet-name>Resteasy</servlet-name>
+		<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Resteasy</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+
+</web-app>
