@@ -39,7 +39,17 @@
 		    <artifactId>Memcached-Java-Client</artifactId>
 		    <version>3.0.2</version>
 		</dependency>
-
+		<dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.7.5</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 	</dependencies>
 	<build>
 		<plugins>
