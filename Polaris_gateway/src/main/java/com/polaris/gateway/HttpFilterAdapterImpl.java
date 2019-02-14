@@ -184,7 +184,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     }
     
     //替换host
-    private void replaceHost(HttpRequest httpRequest) {
+    public static void replaceHost(HttpRequest httpRequest) {
     	String host = httpRequest.headers().get(GatewayConstant.HOST);
     	if (!host.contains(":")) {
     		host = host + ":" + ConfClient.get("server.port");
