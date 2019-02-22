@@ -1,0 +1,1 @@
+java -XX:+HeapDumpOnOutOfMemoryError -XX:-RestrictContended -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -Xmx1024M -Xms128M -jar mwclg-web.jar

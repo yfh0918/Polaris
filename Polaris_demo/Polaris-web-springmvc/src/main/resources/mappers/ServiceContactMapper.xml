@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mwclg.common.entity.ServiceContactMapper">
+    <resultMap id="BaseResultMap" type="com.mwclg.web.entity.po.ServiceContact">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="contact_pic" property="contactPic" jdbcType="VARCHAR"/>
+        <result column="contact_name" property="contactName" jdbcType="VARCHAR"/>
+        <result column="cate_id" property="cateId" jdbcType="INTEGER"/>
+        <result column="cate_sec_id" property="cateSecId" jdbcType="INTEGER"/>
+        <result column="city_id" property="cityId" jdbcType="INTEGER"/>
+        <result column="tel" property="tel" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="create_by" property="createBy" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <resultMap id="serviceContactVoMap" type="com.mwclg.web.entity.vo.ServiceContactVo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="contact_pic" property="contactPic" jdbcType="VARCHAR"/>
+        <result column="contact_name" property="contactName" jdbcType="VARCHAR"/>
+        <result column="cate_name" property="cateName" jdbcType="VARCHAR"/>
+        <result column="cate_sec_name" property="cateSecName" jdbcType="VARCHAR"/>
+        <result column="city_name" property="cityName" jdbcType="VARCHAR"/>
+        <result column="tel" property="tel" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, contact_pic, contact_name, cate_id, cate_sec_id, city_id, tel, email, create_by, 
+    create_time
+  </sql>
+    <select id="selectServiceContactList" resultMap="serviceContactVoMap">
+        SELECT s.id,s.contact_name,s.contact_pic,s.tel,s.email,scate.cate_name,scs.cate_sec_name,scity.city_name from
+        tbl_service_contact s LEFT JOIN tbl_service_cate scate ON scate.id=s.cate_id
+        LEFT JOIN tbl_service_cate_sec scs ON scs.cate_id=scate.id LEFT JOIN tbl_service_city scity ON
+        scity.id=s.city_id WHERE 1=1
+        <if test="cateId != null and cateId !=''">
+            and s.cate_id=#{cateId}
+        </if>
+        <if test="cateSecId != null and cateSecId !=''">
+            and s.cate_sec_id=#{cateSecId}
+        </if>
+        <if test="cityId != null and cityId !=''">
+            and s.city_id=#{cityId}
+        </if>
+        GROUP BY s.id
+    </select>
+
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mwclg.common.entity.FileMapper">
+    <resultMap id="BaseResultMap" type="com.mwclg.web.entity.po.File">
+        <id column="file_id" property="fileId" jdbcType="INTEGER"/>
+        <result column="operator_id" property="operatorId" jdbcType="INTEGER"/>
+        <result column="file_name" property="fileName" jdbcType="VARCHAR"/>
+        <result column="file_editor" property="fileEditor" jdbcType="VARCHAR"/>
+        <result column="attachment_upload" property="attachmentUpload" jdbcType="VARCHAR"/>
+        <result column="publish_time" property="publishTime" jdbcType="TIMESTAMP"/>
+        <result column="file_status" property="fileStatus" jdbcType="INTEGER"/>
+        <result column="download_count" property="downloadCount" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="create_by" property="createBy" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="update_by" property="updateBy" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    file_id, operator_id, file_name, file_editor, attachment_upload, publish_time, file_status, 
+    download_count, create_time, create_by, update_time, update_by
+  </sql>
+    <select id="findFilesByConditions" parameterType="map" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tbl_file WHERE 1=1
+        <if test=" fileName !=null and fileName !='' ">
+            AND file_name LIKE CONCAT('%',#{fileName,jdbcType=VARCHAR},'%')
+        </if>
+        <if test=" fileEditor !=null and fileEditor !='' ">
+            AND file_editor LIKE CONCAT('%',#{fileEditor,jdbcType=VARCHAR},'%')
+        </if>
+        <if test=" fileStatus !=null and fileStatus !='' ">
+            AND file_status = #{fileStatus,jdbcType=INTEGER}
+        </if>
+        <if test=" startTime !=null and startTime !='' ">
+            AND TO_SECONDS(publish_time) <![CDATA[ >=]]> TO_SECONDS(#{startTime})
+        </if>
+        <if test=" endTime !=null and endTime !='' ">
+            AND TO_SECONDS(publish_time) <![CDATA[ <=]]> TO_SECONDS(#{endTime})
+        </if>
+        ORDER BY publish_time DESC
+    </select>
+
+    <!-- 获取已发布的(fileStatus=2)下载总量排名前十(总量相等，取最新发布时间的)的文件 -->
+    <select id="searchTopTenFiles" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM tbl_file
+        WHERE file_status=1
+        ORDER BY download_count DESC, publish_time DESC
+        LIMIT 10
+    </select>
+
+
+</mapper>

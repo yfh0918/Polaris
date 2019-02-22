@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD SQL MAP Config 3.1//EN" 
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  <settings>
+      <setting name="callSettersOnNulls" value="true"/>
+      <setting name="logImpl" value="STDOUT_LOGGING"/>
+  </settings>
+  <plugins>
+    <plugin interceptor="com.github.pagehelper.PageInterceptor">
+        <property name="offsetAsPageNum" value="true"/>
+        <property name="rowBoundsWithCount" value="true"/>
+        <property name="pageSizeZero" value="true"/>
+        <property name="reasonable" value="true"/>
+        <property name="supportMethodsArguments" value="true"/>
+        <property name="returnPageInfo" value="check"/>
+    </plugin>
+ 	<plugin interceptor="com.polaris.comm.interceptor.MybatisInterceptor"/>
+  </plugins>
+</configuration>

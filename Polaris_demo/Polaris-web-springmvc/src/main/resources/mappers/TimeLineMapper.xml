@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mwclg.web.mapper.TimeLineMapper">
+    <resultMap id="BaseResultMap" type="com.mwclg.web.entity.po.TimeLine">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="path" property="path" jdbcType="VARCHAR"/>
+        <result column="time" property="time" jdbcType="TIMESTAMP"/>
+        <result column="column_id" property="columnId" jdbcType="INTEGER"/>
+        <result column="create_by" property="createBy" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_by" property="updateBy" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, title, path, time, column_id, create_by, create_time, update_by, update_time
+  </sql>
+    <select id="selectTimeLineList" resultMap="BaseResultMap">
+   		SELECT	* FROM tbl_time_line tl where 1=1
+		   and tl.column_id=#{arg0}
+   		   order by time desc
+   </select>
+</mapper>
