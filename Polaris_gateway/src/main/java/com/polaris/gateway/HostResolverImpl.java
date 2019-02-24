@@ -47,6 +47,7 @@ public class HostResolverImpl implements HostResolver {
         }
         serverMap = tempServerMap;
         uriMap = tempUriMap;
+        ServerDiscoveryHandlerProvider.getInstance().reset();
     }
 
     //构造函数（单例）

@@ -35,21 +35,22 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
     
 	public String getUrl(String key, List<String> clusters) {
 		List<String> temp = getRemoteAddress(key);
-		for (ServerDiscoveryHandler handler : serviceLoader) {
+		// 单个IP或者多IP不走注册中心
+		if (!isSkip(temp.get(1))) {
 			
-			// 单个IP或者多IP不走注册中心
-			if (isSkip(temp.get(1))) {
+			//走注册中心
+			for (ServerDiscoveryHandler handler : serviceLoader) {
+				
+				
+				// 走注册中心
+				String url = handler.getUrl(temp.get(1), clusters);
+				if (StringUtil.isNotEmpty(url)) {
+					return temp.get(0) + url + temp.get(2);
+				}
+				
+				//只走第一个注册中心
 				break;
 			}
-			
-			// 走注册中心
-			String url = handler.getUrl(temp.get(1), clusters);
-			if (StringUtil.isNotEmpty(url)) {
-				return temp.get(0) + url + temp.get(2);
-			}
-			
-			//只走第一个注册中心
-			break;
 		}
 		return temp.get(0) + ServerDiscovery.getUrl(temp.get(1)) + temp.get(2);
 	}
@@ -60,20 +61,20 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 	}
 	
 	public List<String> getAllUrl(String key, List<String> clusters) {
-		for (ServerDiscoveryHandler handler : serviceLoader) {
-			List<String> temp = getRemoteAddress(key);
-			
-			// 单个IP或者多IP不走注册中心
-			if (isSkip(temp.get(1))) {
-				List<String> urlList = new ArrayList<>();
-				String[] ips = temp.get(1).split(",");
-				for (int i0 = 0; i0 < ips.length; i0++) {
-					urlList.add(temp.get(0) + ips[i0] + temp.get(2));
-				}
-				return urlList;
+		
+		List<String> temp = getRemoteAddress(key);
+		// 单个IP或者多IP不走注册中心
+		if (isSkip(temp.get(1))) {
+			List<String> urlList = new ArrayList<>();
+			String[] ips = temp.get(1).split(",");
+			for (int i0 = 0; i0 < ips.length; i0++) {
+				urlList.add(temp.get(0) + ips[i0] + temp.get(2));
 			}
-			
-			// 走注册中心
+			return urlList;
+		}
+
+		// 走注册中心
+		for (ServerDiscoveryHandler handler : serviceLoader) {
 			List<String> urls = handler.getAllUrls(temp.get(1), clusters);
 			for (int i0 = 0; i0 < urls.size(); i0++) {
 				String value = temp.get(0) + urls.get(i0) + temp.get(2);
@@ -87,9 +88,12 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 	public void connectionFail(String key, String url) {
 		List<String> temp = getRemoteAddress(key);
 		List<String> temp2 = getRemoteAddress(url);
-		for (ServerDiscoveryHandler handler : serviceLoader) {
-			handler.connectionFail(temp.get(1), temp2.get(1));
-			return;
+		// 单个IP或者多IP不走注册中心
+		if (!isSkip(temp.get(1))) {
+			for (ServerDiscoveryHandler handler : serviceLoader) {
+				handler.connectionFail(temp.get(1), temp2.get(1));
+				return;
+			}
 		}
 		ServerDiscovery.connectionFail(temp.get(1), temp2.get(1));
 	}
@@ -126,6 +130,11 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 			return true;
 		}
 		return false;
+	}
+	//用于重新reset
+	public void reset() {
+		//注册中心的reset由注册中心自己完成
+		ServerDiscovery.reset();
 	}
 	
 	public static void main(String[] args) {

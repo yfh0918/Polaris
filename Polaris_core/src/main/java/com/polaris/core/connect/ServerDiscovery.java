@@ -86,5 +86,10 @@ public class ServerDiscovery {
     		connectionFail("localhost:8080,localhost:8081",url);
     	}
     }
+    
+    //如果重新配置了URL原先的serverMap全部清空重来
+    public static void reset() {
+    	serverMap.clear();
+    }
 
 }
