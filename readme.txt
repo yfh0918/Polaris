@@ -22,7 +22,7 @@
 
 7:Polaris_log是现有的日志采集服务，需要自行配置mongodb以及自行开发界面
 
-8:Polaris_gateway是现有的api网管，提供api的统一入口服务
+8:Polaris_gateway是现有的api网管，提供api的统一入口服务(基于netty http实现)
 
 9:支持Sentinel（流量监控类），需要在自己的配置文件中设置如下
   #sentinel
