@@ -1,5 +1,7 @@
 package com.polaris.mq.activemq.dto;
 
+import java.util.concurrent.BlockingQueue;
+
 import com.polaris.mq.common.dto.MqDto;
 
 public class ActiveMqDto extends MqDto{
@@ -10,6 +12,9 @@ public class ActiveMqDto extends MqDto{
 	//null or true异步， false：同步(只用于消费者Consumer)
 	private Boolean asyn;
 	
+	//阻塞队列,获取
+	BlockingQueue<String> messageQueue;
+
 	//ActiveMq 的默认用户名
     private String userName;
     
@@ -118,5 +123,13 @@ public class ActiveMqDto extends MqDto{
 
 	public void setAsyn(Boolean asyn) {
 		this.asyn = asyn;
+	}
+
+	public BlockingQueue<String> getMessageQueue() {
+		return messageQueue;
+	}
+
+	public void setMessageQueue(BlockingQueue<String> messageQueue) {
+		this.messageQueue = messageQueue;
 	}
 }

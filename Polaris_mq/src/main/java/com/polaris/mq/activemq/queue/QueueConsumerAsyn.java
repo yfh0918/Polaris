@@ -1,5 +1,6 @@
 package com.polaris.mq.activemq.queue;
 
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -18,7 +19,7 @@ public class QueueConsumerAsyn extends QueueConsumerBase implements MessageListe
 	private static final LogUtil logger = LogUtil.getInstance(QueueConsumerAsyn.class);
 	
 	//阻塞队列,获取
-	LinkedBlockingQueue<String> queue;
+	BlockingQueue<String> queue;
 
     //初始化连接
 	@Override
@@ -31,7 +32,13 @@ public class QueueConsumerAsyn extends QueueConsumerBase implements MessageListe
     	super.initialize(dto);
     	
     	//初始化获取消息的阻塞队列
-		queue = new LinkedBlockingQueue<>();
+    	if (dto.getMessageQueue() == null) {
+    		queue = new LinkedBlockingQueue<>();
+    		dto.setMessageQueue(queue);
+    		
+    	} else {
+    		queue = dto.getMessageQueue();
+    	}
     	
     	//开始监听
     	try {
