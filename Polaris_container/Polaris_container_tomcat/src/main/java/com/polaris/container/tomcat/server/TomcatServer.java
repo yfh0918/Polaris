@@ -88,9 +88,7 @@ public class TomcatServer {
 
             //关闭jarScan
             StandardJarScanner jarScanner = new StandardJarScanner();
-            jarScanner.setScanClassPath(false);
-            jarScanner.setScanAllFiles(false);
-            jarScanner.setScanAllDirectories(false);
+            jarScanner.setScanManifest(false);
             standardContext.setJarScanner(jarScanner);
 
             //保证已经配置好了。
