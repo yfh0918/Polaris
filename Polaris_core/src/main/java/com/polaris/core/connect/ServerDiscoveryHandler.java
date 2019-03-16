@@ -8,13 +8,9 @@ public interface ServerDiscoveryHandler {
 
 	void deregister(String ip, int port);
 
-	String getUrl(String key, List<String> clusters);
-	
 	String getUrl(String key);
-
+	
 	List<String> getAllUrls(String key);
-
-	List<String> getAllUrls(String key, List<String> clusters);
 
 	void connectionFail(String key, String url);
 }

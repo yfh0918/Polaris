@@ -212,12 +212,14 @@ public class Constant {
 	public static final String DUBBO_PROTOCOL_PORT_NAME = "dubbo.protocol.port";
 	public static final String DUBBO_REGISTRY_ADDRESS_NAME = "dubbo.registry.address";
 
-
-	// 命名空间
+	// 命名空间(注册中心，配置中心公用)
 	public static final String PROJECR_NAMESPACE_NAME="project.namespace";
 	
-	// 集群名称
+	// 集群名称(注册中心，配置中心公用)
 	public static final String PROJECR_CLUSTER_NAME = "project.cluster";
+	
+	// 分组名称(注册中心,dubbo)
+	public static final String PROJECR_GROUP_NAME = "project.group";
 	
 	// 配置中心
 	public static final String CONFIG_REGISTRY_ADDRESS_NAME = "config.registry.address";

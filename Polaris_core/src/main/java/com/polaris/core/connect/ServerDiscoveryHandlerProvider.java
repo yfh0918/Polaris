@@ -28,12 +28,8 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 			handler.deregister(ip, port);
 		}
     }
-
-    public String getUrl(String key) {
-		return getUrl(key, null);
-	}
     
-	public String getUrl(String key, List<String> clusters) {
+	public String getUrl(String key) {
 		List<String> temp = getRemoteAddress(key);
 		// 单个IP或者多IP不走注册中心
 		if (!isSkip(temp.get(1))) {
@@ -43,7 +39,7 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 				
 				
 				// 走注册中心
-				String url = handler.getUrl(temp.get(1), clusters);
+				String url = handler.getUrl(temp.get(1));
 				if (StringUtil.isNotEmpty(url)) {
 					return temp.get(0) + url + temp.get(2);
 				}
@@ -55,12 +51,9 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 		return temp.get(0) + ServerDiscovery.getUrl(temp.get(1)) + temp.get(2);
 	}
 
-	public List<String> getAllUrl(String key) {
-		
-		return getAllUrl(key, null);
-	}
+
 	
-	public List<String> getAllUrl(String key, List<String> clusters) {
+	public List<String> getAllUrl(String key) {
 		
 		List<String> temp = getRemoteAddress(key);
 		// 单个IP或者多IP不走注册中心
@@ -75,7 +68,7 @@ private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoade
 
 		// 走注册中心
 		for (ServerDiscoveryHandler handler : serviceLoader) {
-			List<String> urls = handler.getAllUrls(temp.get(1), clusters);
+			List<String> urls = handler.getAllUrls(temp.get(1));
 			for (int i0 = 0; i0 < urls.size(); i0++) {
 				String value = temp.get(0) + urls.get(i0) + temp.get(2);
 				urls.set(i0, value);

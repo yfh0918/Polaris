@@ -48,13 +48,9 @@ public class HttpClientSupport {
     }
     
     public static String doGet(String orgurl, Map<String, Object> param, Map<String, Object> header) {
-    	return doGet(orgurl, param, header, null);
-    }
-    
-    public static String doGet(String orgurl, Map<String, Object> param, Map<String, Object> header, List<String> clusters) {
         CloseableHttpResponse response = null;
         CloseableHttpClient httpclient = HttpClients.createDefault();
-        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl, clusters);
+        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
         try {
             URIBuilder builder = new URIBuilder(url);
             if (param != null) {
@@ -101,14 +97,10 @@ public class HttpClientSupport {
         return doPost(orgurl, param, null);
     }
     
-    public static String doPost(String orgurl, Map<String, Object> param, Map<String, Object> header) {
-        return doPost(orgurl, param, header, null);
-    }
-    
-    public static String doPost(String orgurl, Map<String, Object> param, Map<String, Object> header, List<String> clusters) {
+    public static String doPost(String orgurl, Map<String, Object> param,  Map<String, Object> header) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         CloseableHttpResponse response = null;
-        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl, clusters);
+        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
         try {
             HttpPost httpPost = new HttpPost(url);
             if (header != null) {
@@ -146,15 +138,13 @@ public class HttpClientSupport {
         return StringUtils.EMPTY;
     }
 
+
     public static String doPostCookie(String orgurl, Map<String, Object> param, CookieStore cookie) {
-        return doPostCookie(orgurl, param, cookie, null);
-    }
-    public static String doPostCookie(String orgurl, Map<String, Object> param, CookieStore cookie, List<String> clusters) {
         HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
         httpClientBuilder.setDefaultCookieStore(cookie);
         CloseableHttpClient closeableHttpClient = httpClientBuilder.build();
         CloseableHttpResponse response = null;
-        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl, clusters);
+        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
         try {
             HttpPost httpPost = new HttpPost(url);
             trace(httpPost);
@@ -187,10 +177,6 @@ public class HttpClientSupport {
     }
 
     public static String doPostJson(String orgurl, String json, String lang) {
-        return doPostJson(orgurl, json, lang, null);
-    }
-
-    public static String doPostJson(String orgurl, String json, String lang, List<String> clusters) {
         CloseableHttpClient httpClient = HttpClients.createDefault();
 		RequestConfig requestConfig = RequestConfig.custom()  
 					.setConnectTimeout(30000).setConnectionRequestTimeout(30000)  
@@ -232,12 +218,8 @@ public class HttpClientSupport {
     public static void httpAsync(String url) {
         httpAsync(url, null);
     }
-    public static void httpAsync(String url, Map<String, Object> paramMap) {
-        httpAsync(url, paramMap, null);
-    }
-    
-    public static void httpAsync(String orgurl, Map<String, Object> paramMap, List<String> clusters) {
-        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl, clusters);
+    public static void httpAsync(String orgurl, Map<String, Object> paramMap) {
+        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
         String paramUrl = url;
         try {
             RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(30000).setConnectTimeout(30000)
@@ -305,10 +287,7 @@ public class HttpClientSupport {
     }
 
     public static void httpAsyncJson(String orgurl, String json, String lang) {
-    	httpAsyncJson(orgurl, json, lang, null);
-    }
-    public static void httpAsyncJson(String orgurl, String json, String lang, List<String> clusters) {
-        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl, clusters);
+        String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
         try {
             RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(300000).setConnectTimeout(300000)
                 .build();

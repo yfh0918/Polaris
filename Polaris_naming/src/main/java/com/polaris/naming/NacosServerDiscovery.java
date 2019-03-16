@@ -1,6 +1,7 @@
 package com.polaris.naming;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -9,6 +10,7 @@ import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.polaris.comm.config.ConfClient;
+import com.polaris.comm.config.ConfigHandlerProvider;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.StringUtil;
 import com.polaris.core.connect.ServerDiscoveryHandler;
@@ -39,7 +41,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	}
 	
 	@Override
-	public String getUrl(String key, List<String> clusters) {
+	public String getUrl(String key) {
 		
 		//判断是否可以获取有效URL
 		if (StringUtil.isEmpty(ConfClient.getNamingRegistryAddress())) {
@@ -56,11 +58,8 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		//获取有效URL
 		try {
 			Instance instance = null;
-			if (clusters != null && clusters.size() > 0) {
-				instance = naming.selectOneHealthyInstance(key, clusters);
-			} else {
-				instance = naming.selectOneHealthyInstance(key);
-			}
+			String[] keyInfo = getKeyInfo(key);
+			instance = naming.selectOneHealthyInstance(keyInfo[0], keyInfo[1], getClusters(keyInfo[2]));
 			if (instance != null) {
 				return instance.toInetAddr();
 			}
@@ -69,13 +68,9 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		return null;
 	}
 	
-	@Override
-	public String getUrl(String key) {
-		return getUrl(key, null);
-	}
 
 	@Override
-	public List<String> getAllUrls(String key, List<String> clusters) {
+	public List<String> getAllUrls(String key) {
 		
 		//判断是否可以获取有效URL
 		if (StringUtil.isEmpty(ConfClient.getNamingRegistryAddress())) {
@@ -92,11 +87,8 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		//获取有效URL
 		try {
 			List<Instance> instances = null;
-			if (clusters != null && clusters.size() > 0) {
-				instances = naming.selectInstances(key,  clusters, true);
-			} else {
-				instances = naming.selectInstances(key,  true);
-			}
+			String[] keyInfo = getKeyInfo(key);
+			instances = naming.selectInstances(keyInfo[0], keyInfo[1], getClusters(keyInfo[2]), true);
 
 			List<String> urls = new ArrayList<>();
 			if (instances != null && instances.size() > 0) {
@@ -108,10 +100,6 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		} catch (Exception e) {
 		}
 		return null;
-	}
-	@Override
-	public List<String> getAllUrls(String key) {
-		return getAllUrls(key, null);
 	}
 
 	@Override
@@ -131,9 +119,12 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	        double weight = Double.parseDouble(ConfClient.get(Constant.PROJECT_WEIGHT, Constant.PROJECT_WEIGHT_DEFAULT, false));
 	        instance.setWeight(weight);
 	        String clusterName = ConfClient.getCluster();
-	        //instance.setCluster(new Cluster(cluster));
 	        instance.setClusterName(clusterName);
-			naming.registerInstance(ConfClient.getAppName(), instance);
+	        String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+	        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
+	        	group = ConfClient.getGroup();
+			}
+        	naming.registerInstance(ConfClient.getAppName(), group, instance);
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -146,7 +137,12 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		}
 		 try {
 	        String cluster = ConfClient.getCluster();
-			naming.deregisterInstance(ConfClient.getAppName(), ip, port,cluster);
+	        String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+	        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
+	        	group = ConfClient.getGroup();
+			}
+
+			naming.deregisterInstance(ConfClient.getAppName(), group, ip, port, cluster);
 		} catch (Exception e) {
 			logger.error(e);
 		}
@@ -154,14 +150,77 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	
 	public static void main( String[] args ) throws Exception
     {
-		Properties properties = new Properties();
-        properties.setProperty(PropertyKeyConst.SERVER_ADDR, "127.0.0.1:8848");
-		NamingService naming = NamingFactory.createNamingService(properties);
-		for (int i0 = 0; i0 < 1000; i0++) {
-			Instance instance = naming.selectOneHealthyInstance("mwclg-sso");
-			System.out.println(instance.toInetAddr());
-		}
-		
+//		Properties properties = new Properties();
+//        properties.setProperty(PropertyKeyConst.SERVER_ADDR, "127.0.0.1:8848");
+//		NamingService naming = NamingFactory.createNamingService(properties);
+//		for (int i0 = 0; i0 < 1000; i0++) {
+//			Instance instance = naming.selectOneHealthyInstance("mwclg-sso");
+//			System.out.println(instance.toInetAddr());
+//		}
+		NacosServerDiscovery ddd = new NacosServerDiscovery();
+		String key1="polaris-demo";
+		String key2="polaris-demo&group=xxx";
+		String key3="polaris-demo&clusters=yyyy1";
+		String key4="polaris-demo&group=xxx&clusters=yyyy1,yyyy2";
+		String[] keyinfo1 = ddd.getKeyInfo(key1);
+		System.out.println(keyinfo1[0]);
+		System.out.println(keyinfo1[1]);
+		System.out.println(ddd.getClusters(keyinfo1[2]));
+		String[] keyinfo2 = ddd.getKeyInfo(key2);
+		System.out.println(keyinfo2[0]);
+		System.out.println(keyinfo2[1]);
+		System.out.println(ddd.getClusters(keyinfo2[2]));
+		String[] keyinfo3 = ddd.getKeyInfo(key3);
+		System.out.println(keyinfo3[0]);
+		System.out.println(keyinfo3[1]);
+		System.out.println(ddd.getClusters(keyinfo3[2]));
+		String[] keyinfo4 = ddd.getKeyInfo(key4);
+		System.out.println(keyinfo4[0]);
+		System.out.println(keyinfo4[1]);
+		System.out.println(ddd.getClusters(keyinfo4[2]));
     }
+	
+	//key: polaris-demo&group=xxx&clusters=yyyy1,yyyy2
+	//key: polaris-demo&group=xxx
+	//key: polaris-demo&clusters=yyyy1
+	//key: polaris-demo
+	private String[] getKeyInfo(String key) {
+		String[] keyInfo = key.split("&");
+		if (keyInfo.length == 1) {
+			return new String[] {keyInfo[0],com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP,""};
+		} else if (keyInfo.length == 2) {
+			if (StringUtil.isEmpty(keyInfo[1])) {
+				String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+				String clusters = "";
+				return new String[] {keyInfo[0],group,clusters};
+			}
+			if (keyInfo[1].indexOf("group") > -1) {
+				return new String[] {keyInfo[0],ConfigHandlerProvider.getKeyValue(keyInfo[1])[1],""};
+			}
+			if (keyInfo[1].indexOf("clusters") > -1) {
+				String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+				return new String[] {keyInfo[0],group, ConfigHandlerProvider.getKeyValue(keyInfo[1])[1]};
+			}
+			return new String[] {keyInfo[0],"",""};
+		} else {
+			String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+			if (StringUtil.isNotEmpty(keyInfo[1]) && keyInfo[1].indexOf("group") > -1) {
+				group = ConfigHandlerProvider.getKeyValue(keyInfo[1])[1];
+			}
+			String clusters = "";
+			if (StringUtil.isNotEmpty(keyInfo[2]) && keyInfo[2].indexOf("clusters") > -1) {
+				clusters = ConfigHandlerProvider.getKeyValue(keyInfo[2])[1];
+			}
+			return new String[] {keyInfo[0],group,clusters};
+		}
+	}
+	
 
+	private List<String> getClusters(String value) {
+		if (StringUtil.isEmpty(value)) {
+			return new ArrayList<>();
+		}
+		return Arrays.asList(value.split(","));
+	}
+	
 }

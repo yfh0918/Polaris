@@ -103,6 +103,11 @@ public class ConfClient {
 		String namespace = ConfigHandlerProvider.getInstance().getValue(Constant.PROJECR_NAMESPACE_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		return namespace == null ? "" :namespace;
 	}
+	public static String getGroup() {
+		String group = ConfigHandlerProvider.getInstance().getValue(Constant.PROJECR_GROUP_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		return group == null ? "" :group;
+	}
+
 	public static String getCluster() {
 		String cluster = ConfigHandlerProvider.getInstance().getValue(Constant.PROJECR_CLUSTER_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		return cluster == null ? "" :cluster;

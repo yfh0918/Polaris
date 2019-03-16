@@ -48,13 +48,19 @@ abstract public class MainSupport {
 			ConfigHandlerProvider.getInstance().updateCache(Constant.PROJECT_NAME, project, Constant.DEFAULT_CONFIG_NAME);
 		}
 		
-		//命名空间
+		//命名空间(注册中心和配置中心)
 		String namespace = System.getProperty(Constant.PROJECR_NAMESPACE_NAME);
 		if (StringUtil.isNotEmpty(namespace)) {
 			ConfigHandlerProvider.getInstance().updateCache(Constant.PROJECR_NAMESPACE_NAME, namespace, Constant.DEFAULT_CONFIG_NAME);
 		} 
 		
-		//集群名称
+		//Group(注册中心和dubbo)
+		String group = System.getProperty(Constant.PROJECR_GROUP_NAME);
+		if (StringUtil.isNotEmpty(group)) {
+			ConfigHandlerProvider.getInstance().updateCache(Constant.PROJECR_GROUP_NAME, group, Constant.DEFAULT_CONFIG_NAME);
+		} 
+
+		//集群名称(注册中心和配置中心)
 		String cluster = System.getProperty(Constant.PROJECR_CLUSTER_NAME);
 		if (StringUtil.isNotEmpty(cluster)) {
 			ConfigHandlerProvider.getInstance().updateCache(Constant.PROJECR_CLUSTER_NAME, cluster, Constant.DEFAULT_CONFIG_NAME);
