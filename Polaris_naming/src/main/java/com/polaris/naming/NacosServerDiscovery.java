@@ -118,6 +118,8 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	        instance.setPort(port);
 	        double weight = Double.parseDouble(ConfClient.get(Constant.PROJECT_WEIGHT, Constant.PROJECT_WEIGHT_DEFAULT, false));
 	        instance.setWeight(weight);
+	        boolean ephemeral = Boolean.parseBoolean(ConfClient.get(Constant.PROJECT_EPHEMERAL, Constant.PROJECT_EPHEMERAL_DEFAULT, false));
+	        instance.setEphemeral(ephemeral);
 	        String clusterName = ConfClient.getCluster();
 	        instance.setClusterName(clusterName);
 	        String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
