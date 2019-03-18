@@ -72,7 +72,7 @@ public class ApplicationSupport {
                     .withSslEngineSource(new GatewaySelfSignedSslEngineSource());
         } 
         httpProxyServerBootstrap.withAllowRequestToOriginServer(true)
-                .withProxyAlias(GatewaySelfSignedSslEngineSource.ALIAS)
+                .withProxyAlias(ConfClient.get("server.tls.alias"))
                 .withThreadPoolConfiguration(threadPoolConfiguration)
                 //XFF设置
                 .plusActivityTracker(new ActivityTrackerAdapter() {

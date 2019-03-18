@@ -18,7 +18,9 @@ import javax.net.ssl.X509TrustManager;
 import org.joda.time.DateTime;
 import org.littleshoot.proxy.SslEngineSource;
 
+import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.util.LogUtil;
+import com.polaris.comm.util.StringUtil;
 
 import net.lightbody.bmp.mitm.CertificateInfo;
 import net.lightbody.bmp.mitm.RootCertificateGenerator;
@@ -35,35 +37,13 @@ public class GatewaySelfSignedSslEngineSource implements SslEngineSource {
 	private static LogUtil logger = LogUtil.getInstance(GatewaySelfSignedSslEngineSource.class);
 
     public static final String KeyStoreType_STR = "JKS";
-    public static final String ALIAS = "gateway";
-    public static final String PASSWORD = "Tom.Yu";
     private static final String PROTOCOL = "TLS";
-    public static final String crtFileName = "gateway.crt";
-    public static final String jksKeyStoreFileName = "gateway.jks";
-    public static final String p12KeyStoreFileName = "gateway.p12";
     private static String KEYALG = "EC";
     public File keyStoreFile;
     private final boolean trustAllServers;
     private final boolean sendCerts;
     private KeyStoreType keyStoreType;
     private SSLContext sslContext;
-
-    /**
-     * use exist keystore
-     *
-     * @param keyStorePath
-     * @param trustAllServers
-     * @param sendCerts
-     */
-    public GatewaySelfSignedSslEngineSource(String keyStorePath,
-                                        boolean trustAllServers, boolean sendCerts, KeyStoreType keyStoreType) {
-        JCEUtil.removeCryptographyRestrictions();
-        this.trustAllServers = trustAllServers;
-        this.sendCerts = sendCerts;
-        this.keyStoreFile = new File(keyStorePath);
-        this.keyStoreType = keyStoreType;
-        initializeSSLContext();
-    }
 
     /**
      * create keystore
@@ -76,9 +56,34 @@ public class GatewaySelfSignedSslEngineSource implements SslEngineSource {
         JCEUtil.removeCryptographyRestrictions();
         this.trustAllServers = trustAllServers;
         this.sendCerts = sendCerts;
-        this.keyStoreType = KeyStoreType.JKS;
-        this.KEYALG = keyalg;
-        initializeKeyStore();
+        if ("jks".equals(ConfClient.get("server.tls.style"))) {
+            this.keyStoreType = KeyStoreType.JKS;
+        } else {
+            this.keyStoreType = KeyStoreType.PKCS12;
+        }
+        
+        //是否外部导入的证书
+        String keystore = ConfClient.get("server.tls.keystore");
+        boolean isFile = false;
+        File tempKeystoreFile = null;
+        if (StringUtil.isNotEmpty(keystore)) {
+        	tempKeystoreFile = new File(keystore);
+        	if (tempKeystoreFile.isFile()) {
+        		isFile = true;
+        	}
+        }
+        
+        //自己生成证书
+        if (!isFile) {
+            this.KEYALG = keyalg;
+            initializeKeyStore();
+        } else {
+        	
+        	//外部导入证书
+        	this.keyStoreFile = tempKeystoreFile;
+        }
+        
+        //初始化ssl
         initializeSSLContext();
     }
 
@@ -101,19 +106,23 @@ public class GatewaySelfSignedSslEngineSource implements SslEngineSource {
     }
 
     public void initializeKeyStore() {
-        File crtFile = new File(crtFileName);
-        File jksFile = new File(jksKeyStoreFileName);
-        File p12File = new File(p12KeyStoreFileName);
-        keyStoreFile = jksFile;
+        File crtFile = new File(ConfClient.get("server.tls.alias") + ".crt");
+        if ("jks".equals(ConfClient.get("server.tls.style"))) {
+            File jksFile = new File(ConfClient.get("server.tls.alias") + ".jks");
+            keyStoreFile = jksFile;
+        } else {
+            File p12File = new File(ConfClient.get("server.tls.alias") + ".p12");
+            keyStoreFile = p12File;
+        }
         if (keyStoreFile.isFile()) {
             logger.info("Not deleting keystore");
             return;
         }
         CertificateInfo certificateInfo = new CertificateInfo();
-        certificateInfo.countryCode("CN");
-        certificateInfo.organization("tech-Tom.Yu.com");
-        certificateInfo.email("yufenghua@tech-Tom.Yu.com");
-        certificateInfo.commonName("Gateway Integration Certification Authority");
+        certificateInfo.countryCode(ConfClient.get("server.certificate.country"));
+        certificateInfo.organization(ConfClient.get("server.certificate.organization"));
+        certificateInfo.email(ConfClient.get("server.certificate.email"));
+        certificateInfo.commonName(ConfClient.get("server.certificate.name"));
         DateTime dateTime = new DateTime();
         certificateInfo.notBefore(dateTime.minusDays(1).toDate());
         certificateInfo.notAfter(dateTime.plusYears(1).toDate());
@@ -128,10 +137,13 @@ public class GatewaySelfSignedSslEngineSource implements SslEngineSource {
 
         rootCertificateGenerator.saveRootCertificateAsPemFile(crtFile);
         logger.info("CRT file created success");
-        rootCertificateGenerator.saveRootCertificateAndKey(KeyStoreType.JKS.name(), jksFile, ALIAS, PASSWORD);
-        logger.info("JKS file created success");
-        rootCertificateGenerator.saveRootCertificateAndKey(KeyStoreType.PKCS12.name(), p12File, ALIAS, PASSWORD);
-        logger.info("PKCS12 file created success");
+        if ("jks".equals(ConfClient.get("server.tls.style"))) {
+            rootCertificateGenerator.saveRootCertificateAndKey(KeyStoreType.JKS.name(), keyStoreFile, ConfClient.get("server.tls.alias"), ConfClient.get("server.tls.password"));
+            logger.info("JKS file created success");
+        } else {
+            rootCertificateGenerator.saveRootCertificateAndKey(KeyStoreType.PKCS12.name(), keyStoreFile, ConfClient.get("server.tls.alias"), ConfClient.get("server.tls.password"));
+            logger.info("PKCS12 file created success");
+        }
     }
 
     private void initializeSSLContext() {
@@ -143,12 +155,12 @@ public class GatewaySelfSignedSslEngineSource implements SslEngineSource {
 
         try {
             final KeyStore ks = KeyStore.getInstance(keyStoreType.name());
-            ks.load(new FileInputStream(keyStoreFile), PASSWORD.toCharArray());
+            ks.load(new FileInputStream(keyStoreFile), ConfClient.get("server.tls.password").toCharArray());
 
             // Set up key manager factory to use our key store
             final KeyManagerFactory kmf =
                     KeyManagerFactory.getInstance(algorithm);
-            kmf.init(ks, PASSWORD.toCharArray());
+            kmf.init(ks, ConfClient.get("server.tls.password").toCharArray());
 
             // Set up a trust manager factory to use our key store
             TrustManagerFactory tmf = TrustManagerFactory
