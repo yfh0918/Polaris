@@ -34,7 +34,7 @@ public class MainSupport extends com.polaris.comm.supports.MainSupport{
     	iniParameter();
     	
 		//启动
-		com.alibaba.dubbo.container.Main.main(args);
+		org.apache.dubbo.container.Main.main(args);
     }
     
 }
