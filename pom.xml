@@ -20,7 +20,6 @@
         <module>Polaris_distributed_lock</module>
         <module>Polaris_filter</module>
         <module>Polaris_gateway</module>
-        <module>Polaris_mq</module>
     </modules>
  
 </project>

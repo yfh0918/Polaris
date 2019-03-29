@@ -154,11 +154,6 @@
 	            <artifactId>Polaris_gateway</artifactId>
 	            <version>${project.version}</version>
 	        </dependency>  
-	        <dependency>
-	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_mq</artifactId>
-	            <version>${project.version}</version>
-	        </dependency>
         
 	       	<dependency>
 	            <groupId>com.polaris</groupId>
