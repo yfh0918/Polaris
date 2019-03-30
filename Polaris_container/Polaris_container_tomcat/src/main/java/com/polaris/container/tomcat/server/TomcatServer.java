@@ -88,6 +88,8 @@ public class TomcatServer {
 
             //关闭jarScan
             StandardJarScanner jarScanner = new StandardJarScanner();
+            boolean scanClassPath = Boolean.parseBoolean(ConfClient.get("server.websocket", "false"));
+            jarScanner.setScanClassPath(scanClassPath);
             jarScanner.setScanManifest(false);
             standardContext.setJarScanner(jarScanner);
 
