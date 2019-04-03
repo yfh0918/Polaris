@@ -23,7 +23,8 @@ import com.polaris.container.jetty.listener.ServerHandlerListerner;
 
 public class JettyServer {
     private static final LogUtil logger = LogUtil.getInstance(JettyServer.class);
-    private static final String MAX_THREADS = "300";//和jetty保持一致
+    private static final String MAX_THREADS = "300";//和tomcat保持一致
+    private static final  int MAX_SAVE_POST_SIZE = 4 * 1024;
 
     /**
      * 服务器
@@ -60,6 +61,7 @@ public class JettyServer {
             String resourceBase = PropertyUtils.getFilePath("WebContent");
             File resDir = new File(resourceBase);
             context.setResourceBase(resDir.getCanonicalPath());
+            context.setMaxFormContentSize(Integer.parseInt(ConfClient.get("server.maxSavePostSize",String.valueOf(MAX_SAVE_POST_SIZE))));
             
             this.server.setHandler(context); // 将Application注册到服务器
             context.addBean(new ServerHandlerLifeCycle(context.getServletContext()),true);

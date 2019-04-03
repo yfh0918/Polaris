@@ -25,6 +25,9 @@ import com.polaris.comm.util.PropertyUtils;
 public class TomcatServer {
     private static final LogUtil logger = LogUtil.getInstance(TomcatServer.class);
     private static final String MAX_THREADS = "300";//和jetty保持一致
+    private static final  int MAX_SAVE_POST_SIZE = 4 * 1024;
+    private static final  int MAX_HTTP_HEADER_SIZE = 8 * 1024;
+    
 
     /**
      * 服务器
@@ -71,6 +74,8 @@ public class TomcatServer {
             tomcat.getHost().setAppBase(catalina_home);
             Http11NioProtocol protocol = (Http11NioProtocol)tomcat.getConnector().getProtocolHandler();
             protocol.setMaxThreads(Integer.parseInt(ConfClient.get("server.maxThreads",MAX_THREADS)));//设置最大线程数
+            protocol.setMaxSavePostSize(Integer.parseInt(ConfClient.get("server.maxSavePostSize",String.valueOf(MAX_SAVE_POST_SIZE))));
+            protocol.setMaxHttpHeaderSize(Integer.parseInt(ConfClient.get("server.maxHttpHeaderSize",String.valueOf(MAX_HTTP_HEADER_SIZE))));
 
             // Add AprLifecycleListener
             StandardServer server = (StandardServer) tomcat.getServer();
