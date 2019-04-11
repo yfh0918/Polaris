@@ -74,37 +74,34 @@ public class ApplicationSupport {
         httpProxyServerBootstrap.withAllowRequestToOriginServer(true)
                 .withProxyAlias(ConfClient.get("server.tls.alias"))
                 .withThreadPoolConfiguration(threadPoolConfiguration)
-                //XFF设置
+                //X-Real-IP,XFF设置
                 .plusActivityTracker(new ActivityTrackerAdapter() {
                     @Override
                     public void requestReceivedFromClient(FlowContext flowContext,
                                                           HttpRequest httpRequest) {
 
-                        String xffKey = GatewayConstant.X_Forwarded_For;
+                    	//如何设置真实IP
+                        List<String> headerValues = GatewayConstant.getHeaderValues(httpRequest, GatewayConstant.X_Real_IP);
+                        List<String> headerValues2 = GatewayConstant.getHeaderValues(httpRequest, GatewayConstant.X_Forwarded_For);
+                        if (headerValues.size() == 0) {
+                        	if (headerValues2 != null && headerValues2.size() > 0) {
+                        		httpRequest.headers().add(GatewayConstant.X_Real_IP, headerValues2.get(0));
+                        	} else {
+                        		String remoteAddress = flowContext.getClientAddress().getAddress().getHostAddress();
+                                httpRequest.headers().add(GatewayConstant.X_Real_IP, remoteAddress);
+                        	}
+                        }
+
+                        //设置XFF
                         StringBuilder xff = new StringBuilder();
-                        List<String> headerValues1 = GatewayConstant.getHeaderValues(httpRequest, xffKey);
-                        if (headerValues1.size() > 0 && headerValues1.get(0) != null) {
+                        if (headerValues2.size() > 0 && headerValues2.get(0) != null) {
                             //逗号面一定要带一个空格
-                            xff.append(headerValues1.get(0)).append(", ");
+                            xff.append(headerValues2.get(0)).append(", ");
                         }
                         xff.append(NetUtils.getLocalHost());
-                        httpRequest.headers().set(xffKey, xff.toString());
+                        httpRequest.headers().set(GatewayConstant.X_Forwarded_For, xff.toString());
                     }
                 })
-                //X-Real-IP设置
-                .plusActivityTracker(
-                        new ActivityTrackerAdapter() {
-                            @Override
-                            public void requestReceivedFromClient(FlowContext flowContext,
-                                                                  HttpRequest httpRequest) {
-                                List<String> headerValues2 = GatewayConstant.getHeaderValues(httpRequest, GatewayConstant.X_Real_IP);
-                                if (headerValues2.size() == 0) {
-                                    String remoteAddress = flowContext.getClientAddress().getAddress().getHostAddress();
-                                    httpRequest.headers().add(GatewayConstant.X_Real_IP, remoteAddress);
-                                }
-                            }
-                        }
-                )
                 .withFiltersSource(new HttpFiltersSourceAdapter() {
                     @Override
                     public HttpFilters filterRequest(HttpRequest originalRequest, ChannelHandlerContext ctx) {
