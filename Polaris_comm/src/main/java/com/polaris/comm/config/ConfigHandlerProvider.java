@@ -159,7 +159,17 @@ public  class ConfigHandlerProvider {
 			if (keyvalue.length == 1) {
 				return new String[] {keyvalue[0].trim(),""};
 			}
-			return new String[] {keyvalue[0].trim(),keyvalue[1].trim()};
+			String value = "";
+			for (int index = 0; index < keyvalue.length; index++) {
+				if (index != 0) {
+					if (StringUtil.isEmpty(value)) {
+						value = keyvalue[index].trim();
+					} else {
+						value = value + "=" + keyvalue[index].trim();
+					}
+				}
+			}
+			return new String[] {keyvalue[0].trim(),value};
 		}
 		return null;
 	}
