@@ -13,12 +13,10 @@ import com.polaris.comm.util.StringUtil;
 
 public class WebFilterInit {
 	private final static String FILE_NAME = "sentinel.txt";
-    private volatile static Set<String> staticSet = new HashSet<String>();
     private volatile static Set<String> restUriSet = new HashSet<>();
 
 	private static void loadFile(String content) {
     	String[] contents = content.split(Constant.LINE_SEP);
-    	Set<String> TEMP_FILE_TYPE = new HashSet<>();
     	Set<String> TEMP_REST_URI = new HashSet<>();
  
     	for (String conf : contents) {
@@ -27,11 +25,6 @@ public class WebFilterInit {
     			conf = conf.replace("\r", "");
 				String[] kv = ConfigHandlerProvider.getKeyValue(conf);
 
-    			// 不需要验证token的uri
-    			if (kv[0].equals("csp.sentinel.filter.fileType")) {
-    				TEMP_FILE_TYPE.add(kv[1]);
-    			}
-
     			// 以xx开头放过的URL
     			if (kv[0].equals("csp.sentinel.filter.restUri")) {
     				TEMP_REST_URI.add(kv[1]);
@@ -39,7 +32,6 @@ public class WebFilterInit {
     		}
     	}
     	
-    	staticSet = TEMP_FILE_TYPE;
     	restUriSet = TEMP_REST_URI;
     }
 	
@@ -60,39 +52,20 @@ public class WebFilterInit {
 			//File nothing
 		}
    	
-		//过滤
-		staticSet.add(".css");
-		staticSet.add(".js");
-		staticSet.add(".jpg");
-		staticSet.add(".png");
-		staticSet.add(".ico");
-		staticSet.add(".gif");
-		staticSet.add(".properties");
-
 		//url过滤
 		WebCallbackManager.setUrlCleaner(new UrlCleaner() {
 			@Override
 			public String clean(String originUrl) {
 				if (originUrl != null) {
 					
-					//静态资源,比如css,js等统一规整
-					int index = originUrl.lastIndexOf(".");
-					if (index > -1) {
-						String suffix = originUrl.substring(index).toLowerCase();
-						if (staticSet.contains(suffix)) {
-							return staticSet.toString();
-						}
-					}
-					
 					//rest风格的URI需要统合，比如/user/1,user/2,user/3,etc统合成/user/*
 					if (restUriSet.size() > 0) {
-						int restindex = originUrl.lastIndexOf("/");
-						if (restindex > -1) {
-							String rest = originUrl.substring(0, restindex + 1);
-							if (restUriSet.contains(rest)) {
-								return rest + "*";
+						for (String prefix : restUriSet) {
+							if (originUrl.startsWith(prefix)) {
+								return prefix + "/*";
 							}
 						}
+						
 					}
 				}
 				
