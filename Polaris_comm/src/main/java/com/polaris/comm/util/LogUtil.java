@@ -1,12 +1,5 @@
 package com.polaris.comm.util;
 
-import java.lang.reflect.Method;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.LinkedBlockingQueue;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,7 +25,7 @@ public class LogUtil extends ExtendedLoggerWrapper {
 	public static final String MODULE_ID = "moduleId";// 本模块ID
 	public static final String LOG_SEPARATOR = "->";// 分割符号
 	private static final String FQCN = LogUtil.class.getName();
-	private boolean isCollect = true;//
+//	private boolean isCollect = true;//
 
 	private LogUtil(final Logger logger) {
 		super((AbstractLogger) logger, logger.getName(), logger.getMessageFactory());
@@ -41,7 +34,7 @@ public class LogUtil extends ExtendedLoggerWrapper {
 	
 	private LogUtil(final Logger logger, boolean isCollect) {
 		this(logger);
-		this.isCollect = isCollect;
+//		this.isCollect = isCollect;
 	}
 
 
@@ -235,50 +228,50 @@ public class LogUtil extends ExtendedLoggerWrapper {
     }  
   
 
-	//日志埋点和收集（需要自定义类型）
-	@SuppressWarnings("unchecked")
-	public void collect(String str, Level level) {
-		if (StringUtil.isNotEmpty(getTraceId())) {
-			Object proxy = SpringUtil.getBean("logAdapter");
-			if (proxy == null) {
-				return;
-			}
-			LinkedBlockingQueue<Map<String, Object>> queue = null;
-			try {
-				Method getBlockingQueue = proxy.getClass().getMethod("getBlockingQueue");
-				if(getBlockingQueue == null) {
-					return;
-				}
-				queue = (LinkedBlockingQueue<Map<String, Object>>) getBlockingQueue.invoke(proxy);
-			} catch (Exception e) {
-				return;
-			}
-
-			//获取日志等级
-			if (queue != null) {
-				
-				//默认info级别以上输出日志
-				if (level.intLevel() >= getLevel(ConfClient.get("log.collect.level", "info"))) {
-					
-					// 构造logDto
-					SimpleDateFormat sdf = new SimpleDateFormat(YEAR_MONTH_DAY_TIME);
-					
-					Map<String ,Object> logMap = new HashMap<>();
-					// uuid
-					logMap.put("uuid", UuidUtil.generateUuid());
-					// 操作时间
-					logMap.put("createDate", sdf.format(new Date()));
-					logMap.put("content", str);
-					logMap.put("logType", level.toString());
-					logMap.put("trace_id", getTraceId());
-					logMap.put("module_id", getModuleId());
-					logMap.put("parent_id", getParentId());
-					logMap.put("remoteAddr", NetUtils.getLocalHost());
-					queue.offer(logMap);
-				}
-			}
-		}
-	}
+//	//日志埋点和收集（需要自定义类型）
+//	@SuppressWarnings("unchecked")
+//	public void collect(String str, Level level) {
+//		if (StringUtil.isNotEmpty(getTraceId())) {
+//			Object proxy = SpringUtil.getBean("logAdapter");
+//			if (proxy == null) {
+//				return;
+//			}
+//			LinkedBlockingQueue<Map<String, Object>> queue = null;
+//			try {
+//				Method getBlockingQueue = proxy.getClass().getMethod("getBlockingQueue");
+//				if(getBlockingQueue == null) {
+//					return;
+//				}
+//				queue = (LinkedBlockingQueue<Map<String, Object>>) getBlockingQueue.invoke(proxy);
+//			} catch (Exception e) {
+//				return;
+//			}
+//
+//			//获取日志等级
+//			if (queue != null) {
+//				
+//				//默认info级别以上输出日志
+//				if (level.intLevel() >= getLevel(ConfClient.get("log.collect.level", "info"))) {
+//					
+//					// 构造logDto
+//					SimpleDateFormat sdf = new SimpleDateFormat(YEAR_MONTH_DAY_TIME);
+//					
+//					Map<String ,Object> logMap = new HashMap<>();
+//					// uuid
+//					logMap.put("uuid", UuidUtil.generateUuid());
+//					// 操作时间
+//					logMap.put("createDate", sdf.format(new Date()));
+//					logMap.put("content", str);
+//					logMap.put("logType", level.toString());
+//					logMap.put("trace_id", getTraceId());
+//					logMap.put("module_id", getModuleId());
+//					logMap.put("parent_id", getParentId());
+//					logMap.put("remoteAddr", NetUtils.getLocalHost());
+//					queue.offer(logMap);
+//				}
+//			}
+//		}
+//	}
 
 	//日志输出
 	private Object getMessage(Object strO, Level level) {
@@ -289,10 +282,10 @@ public class LogUtil extends ExtendedLoggerWrapper {
 			str = "";
 		}
 
-		// 保存log
-		if (isCollect) {
-			collect(str, level);
-		}
+//		// 保存log
+//		if (isCollect) {
+//			collect(str, level);
+//		}
 
 		//日志本地输出格式设定
 		StringBuilder strB = new StringBuilder();
@@ -319,27 +312,27 @@ public class LogUtil extends ExtendedLoggerWrapper {
 		return strB.toString();
 	}
 
-	//转化日志等级
-	private int getLevel(String levelStr) {
-		if (StringUtil.isEmpty(levelStr)) {
-			return Level.INFO.intLevel();
-		}
-		if (levelStr.toUpperCase().equals(Level.TRACE.toString())) {
-			return Level.INFO.intLevel();
-		}
-		if (levelStr.toUpperCase().equals(Level.ERROR.toString())) {
-			return Level.ERROR.intLevel();
-		}
-		if (levelStr.toUpperCase().equals(Level.WARN.toString())) {
-			return Level.WARN.intLevel();
-		}
-		if (levelStr.toUpperCase().equals(Level.INFO.toString())) {
-			return Level.INFO.intLevel();
-		}
-		if (levelStr.toUpperCase().equals(Level.DEBUG.toString())) {
-			return Level.DEBUG.intLevel();
-		}
-		return Level.INFO.intLevel();
-	}
+//	//转化日志等级
+//	private int getLevel(String levelStr) {
+//		if (StringUtil.isEmpty(levelStr)) {
+//			return Level.INFO.intLevel();
+//		}
+//		if (levelStr.toUpperCase().equals(Level.TRACE.toString())) {
+//			return Level.INFO.intLevel();
+//		}
+//		if (levelStr.toUpperCase().equals(Level.ERROR.toString())) {
+//			return Level.ERROR.intLevel();
+//		}
+//		if (levelStr.toUpperCase().equals(Level.WARN.toString())) {
+//			return Level.WARN.intLevel();
+//		}
+//		if (levelStr.toUpperCase().equals(Level.INFO.toString())) {
+//			return Level.INFO.intLevel();
+//		}
+//		if (levelStr.toUpperCase().equals(Level.DEBUG.toString())) {
+//			return Level.DEBUG.intLevel();
+//		}
+//		return Level.INFO.intLevel();
+//	}
 
 }
