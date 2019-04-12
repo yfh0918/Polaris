@@ -141,11 +141,6 @@
 	        </dependency>  
 	        <dependency>
 	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_filter</artifactId>
-	            <version>${project.version}</version>
-	        </dependency>  
-	        <dependency>
-	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_distributed_lock</artifactId>
 	            <version>${project.version}</version>
 	        </dependency>  
@@ -155,27 +150,6 @@
 	            <version>${project.version}</version>
 	        </dependency>  
         
-	       	<dependency>
-	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_log_parent</artifactId>
-	            <version>${project.version}</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_log</artifactId>
-	            <version>${project.version}</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_log_api</artifactId>
-	            <version>${project.version}</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_log_rest</artifactId>
-	            <version>${project.version}</version>
-	        </dependency>
-	        
 	       	<dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_timer_parent</artifactId>
