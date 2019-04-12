@@ -1,7 +1,10 @@
 package com.polaris.gateway.request;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.stereotype.Service;
 
@@ -24,12 +27,20 @@ import io.netty.handler.codec.http.HttpRequest;
  * Description:
  * cc拦截
  */
+/**
+ * @author:Tom.Yu
+ *
+ * Description:
+ * cc拦截
+ */
 @Service
 public class CCHttpRequestFilter extends HttpRequestFilter {
 	private static LogUtil logger = LogUtil.getInstance(CCHttpRequestFilter.class);
 	
 	//控制每个IP地址的访问率
 	private volatile LoadingCache<String, RateLimiter> loadingCache;
+	private volatile Map<String, AtomicInteger> countMap = new HashMap<>();
+	private static final int IP_MAX_WAIT_COUNT = 5;//最对同一个IP有5个线程等待处理
     
     //控制总的流量
 	private volatile RateLimiter totalRateLimiter;
@@ -51,6 +62,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
                     @Override
                     public RateLimiter load(String key) throws Exception {
                         RateLimiter rateLimiter = RateLimiter.create(Integer.parseInt(ip_rate));
+                        countMap.put(key, new AtomicInteger(0));
                         logger.debug("RateLimiter for key:{} have been created", key);
                         return rateLimiter;
                     }
@@ -63,14 +75,24 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             String realIp = GatewayConstant.getRealIp((DefaultHttpRequest) httpObject);
-            RateLimiter rateLimiter = null;
-            try {
-                rateLimiter = (RateLimiter) loadingCache.get(realIp);
-            } catch (ExecutionException e) {
-            	logger.error(e);
-            	return true;
+            
+        	//总流量控制发生变化
+            if (!ConfClient.get("gateway.flowcontrol.rate").equals(flow_control_rate)) {
+            	synchronized(this) {
+            		if (!ConfClient.get("gateway.flowcontrol.rate").equals(flow_control_rate)) {
+            			flow_control_rate = ConfClient.get("gateway.flowcontrol.rate");
+            			totalRateLimiter = RateLimiter.create(Integer.parseInt(flow_control_rate));
+            		}
+            	}
             }
             
+            //控制总流量，超标直接返回
+            if (!totalRateLimiter.tryAcquire()) {
+                hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", ConfClient.get("gateway.cc.rate"));
+                return true;
+            }
+            
+            //单个IP最大访问速率gateway.cc.rate
             if (!ConfClient.get("gateway.cc.rate").equals(ip_rate)) {
             	synchronized(this) {
             		if (!ConfClient.get("gateway.cc.rate").equals(ip_rate)) {
@@ -82,6 +104,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             	                    @Override
             	                    public RateLimiter load(String key) throws Exception {
             	                        RateLimiter rateLimiter = RateLimiter.create(Integer.parseInt(ip_rate));
+            	                        countMap.put(key, new AtomicInteger(0));
             	                        logger.debug("RateLimiter for key:{} have been created", key);
             	                        return rateLimiter;
             	                    }
@@ -89,33 +112,23 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             		}
             	}
             }
-            
-            //最大访问速率gateway.cc.rate
-            if (rateLimiter.tryAcquire()) {
-            	
-            	//总流量控制发生变化
-                if (!ConfClient.get("gateway.flowcontrol.rate").equals(flow_control_rate)) {
-                	synchronized(this) {
-                		if (!ConfClient.get("gateway.flowcontrol.rate").equals(flow_control_rate)) {
-                			flow_control_rate = ConfClient.get("gateway.flowcontrol.rate");
-                			totalRateLimiter = RateLimiter.create(Integer.parseInt(flow_control_rate));
-                		}
-                	}
+            RateLimiter rateLimiter = null;
+            try {
+                rateLimiter = (RateLimiter) loadingCache.get(realIp);
+                int count = countMap.get(realIp).incrementAndGet();
+                if (count > IP_MAX_WAIT_COUNT) {
+                	hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", ConfClient.get("gateway.cc.rate"));
+                	return true;
                 }
-                
-                //最大访问速率gateway.cc.rate
-                if (totalRateLimiter.tryAcquire()) {
-                    return false;
-                } else {
-                    hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", ConfClient.get("gateway.cc.rate"));
-                    return true;
-                }
-            } else {
-                hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", ConfClient.get("gateway.cc.rate"));
-                return true;
+            } catch (ExecutionException e) {
+            	logger.error(e);
+            	return true;
             }
+            rateLimiter.acquire();
+            countMap.get(realIp).decrementAndGet();
         }
         return false;
     }
 }
+
 
