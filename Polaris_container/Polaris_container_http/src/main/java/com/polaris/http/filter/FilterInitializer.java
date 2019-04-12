@@ -8,8 +8,11 @@ import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-public class RequestFirstFilterInitializer implements  ServletContainerInitializer { 
-	private final String REQUEST_FIRST_FILTER = "RequestFirstFilter";
+import com.polaris.comm.config.ConfClient;
+
+public class FilterInitializer implements  ServletContainerInitializer { 
+	private final String POLARIS_REQUEST_FIRST_FILTER = "PolarisRequestFirstFilter";
+	private final String POLARIS_FLOW_CONTROL_FILTER = "PolarisFlowControlFilter";
 //	private final static Map<String, String> initParameterMap = new HashMap<>();
 //	private final static List<ServletContextListener> listenerList = new ArrayList<>();
 //	private final static Map<String, Class <? extends Servlet>> servletClassMap = new HashMap<>();
@@ -34,8 +37,14 @@ public class RequestFirstFilterInitializer implements  ServletContainerInitializ
 	public void onStartup(Set<Class<?>> requestFirstFilters, ServletContext servletContext)  throws ServletException {
 		
 		// filter
-		servletContext.addFilter(REQUEST_FIRST_FILTER, new RequestFirstFilter())
+		servletContext.addFilter(POLARIS_REQUEST_FIRST_FILTER, new RequestFirstFilter())
 					  .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+		
+		// 流控
+		if ("true".equals(ConfClient.get("server.flowcontrol.enabled", "false"))) {
+			servletContext.addFilter(POLARIS_FLOW_CONTROL_FILTER, new FlowControlFilter())
+			  .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+		}
 
 	} 
 	

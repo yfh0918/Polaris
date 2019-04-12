@@ -1,4 +1,4 @@
-package com.polaris.filter;
+package com.polaris.http.filter;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
@@ -16,6 +16,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
+import com.polaris.comm.config.ConfClient;
 import com.polaris.comm.dto.ResultDto;
 
 /**
@@ -50,8 +51,8 @@ public class FlowControlFilter implements Filter {
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		
-		//web.xml中定义的最大线程数
-		String p = filterConfig.getInitParameter("permits");
+		//application.properties中定义的最大线程数
+		String p = ConfClient.get("server.flowcontrol.permits");
 		if(p != null) {
 			permits = Integer.parseInt(p);
 			if(permits < 0) {
@@ -59,8 +60,8 @@ public class FlowControlFilter implements Filter {
 			}
 		}
 
-		//web.xml中定义的最大等待时间
-		String t = filterConfig.getInitParameter("timeout");
+		//application.properties中定义的最大等待时间
+		String t = ConfClient.get("server.flowcontrol.timeout");
 		if(t != null) {
 			timeout = Long.parseLong(t);
 			if(timeout < 1) {
@@ -68,8 +69,8 @@ public class FlowControlFilter implements Filter {
 			}
 		}
 
-		//web.xml中定义的等待队列的最大尺度
-		String b = filterConfig.getInitParameter("bufferSize");
+		//application.properties中定义的等待队列的最大尺度
+		String b = ConfClient.get("server.flowcontrol.bufferSize");
 		if(b != null) {
 			bufferSize = Integer.parseInt(b);
 			if(bufferSize < 0) {

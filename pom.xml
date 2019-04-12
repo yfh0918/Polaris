@@ -18,7 +18,6 @@
         <module>Polaris_cache</module>
         <module>Polaris_sentinel</module>
         <module>Polaris_distributed_lock</module>
-        <module>Polaris_filter</module>
         <module>Polaris_gateway</module>
     </modules>
  
