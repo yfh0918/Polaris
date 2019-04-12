@@ -149,22 +149,6 @@
 	            <artifactId>Polaris_gateway</artifactId>
 	            <version>${project.version}</version>
 	        </dependency>  
-        
-	       	<dependency>
-	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_timer_parent</artifactId>
-	            <version>${project.version}</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_timer</artifactId>
-	            <version>${project.version}</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_timer_api</artifactId>
-	            <version>${project.version}</version>
-	        </dependency>
 
 	       	<dependency>
 	            <groupId>com.polaris</groupId>
