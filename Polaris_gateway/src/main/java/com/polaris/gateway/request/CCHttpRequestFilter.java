@@ -116,7 +116,8 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             try {
                 rateLimiter = (RateLimiter) loadingCache.get(realIp);
                 int count = countMap.get(realIp).incrementAndGet();
-                if (count > IP_MAX_WAIT_COUNT) {
+                int orgCount = Integer.parseInt(ConfClient.get("gateway.cc.maxcount", String.valueOf(IP_MAX_WAIT_COUNT)));
+                if (count > orgCount) {
                 	hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", ConfClient.get("gateway.cc.rate"));
                 	return true;
                 }
