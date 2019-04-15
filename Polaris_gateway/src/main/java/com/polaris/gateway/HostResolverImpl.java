@@ -22,15 +22,17 @@ public class HostResolverImpl implements HostResolver {
 
     private volatile static HostResolverImpl singleton;
     private volatile Map<String, String> serverMap = new ConcurrentHashMap<>();
+    private volatile Map<String, String> staticServerMap = new ConcurrentHashMap<>();
     private volatile Map<String, String> uriMap = new ConcurrentHashMap<>();
     public static final String UPSTREAM = "upstream.txt";
+    private static final String STATIC_RESOURCE_PREFIX = "static:";
 
     //载入需要代理的IP(需要动态代理)
     private void loadUpstream(String content) {
         if (StringUtil.isEmpty(content)) {
             return;
         }
-
+        Map<String, String> tempStaticServerMap = new ConcurrentHashMap<>();
         Map<String, String> tempServerMap = new ConcurrentHashMap<>();
         Map<String, String> tempUriMap = new ConcurrentHashMap<>();
         String[] contents = content.split(Constant.LINE_SEP);
@@ -41,10 +43,17 @@ public class HostResolverImpl implements HostResolver {
             String[] keyvalue = ConfigHandlerProvider.getKeyValue(detail);
             if (keyvalue != null) {
                 tempServerMap.put(String.valueOf(port), keyvalue[1]);
-                tempUriMap.put(keyvalue[0], String.valueOf(port));
+                if (keyvalue[0].startsWith(STATIC_RESOURCE_PREFIX)) {
+                	String key = keyvalue[0].substring(STATIC_RESOURCE_PREFIX.length());
+                	tempStaticServerMap.put(key, key);
+                    tempUriMap.put(key, String.valueOf(port));
+                } else {
+                    tempUriMap.put(keyvalue[0], String.valueOf(port));
+                }
                 port++;
             }
         }
+        staticServerMap = tempStaticServerMap;
         serverMap = tempServerMap;
         uriMap = tempUriMap;
         ServerDiscoveryHandlerProvider.getInstance().reset();
@@ -119,5 +128,18 @@ public class HostResolverImpl implements HostResolver {
             String[] si = defaultUri.split(":");
             return new InetSocketAddress(si[0], Integer.parseInt(si[1]));
         }
+    }
+    
+    //是否是静态资源（静态资源不需要拦截）
+    public boolean isStatic(String url) {
+    	if (StringUtil.isEmpty(url)) {
+    		return false;
+    	}
+    	for (String key : staticServerMap.keySet()) {
+    		if (url.startsWith(key)) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
 }

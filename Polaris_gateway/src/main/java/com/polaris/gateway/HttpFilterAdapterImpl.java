@@ -62,14 +62,14 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         		RequestUtil.remove();
         		HttpRequest httpRequest = (HttpRequest) httpObject;
         		replaceHost(httpRequest);
-        	}
-        	
-        	//TraceId
-        	if (httpObject instanceof HttpRequest) {
-        		HttpRequest httpRequest = (HttpRequest) httpObject;
         		httpRequest.headers().set(LogUtil.TRACE_ID, UuidUtil.generateUuid());
         	}
-
+        	
+        	//静态资源不拦截
+        	if (HostResolverImpl.getSingleton().isStatic(originalRequest.uri())) {
+        		return httpResponse;
+        	}
+        	
         	//进入request过滤器
             ImmutablePair<Boolean, HttpRequestFilter> immutablePair = HttpRequestFilterChain.doFilter(originalRequest, httpObject, ctx);
             

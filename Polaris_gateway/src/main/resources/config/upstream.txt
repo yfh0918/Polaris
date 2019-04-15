@@ -1,6 +1,6 @@
-/resource=192.168.0.1:9002
-/mwclgcommerce=192.168.0.1:9003
 /paygateway=192.168.0.1:9004
-/mwclgadmin=192.168.0.1:9005
 /mwclgapp=192.168.0.1:9006
+static:/mwclgcommerce=192.168.0.1:9003
+static:/mwclgadmin=192.168.0.1:9005
+static:/resource=192.168.0.1:9002
 default=192.168.0.1:9001
