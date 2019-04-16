@@ -292,3 +292,8 @@
 /Polaris_demo/Polaris-web-springmvc/.classpath
 /Polaris_demo/Polaris-web-springmvc/.project
 /Polaris_demo/Polaris-web-springmvc/.settings
+/Polaris_static_server/.gitignore
+/Polaris_static_server/.project
+/Polaris_static_server/.classpath
+/Polaris_static_server/.settings
+/Polaris_static_server/target
