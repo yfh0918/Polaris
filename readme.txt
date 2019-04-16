@@ -22,6 +22,7 @@
 6:Polaris_workflow是现有的服务（工作流activity内核）
 
 7:Polaris_gateway是现有的api网管，提供api的统一入口服务(基于netty http实现)
+  具体的api代理请参考config\upstream.txt,其中static:开头的代理的存静态文件会跳过所有的filter
 
 8:支持Sentinel（流量监控类），需要在自己的配置文件中设置如下
   #sentinel
@@ -33,3 +34,6 @@
 
 9,如何启动，打开eclipse后启动application.java文件（pom.xml中提供 tomcat和jetty两种启动模式）
   参数中可以配置是否启动websocket可以参考Polaris_demo_web_nodubbo的application.properties
+
+10,新增了基于netty的静态文件服务器（不支持jsp和servlet）
+   具体context配置参照config\static.txt
