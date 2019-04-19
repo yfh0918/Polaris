@@ -3,10 +3,8 @@ package com.polaris.comm.config;
 import java.util.Properties;
 
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinitionVisitor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.util.StringValueResolver;
 
@@ -20,7 +18,7 @@ import com.polaris.comm.util.LogUtil;
  * <bean id="confPropertyPlaceholderConfigurer" class="com.polaris_conf_core.spring.ConfPropertyPlaceholderConfigurer" />
  *
  */
-public class ConfPropertyPlaceholderConfigurer extends EncryptPropertyPlaceholderConfigurer {
+public class ConfPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
 	private static final LogUtil logger = LogUtil.getInstance(ConfPropertyPlaceholderConfigurer.class);
 
 	@Override
@@ -68,22 +66,7 @@ public class ConfPropertyPlaceholderConfigurer extends EncryptPropertyPlaceholde
 			}
 		};
 
-		// init bean define visitor
-		BeanDefinitionVisitor visitor = new BeanDefinitionVisitor(valueResolver);
-
-		// visit bean definition
-		String[] beanNames = beanFactoryToProcess.getBeanDefinitionNames();
-		if (beanNames != null && beanNames.length > 0) {
-			for (String beanName : beanNames) {
-				if (!(beanName.equals(this.beanName) && beanFactoryToProcess.equals(this.beanFactory))) {
-					BeanDefinition bd = beanFactoryToProcess.getBeanDefinition(beanName);
-					visitor.visitBeanDefinition(bd);
-				}
-			}
-		}
-		
-		//调用加密算法
-		super.processProperties(beanFactoryToProcess, props);
+		super.doProcessProperties(beanFactoryToProcess, valueResolver);
 	}
 
 	@Override
@@ -91,17 +74,6 @@ public class ConfPropertyPlaceholderConfigurer extends EncryptPropertyPlaceholde
 		return Ordered.LOWEST_PRECEDENCE;
 	}
 
-	private String beanName;
-	@Override
-	public void setBeanName(String name) {
-		this.beanName = name;
-	}
-
-	private BeanFactory beanFactory;
-	@Override
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-		this.beanFactory = beanFactory;
-	}
 
 	@Override
 	public void setIgnoreUnresolvablePlaceholders(boolean ignoreUnresolvablePlaceholders) {
