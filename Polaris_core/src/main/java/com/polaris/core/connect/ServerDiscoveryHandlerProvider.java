@@ -7,7 +7,7 @@ import java.util.ServiceLoader;
 import com.polaris.comm.util.StringUtil;
 
 public class ServerDiscoveryHandlerProvider {
-private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoader.load(ServerDiscoveryHandler.class);
+	private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoader.load(ServerDiscoveryHandler.class);
 	public static final String HTTP_PREFIX = "http://";
 	public static final String HTTPS_PREFIX = "https://";
 

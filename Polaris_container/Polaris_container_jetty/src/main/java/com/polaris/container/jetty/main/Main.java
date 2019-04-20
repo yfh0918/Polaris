@@ -1,29 +1,30 @@
 package com.polaris.container.jetty.main;
 
+import com.polaris.comm.util.LogUtil;
 import com.polaris.container.jetty.server.JettyServer;
+import com.polaris.http.factory.ContainerDiscoveryHandler;
 
 /**
  * 入口启动类
  */
-public class Main {
+public class Main implements ContainerDiscoveryHandler{
 
-
+	private static LogUtil logger = LogUtil.getInstance(Main.class);
     /**
-     * 构造函数
+     * 服务启动
      *
-     * @return 唯一进程实例
-     * @Title: getInstance
      */
-    public Main() {
-
-        //启动jetty
+	@Override
+	public void start() {
+		//启动jetty
         new Thread(new Runnable() {
             @Override
             public void run() {
+            	logger.info("jetty启动！");
                 JettyServer server = JettyServer.getInstance();
                 server.start();
             }
         }).start();
-
-    }
+		
+	}
 }

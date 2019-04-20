@@ -53,6 +53,6 @@ public class MainSupport extends com.polaris.comm.supports.MainSupport{
 		}
 		
     	//启动
-    	ContainerServerFactory.newInstance();
+    	ContainerServerFactory.startServer();
     }
 }

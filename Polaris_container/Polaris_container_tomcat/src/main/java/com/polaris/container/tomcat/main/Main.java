@@ -1,30 +1,31 @@
 package com.polaris.container.tomcat.main;
 
+import com.polaris.comm.util.LogUtil;
 import com.polaris.container.tomcat.server.TomcatServer;
+import com.polaris.http.factory.ContainerDiscoveryHandler;
 
 /**
  * 入口启动类
  *
  */
-public class Main 
-{
+public class Main implements ContainerDiscoveryHandler {
 
-    /**
-     * 构造函数
-     * @Title: getInstance
-     * @return  唯一进程实例
+	private static LogUtil logger = LogUtil.getInstance(Main.class);
+	/**
+     * 服务启动
+     *
      */
-    public Main() {
-    	
-    	//启动tomcat
+	@Override
+	public void start() {
+		//启动tomcat
     	new Thread(new Runnable() {
 			@Override
 			public void run() {
+				logger.info("tomcat启动！");
 				TomcatServer server = TomcatServer.getInstance();
 				server.start();
 			}
 		}).start();
-
 	}
 
 
