@@ -1,7 +1,5 @@
 package com.polaris.gateway.request;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,13 +36,12 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 	private static LogUtil logger = LogUtil.getInstance(CCHttpRequestFilter.class);
 	
 	//控制每个IP地址的访问率
-	private volatile LoadingCache<String, RateLimiter> loadingCache;
-	private volatile Map<String, AtomicInteger> countMap = new HashMap<>();
-	private static final int IP_MAX_WAIT_COUNT = 5;//最对同一个IP有5个线程等待处理
+	private volatile LoadingCache<String, AtomicInteger> loadingCache;
     
     //控制总的流量
 	private volatile RateLimiter totalRateLimiter;
 	private volatile String ip_rate;
+	private volatile int int_ip_rate = 0;
 	private volatile String flow_control_rate;
 
 	public CCHttpRequestFilter() {
@@ -55,16 +52,14 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     			
     	//IP单位的缓存
 		ip_rate = ConfClient.get("gateway.cc.rate");
+		int_ip_rate = Integer.parseInt(ip_rate);
         loadingCache = CacheBuilder.newBuilder()
                 .maximumSize(1000)
                 .expireAfterWrite(1, TimeUnit.SECONDS)
-                .build(new CacheLoader<String, RateLimiter>() {
+                .build(new CacheLoader<String, AtomicInteger>() {
                     @Override
-                    public RateLimiter load(String key) throws Exception {
-                        RateLimiter rateLimiter = RateLimiter.create(Integer.parseInt(ip_rate));
-                        countMap.put(key, new AtomicInteger(0));
-                        logger.debug("RateLimiter for key:{} have been created", key);
-                        return rateLimiter;
+                    public AtomicInteger load(String key) throws Exception {
+                    	return new AtomicInteger(0);
                     }
                 });
 
@@ -88,7 +83,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             
             //控制总流量，超标直接返回
             if (!totalRateLimiter.tryAcquire()) {
-                hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", ConfClient.get("gateway.cc.rate"));
+                hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", ConfClient.get("gateway.flowcontrol.rate"));
                 return true;
             }
             
@@ -97,36 +92,31 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             	synchronized(this) {
             		if (!ConfClient.get("gateway.cc.rate").equals(ip_rate)) {
             			ip_rate = ConfClient.get("gateway.cc.rate");
+            			int_ip_rate = Integer.parseInt(ip_rate);
             			loadingCache = CacheBuilder.newBuilder()
             	                .maximumSize(1000)
             	                .expireAfterWrite(1, TimeUnit.SECONDS)
-            	                .build(new CacheLoader<String, RateLimiter>() {
+            	                .build(new CacheLoader<String, AtomicInteger>() {
             	                    @Override
-            	                    public RateLimiter load(String key) throws Exception {
-            	                        RateLimiter rateLimiter = RateLimiter.create(Integer.parseInt(ip_rate));
-            	                        countMap.put(key, new AtomicInteger(0));
-            	                        logger.debug("RateLimiter for key:{} have been created", key);
-            	                        return rateLimiter;
+            	                    public AtomicInteger load(String key) throws Exception {
+            	                    	return new AtomicInteger(0);
             	                    }
             	                });
             		}
             	}
             }
-            RateLimiter rateLimiter = null;
+            AtomicInteger rateLimiter = null;
             try {
-                rateLimiter = (RateLimiter) loadingCache.get(realIp);
-                int count = countMap.get(realIp).incrementAndGet();
-                int orgCount = Integer.parseInt(ConfClient.get("gateway.cc.maxcount", String.valueOf(IP_MAX_WAIT_COUNT)));
-                if (count > orgCount) {
-                	hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", ConfClient.get("gateway.cc.rate"));
+                rateLimiter = (AtomicInteger) loadingCache.get(realIp);
+                int count = rateLimiter.incrementAndGet();
+                if (count > int_ip_rate) {
+                	hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", "Access " +count+ " per second has exceeded " + ConfClient.get("gateway.cc.rate"));
                 	return true;
                 }
             } catch (ExecutionException e) {
             	logger.error(e);
             	return true;
             }
-            rateLimiter.acquire();
-            countMap.get(realIp).decrementAndGet();
         }
         return false;
     }
