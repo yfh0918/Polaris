@@ -10,8 +10,6 @@ import java.util.Enumeration;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.polaris.comm.util.LogUtil;
 
 /**
@@ -234,25 +232,5 @@ public class NetUtils extends com.polaris.comm.util.NetUtils{
         return sb.toString();
     }
     
-  /**
-  * 获取客户端的IP
-  *
-  * @return
-  */
- public static String getRemortIP(HttpServletRequest request) {
-     String ip = request.getHeader("x-forwarded-for");
-     String unknown = "unknown";
-     if (ip == null || ip.length() == 0 || unknown.equalsIgnoreCase(ip)) {
-         ip = request.getHeader("Proxy-Client-IP");
-     }
 
-     if (ip == null || ip.length() == 0 || unknown.equalsIgnoreCase(ip)) {
-         ip = request.getHeader("WL-Proxy-Client-IP");
-     }
-
-     if (ip == null || ip.length() == 0 || unknown.equalsIgnoreCase(ip)) {
-         ip = request.getRemoteAddr();
-     }
-     return ip;
- }
 }

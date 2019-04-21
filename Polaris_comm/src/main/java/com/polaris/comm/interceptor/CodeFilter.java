@@ -1,4 +1,4 @@
-package com.polaris.comm.filter;
+package com.polaris.comm.interceptor;
 
 import com.polaris.comm.util.StringUtil;
 

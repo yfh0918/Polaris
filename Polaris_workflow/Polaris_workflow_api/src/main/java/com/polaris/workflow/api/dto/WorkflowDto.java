@@ -7,10 +7,10 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import com.polaris.comm.dto.BaseDto;
+import com.polaris.comm.dto.PageDto;
 import com.polaris.comm.util.StringUtil;
 
-public class WorkflowDto extends BaseDto implements Serializable {
+public class WorkflowDto extends PageDto implements Serializable {
 
 	/**
 	 * 序列号

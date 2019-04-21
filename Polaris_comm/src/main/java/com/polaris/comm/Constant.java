@@ -45,18 +45,8 @@ public class Constant {
 	 */
     public static final int STATUS_REQUEST_BLOCKED=7;
 
-    /**
-	 * session保存的登陆ID
-	 */
-	public static final String SESSION_USER_ID = "session_yh_mc";
-	
 	/**
-	 * session保存的YH_ID
-	 */
-	public static final String SESSION_YH_ID = "session_yh_id";
-	
-	/**
-	 * session保存的YH_ID和用户名称的分割符号
+	 * 分割符号
 	 */
 	public static final String SESSION_YH_ID_MC_SPLIT = "-polaris-";
 
@@ -68,80 +58,6 @@ public class Constant {
 	public static final int DEFAULT_TOKEN_TIMEOUT = 30 * 60;
 	public static final int DEFAULT_REFRESH_TOKEN_TIMEOUT = 30 * 24 * 60 * 60;
 	
-	/**
-	 * 请求区分（0：浏览器登陆用户，1：token用户例如定时器）
-	 */
-	public static final String REQUEST_TYPE = "request_type";
-	public static final String LOGIN_USER_TYPE = "0";//登陆用户
-	public static final String TOKEN_USER_TYPE = "1";//内部用户（外部授权的token，不需要指定request_type）
-	
-	/**
-	 * 查询成功
-	 */
-	public static final String MESSAGE_SEARCH_SUCCESS = "查询成功！";
-	
-	/**
-	 * 查询失败
-	 */
-	public static final String MESSAGE_SEARCH_ERROR = "查询失败！";
-	
-	/**
-	 * 查询结果为空
-	 */
-	public static final String MESSAGE_SEARCH_ZERO = "没有数据！";
-
-	/**
-	 * 操作成功
-	 */
-	public static final String MESSAGE_OPERATE_SUCCESS = "操作成功！";
-
-	/**
-	 * 操作失败
-	 */
-	public static final String MESSAGE_OPERATE_ERROR = "操作失败！";
-
-	/**
-	 * 修改成功
-	 */
-	public static final String MESSAGE_UPDATE_SUCCESS = "修改成功！";
-
-	/**
-	 * 修改失败
-	 */
-	public static final String MESSAGE_UPDATE_ERROR = "修改失败！";
-	
-	/**
-	 * 新增成功
-	 */
-	public static final String MESSAGE_INSERT_SUCCESS = "新增成功！";
-
-	/**
-	 * 新增失败
-	 */
-	public static final String MESSAGE_INSERT_ERROR = "新增失败！";
-
-	/**
-	 * 删除成功
-	 */
-	public static final String MESSAGE_DELETE_SUCCESS = "删除成功！";
-
-	/**
-	 * 删除失败
-	 */
-	public static final String MESSAGE_DELETE_ERROR = "删除失败！";
-
-	public static final String MESSAGE_DELETE_NOT_ALLOWED = "不能删除的数据！";
-
-	/**
-	 * 数据为选择
-	 */
-	public static final String MESSAGE_DATA_NO_SELECTED = "未选择数据！";
-	
-	/**
-	 * 数据库异常
-	 */
-	public static final String MESSAGE_DB_ERROR = "数据库异常，请联系管理员！";
-
 	/**
 	 * 全局异常信息
 	 */

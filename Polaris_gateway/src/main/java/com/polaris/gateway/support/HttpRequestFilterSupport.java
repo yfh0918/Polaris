@@ -15,7 +15,7 @@ public class HttpRequestFilterSupport {
     public static ResultDto createResultDto(int status,  String message) {
     	ResultDto resultDto = new ResultDto();
     	resultDto.setStatus(status);
-    	resultDto.setMsgDetail(message);
+    	resultDto.setMsgContent(message);
     	return resultDto;
     }
 }

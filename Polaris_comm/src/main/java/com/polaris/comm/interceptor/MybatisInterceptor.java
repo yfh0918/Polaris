@@ -22,7 +22,6 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import com.polaris.comm.filter.CodeFilter;
 import com.polaris.comm.util.LogUtil;
 
 @Intercepts({

@@ -7,11 +7,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSONObject;
 import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.ResultUtil;
 
-public class ResponseUtil extends ResultUtil{
+public class ResponseUtil {
 
-    private static final LogUtil logger = LogUtil.getInstance(ResultUtil.class);
+    private static final LogUtil logger = LogUtil.getInstance(ResponseUtil.class);
 
     /**
      * 封装返回信息
