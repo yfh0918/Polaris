@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 
-public class ResultDto extends BaseDto implements Serializable {
+public class ResultDto extends MessageDto implements Serializable {
 	
 	/**
 	 * 
@@ -25,7 +25,7 @@ public class ResultDto extends BaseDto implements Serializable {
 		return (JSONObject) JSONObject.toJSON(this);
 	}
 	
-	public JSONObject toJSON(BaseDto dto) {
+	public JSONObject toJSON(ResultDto dto) {
 		return (JSONObject) JSONObject.toJSON(dto);
 	}
 	

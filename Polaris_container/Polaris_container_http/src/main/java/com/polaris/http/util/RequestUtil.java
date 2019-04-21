@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.BeanUtils;
 
-import com.polaris.comm.dto.BaseDto;
+import com.polaris.comm.dto.ParameterDto;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.StringUtil;
 
@@ -156,8 +156,8 @@ public final class RequestUtil {
 	        	}
 	    	}
 	    }
-	    if (rtnObject instanceof BaseDto) {
-	    	((BaseDto)rtnObject).setParameterMap(parameterMap);
+	    if (rtnObject instanceof ParameterDto) {
+	    	((ParameterDto)rtnObject).setParameterMap(parameterMap);
 	    }
 	    return rtnObject;
 	}

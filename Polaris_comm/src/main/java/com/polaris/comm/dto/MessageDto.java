@@ -1,10 +1,8 @@
 package com.polaris.comm.dto;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-public class BaseDto implements Serializable {
+public class MessageDto implements Serializable {
 	
 	/**
 	 * 
@@ -22,25 +20,11 @@ public class BaseDto implements Serializable {
 	 */
 	private String msgContent;
 
-	/**
-	 * 请求参数Map
-	 */
-	private Map<String, Object> parameterMap = new LinkedHashMap<>();
-	/**
-	 * 获取map
-	 */
-	public Map<String, Object> getParameterMap() {
-		return parameterMap;
-	}
-	public void setParameterMap(Map<String, Object> parameterMap) {
-		this.parameterMap = parameterMap;
-	}
-
-	 public  BaseDto(){
+	 public  MessageDto(){
 		 
 	 }
 	 
-	 public  BaseDto(Integer status,String msgContent){
+	 public  MessageDto(Integer status,String msgContent){
 	    	this.status = status;
 	    	this.msgContent=msgContent;
 	  }
