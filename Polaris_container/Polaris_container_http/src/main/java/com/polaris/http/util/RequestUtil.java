@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.BeanUtils;
 
 import com.polaris.comm.dto.ParameterDto;
+import com.polaris.comm.dto.ResultDto;
 import com.polaris.comm.util.LogUtil;
 import com.polaris.comm.util.StringUtil;
 
@@ -158,6 +159,10 @@ public final class RequestUtil {
 	    }
 	    if (rtnObject instanceof ParameterDto) {
 	    	((ParameterDto)rtnObject).setParameterMap(parameterMap);
+	    }
+	    
+	    if (rtnObject instanceof ResultDto) {
+	    	((ResultDto)rtnObject).setParameterMap(parameterMap);
 	    }
 	    return rtnObject;
 	}
