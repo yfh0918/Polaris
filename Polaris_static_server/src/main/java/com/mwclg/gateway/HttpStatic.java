@@ -93,13 +93,20 @@ public class HttpStatic {
     
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected static HttpResponse showStatic(HttpRequest request,ChannelHandlerContext ctx) throws Exception {
+		
         // 获取URI
         String uri = request.uri();
+        
         // 设置不支持favicon.ico文件
         if ("favicon.ico".equals(uri)) {
             return null;
         }
         
+        // 状态为1xx的话，继续请求
+        if (HttpUtil.is100ContinueExpected(request)) {
+            return send100Continue(ctx);
+        }
+
         //判断url
         Map<String, String> urls = null;
         String context = null;
@@ -117,19 +124,18 @@ public class HttpStatic {
         //找到位置
         if (context.equals(uri) || ((context + "/").equals(uri))) {
         	uri = "/" + urls.get("startup");
-        } else {
-        	uri = uri.substring(context.length());
+        } 
+        
+        //不包含相应的context
+        if (!uri.startsWith(context + "/")) {
+        	uri = "/" + urls.get("error");//直接返回error
         }
-
-        // 根据路径地址构建文件
-        String path = urls.get("location") + uri;
+        
+        //去掉context后获取真实的物理路径
+        String path = urls.get("location") + uri.substring(context.length());
         File html = new File(path);
 
-        // 状态为1xx的话，继续请求
-        if (HttpUtil.is100ContinueExpected(request)) {
-            return send100Continue(ctx);
-        }
-
+        //定义response
         HttpResponse response = new DefaultHttpResponse(request.protocolVersion(), HttpResponseStatus.OK);
 
         // 当文件不存在的时候，将资源指向NOT_FOUND
