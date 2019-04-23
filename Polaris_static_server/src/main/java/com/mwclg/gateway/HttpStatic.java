@@ -123,12 +123,12 @@ public class HttpStatic {
         
         //找到位置
         if (context.equals(uri) || ((context + "/").equals(uri))) {
-        	uri = "/" + urls.get("startup");
+        	uri = context + "/" + urls.get("startup");
         } 
         
         //不包含相应的context
         if (!uri.startsWith(context + "/")) {
-        	uri = "/" + urls.get("error");//直接返回error
+        	uri = context + "/" + urls.get("error");//直接返回error
         }
         
         //去掉context后获取真实的物理路径
