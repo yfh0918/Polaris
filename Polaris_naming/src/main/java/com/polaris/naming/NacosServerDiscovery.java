@@ -42,7 +42,9 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	
 	@Override
 	public String getUrl(String key) {
-		
+		if (StringUtil.isEmpty(key)) {
+			return null;
+		}
 		//判断是否可以获取有效URL
 		if (StringUtil.isEmpty(ConfClient.getNamingRegistryAddress())) {
 			return null;
@@ -72,6 +74,10 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	@Override
 	public List<String> getAllUrls(String key) {
 		
+		if (StringUtil.isEmpty(key)) {
+			return null;
+		}
+
 		//判断是否可以获取有效URL
 		if (StringUtil.isEmpty(ConfClient.getNamingRegistryAddress())) {
 			return null;
