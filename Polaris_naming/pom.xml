@@ -12,7 +12,7 @@
 
     <properties>
         <!-- nacos -->
-        <nacos.version>1.0.0-RC2</nacos.version>
+        <nacos.version>1.0.0</nacos.version>
     </properties>
 
 	<dependencies>
