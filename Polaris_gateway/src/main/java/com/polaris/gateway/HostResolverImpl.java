@@ -91,9 +91,12 @@ public class HostResolverImpl implements HostResolver {
     }
 
     String getPort(String uri) {
+    	if (!uri.substring(1).contains("/")) {
+    		uri = uri + "/";
+    	}
         if (uri != null) {
             for (Entry<String, String> entry : uriMap.entrySet()) {
-                if (uri.startsWith(entry.getKey())) {
+                if (uri.startsWith(entry.getKey()+"/")) {
                     return entry.getValue();
                 }
 
