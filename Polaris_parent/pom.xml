@@ -987,6 +987,7 @@
                             <exclude>WebContent/</exclude>
                             <exclude>deployments/</exclude>
                             <exclude>diagrams/</exclude>
+                            <exclude>scripts/</exclude>
                         </excludes>
                     </configuration>
                 </plugin>

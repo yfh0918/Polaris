@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd  
+           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd  
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://code.alibabatech.com/schema/dubbo  
+           http://code.alibabatech.com/schema/dubbo/dubbo.xsd "
+	default-init-method="init" default-lazy-init="false"
+	default-destroy-method="destroy">
+
+	<!-- 注解注入 -->
+	<context:component-scan base-package="com.polaris">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	
+	<!-- 读入配置文件 -->
+	<bean id="propertyConfigurer" class="com.polaris.comm.config.ConfPropertyPlaceholderConfigurer">  
+        <property name="fileEncoding" value="utf-8" /> 
+    </bean>
+    
+    	<!--自定义数据源-->
+	<bean id="dataSource_db" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+		destroy-method="close">
+		<property name="driverClass" value="${db.driverClassName}" />
+		<property name="jdbcUrl" value="${db.url}" />
+		<property name="user" value="${db.username}" />
+		<property name="password" value="${db.password}" /> 
+		<property name="initialPoolSize" value="${db.initialPoolSize}" />
+		<property name="maxPoolSize" value="${db.maxPoolSize}" />
+		<property name="minPoolSize" value="${db.minPoolSize}" />
+		<property name="maxIdleTime" value="${db.maxIdleTime}" />
+	</bean>
+	<bean id="dataSource" class="com.polaris.comm.datasource.DynamicDataSource">
+		<property name="targetDataSources">
+			<map key-type="java.lang.String">
+				<entry key="dataSource_db" value-ref="dataSource_db" />
+			</map>
+		</property>
+		<property name="defaultTargetDataSource" ref="dataSource_db"/>
+	</bean>
+	
+    <!-- Jpa Entity Manager 配置 -->
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="jpaVendorAdapter" ref="hibernateJpaVendorAdapter"/>
+        <property name="packagesToScan">
+        	<list></list>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                <prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- Spring Data Jpa适配器 -->
+    <bean id="hibernateJpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+
+    <!-- Jpa 事务配置 -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+    <!-- 使用annotation定义事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+
+    <!-- 引擎内部提供的UUID生成器，依赖fastxml的java-uuid-generator模块 -->
+    <bean id="uuidGenerator" class="org.activiti.engine.impl.persistence.StrongUuidGenerator" />
+	
+	<!-- Activiti begin -->
+    <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="databaseSchemaUpdate" value="true"/>
+        <property name="jobExecutorActivate" value="false"/>
+        <property name="processDefinitionCacheLimit" value="10"/>
+        <property name="dbIdentityUsed" value="false" />
+
+		<!-- UUID作为主键生成策略--> 
+        <property name="idGenerator" ref="uuidGenerator" />  
+
+        <!-- 生成流程图的字体 -->
+        <property name="activityFontName" value="${diagram.activityFontName}"/>
+        <property name="labelFontName" value="${diagram.labelFontName}"/>
+
+        <!-- JPA -->
+        <property name="jpaEntityManagerFactory" ref="entityManagerFactory" />
+        <property name="jpaHandleTransaction" value="false" />
+        <property name="jpaCloseEntityManager" value="false" />
+        
+        <!-- 全局事件 -->
+        <property name="eventListeners">
+           <list>
+               <ref bean="workflowListener"/>
+           </list>
+        </property>
+        
+    </bean>
+
+    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+        <property name="processEngineConfiguration" ref="processEngineConfiguration"/>
+    </bean>
+    <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService"/>
+    <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService"/>
+    <bean id="formService" factory-bean="processEngine" factory-method="getFormService"/>
+    <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService"/>
+    <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService"/>
+    <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService"/>
+    <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService"/>
+    <!-- Activiti end -->
+	
+
+    
+</beans>

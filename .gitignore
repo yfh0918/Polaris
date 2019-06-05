@@ -297,3 +297,7 @@
 /Polaris_static_server/.classpath
 /Polaris_static_server/.settings
 /Polaris_static_server/target
+/Polaris_workflow/Polaris_workflow_web/target
+/Polaris_workflow/Polaris_workflow_web/.classpath
+/Polaris_workflow/Polaris_workflow_web/.project
+/Polaris_workflow/Polaris_workflow_web/.settings

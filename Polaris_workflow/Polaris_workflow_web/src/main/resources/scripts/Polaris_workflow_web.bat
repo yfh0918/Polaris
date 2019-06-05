@@ -1,0 +1,1 @@
+java -Xmx1024M -Xms128M -jar Polaris_workflow_web.jar
