@@ -100,7 +100,7 @@ public class ServerDiscoveryHandlerProvider {
 			serverList.add(HTTPS_PREFIX);
 			serverInfo = serverInfo.substring(HTTPS_PREFIX.length());
 		} else {
-			serverList.add("");
+			serverList.add(HTTP_PREFIX);
 		}
 		int suffixIndex = serverInfo.indexOf("/");
 		if (suffixIndex > 0) {
@@ -131,13 +131,7 @@ public class ServerDiscoveryHandlerProvider {
 	}
 	
 	public static void main(String[] args) {
-		String key = "http://localhost:8080,localhost:8081/test/tesaa/afad";
-		for (int i0 = 0; i0 < 10; i0++) {
-			System.out.println(ServerDiscoveryHandlerProvider.INSTANCE.getUrl(key));
-		}
-		ServerDiscoveryHandlerProvider.INSTANCE.connectionFail(key, "http://localhost:8080/test/tesaa/afad");
-		for (int i0 = 0; i0 < 10; i0++) {
-			System.out.println(ServerDiscoveryHandlerProvider.INSTANCE.getUrl(key));
-		}
+		String key = "FMS.APIRes.test.mcpsystem.com/api/partner/add";
+		System.out.println(ServerDiscoveryHandlerProvider.INSTANCE.getUrl(key));
     }
 }
