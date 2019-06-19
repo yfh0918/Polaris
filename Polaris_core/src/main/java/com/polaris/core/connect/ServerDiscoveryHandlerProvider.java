@@ -100,7 +100,7 @@ public class ServerDiscoveryHandlerProvider {
 			serverList.add(HTTPS_PREFIX);
 			serverInfo = serverInfo.substring(HTTPS_PREFIX.length());
 		} else {
-			serverList.add(HTTP_PREFIX);
+			serverList.add("");
 		}
 		int suffixIndex = serverInfo.indexOf("/");
 		if (suffixIndex > 0) {
