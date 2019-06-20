@@ -51,6 +51,7 @@ public class HttpClientSupport {
         CloseableHttpResponse response = null;
         CloseableHttpClient httpclient = HttpClients.createDefault();
         String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
+        LOGGER.info(url);
         try {
             URIBuilder builder = new URIBuilder(url);
             if (param != null) {
