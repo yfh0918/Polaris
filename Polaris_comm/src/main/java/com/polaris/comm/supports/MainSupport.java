@@ -21,6 +21,17 @@ import com.polaris.comm.util.StringUtil;
 abstract public class MainSupport {
 	
     /**
+    * 设置初始载入路径
+    * @param 
+    * @return 
+    * @Exception 
+    * @since 
+    */
+	public static void setConfigPath(String path, String fileName) {
+		Constant.setConfigPath(path, fileName);
+	}
+	
+    /**
     * iniParameter(初期的参数配置)
     * @param 
     * @return 
