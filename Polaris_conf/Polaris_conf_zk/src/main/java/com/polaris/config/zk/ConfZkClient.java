@@ -14,10 +14,10 @@ import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.config.ConfigHandlerProvider;
-import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.ConfigHandlerProvider;
+import com.polaris.core.util.LogUtil;
+import com.polaris.core.util.StringUtil;
 
 
 /**

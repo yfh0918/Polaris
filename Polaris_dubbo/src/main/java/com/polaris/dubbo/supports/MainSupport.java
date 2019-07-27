@@ -13,7 +13,7 @@ package com.polaris.dubbo.supports;
 * @version
 *
 */
-public class MainSupport extends com.polaris.comm.supports.MainSupport{
+public class MainSupport extends com.polaris.core.supports.MainSupport{
 	
 	/**
 	* 创建一个新的实例 MainSupport.

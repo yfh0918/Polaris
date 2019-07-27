@@ -11,7 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.util.StringUtil;
 import com.polaris.conf.admin.controller.annotation.PermessionLimit;
 import com.polaris.conf.admin.core.model.ConfGroup;
 import com.polaris.conf.admin.core.util.AdminSupport;

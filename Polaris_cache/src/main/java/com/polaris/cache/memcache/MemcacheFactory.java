@@ -2,8 +2,8 @@ package com.polaris.cache.memcache;
 
 import com.whalin.MemCached.MemCachedClient;
 import com.whalin.MemCached.SockIOPool;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.StringUtil;
 
 public class MemcacheFactory {
 	

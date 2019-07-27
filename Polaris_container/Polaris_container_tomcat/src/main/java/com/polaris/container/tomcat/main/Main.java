@@ -1,6 +1,6 @@
 package com.polaris.container.tomcat.main;
 
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.util.LogUtil;
 import com.polaris.container.tomcat.server.TomcatServer;
 import com.polaris.http.factory.ContainerDiscoveryHandler;
 

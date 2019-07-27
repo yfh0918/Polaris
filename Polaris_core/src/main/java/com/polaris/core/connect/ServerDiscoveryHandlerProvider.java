@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.util.StringUtil;
 
 public class ServerDiscoveryHandlerProvider {
 	private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoader.load(ServerDiscoveryHandler.class);

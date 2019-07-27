@@ -3,8 +3,8 @@ package com.polaris.gateway.request;
 import javax.annotation.PostConstruct;
 
 import com.polaris.gateway.HttpFilterOrder;
-import com.polaris.comm.dto.ResultDto;
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.dto.ResultDto;
+import com.polaris.core.util.LogUtil;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.util.LogUtil;
 
 @Component
 public class WorkflowListener implements ActivitiEventListener {

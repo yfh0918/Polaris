@@ -10,7 +10,7 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.apache.commons.io.FileUtils;
 
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.util.LogUtil;
 
 /**
  * @author HenryYan

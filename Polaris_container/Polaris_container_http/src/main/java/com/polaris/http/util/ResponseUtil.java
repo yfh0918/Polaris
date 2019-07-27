@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSONObject;
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.util.LogUtil;
 
 public class ResponseUtil {
 

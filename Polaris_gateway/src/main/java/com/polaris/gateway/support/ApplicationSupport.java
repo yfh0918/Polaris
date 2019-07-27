@@ -12,11 +12,11 @@ import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 import org.littleshoot.proxy.impl.ThreadPoolConfiguration;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.supports.MainSupport;
-import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.SpringUtil;
+import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.supports.MainSupport;
+import com.polaris.core.util.LogUtil;
+import com.polaris.core.util.SpringUtil;
 import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.HostResolverImpl;

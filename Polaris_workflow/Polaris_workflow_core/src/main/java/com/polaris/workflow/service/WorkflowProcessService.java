@@ -60,10 +60,10 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.LogUtil;
+import com.polaris.core.util.StringUtil;
 import com.polaris.workflow.api.dto.WorkflowDto;
 import com.polaris.workflow.util.Page;
 import com.polaris.workflow.util.PageUtil;

@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.config.ConfListener;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.ConfListener;
+import com.polaris.core.util.StringUtil;
 import com.polaris.gateway.request.FilterType;
 
 /**

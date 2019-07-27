@@ -1,6 +1,6 @@
 package com.polaris.container.jetty.main;
 
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.util.LogUtil;
 import com.polaris.container.jetty.server.JettyServer;
 import com.polaris.http.factory.ContainerDiscoveryHandler;
 

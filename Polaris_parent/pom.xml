@@ -70,11 +70,6 @@
         <dependencies>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_comm</artifactId>
-	            <version>${project.version}</version>
-	        </dependency> 
-	        <dependency>
-	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_core</artifactId>
 	            <version>${project.version}</version>
 	        </dependency> 

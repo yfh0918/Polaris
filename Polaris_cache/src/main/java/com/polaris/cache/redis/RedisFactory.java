@@ -1,7 +1,7 @@
 package com.polaris.cache.redis;
 
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.StringUtil;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;

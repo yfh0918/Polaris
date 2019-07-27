@@ -12,8 +12,8 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.LogUtil;
 
 /**
  * 流程结束监听器

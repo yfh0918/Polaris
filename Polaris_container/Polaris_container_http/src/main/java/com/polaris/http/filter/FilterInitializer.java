@@ -8,7 +8,7 @@ import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-import com.polaris.comm.config.ConfClient;
+import com.polaris.core.config.ConfClient;
 
 public class FilterInitializer implements  ServletContainerInitializer { 
 	private final String POLARIS_REQUEST_FIRST_FILTER = "PolarisRequestFirstFilter";

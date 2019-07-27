@@ -11,11 +11,11 @@ import org.littleshoot.proxy.HttpFiltersAdapter;
 import org.littleshoot.proxy.impl.ClientToProxyConnection;
 import org.littleshoot.proxy.impl.ProxyToServerConnection;
 
-import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.dto.ResultDto;
-import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.UuidUtil;
+import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.dto.ResultDto;
+import com.polaris.core.util.LogUtil;
+import com.polaris.core.util.UuidUtil;
 import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
 import com.polaris.gateway.request.HttpRequestFilter;
 import com.polaris.gateway.request.HttpRequestFilterChain;

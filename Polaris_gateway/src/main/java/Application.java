@@ -1,6 +1,6 @@
 
 
-import com.polaris.comm.config.ConfClient;
+import com.polaris.core.config.ConfClient;
 import com.polaris.gateway.support.ApplicationSupport;
 
 public class Application {

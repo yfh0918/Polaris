@@ -5,11 +5,11 @@ import java.util.Set;
 
 import com.alibaba.csp.sentinel.adapter.servlet.callback.UrlCleaner;
 import com.alibaba.csp.sentinel.adapter.servlet.callback.WebCallbackManager;
-import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.config.ConfListener;
-import com.polaris.comm.config.ConfigHandlerProvider;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.ConfListener;
+import com.polaris.core.config.ConfigHandlerProvider;
+import com.polaris.core.util.StringUtil;
 
 public class WebFilterInit {
 	private final static String FILE_NAME = "sentinel.txt";

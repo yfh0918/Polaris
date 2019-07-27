@@ -8,7 +8,7 @@ import java.util.Set;
 
 import com.whalin.MemCached.MemCachedClient;
 import com.polaris.cache.Cache;
-import com.polaris.comm.Constant;
+import com.polaris.core.Constant;
 
 public class MemCache implements Cache {
 

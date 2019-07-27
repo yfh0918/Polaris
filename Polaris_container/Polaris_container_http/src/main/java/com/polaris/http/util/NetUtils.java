@@ -10,7 +10,7 @@ import java.util.Enumeration;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.util.LogUtil;
 
 /**
  * @author:Tom.Yu
@@ -18,7 +18,7 @@ import com.polaris.comm.util.LogUtil;
  * Description:
  *
  */
-public class NetUtils extends com.polaris.comm.util.NetUtils{
+public class NetUtils extends com.polaris.core.util.NetUtils{
 	private static LogUtil logger = LogUtil.getInstance(NetUtils.class);
     public static final String LOCALHOST = "127.0.0.1";
     public static final String ANYHOST = "0.0.0.0";

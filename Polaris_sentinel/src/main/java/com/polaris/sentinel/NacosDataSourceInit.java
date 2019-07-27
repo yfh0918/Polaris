@@ -12,8 +12,8 @@ import com.alibaba.csp.sentinel.slots.system.SystemRule;
 import com.alibaba.csp.sentinel.slots.system.SystemRuleManager;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.StringUtil;
 
 /**
 *

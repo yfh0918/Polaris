@@ -4,7 +4,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.RetryNTimes;
 
-import com.polaris.comm.config.ConfClient;
+import com.polaris.core.config.ConfClient;
 
 public class CouratorFrameworkCreate {
 	private static CuratorFramework zk;

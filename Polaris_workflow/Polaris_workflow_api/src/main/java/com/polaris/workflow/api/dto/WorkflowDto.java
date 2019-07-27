@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import com.polaris.comm.dto.PageDto;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.dto.PageDto;
+import com.polaris.core.util.StringUtil;
 
 public class WorkflowDto extends PageDto implements Serializable {
 

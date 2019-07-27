@@ -1,8 +1,8 @@
 package com.polaris.config.zk;
 
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.config.ConfigHandler;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.ConfigHandler;
+import com.polaris.core.util.StringUtil;
 
 public class ConfZkHandler implements ConfigHandler {
 

@@ -7,9 +7,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.WeightedRoundRobinScheduling;
-import com.polaris.comm.util.WeightedRoundRobinScheduling.Server;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.WeightedRoundRobinScheduling;
+import com.polaris.core.util.WeightedRoundRobinScheduling.Server;
 
 public class ServerDiscovery {
     private static Map<String, WeightedRoundRobinScheduling> serverMap = new ConcurrentHashMap<>();

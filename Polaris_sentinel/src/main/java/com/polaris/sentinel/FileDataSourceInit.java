@@ -16,7 +16,7 @@ import com.alibaba.csp.sentinel.slots.system.SystemRuleManager;
 import com.alibaba.csp.sentinel.transport.util.WritableDataSourceRegistry;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.polaris.comm.util.PropertyUtils;
+import com.polaris.core.util.PropertyUtils;
 
 /**
 *

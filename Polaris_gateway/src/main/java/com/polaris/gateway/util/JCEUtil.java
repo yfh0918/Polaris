@@ -6,7 +6,7 @@ import java.security.Permission;
 import java.security.PermissionCollection;
 import java.util.Map;
 
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.util.LogUtil;
 
 /**
  * @author:Tom.Yu

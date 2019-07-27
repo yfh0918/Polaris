@@ -11,9 +11,9 @@ import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.PropertyUtils;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.LogUtil;
+import com.polaris.core.util.PropertyUtils;
 
 /**
  * Class Name : TomcatServer

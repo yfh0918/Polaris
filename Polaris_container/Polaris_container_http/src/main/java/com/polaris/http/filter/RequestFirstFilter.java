@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 
 import com.github.pagehelper.util.StringUtil;
-import com.polaris.comm.Constant;
-import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.UuidUtil;
+import com.polaris.core.Constant;
+import com.polaris.core.util.LogUtil;
+import com.polaris.core.util.UuidUtil;
 
 /**
  * 实现的第一个过滤器

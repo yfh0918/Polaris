@@ -8,9 +8,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.PropertyUtils;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.LogUtil;
+import com.polaris.core.util.PropertyUtils;
 import com.polaris.container.jetty.listener.ServerHandlerLifeCycle;
 import com.polaris.container.jetty.listener.ServerHandlerListerner;
 

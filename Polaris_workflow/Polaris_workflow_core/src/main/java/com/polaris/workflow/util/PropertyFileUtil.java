@@ -18,7 +18,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.DefaultPropertiesPersister;
 import org.springframework.util.PropertiesPersister;
 
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.util.LogUtil;
 
 /**
  * 系统属性工具类

@@ -9,10 +9,10 @@ import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.config.ConfigHandlerProvider;
-import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.ConfigHandlerProvider;
+import com.polaris.core.util.LogUtil;
+import com.polaris.core.util.StringUtil;
 import com.polaris.core.connect.ServerDiscoveryHandler;
 
 

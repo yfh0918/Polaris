@@ -8,7 +8,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.util.LogUtil;
 import com.polaris.conf.admin.core.util.JacksonUtil;
 import com.polaris.conf.admin.core.util.ReturnT;
 

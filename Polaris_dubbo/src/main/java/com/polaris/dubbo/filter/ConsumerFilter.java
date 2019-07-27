@@ -8,7 +8,7 @@ import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcContext;
 import com.polaris.dubbo.Constant;
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.util.LogUtil;
 
 @Activate(group = Constants.CONSUMER)
 public class ConsumerFilter implements Filter {

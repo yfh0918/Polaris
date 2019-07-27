@@ -1,7 +1,7 @@
 package com.polaris.http.supports;
 
-import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
+import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
 import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
 import com.polaris.http.factory.ContainerServerFactory;
 import com.polaris.http.util.NetUtils;
@@ -19,7 +19,7 @@ import com.polaris.http.util.NetUtils;
 * @version
 *
 */
-public class MainSupport extends com.polaris.comm.supports.MainSupport{
+public class MainSupport extends com.polaris.core.supports.MainSupport{
 	
 	/**
 	* 创建一个新的实例 MainSupport.
@@ -42,12 +42,13 @@ public class MainSupport extends com.polaris.comm.supports.MainSupport{
     	
 		//注册服务
 		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON, false))) {
-			ServerDiscoveryHandlerProvider.getInstance().register(NetUtils.getLocalHost(), Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, false)));
+			String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
+			ServerDiscoveryHandlerProvider.getInstance().register(registerIp, Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, false)));
 			
 			// add shutdown hook to stop server
 	        Runtime.getRuntime().addShutdownHook(new Thread() {
 	            public void run() {
-	            	ServerDiscoveryHandlerProvider.getInstance().deregister(NetUtils.getLocalHost(), Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, false)));
+	            	ServerDiscoveryHandlerProvider.getInstance().deregister(registerIp, Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, false)));
 	            }
 	        });
 		}

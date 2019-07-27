@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 
-import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.PropertyUtils;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.util.LogUtil;
+import com.polaris.core.util.PropertyUtils;
+import com.polaris.core.util.StringUtil;
 import com.polaris.conf.admin.Constant;
 import com.polaris.config.zk.ConfZkClient;
 

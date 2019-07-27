@@ -6,8 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.polaris.cache.ehcache.EhCacheCache;
 import com.polaris.cache.memcache.MemCache;
 import com.polaris.cache.redis.RedisCache;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.StringUtil;
 
 public class CacheFactory {
 

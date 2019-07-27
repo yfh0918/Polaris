@@ -3,7 +3,7 @@ package com.polaris.cache.ehcache;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.polaris.comm.config.ConfClient;
+import com.polaris.core.config.ConfClient;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;

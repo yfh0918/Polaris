@@ -16,8 +16,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.dto.ResultDto;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.dto.ResultDto;
 
 /**
 * 流量控制过滤器

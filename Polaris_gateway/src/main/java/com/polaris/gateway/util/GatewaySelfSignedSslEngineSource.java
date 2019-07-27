@@ -18,9 +18,9 @@ import javax.net.ssl.X509TrustManager;
 import org.joda.time.DateTime;
 import org.littleshoot.proxy.SslEngineSource;
 
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.LogUtil;
+import com.polaris.core.util.StringUtil;
 
 import net.lightbody.bmp.mitm.CertificateInfo;
 import net.lightbody.bmp.mitm.RootCertificateGenerator;

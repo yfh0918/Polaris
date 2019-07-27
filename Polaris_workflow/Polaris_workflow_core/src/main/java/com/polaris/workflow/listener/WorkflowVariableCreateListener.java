@@ -5,7 +5,7 @@ import org.activiti.engine.delegate.event.ActivitiVariableEvent;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.util.LogUtil;
 
 /**
  * 引擎的全局监听器（监听变量的创建）

@@ -1,8 +1,8 @@
 package com.polaris.sentinel;
 
 import com.alibaba.csp.sentinel.init.InitFunc;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.StringUtil;
 
 /**
 *

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.polaris.comm.util.WeightedRoundRobinScheduling;
+import com.polaris.core.util.WeightedRoundRobinScheduling;
 
 /**
  * @author:Tom.Yu

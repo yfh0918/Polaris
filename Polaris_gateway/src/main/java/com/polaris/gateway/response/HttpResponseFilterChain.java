@@ -2,7 +2,7 @@ package com.polaris.gateway.response;
 
 import java.util.Collections;
 
-import com.polaris.comm.config.ConfClient;
+import com.polaris.core.config.ConfClient;
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.HttpFilterChain;
 import com.polaris.gateway.HttpFilterCompare;

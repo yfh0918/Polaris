@@ -10,12 +10,12 @@ import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
-import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.config.ConfListener;
-import com.polaris.comm.config.ConfigHandlerProvider;
-import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.ConfListener;
+import com.polaris.core.config.ConfigHandlerProvider;
+import com.polaris.core.util.LogUtil;
+import com.polaris.core.util.StringUtil;
 
 public class ConfNacosClient { 
 	

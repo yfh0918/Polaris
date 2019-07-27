@@ -9,10 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.littleshoot.proxy.HostResolver;
 
 import com.github.pagehelper.util.StringUtil;
-import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.config.ConfListener;
-import com.polaris.comm.config.ConfigHandlerProvider;
+import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.ConfListener;
+import com.polaris.core.config.ConfigHandlerProvider;
 import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
 
 /**

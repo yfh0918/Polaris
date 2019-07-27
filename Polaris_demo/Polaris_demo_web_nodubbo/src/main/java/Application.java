@@ -1,6 +1,6 @@
 
 
-import com.polaris.comm.config.ConfClient;
+import com.polaris.core.config.ConfClient;
 import com.polaris.http.supports.MainSupport;
 
 /**

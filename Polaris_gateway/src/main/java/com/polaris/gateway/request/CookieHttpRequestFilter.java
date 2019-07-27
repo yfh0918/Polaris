@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.util.ConfUtil;
 import com.polaris.gateway.util.RequestUtil;
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.util.LogUtil;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;

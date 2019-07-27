@@ -6,7 +6,7 @@ import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.polaris.cache.Cache;
-import com.polaris.comm.Constant;
+import com.polaris.core.Constant;
 
 import redis.clients.jedis.Jedis;
 

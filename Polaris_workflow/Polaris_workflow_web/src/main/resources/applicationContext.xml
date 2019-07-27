@@ -19,7 +19,7 @@
 	</context:component-scan>
 	
 	<!-- 读入配置文件 -->
-	<bean id="propertyConfigurer" class="com.polaris.comm.config.ConfPropertyPlaceholderConfigurer">  
+	<bean id="propertyConfigurer" class="com.polaris.core.config.ConfPropertyPlaceholderConfigurer">  
         <property name="fileEncoding" value="utf-8" /> 
     </bean>
     
@@ -35,7 +35,7 @@
 		<property name="minPoolSize" value="${db.minPoolSize}" />
 		<property name="maxIdleTime" value="${db.maxIdleTime}" />
 	</bean>
-	<bean id="dataSource" class="com.polaris.comm.datasource.DynamicDataSource">
+	<bean id="dataSource" class="com.polaris.core.datasource.DynamicDataSource">
 		<property name="targetDataSources">
 			<map key-type="java.lang.String">
 				<entry key="dataSource_db" value-ref="dataSource_db" />

@@ -11,8 +11,8 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.WeightedRoundRobinScheduling;
+import com.polaris.core.util.LogUtil;
+import com.polaris.core.util.WeightedRoundRobinScheduling;
 
 public class ServerCheckTask implements Runnable {
 	

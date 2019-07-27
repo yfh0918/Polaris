@@ -2,9 +2,9 @@ package com.polaris.demo.core.entry;
 
 import org.springframework.stereotype.Service;
 
-import com.polaris.comm.adapter.ServiceAdapter;
-import com.polaris.comm.util.EncryptUtil;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.adapter.ServiceAdapter;
+import com.polaris.core.util.EncryptUtil;
+import com.polaris.core.util.StringUtil;
 import com.polaris.demo.api.dto.DemoDto;
 import com.polaris.demo.api.service.DemoEntryIF;
 import com.polaris.demo.core.service.TestService;

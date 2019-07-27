@@ -1,7 +1,7 @@
 package com.polaris.config.nacos;
 
-import com.polaris.comm.config.ConfListener;
-import com.polaris.comm.config.ConfigHandler;
+import com.polaris.core.config.ConfListener;
+import com.polaris.core.config.ConfigHandler;
 
 public class ConfNacosHandler implements ConfigHandler {
 

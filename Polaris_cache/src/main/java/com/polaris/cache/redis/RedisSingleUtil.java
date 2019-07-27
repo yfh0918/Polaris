@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
-import com.polaris.comm.config.ConfClient;
+import com.polaris.core.config.ConfClient;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;

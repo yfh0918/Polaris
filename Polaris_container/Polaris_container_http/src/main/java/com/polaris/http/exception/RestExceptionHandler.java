@@ -6,10 +6,10 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import com.github.pagehelper.util.StringUtil;
-import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.dto.ResultDto;
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.dto.ResultDto;
+import com.polaris.core.util.LogUtil;
 
 @Provider  
 public class RestExceptionHandler implements ExceptionMapper<Exception>{  

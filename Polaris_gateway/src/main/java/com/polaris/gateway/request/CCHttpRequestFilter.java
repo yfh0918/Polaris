@@ -10,8 +10,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.RateLimiter;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.util.LogUtil;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.LogUtil;
 import com.polaris.gateway.GatewayConstant;
 
 import io.netty.channel.ChannelHandlerContext;

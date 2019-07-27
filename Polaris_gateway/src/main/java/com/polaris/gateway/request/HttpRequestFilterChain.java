@@ -4,7 +4,7 @@ import java.util.Collections;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import com.polaris.comm.config.ConfClient;
+import com.polaris.core.config.ConfClient;
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.HttpFilterChain;
 import com.polaris.gateway.HttpFilterCompare;

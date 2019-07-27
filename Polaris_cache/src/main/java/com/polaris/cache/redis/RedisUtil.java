@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
-import com.polaris.comm.config.ConfClient;
+import com.polaris.core.config.ConfClient;
 
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.Jedis;

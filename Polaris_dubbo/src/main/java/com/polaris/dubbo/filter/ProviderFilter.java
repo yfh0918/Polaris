@@ -11,7 +11,7 @@ import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.RpcException;
 import com.polaris.dubbo.Constant;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.util.StringUtil;
 
 @Activate(group = Constants.PROVIDER)
 public class ProviderFilter implements Filter {

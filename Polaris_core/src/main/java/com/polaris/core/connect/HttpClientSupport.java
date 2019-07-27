@@ -30,10 +30,11 @@ import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-import com.polaris.comm.Constant;
-import com.polaris.comm.util.LogUtil;
-import com.polaris.comm.util.StringUtil;
+import com.polaris.core.Constant;
+import com.polaris.core.util.LogUtil;
+import com.polaris.core.util.StringUtil;
 
+@Deprecated
 public class HttpClientSupport {
 
     private static LogUtil LOGGER = LogUtil.getInstance(HttpClientSupport.class);
@@ -102,6 +103,7 @@ public class HttpClientSupport {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         CloseableHttpResponse response = null;
         String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
+        LOGGER.info(url);
         try {
             HttpPost httpPost = new HttpPost(url);
             if (header != null) {
@@ -146,6 +148,7 @@ public class HttpClientSupport {
         CloseableHttpClient closeableHttpClient = httpClientBuilder.build();
         CloseableHttpResponse response = null;
         String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
+        LOGGER.info(url);
         try {
             HttpPost httpPost = new HttpPost(url);
             trace(httpPost);
@@ -185,6 +188,7 @@ public class HttpClientSupport {
 
         CloseableHttpResponse response = null;
         String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
+        LOGGER.info(url);
         try {
             if (StringUtil.isNotEmpty(lang)) {
             	url = url + "?lang=" + lang;
@@ -221,6 +225,7 @@ public class HttpClientSupport {
     }
     public static void httpAsync(String orgurl, Map<String, Object> paramMap) {
         String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
+        LOGGER.info(url);
         String paramUrl = url;
         try {
             RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(30000).setConnectTimeout(30000)
@@ -289,6 +294,7 @@ public class HttpClientSupport {
 
     public static void httpAsyncJson(String orgurl, String json, String lang) {
         String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
+        LOGGER.info(url);
         try {
             RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(300000).setConnectTimeout(300000)
                 .build();

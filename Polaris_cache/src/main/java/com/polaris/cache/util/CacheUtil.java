@@ -6,7 +6,7 @@ import com.polaris.cache.Cache;
 import com.polaris.cache.ehcache.EhCacheCache;
 import com.polaris.cache.serializer.KryoSerializer;
 import com.polaris.cache.serializer.ObjectSerializer;
-import com.polaris.comm.Constant;
+import com.polaris.core.Constant;
 
 public class CacheUtil {
 	

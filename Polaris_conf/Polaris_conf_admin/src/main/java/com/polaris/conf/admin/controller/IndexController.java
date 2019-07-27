@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.polaris.comm.config.ConfClient;
+import com.polaris.core.config.ConfClient;
 import com.polaris.conf.admin.controller.annotation.PermessionLimit;
 import com.polaris.conf.admin.controller.interceptor.PermissionInterceptor;
 import com.polaris.conf.admin.core.util.ReturnT;

@@ -2,7 +2,7 @@ package com.polaris.cache.ehcache;
 
 import java.io.UnsupportedEncodingException;
 
-import com.polaris.comm.Constant;
+import com.polaris.core.Constant;
 
 import net.sf.ehcache.Element;
 

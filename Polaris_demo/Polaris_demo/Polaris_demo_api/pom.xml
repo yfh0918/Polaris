@@ -14,7 +14,7 @@
   <dependencies>
   	<dependency>
 		<groupId>com.polaris</groupId>
-		<artifactId>Polaris_comm</artifactId>
+		<artifactId>Polaris_core</artifactId>
 	</dependency>
   </dependencies>
 

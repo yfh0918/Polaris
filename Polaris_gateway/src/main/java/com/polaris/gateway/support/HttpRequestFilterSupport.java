@@ -1,7 +1,7 @@
 package com.polaris.gateway.support;
 
-import com.polaris.comm.Constant;
-import com.polaris.comm.dto.ResultDto;
+import com.polaris.core.Constant;
+import com.polaris.core.dto.ResultDto;
 
 public class HttpRequestFilterSupport {
 

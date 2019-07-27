@@ -3,7 +3,7 @@ package com.polaris.gateway.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.polaris.comm.thread.InheritablePolarisThreadLocal;
+import com.polaris.core.thread.InheritablePolarisThreadLocal;
 
 public class RequestUtil {
 
