@@ -340,6 +340,18 @@ public class RedisUtil {
         }
         return flag;
     }
+    public static Long deleteKey(byte[] keys) {
+        Long flag = null;
+        try {
+            flag = getJedisCluster().del(keys);
+        } catch (Exception e) {
+            LOGGER.error("Remove keyex error : {}", e);
+        } finally {
+            returnBrokenResource(jedisCluster);
+            returnResource(jedisCluster);
+        }
+        return flag;
+    }
 
     /**
      * 删除前缀为{参数}的所有key<br>

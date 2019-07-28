@@ -6,6 +6,7 @@ public interface Cache {
 	public static final String CACHE_MAX_SIZE_DEFAULT_VALUE = "10000";
 	public static final String EHCACHE = "ehcache";
 	public static final String REDIS = "redis";
+	public static final String REDIS_CLUSTER = "rediscluster";
 	public static final String MEMCACHED = "memcached";
 	
 	void put(Object key, Object value, int timeout);

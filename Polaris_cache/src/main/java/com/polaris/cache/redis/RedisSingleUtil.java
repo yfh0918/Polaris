@@ -323,6 +323,23 @@ public class RedisSingleUtil {
         }
         return flag;
     }
+    public static Long deleteKey(byte[] keys) {
+        Jedis jedis = null;
+        Long flag = null;
+        try {
+            jedis = getJedis();
+            flag = jedis.del(keys);
+        } catch (Exception e) {
+            if (jedis != null) {
+                jedis.close();
+            }
+            logger.error("Remove keyex error : " + e);
+
+        } finally {
+            returnResource(jedis);
+        }
+        return flag;
+    }
 
     /**
      * 删除多个key

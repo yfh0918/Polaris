@@ -5,10 +5,10 @@ import java.io.UnsupportedEncodingException;
 import com.polaris.cache.Cache;
 import com.polaris.core.Constant;
 
-public class RedisCache implements Cache {
+public class RedisClusterCache implements Cache {
 
 	private String cacheName;//用于区分不同缓存名称但是key相同的元素
-	public RedisCache(String cacheName) {
+	public RedisClusterCache(String cacheName) {
 		this.cacheName = cacheName + ":";
 	}
 	
@@ -22,7 +22,6 @@ public class RedisCache implements Cache {
 		if (key == null || value == null) {
 			return;
 		}
-		//Jedis jedis = RedisFactory.getJedis();
 		if (key instanceof byte[]) {
 			try {
 				key = (cacheName + new String((byte[])key,Constant.UTF_CODE)).getBytes(Constant.UTF_CODE);
@@ -30,18 +29,17 @@ public class RedisCache implements Cache {
 				e.fillInStackTrace();
 				return;
 			}
-			
 			if (timeout > 0) {
-				RedisSingleUtil.set((byte[])key, (byte[])value, timeout);
+				RedisUtil.set((byte[])key, (byte[])value, timeout);
 			} else {
-				RedisSingleUtil.set((byte[])key, (byte[])value);
+				RedisUtil.set((byte[])key, (byte[])value);
 			}
 		} else {
 			key = cacheName + key.toString();
 			if (timeout > 0) {
-				RedisSingleUtil.set(key.toString(), value.toString(), timeout);
+				RedisUtil.set(key.toString(), value.toString(), timeout);
 			} else {
-				RedisSingleUtil.set(key.toString(), value.toString());
+				RedisUtil.set(key.toString(), value.toString());
 			}
 		}
 	}
@@ -55,20 +53,22 @@ public class RedisCache implements Cache {
 			try {
 				key = (cacheName + new String((byte[])key,Constant.UTF_CODE)).getBytes(Constant.UTF_CODE);
 			} catch (UnsupportedEncodingException e) {
+				
 				e.fillInStackTrace();
 				return;
 			}
-			RedisSingleUtil.deleteKey((byte[])key);
+			RedisUtil.deleteKey((byte[])key);
 		} else {
 			key = cacheName + key.toString();
-			RedisSingleUtil.deleteKey(key.toString());
+			RedisUtil.deleteKey(key.toString());
 		}
+		
 		return;
 	}
 	
 	@Override
 	public void removeAll() {
-		RedisSingleUtil.deleteKeyByPrefix(cacheName);
+		RedisUtil.deleteKeyByPrefix(cacheName);
 		return;
 	}
 	
@@ -83,13 +83,15 @@ public class RedisCache implements Cache {
 				key = (cacheName + new String((byte[])key,Constant.UTF_CODE)).getBytes(Constant.UTF_CODE);
 			} catch (UnsupportedEncodingException e) {
 				e.fillInStackTrace();
+				
 				return null;
 			}
-			result = RedisSingleUtil.get((byte[])key);
+			result = RedisUtil.get((byte[])key);
 		} else {
 			key = cacheName + key.toString();
-			result = RedisSingleUtil.get(key.toString());
+			result = RedisUtil.get(key.toString());
 		}
+		
 		return result;
 	}
 	

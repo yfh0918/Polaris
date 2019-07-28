@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.polaris.cache.ehcache.EhCacheCache;
-import com.polaris.cache.memcache.MemCache;
 import com.polaris.cache.redis.RedisCache;
+import com.polaris.cache.redis.RedisClusterCache;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.StringUtil;
 
@@ -17,8 +17,8 @@ public class CacheFactory {
 	//redis
 	private static Map<String, Cache> redisMap = new ConcurrentHashMap<>();
 	
-	//memcached
-	private static Map<String, Cache> memCacheMap = new ConcurrentHashMap<>();
+	//redis cluser
+	private static Map<String, Cache> redisClusterMap = new ConcurrentHashMap<>();
 	
 	private CacheFactory() {}
 	
@@ -34,16 +34,16 @@ public class CacheFactory {
     	return redisMap.get(cacheName);
 	}
 	
-	//获取MemCache
-	private static Cache getMemCache(String cacheName) {
-		if (memCacheMap.get(cacheName) == null) {
+	//获取RedisCache
+	private static Cache getRedisClusterCache(String cacheName) {
+		if (redisClusterMap.get(cacheName) == null) {
     		synchronized(cacheName.intern()) {
-    			if (memCacheMap.get(cacheName) == null) {
-    				memCacheMap.put(cacheName, new MemCache(cacheName));
+    			if (redisClusterMap.get(cacheName) == null) {
+    				redisClusterMap.put(cacheName, new RedisClusterCache(cacheName));
     			}
     		}
     	}
-    	return memCacheMap.get(cacheName);
+    	return redisClusterMap.get(cacheName);
 	}
 	
 	//获取EhCacheCache
@@ -65,8 +65,8 @@ public class CacheFactory {
 		}
 		if (Cache.REDIS.equals(ConfClient.get("cache."+cacheName+".type",Cache.EHCACHE).toLowerCase())) {
 			return getRedisCache(cacheName);
-		} else if (Cache.MEMCACHED.equals(ConfClient.get("cache."+cacheName+".type",Cache.EHCACHE).toLowerCase())) {
-			return getMemCache(cacheName);
+		} else if (Cache.REDIS_CLUSTER.equals(ConfClient.get("cache."+cacheName+".type",Cache.EHCACHE).toLowerCase())) {
+			return getRedisClusterCache(cacheName);
 		}
 		return getEhCache(cacheName);
 	}
