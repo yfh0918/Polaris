@@ -17,7 +17,10 @@
 		<groupId>com.polaris</groupId>
 		<artifactId>Polaris_workflow_core</artifactId>
 	  </dependency>
-		
+  	  <dependency>
+		<groupId>com.polaris</groupId>
+		<artifactId>Polaris_workflow_api</artifactId>
+	  </dependency>		
 	  <dependency>
 		<groupId>com.polaris</groupId>
 		<artifactId>Polaris_dubbo</artifactId>
