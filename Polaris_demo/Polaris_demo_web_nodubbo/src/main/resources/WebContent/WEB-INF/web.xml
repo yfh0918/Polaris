@@ -35,10 +35,4 @@
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 
-	<!-- 引入swagger -->
-	<servlet>
-        <servlet-name>Jersey2Config</servlet-name>
-        <servlet-class>io.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
-        <load-on-startup>2</load-on-startup>
-    </servlet>
 </web-app>
