@@ -16,6 +16,12 @@
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_container_tomcat</artifactId>
         </dependency>
+		
+		<dependency>
+		    <groupId>io.swagger</groupId>
+		    <artifactId>swagger-jaxrs</artifactId>
+		</dependency>
+			
     </dependencies>
 
     <build>

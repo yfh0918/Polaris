@@ -568,7 +568,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
                             .serverSslEngine()));
                 } else {
                     connectionFlow.then(serverConnection.EncryptChannel(proxyServer.getMitmManager()
-                            .serverSslEngine(parsedHostAndPort.getHostText(), parsedHostAndPort.getPort())));
+                            .serverSslEngine(parsedHostAndPort.getHost(), parsedHostAndPort.getPort())));
                 }
 
                 connectionFlow
@@ -956,8 +956,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
             // we couldn't understand the hostAndPort string, so there is no way we can resolve it.
             throw new UnknownHostException(hostAndPort);
         }
-
-        String host = parsedHostAndPort.getHostText();
+        String host = parsedHostAndPort.getHost();
         int port = parsedHostAndPort.getPortOrDefault(80);
 
         return proxyServer.getServerResolver().resolve(host, port);

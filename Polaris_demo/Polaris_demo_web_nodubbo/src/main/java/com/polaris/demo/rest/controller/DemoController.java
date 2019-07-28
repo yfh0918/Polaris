@@ -10,7 +10,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.springframework.stereotype.Component;
 
-import com.alibaba.fastjson.JSONObject;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 认证模块
@@ -18,6 +19,7 @@ import com.alibaba.fastjson.JSONObject;
  * @return
  */
 @Component
+@Api(value = "/rest/demo", description = "IOrderServiceApi Resource", produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
 @Path("/rest/demo")
 public class DemoController {
 
@@ -27,10 +29,11 @@ public class DemoController {
      *
      * @return
      */
+    @Produces(MediaType.APPLICATION_JSON)
     @GET
     @POST
     @Path("/test")
-    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "获取一个订单", notes = "返回一个订单", response = String.class)
     public String demotest(@Context HttpServletRequest request) {
 
         System.out.println("hello1234");

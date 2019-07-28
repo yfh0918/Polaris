@@ -23,4 +23,16 @@
         <property name="fileEncoding" value="utf-8" /> 
     </bean>
     
+    <!-- 引入swagger2 -->
+    <bean id="apiListingResourceJSON" class="io.swagger.jaxrs.listing.ApiListingResource"/>
+    <bean id="apiDeclarationProvider" class="io.swagger.jaxrs.listing.SwaggerSerializers"/>
+    <bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">
+        <property name="title" value="Swagger Sample App"/>
+        <property name="version" value="1.0.0" />
+        <property name="schemes" value="http" />
+        <property name="resourcePackage" value="com.polaris"/>
+        <property name="scan" value="true"/>
+        <property name="prettyPrint" value="true"/>
+    </bean>
+    
 </beans>
