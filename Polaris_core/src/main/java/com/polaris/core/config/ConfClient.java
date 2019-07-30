@@ -67,6 +67,19 @@ public class ConfClient {
 			}
 		}
 		
+		//全局
+		if (StringUtil.isNotEmpty(ConfClient.getGlobalGroup())) {
+			String[] globalProperties = ConfigHandlerProvider.getInstance().getGlobalProperties();
+			if (globalProperties != null) {
+				for (String file : globalProperties) {
+					value = ConfigHandlerProvider.getInstance().getValue(key, file, isWatch);
+					if (value != null) {
+						return value;
+					}
+				}
+			}
+		}		
+		
 		//默认值
 		if (StringUtil.isNotEmpty(defaultVal)) {
 			ConfigHandlerProvider.getInstance().updateCache(key, defaultVal, Constant.DEFAULT_CONFIG_NAME);
@@ -134,4 +147,10 @@ public class ConfClient {
 		}
 		return Long.parseLong(datacenterId.trim());
 	}	
+	public static String getGlobalGroup() {
+		String globalGroupName = ConfigHandlerProvider.getInstance().getValue(Constant.PROJECR_GLOBAL_GROUP_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		return globalGroupName == null ? "" :globalGroupName;
+	}
+	
+	
 }

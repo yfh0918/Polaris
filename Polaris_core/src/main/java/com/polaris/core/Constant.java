@@ -112,6 +112,7 @@ public class Constant {
 	public static String PROJECT_PROPERTY = CONFIG + File.separator + DEFAULT_CONFIG_NAME;
 	
 	public static String PROJECT_EXTENSION_PROPERTIES = "project.extension.properties";
+	public static String PROJECT_GLOBAL_PROPERTIES = "project.global.properties";
 	
 	// 应用名称
 	public static String PROJECT_ENV_NAME = "project.env";
@@ -137,6 +138,9 @@ public class Constant {
 	// 分组名称(注册中心,dubbo)
 	public static final String PROJECR_GROUP_NAME = "project.group";
 	
+	//全局global的名称(配置中心公用)
+	public static final String PROJECR_GLOBAL_GROUP_NAME = "project.global.group";
+
 	// 配置中心
 	public static final String CONFIG_REGISTRY_ADDRESS_NAME = "config.registry.address";
 	
@@ -156,6 +160,7 @@ public class Constant {
 	//随机数
 	public static final String UUID_WORKID = "uuid.wokerId";
 	public static final String UUID_DATACENTERID="uuid.datacenterId";
+	
 
 	//外部可以设置路径
 	public static void setConfigPath(String path, String fileName) {

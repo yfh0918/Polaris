@@ -53,7 +53,16 @@ public class ConfNacosClient {
 			//扩展文件
 			String[] extendFiles = ConfigHandlerProvider.getExtensionProperties();
 			if (extendFiles != null) {
-				loadExtendFiles(extendFiles);
+				String group = ConfigHandlerProvider.getConfigGroup();
+				loadFiles(extendFiles,group);
+			}
+			
+			//获取全局文件
+			if (StringUtil.isNotEmpty(ConfClient.getGlobalGroup())) {
+				String[] globalFiles = ConfigHandlerProvider.getGlobalProperties();
+				if (globalFiles != null) {
+					loadFiles(extendFiles, ConfigHandlerProvider.getGlobalConfigGroup());
+				}
 			}
 
 		
@@ -63,9 +72,9 @@ public class ConfNacosClient {
 		}
 	}
 	
-	private void loadExtendFiles (String[] extendFiles) {
+	private void loadFiles (String[] extendFiles, String group) {
 		for (String file : extendFiles) {
-			addListener(file, new ConfListener() {
+			addListener(file, group, new ConfListener() {
 				@Override
 				public void receive(String propertyContent) {
 					if (StringUtil.isNotEmpty(propertyContent)) {
@@ -86,7 +95,7 @@ public class ConfNacosClient {
 	
 
 	// 获取key,value
-	public String getConfig(String key, String fileName) {
+	public String getConfig(String key, String fileName, String group) {
 		//配置文件
     	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
     		return null;
@@ -99,7 +108,6 @@ public class ConfNacosClient {
     		}
     	}
     	
-		String group = getGroup();
 		try {
 			String propertyContent = configService.getConfig(fileName, group, 5000);
 			if (StringUtil.isNotEmpty(propertyContent)) {
@@ -119,7 +127,7 @@ public class ConfNacosClient {
 	}
 	
 	// 获取文件内容
-	public String getConfig(String fileName) {
+	public String getConfig(String fileName, String group) {
 		//配置文件
     	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
     		return null;
@@ -132,7 +140,7 @@ public class ConfNacosClient {
     		}
     	}
     	
-		String group = getGroup();
+		
 		try {
 			String propertyContent = configService.getConfig(fileName, group, 5000);
 			return propertyContent;
@@ -144,7 +152,7 @@ public class ConfNacosClient {
 	}
 	
 	// 监听需要关注的内容
-	public void addListener(String dataId, ConfListener listener) {
+	public void addListener(String dataId, String group, ConfListener listener) {
 		//配置文件
     	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
     		return;
@@ -157,7 +165,6 @@ public class ConfNacosClient {
     		}
     	}
     	
-		String group = getGroup();
 		try {
 			configService.addListener(dataId, group.toString(), new Listener() {
 				@Override
@@ -177,18 +184,6 @@ public class ConfNacosClient {
 		}
 	}
 
-	// 获取分组信息
-	private String getGroup() {
-		StringBuilder group = new StringBuilder();
-		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
-			group.append(ConfClient.getEnv());
-			group.append(":");
-		}
-		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
-			group.append(ConfClient.getCluster());
-			group.append(":");
-		}
-		group.append(ConfClient.getAppName());
-		return group.toString();
-	}	
+
+		
 }

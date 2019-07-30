@@ -89,7 +89,7 @@ public  class ConfigHandlerProvider {
 	}
 	
 	/**
-	* 获取配置信息
+	* 获取扩展配置信息
 	* @param 
 	* @return 
 	* @Exception 
@@ -99,6 +99,24 @@ public  class ConfigHandlerProvider {
 		try {
 			//从本地获取
 			String files = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_EXTENSION_PROPERTIES, false);
+			return files.split(",");
+		} catch (Exception ex) {
+			//nothing
+		}
+		return null;
+	}
+	
+	/**
+	* 获取全局配置信息
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
+	public static String[] getGlobalProperties() {
+		try {
+			//从本地获取
+			String files = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_GLOBAL_PROPERTIES, false);
 			return files.split(",");
 		} catch (Exception ex) {
 			//nothing
@@ -214,6 +232,35 @@ public  class ConfigHandlerProvider {
         	//nothing
         }
 		return null;
+	}
+	
+	// 获取配置中心的分组
+	public static String getConfigGroup() {
+		StringBuilder group = new StringBuilder();
+		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
+			group.append(ConfClient.getEnv());
+			group.append(":");
+		}
+		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
+			group.append(ConfClient.getCluster());
+			group.append(":");
+		}
+		group.append(ConfClient.getAppName());
+		return group.toString();
+	}
+	// 获取全局配置中心的分组
+	public static String getGlobalConfigGroup() {
+		StringBuilder group = new StringBuilder();
+		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
+			group.append(ConfClient.getEnv());
+			group.append(":");
+		}
+		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
+			group.append(ConfClient.getCluster());
+			group.append(":");
+		}
+		group.append(ConfClient.getGlobalGroup());
+		return group.toString();
 	}
 	
 }
