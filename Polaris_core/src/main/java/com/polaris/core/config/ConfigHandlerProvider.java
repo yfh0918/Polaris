@@ -38,6 +38,7 @@ public  class ConfigHandlerProvider {
 						String[] keyvalue = ConfHandlerSupport.getKeyValue(content);
 						if (keyvalue != null) {
 							cache.put(keyvalue[0], keyvalue[1]);
+							logger.info(">>>>>>>>>> conf: 更新配置：file:{}, key:{} , value:{}", fileName, keyvalue[0], keyvalue[1]);
 						}
 					}
 					if (isGlobal) {
@@ -58,6 +59,8 @@ public  class ConfigHandlerProvider {
 				String[] keyvalue = ConfHandlerSupport.getKeyValue(content);
 				if (keyvalue != null) {
 					cache.put(keyvalue[0], keyvalue[1]);
+					logger.info(">>>>>>>>>> conf: 更新配置：file:{}, key:{} , value:{}", fileName, keyvalue[0], keyvalue[1]);
+
 				}
 			}
 	    	if (isGlobal) {
