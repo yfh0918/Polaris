@@ -1,14 +1,12 @@
 package com.polaris.core.config;
 
-import java.io.File;
-
 import com.polaris.core.Constant;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 
 /**
 *
-* 项目名称：Polaris_comm
+* 项目名称：Polaris_core
 * 类名称：ConfClient
 * 类描述：
 * 创建人：yufenghua
@@ -26,9 +24,6 @@ public class ConfClient {
 	public static void init() {
 		try {
 			
-			//载入日志文件
-			System.setProperty("log4j.configurationFile", PropertyUtils.getFilePath(Constant.CONFIG + File.separator + Constant.LOG4J));
-
 	    	// 启动字符集
 	    	System.setProperty("file.encoding", "UTF-8");
 	    	

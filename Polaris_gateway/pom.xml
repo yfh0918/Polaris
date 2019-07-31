@@ -19,14 +19,6 @@
     <dependencies>
       
         <dependency>
-            <groupId>com.polaris</groupId>
-            <artifactId>Polaris_conf_nacos</artifactId>
-        </dependency>   
-        <dependency>
-            <groupId>com.polaris</groupId>
-            <artifactId>Polaris_naming</artifactId>
-        </dependency>   
-        <dependency>
             <groupId>org.littleshoot</groupId>
             <artifactId>littleproxy</artifactId>
             <version>1.1.2</version>
@@ -51,6 +43,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
+
         <!-- metrics -->
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
@@ -101,6 +94,7 @@
             <artifactId>httpmime</artifactId>
             <version>4.5.2</version>
         </dependency>
+
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
@@ -122,15 +116,25 @@
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_core</artifactId>
         </dependency>
-		<dependency>
-            <groupId>com.polaris</groupId>
-            <artifactId>Polaris_cache</artifactId>
-        </dependency>
 
       	<dependency>
 			<groupId>com.polaris</groupId>
 			<artifactId>Polaris_container_http</artifactId>
 		</dependency>	
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_conf_nacos</artifactId>
+        </dependency>   
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_naming</artifactId>
+        </dependency>   
+
+		<dependency>
+		    <groupId>nl.bitwalker</groupId>
+		    <artifactId>UserAgentUtils</artifactId>
+		    <version>1.2.4</version>
+		</dependency>
 
     </dependencies>
 

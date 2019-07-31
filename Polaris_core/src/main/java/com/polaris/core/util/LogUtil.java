@@ -1,5 +1,8 @@
 package com.polaris.core.util;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +14,15 @@ import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 public class LogUtil extends ExtendedLoggerWrapper {
 
+	static {
+		//载入日志文件
+		try {
+			System.setProperty("log4j.configurationFile", PropertyUtils.getFilePath(Constant.CONFIG + File.separator + Constant.LOG4J));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
 	/**
 	 * 
 	 */
@@ -26,6 +38,7 @@ public class LogUtil extends ExtendedLoggerWrapper {
 	public static final String LOG_SEPARATOR = "->";// 分割符号
 	private static final String FQCN = LogUtil.class.getName();
 //	private boolean isCollect = true;//
+	
 
 	private LogUtil(final Logger logger) {
 		super((AbstractLogger) logger, logger.getName(), logger.getMessageFactory());
