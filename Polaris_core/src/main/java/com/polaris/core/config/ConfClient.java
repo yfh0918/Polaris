@@ -1,7 +1,6 @@
 package com.polaris.core.config;
 
 import java.io.File;
-import java.io.IOException;
 
 import com.polaris.core.Constant;
 import com.polaris.core.util.PropertyUtils;
@@ -24,27 +23,20 @@ public class ConfClient {
 	
 	
 	//初始化操作
-	public static void init(String appName) {
+	public static void init() {
 		try {
+			
 			//载入日志文件
 			System.setProperty("log4j.configurationFile", PropertyUtils.getFilePath(Constant.CONFIG + File.separator + Constant.LOG4J));
 
-			//载入application.properties
-			ConfigHandlerProvider.loadConfig(Constant.DEFAULT_CONFIG_NAME,false);
-			
-			//APPName
-			if (StringUtil.isEmpty(appName)) {
-				appName = System.getProperty(Constant.PROJECT_NAME);
-			}
-			if (StringUtil.isNotEmpty(appName)) {
-				ConfigHandlerProvider.updateCache(Constant.PROJECT_NAME, appName, Constant.DEFAULT_CONFIG_NAME);
-			}
-						
 	    	// 启动字符集
 	    	System.setProperty("file.encoding", "UTF-8");
 	    	
 			// user.home
 	        System.setProperty("user.home", PropertyUtils.getAppPath());
+
+	        //载入application.properties
+			ConfigHandlerProvider.loadConfig(Constant.DEFAULT_CONFIG_NAME,false);									
 						
 			//配置中心
 			String config = System.getProperty(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
@@ -123,7 +115,7 @@ public class ConfClient {
 				}
 			}		
 
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -181,9 +173,6 @@ public class ConfClient {
 	}
 	
 	//在设置应用名称的时候启动各项参数载入
-	public static void setAppName(String inputAppName) {
-		init(inputAppName);
-	}
 	public static String getAppName() {
 		String appName = ConfigHandlerProvider.getValue(Constant.PROJECT_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		return appName == null ? "" :appName;

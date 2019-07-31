@@ -1,5 +1,7 @@
 package com.polaris.dubbo.supports;
 
+import com.polaris.core.config.ConfClient;
+
 /**
 *
 * 项目名称：Polaris_comm
@@ -29,7 +31,8 @@ public class MainSupport extends com.polaris.core.supports.MainSupport{
     * @since 
     */
     public static void startDubboServer(String[] args) {
-    	
+    	//载入参数
+    	ConfClient.init();
 		//启动
 		org.apache.dubbo.container.Main.main(args);
     }

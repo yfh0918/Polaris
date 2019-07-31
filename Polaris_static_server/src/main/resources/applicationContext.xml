@@ -17,13 +17,11 @@
 	<!-- 注解扫描 -->
 	<context:annotation-config/>
 	<aop:aspectj-autoproxy/> 
-	<context:component-scan base-package="com.mwclg">
-	</context:component-scan>
 	<context:component-scan base-package="com.polaris">
 	</context:component-scan>
 	
 	<!-- 读入配置文件 -->
-	<bean id="propertyConfigurer" class="com.polaris.comm.config.ConfPropertyPlaceholderConfigurer">  
+	<bean id="propertyConfigurer" class="com.polaris.core.config.ConfPropertyPlaceholderConfigurer">  
         <property name="fileEncoding" value="utf-8" /> 
     </bean>
 

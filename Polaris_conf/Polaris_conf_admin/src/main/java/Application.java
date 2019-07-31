@@ -1,6 +1,5 @@
 
 
-import com.polaris.core.config.ConfClient;
 import com.polaris.http.supports.MainSupport;
 
 
@@ -13,10 +12,7 @@ public class Application
 
     public static void main( String[] args ) throws Exception
     {
-    	//应用名称
-    	ConfClient.setAppName("Polaris_conf_admin");
-    	
-    	//启动
+     	//启动
     	MainSupport.startWebServer(args);
     }
     
