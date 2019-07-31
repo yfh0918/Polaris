@@ -37,18 +37,15 @@ public class MainSupport extends com.polaris.core.supports.MainSupport{
     */
     public static void startWebServer(String[] args) {
     	
-    	//参数初期化
-    	MainSupport.iniParameter();
-    	
 		//注册服务
-		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON, false))) {
+		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {
 			String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
-			ServerDiscoveryHandlerProvider.getInstance().register(registerIp, Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, false)));
+			ServerDiscoveryHandlerProvider.getInstance().register(registerIp, Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME)));
 			
 			// add shutdown hook to stop server
 	        Runtime.getRuntime().addShutdownHook(new Thread() {
 	            public void run() {
-	            	ServerDiscoveryHandlerProvider.getInstance().deregister(registerIp, Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, false)));
+	            	ServerDiscoveryHandlerProvider.getInstance().deregister(registerIp, Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME)));
 	            }
 	        });
 		}

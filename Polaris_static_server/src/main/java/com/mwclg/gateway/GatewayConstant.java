@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.polaris.comm.config.ConfClient;
+import com.polaris.core.config.ConfClient;
 
 import io.netty.handler.codec.http.HttpMessage;
 

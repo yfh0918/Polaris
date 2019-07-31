@@ -27,8 +27,8 @@ public class ServerDiscovery {
 				if (scheduledThreadPoolExecutor == null) {
 					scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
 			        scheduledThreadPoolExecutor.scheduleAtFixedRate(new ServerCheckTask(serverMap), 
-			        		Integer.parseInt(ConfClient.get("server.check.cycletime", "30", false)), 
-			        		Integer.parseInt(ConfClient.get("server.check.cycletime", "30", false)), TimeUnit.SECONDS);
+			        		Integer.parseInt(ConfClient.get("server.check.cycletime", "30")), 
+			        		Integer.parseInt(ConfClient.get("server.check.cycletime", "30")), TimeUnit.SECONDS);
 				}
 			}
 		}

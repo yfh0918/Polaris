@@ -10,10 +10,10 @@ import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.ConfigHandlerProvider;
+import com.polaris.core.config.ConfHandlerSupport;
+import com.polaris.core.connect.ServerDiscoveryHandler;
 import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.StringUtil;
-import com.polaris.core.connect.ServerDiscoveryHandler;
 
 
 public class NacosServerDiscovery implements ServerDiscoveryHandler {
@@ -122,9 +122,9 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 			Instance instance = new Instance();
 	        instance.setIp(ip);
 	        instance.setPort(port);
-	        double weight = Double.parseDouble(ConfClient.get(Constant.PROJECT_WEIGHT, Constant.PROJECT_WEIGHT_DEFAULT, false));
+	        double weight = Double.parseDouble(ConfClient.get(Constant.PROJECT_WEIGHT, Constant.PROJECT_WEIGHT_DEFAULT));
 	        instance.setWeight(weight);
-	        boolean ephemeral = Boolean.parseBoolean(ConfClient.get(Constant.PROJECT_EPHEMERAL, Constant.PROJECT_EPHEMERAL_DEFAULT, false));
+	        boolean ephemeral = Boolean.parseBoolean(ConfClient.get(Constant.PROJECT_EPHEMERAL, Constant.PROJECT_EPHEMERAL_DEFAULT));
 	        instance.setEphemeral(ephemeral);
 	        String clusterName = ConfClient.getCluster();
 	        instance.setClusterName(clusterName);
@@ -203,21 +203,21 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 				return new String[] {keyInfo[0],group,clusters};
 			}
 			if (keyInfo[1].indexOf("group") > -1) {
-				return new String[] {keyInfo[0],ConfigHandlerProvider.getKeyValue(keyInfo[1])[1],""};
+				return new String[] {keyInfo[0],ConfHandlerSupport.getKeyValue(keyInfo[1])[1],""};
 			}
 			if (keyInfo[1].indexOf("clusters") > -1) {
 				String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-				return new String[] {keyInfo[0],group, ConfigHandlerProvider.getKeyValue(keyInfo[1])[1]};
+				return new String[] {keyInfo[0],group, ConfHandlerSupport.getKeyValue(keyInfo[1])[1]};
 			}
 			return new String[] {keyInfo[0],"",""};
 		} else {
 			String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
 			if (StringUtil.isNotEmpty(keyInfo[1]) && keyInfo[1].indexOf("group") > -1) {
-				group = ConfigHandlerProvider.getKeyValue(keyInfo[1])[1];
+				group = ConfHandlerSupport.getKeyValue(keyInfo[1])[1];
 			}
 			String clusters = "";
 			if (StringUtil.isNotEmpty(keyInfo[2]) && keyInfo[2].indexOf("clusters") > -1) {
-				clusters = ConfigHandlerProvider.getKeyValue(keyInfo[2])[1];
+				clusters = ConfHandlerSupport.getKeyValue(keyInfo[2])[1];
 			}
 			return new String[] {keyInfo[0],group,clusters};
 		}

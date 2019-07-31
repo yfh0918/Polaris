@@ -44,7 +44,7 @@ public class ConfPropertyPlaceholderConfigurer extends PropertyPlaceholderConfig
 					
 					String startValue = buf.substring(0, startIndex - placeholderPrefix.length());
 					String endValue = buf.substring(endIndex + placeholderSuffix.length());
-					zkValue = ConfClient.get(key,false);//启动参数无需wartch
+					zkValue = ConfClient.get(key);//启动参数无需wartch
 					buf = new StringBuilder();
 					buf.append(startValue);
 					logger.info(">>>>>>>>>>> polaris_conf resolved placeholder '" + key + "' to value [" + zkValue + "]");

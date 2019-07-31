@@ -12,11 +12,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.mwclg.gateway.GatewayConstant;
 import com.mwclg.gateway.HostResolverImpl;
 import com.mwclg.gateway.HttpFilterAdapterImpl;
-import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.supports.MainSupport;
-import com.polaris.comm.util.SpringUtil;
+import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
 import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
+import com.polaris.core.util.SpringUtil;
 import com.polaris.http.util.NetUtils;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -28,17 +27,16 @@ public class ApplicationSupport {
     @SuppressWarnings("resource")
 	public static void startGateway() {
     	
-    	MainSupport.iniParameter();
     	new ClassPathXmlApplicationContext(SpringUtil.SPRING_PATH);
     	
     	//注册服务
-		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON, false))) {
-			ServerDiscoveryHandlerProvider.getInstance().register(NetUtils.getLocalHost(), Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, false)));
+		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {
+			ServerDiscoveryHandlerProvider.getInstance().register(NetUtils.getLocalHost(), Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME)));
 			
 			// add shutdown hook to stop server
 	        Runtime.getRuntime().addShutdownHook(new Thread() {
 	            public void run() {
-	            	ServerDiscoveryHandlerProvider.getInstance().deregister(NetUtils.getLocalHost(), Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, false)));
+	            	ServerDiscoveryHandlerProvider.getInstance().deregister(NetUtils.getLocalHost(), Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME)));
 	            }
 	        });
 		}

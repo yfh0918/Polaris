@@ -1,20 +1,13 @@
 package com.polaris.core.config;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.util.LogUtil;
-import com.polaris.core.util.PropertyUtils;
 
 public  class ConfigHandlerProvider {
 
@@ -22,108 +15,104 @@ public  class ConfigHandlerProvider {
 	
     private static final ServiceLoader<ConfigHandler> serviceLoader = ServiceLoader.load(ConfigHandler.class);
     
-    private static final ConfigHandlerProvider INSTANCE = new ConfigHandlerProvider();
-    
 	private static volatile Map<String, Map<String, String>> cacheFileMap = new ConcurrentHashMap<>();
 
-    // 监听所有扩展的文件
+	private static volatile Map<String, Map<String, String>> gobalCacheFileMap = new ConcurrentHashMap<>();
+
+	// 监听所有扩展的文件
     private ConfigHandlerProvider() {
+    	
     }
-
-    public static ConfigHandlerProvider getInstance() {
-        return INSTANCE;
-    }
-	
-    //获取文件
-	public String getConfig(String fileName) {
-		//扩展点
-		for (ConfigHandler handler : serviceLoader) {
-			String config = handler.getConfig(fileName);
-			if (StringUtil.isNotEmpty(config)) {
-				return config;
-			}
-		}
-		return getLocalFileContent(fileName);
-	}
-	
-	//监听
-	public void addListener(String fileName, ConfListener listener) {
-		//扩展点
-		for (ConfigHandler handler : serviceLoader) {
-			handler.addListener(fileName, listener);
-		}
-	}
-	
-    // 获取key,value
-	public String getValue(String key, String fileName, boolean isWatch) {
-		
-		// 缓存获取
-		Map<String, String> cache = cacheFileMap.get(fileName);
-		if (cache != null && cache.containsKey(key)) {
-			return cache.get(key);
-		}
-
-		// 扩展点(application.properties除外)
-		if (!Constant.DEFAULT_CONFIG_NAME.equals(fileName)) {
-			for (ConfigHandler handler : serviceLoader) {
-				String result = handler.getValue(key, fileName, isWatch);
-				if (StringUtil.isNotEmpty(result)) {
-					updateCache(key, result, fileName);
-					return result;
+    
+    // 载入文件到缓存
+    public static void loadConfig(String fileName, boolean isGlobal) {
+    	
+    	//增加监听
+    	addListener(fileName, isGlobal, new ConfListener() {
+			@Override
+			public void receive(String propertyContent) {
+				if (StringUtil.isNotEmpty(propertyContent)) {
+					String[] contents = propertyContent.split(Constant.LINE_SEP);
+					Map<String, String> cache = new HashMap<>();
+					for (String content : contents) {
+						String[] keyvalue = ConfHandlerSupport.getKeyValue(content);
+						if (keyvalue != null) {
+							cache.put(keyvalue[0], keyvalue[1]);
+						}
+					}
+					if (isGlobal) {
+			    		gobalCacheFileMap.put(fileName, cache);
+					} else {
+						cacheFileMap.put(fileName, cache);
+					}
 				}
 			}
-		}
-		
-		// 本地配置（默认文件）
-		try {
-			String propertyValue = PropertyUtils.readData(Constant.CONFIG + File.separator + fileName, key, false);
-			if (propertyValue != null) {
-				updateCache(key, propertyValue, fileName);
-				return propertyValue;
+			});
+
+		//载入配置到缓存
+    	String config = getConfig(fileName, isGlobal);
+		if (StringUtil.isNotEmpty(config)) {
+			String[] contents = config.split(Constant.LINE_SEP);
+			Map<String, String> cache = new HashMap<>();
+			for (String content : contents) {
+				String[] keyvalue = ConfHandlerSupport.getKeyValue(content);
+				if (keyvalue != null) {
+					cache.put(keyvalue[0], keyvalue[1]);
+				}
 			}
-		} catch (Exception ex) {
-			//nothing
+	    	if (isGlobal) {
+	    		gobalCacheFileMap.put(fileName, cache);
+			} else {
+				cacheFileMap.put(fileName, cache);
+			}
 		}
+
+    }
+	
+    //获取自定义文件
+	public static String getConfig(String fileName, boolean isGlobal) {
+		//扩展点
+    	if (!Constant.DEFAULT_CONFIG_NAME.equals(fileName)) {
+    		for (ConfigHandler handler : serviceLoader) {
+    			String config = handler.getConfig(fileName,ConfHandlerSupport.getGroup(isGlobal));
+    			if (StringUtil.isNotEmpty(config)) {
+    				return config;
+    			}
+    		}
+    	}
+		return ConfHandlerSupport.getLocalFileContent(fileName);
+	}
+	
+	//监听自定义文件变化
+	public static void addListener(String fileName, boolean isGlobal, ConfListener listener) {
+		if (!Constant.DEFAULT_CONFIG_NAME.equals(fileName)) {
+			for (ConfigHandler handler : serviceLoader) {
+				handler.addListener(fileName, ConfHandlerSupport.getGroup(isGlobal), listener);
+			}
+		}
+	}
+	
+    //获取配置文件
+	public static String getValue(String key, String fileName, boolean isGlobal) {
 		
-		return null;
-	}
-	
-	/**
-	* 获取扩展配置信息
-	* @param 
-	* @return 
-	* @Exception 
-	* @since 
-	*/
-	public static String[] getExtensionProperties() {
-		try {
-			//从本地获取
-			String files = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_EXTENSION_PROPERTIES, false);
-			return files.split(",");
-		} catch (Exception ex) {
-			//nothing
+		// 缓存获取
+		if (isGlobal) {
+			Map<String, String> cache = gobalCacheFileMap.get(fileName);
+			if (cache != null && cache.containsKey(key)) {
+				return cache.get(key);
+			}
+			
+		} else {
+			Map<String, String> cache = cacheFileMap.get(fileName);
+			if (cache != null && cache.containsKey(key)) {
+				return cache.get(key);
+			}
 		}
+
 		return null;
 	}
 	
-	/**
-	* 获取全局配置信息
-	* @param 
-	* @return 
-	* @Exception 
-	* @since 
-	*/
-	public static String[] getGlobalProperties() {
-		try {
-			//从本地获取
-			String files = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_GLOBAL_PROPERTIES, false);
-			return files.split(",");
-		} catch (Exception ex) {
-			//nothing
-		}
-		return null;
-	}
-	
+	//一下对缓存的处理都只针对 非全局缓存
 	public static void removeCache(String fileName) {
 		Map<String, String> cache = cacheFileMap.get(fileName);
 		if (cache != null) {
@@ -140,6 +129,9 @@ public  class ConfigHandlerProvider {
 	}
 	
 	public static void updateCache(String fileName, Map<String, String> cache) {
+		updateCache(fileName, cache, false);
+	}
+	public static void updateCache(String fileName, Map<String, String> cache, boolean isGlobal) {
 		logger.info(">>>>>>>>>> conf: 跟新配置：file:{}", fileName);
 		cacheFileMap.put(fileName, cache);
 	}
@@ -168,99 +160,5 @@ public  class ConfigHandlerProvider {
 		cache.put(key, value);
 	}
 	
-	public static String[] getKeyValue(String line) {
-		if (StringUtil.isNotEmpty(line)) {
-			String[] keyvalue = line.split("=");
-			if (keyvalue.length == 0) {
-				return new String[] {"",""};
-			}
-			if (keyvalue.length == 1) {
-				return new String[] {keyvalue[0].trim(),""};
-			}
-			String value = "";
-			for (int index = 0; index < keyvalue.length; index++) {
-				if (index != 0) {
-					if (StringUtil.isEmpty(value)) {
-						value = keyvalue[index].trim();
-					} else {
-						value = value + "=" + keyvalue[index].trim();
-					}
-				}
-			}
-			return new String[] {keyvalue[0].trim(),value};
-		}
-		return null;
-	}
-		
-	//获取整个文件的内容
-	@SuppressWarnings("rawtypes")
-	public static String getLocalFileContent(String fileName) {
-		
-		// propertyies
-		if (fileName.toLowerCase().endsWith(".properties")) {
-			StringBuffer buffer = new StringBuffer();
-			try (InputStream in = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + fileName)) {
-	            Properties p = new Properties();
-	            p.load(in);
-	            for (Map.Entry entry : p.entrySet()) {
-	                String key = (String) entry.getKey();
-	                buffer.append(key + "=" + entry.getValue());
-	                buffer.append(Constant.LINE_SEP);
-	            }
-	        } catch (IOException e) {
-	           // nothing;
-	        }
-			return buffer.toString();
-		}
-		
-		// 非propertyies
-		try (InputStream inputStream = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + fileName)) {
-			InputStreamReader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
-			BufferedReader bf= new BufferedReader(reader);
-			StringBuffer buffer = new StringBuffer();
-			String line = bf.readLine();
-	        while (line != null) {
-	        	buffer.append(line);
-	            line = bf.readLine();
-	        	buffer.append(Constant.LINE_SEP);
-	        }
-	        String content = buffer.toString();
-	        if (StringUtil.isNotEmpty(content)) {
-	        	return content;
-	        }
-        } catch (IOException e) {
-        	//nothing
-        }
-		return null;
-	}
-	
-	// 获取配置中心的分组
-	public static String getConfigGroup() {
-		StringBuilder group = new StringBuilder();
-		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
-			group.append(ConfClient.getEnv());
-			group.append(":");
-		}
-		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
-			group.append(ConfClient.getCluster());
-			group.append(":");
-		}
-		group.append(ConfClient.getAppName());
-		return group.toString();
-	}
-	// 获取全局配置中心的分组
-	public static String getGlobalConfigGroup() {
-		StringBuilder group = new StringBuilder();
-		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
-			group.append(ConfClient.getEnv());
-			group.append(":");
-		}
-		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
-			group.append(ConfClient.getCluster());
-			group.append(":");
-		}
-		group.append(ConfClient.getGlobalGroup());
-		return group.toString();
-	}
 	
 }

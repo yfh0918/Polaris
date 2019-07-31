@@ -24,18 +24,18 @@ public class DataSourceInit implements InitFunc {
 
 		//获取参数 
 		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.dashboard.server"))) {
-			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.dashboard.server", false))) {
-				System.setProperty("csp.sentinel.dashboard.server", ConfClient.get("csp.sentinel.dashboard.server", false));
+			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.dashboard.server"))) {
+				System.setProperty("csp.sentinel.dashboard.server", ConfClient.get("csp.sentinel.dashboard.server"));
 			}
 		}
 		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.api.port"))) {
-			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.api.port", false))) {
-				System.setProperty("csp.sentinel.api.port", ConfClient.get("csp.sentinel.api.port", false));
+			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.api.port"))) {
+				System.setProperty("csp.sentinel.api.port", ConfClient.get("csp.sentinel.api.port"));
 			}
 		}
 		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.heartbeat.interval.ms"))) {
-			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.heartbeat.interval.ms", false))) {
-				System.setProperty("csp.sentinel.heartbeat.interval.ms", ConfClient.get("csp.sentinel.heartbeat.interval.ms", false));
+			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.heartbeat.interval.ms"))) {
+				System.setProperty("csp.sentinel.heartbeat.interval.ms", ConfClient.get("csp.sentinel.heartbeat.interval.ms"));
 			}
 		}
 		System.setProperty("project.name", ConfClient.getAppName());
@@ -48,7 +48,7 @@ public class DataSourceInit implements InitFunc {
 		//获取类型参数
 		String datasource = System.getProperty("csp.sentinel.datasource");
 		if (StringUtil.isEmpty(datasource)) {
-			datasource = ConfClient.get("csp.sentinel.datasource", false);
+			datasource = ConfClient.get("csp.sentinel.datasource");
 			if (StringUtil.isEmpty(datasource)) {
 				datasource = "nacos";
 			}

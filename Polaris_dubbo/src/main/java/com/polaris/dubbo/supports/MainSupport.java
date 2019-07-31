@@ -30,9 +30,6 @@ public class MainSupport extends com.polaris.core.supports.MainSupport{
     */
     public static void startDubboServer(String[] args) {
     	
-    	//参数初期化
-    	iniParameter();
-    	
 		//启动
 		org.apache.dubbo.container.Main.main(args);
     }

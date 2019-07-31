@@ -1,7 +1,7 @@
 
 
 import com.mwclg.gateway.support.ApplicationSupport;
-import com.polaris.comm.config.ConfClient;
+import com.polaris.core.config.ConfClient;
 
 public class Application {
     public static void main(String[] args) {

@@ -45,8 +45,8 @@ public class IndexController {
         	
         	try {
                 if (StringUtils.isNotBlank(userName) && StringUtils.isNotBlank(password)
-                        && ConfClient.get("polaris.conf.login.username", false).equals(userName)
-                        && ConfClient.get("polaris.conf.login.password", false).equals(password)) {
+                        && ConfClient.get("polaris.conf.login.username").equals(userName)
+                        && ConfClient.get("polaris.conf.login.password").equals(password)) {
                     boolean ifRem = false;
                     if (StringUtils.isNotBlank(ifRemember) && "on".equals(ifRemember)) {
                         ifRem = true;

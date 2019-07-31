@@ -22,9 +22,107 @@ import com.polaris.core.util.StringUtil;
 */
 public class ConfClient {
 	
-	static {
+	
+	//初始化操作
+	public static void init(String appName) {
 		try {
+			//载入日志文件
 			System.setProperty("log4j.configurationFile", PropertyUtils.getFilePath(Constant.CONFIG + File.separator + Constant.LOG4J));
+
+			//载入application.properties
+			ConfigHandlerProvider.loadConfig(Constant.DEFAULT_CONFIG_NAME,false);
+			
+			//APPName
+			if (StringUtil.isEmpty(appName)) {
+				appName = System.getProperty(Constant.PROJECT_NAME);
+			}
+			if (StringUtil.isNotEmpty(appName)) {
+				ConfigHandlerProvider.updateCache(Constant.PROJECT_NAME, appName, Constant.DEFAULT_CONFIG_NAME);
+			}
+						
+	    	// 启动字符集
+	    	System.setProperty("file.encoding", "UTF-8");
+	    	
+			// user.home
+	        System.setProperty("user.home", PropertyUtils.getAppPath());
+						
+			//配置中心
+			String config = System.getProperty(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
+			if (StringUtil.isNotEmpty(config)) {
+				ConfigHandlerProvider.updateCache(Constant.CONFIG_REGISTRY_ADDRESS_NAME, config, Constant.DEFAULT_CONFIG_NAME);
+			} 
+			
+			//环境（production, pre,dev,pre etc）
+			String env = System.getProperty(Constant.PROJECT_ENV_NAME);
+			if (StringUtil.isNotEmpty(env)) {
+				ConfigHandlerProvider.updateCache(Constant.PROJECT_ENV_NAME, env, Constant.DEFAULT_CONFIG_NAME);
+			} 
+			
+			//工程名称
+			String project = System.getProperty(Constant.PROJECT_NAME);
+			if (StringUtil.isNotEmpty(project)) {
+				ConfigHandlerProvider.updateCache(Constant.PROJECT_NAME, project, Constant.DEFAULT_CONFIG_NAME);
+			}
+			
+			//命名空间(注册中心和配置中心)
+			String namespace = System.getProperty(Constant.PROJECR_NAMESPACE_NAME);
+			if (StringUtil.isNotEmpty(namespace)) {
+				ConfigHandlerProvider.updateCache(Constant.PROJECR_NAMESPACE_NAME, namespace, Constant.DEFAULT_CONFIG_NAME);
+			} 
+			
+			//Group(注册中心和dubbo)
+			String group = System.getProperty(Constant.PROJECR_GROUP_NAME);
+			if (StringUtil.isNotEmpty(group)) {
+				ConfigHandlerProvider.updateCache(Constant.PROJECR_GROUP_NAME, group, Constant.DEFAULT_CONFIG_NAME);
+			} 
+
+			//集群名称(注册中心和配置中心)
+			String cluster = System.getProperty(Constant.PROJECR_CLUSTER_NAME);
+			if (StringUtil.isNotEmpty(cluster)) {
+				ConfigHandlerProvider.updateCache(Constant.PROJECR_CLUSTER_NAME, cluster, Constant.DEFAULT_CONFIG_NAME);
+			} 
+			
+			//服务端口
+			String serverport = System.getProperty(Constant.SERVER_PORT_NAME);
+			if (StringUtil.isNotEmpty(serverport)) {
+				ConfigHandlerProvider.updateCache(Constant.SERVER_PORT_NAME, serverport, Constant.DEFAULT_CONFIG_NAME);
+			}
+			
+			//注册中心
+			String name = System.getProperty(Constant.NAMING_REGISTRY_ADDRESS_NAME);
+			if (StringUtil.isNotEmpty(name)) {
+				ConfigHandlerProvider.updateCache(Constant.NAMING_REGISTRY_ADDRESS_NAME, name, Constant.DEFAULT_CONFIG_NAME);
+			}
+			
+			//dubbo服务端口
+			String dubboport = System.getProperty(Constant.DUBBO_PROTOCOL_PORT_NAME);
+			if (StringUtil.isNotEmpty(dubboport)) {
+				ConfigHandlerProvider.updateCache(Constant.DUBBO_PROTOCOL_PORT_NAME, dubboport, Constant.DEFAULT_CONFIG_NAME);
+			}
+			//dubbo注册中心
+			String dubboname = System.getProperty(Constant.DUBBO_REGISTRY_ADDRESS_NAME);
+			if (StringUtil.isNotEmpty(dubboname)) {
+				ConfigHandlerProvider.updateCache(Constant.DUBBO_REGISTRY_ADDRESS_NAME, dubboname, Constant.DEFAULT_CONFIG_NAME);
+			}
+			
+			//载入扩展文件
+			String[] extendProperties = ConfHandlerSupport.getExtensionProperties();
+			if (extendProperties != null) {
+				for (String file : extendProperties) {
+					ConfigHandlerProvider.loadConfig(file,false);//载入缓存
+				}
+			}
+			
+			//载入全局文件
+			if (StringUtil.isNotEmpty(ConfClient.getGlobalGroup())) {
+				String[] globalProperties = ConfHandlerSupport.getGlobalProperties();
+				if (globalProperties != null) {
+					for (String file : globalProperties) {
+						ConfigHandlerProvider.loadConfig(file,true);
+					}
+				}
+			}		
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -39,28 +137,21 @@ public class ConfClient {
 	* @since 
 	*/
 	public static String get(String key) {
-		return get(key, "", true);
+		return get(key, "");
 	}
-	public static String get(String key, boolean isWatch) {
-		return get(key, "", isWatch);
-	}
-	public static String get(String key, String defaultValue) {
-		return get(key, defaultValue, true);
-	}
-	@SuppressWarnings("static-access")
-	public static String get(String key, String defaultVal, boolean isWatch) {
+	public static String get(String key, String defaultVal) {
 		
 		//application.properties
-		String value = ConfigHandlerProvider.getInstance().getValue(key, Constant.DEFAULT_CONFIG_NAME, isWatch);
+		String value = ConfigHandlerProvider.getValue(key,Constant.DEFAULT_CONFIG_NAME,false);
 		if (value != null) {
 			return value;
 		}
 		
 		//扩展文件
-		String[] allProperties = ConfigHandlerProvider.getInstance().getExtensionProperties();
+		String[] allProperties = ConfHandlerSupport.getExtensionProperties();
 		if (allProperties != null) {
 			for (String file : allProperties) {
-				value = ConfigHandlerProvider.getInstance().getValue(key, file, isWatch);
+				value = ConfigHandlerProvider.getValue(key, file, false);
 				if (value != null) {
 					return value;
 				}
@@ -69,10 +160,10 @@ public class ConfClient {
 		
 		//全局
 		if (StringUtil.isNotEmpty(ConfClient.getGlobalGroup())) {
-			String[] globalProperties = ConfigHandlerProvider.getInstance().getGlobalProperties();
+			String[] globalProperties = ConfHandlerSupport.getGlobalProperties();
 			if (globalProperties != null) {
 				for (String file : globalProperties) {
-					value = ConfigHandlerProvider.getInstance().getValue(key, file, isWatch);
+					value = ConfigHandlerProvider.getValue(key, file, true);
 					if (value != null) {
 						return value;
 					}
@@ -82,73 +173,79 @@ public class ConfClient {
 		
 		//默认值
 		if (StringUtil.isNotEmpty(defaultVal)) {
-			ConfigHandlerProvider.getInstance().updateCache(key, defaultVal, Constant.DEFAULT_CONFIG_NAME);
+			ConfigHandlerProvider.updateCache(key, defaultVal, Constant.DEFAULT_CONFIG_NAME);
 		}
 		
 		//返回默认值
 		return defaultVal;
 	}
 	
+	//在设置应用名称的时候启动各项参数载入
+	public static void setAppName(String inputAppName) {
+		init(inputAppName);
+	}
+	public static String getAppName() {
+		String appName = ConfigHandlerProvider.getValue(Constant.PROJECT_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		return appName == null ? "" :appName;
+	}
 
 	//获取配置文件
 	public static String getConfigValue(String fileName) {
-		return ConfigHandlerProvider.getInstance().getConfig(fileName);
+		return getConfigValue(fileName,false);
+	}
+	public static String getConfigValue(String fileName, boolean isGlobal) {
+		return ConfigHandlerProvider.getConfig(fileName, isGlobal);
 	}
 
 	//增加文件是否修改的监听
 	public static void addListener(String fileName, ConfListener listener) {
-		ConfigHandlerProvider.getInstance().addListener(fileName, listener);
+		addListener(fileName, false, listener);
+	}
+	public static void addListener(String fileName, boolean isGlobal, ConfListener listener) {
+		ConfigHandlerProvider.addListener(fileName, isGlobal, listener);
 	}
 
-	@SuppressWarnings("static-access")
-	public static void setAppName(String inputAppName) {
-		ConfigHandlerProvider.getInstance().updateCache(Constant.PROJECT_NAME, inputAppName, Constant.DEFAULT_CONFIG_NAME);
-	}
-	public static String getAppName() {
-		String appName = ConfigHandlerProvider.getInstance().getValue(Constant.PROJECT_NAME, Constant.DEFAULT_CONFIG_NAME, false);
-		return appName == null ? "" :appName;
-	}
 	public static String getConfigRegistryAddress() {
-		String config = ConfigHandlerProvider.getInstance().getValue(Constant.CONFIG_REGISTRY_ADDRESS_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		String config = ConfigHandlerProvider.getValue(Constant.CONFIG_REGISTRY_ADDRESS_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		return config == null ? "" :config;
 	}
 	public static String getNameSpace() {
-		String namespace = ConfigHandlerProvider.getInstance().getValue(Constant.PROJECR_NAMESPACE_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		String namespace = ConfigHandlerProvider.getValue(Constant.PROJECR_NAMESPACE_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		return namespace == null ? "" :namespace;
 	}
 	public static String getGroup() {
-		String group = ConfigHandlerProvider.getInstance().getValue(Constant.PROJECR_GROUP_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		String group = ConfigHandlerProvider.getValue(Constant.PROJECR_GROUP_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		return group == null ? "" :group;
 	}
 
 	public static String getCluster() {
-		String cluster = ConfigHandlerProvider.getInstance().getValue(Constant.PROJECR_CLUSTER_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		String cluster = ConfigHandlerProvider.getValue(Constant.PROJECR_CLUSTER_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		return cluster == null ? "" :cluster;
 	}
 	public static String getEnv() {
-		String env = ConfigHandlerProvider.getInstance().getValue(Constant.PROJECT_ENV_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		String env = ConfigHandlerProvider.getValue(Constant.PROJECT_ENV_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		return env == null ? "" :env;
 	}
 	public static String getNamingRegistryAddress() {
-		String naming = ConfigHandlerProvider.getInstance().getValue(Constant.NAMING_REGISTRY_ADDRESS_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		String naming = ConfigHandlerProvider.getValue(Constant.NAMING_REGISTRY_ADDRESS_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		return naming == null ? "" :naming;
 	}
 	public static long getUuidWorkId() {
-		String workId = ConfigHandlerProvider.getInstance().getValue(Constant.UUID_WORKID, Constant.DEFAULT_CONFIG_NAME, false);
+		String workId = ConfigHandlerProvider.getValue(Constant.UUID_WORKID, Constant.DEFAULT_CONFIG_NAME, false);
 		if (StringUtil.isEmpty(workId)) {
 			return 0l;
 		}
 		return Long.parseLong(workId.trim());
 	}
 	public static long getUuidDatacenterId() {
-		String datacenterId = ConfigHandlerProvider.getInstance().getValue(Constant.UUID_DATACENTERID, Constant.DEFAULT_CONFIG_NAME, false);
+		String datacenterId = ConfigHandlerProvider.getValue(Constant.UUID_DATACENTERID, Constant.DEFAULT_CONFIG_NAME, false);
 		if (StringUtil.isEmpty(datacenterId)) {
 			return 0l;
 		}
 		return Long.parseLong(datacenterId.trim());
 	}	
 	public static String getGlobalGroup() {
-		String globalGroupName = ConfigHandlerProvider.getInstance().getValue(Constant.PROJECR_GLOBAL_GROUP_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		String globalGroupName = ConfigHandlerProvider.getValue(Constant.PROJECR_GLOBAL_GROUP_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		return globalGroupName == null ? "" :globalGroupName;
 	}
 	

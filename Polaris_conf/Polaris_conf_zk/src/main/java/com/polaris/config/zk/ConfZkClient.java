@@ -75,7 +75,6 @@ public class ConfZkClient implements Watcher {
 							}
 						}
 						zooKeeper = new ZooKeeper(ConfClient.getConfigRegistryAddress(), 20000, new Watcher() {
-							@SuppressWarnings("static-access")
 							@Override
 							public void process(WatchedEvent watchedEvent) {
 								try {
@@ -97,11 +96,11 @@ public class ConfZkClient implements Watcher {
 										// add One-time trigger
 										zooKeeper.exists(path, true);
 										if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
-											ConfigHandlerProvider.getInstance().removeCache(key, Constant.DEFAULT_CONFIG_NAME);
+											ConfigHandlerProvider.removeCache(key, Constant.DEFAULT_CONFIG_NAME);
 										} else if (watchedEvent.getType() == Event.EventType.NodeDataChanged || 
 												watchedEvent.getType() == Event.EventType.NodeCreated) {
 											String data = getPathData(path, false);
-											ConfigHandlerProvider.getInstance().updateCache(key, data, Constant.DEFAULT_CONFIG_NAME);
+											ConfigHandlerProvider.updateCache(key, data, Constant.DEFAULT_CONFIG_NAME);
 										} 
 									}
 								} catch (KeeperException e) {

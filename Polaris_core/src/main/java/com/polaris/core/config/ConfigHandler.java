@@ -1,10 +1,12 @@
 package com.polaris.core.config;
 
 public interface ConfigHandler {
-	String getValue(String key, String fileName, boolean isWatch);
-	default void addListener(String fileName, ConfListener listener) {
+	default void addListener(String fileName, String group, ConfListener listener) {
 	}
-	default String getConfig(String fileName) {
+	default String getConfig(String fileName, String group) {
+		return null;
+	}
+	default String getValue(String key, String fileName, boolean isWatch) {
 		return null;
 	}
 }

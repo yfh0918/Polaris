@@ -1,7 +1,5 @@
 package com.polaris.config.nacos;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
@@ -13,7 +11,6 @@ import com.alibaba.nacos.api.exception.NacosException;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfListener;
-import com.polaris.core.config.ConfigHandlerProvider;
 import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -49,82 +46,13 @@ public class ConfNacosClient {
 		}
 		try {
 			configService = NacosFactory.createConfigService(properties);
-			
-			//扩展文件
-			String[] extendFiles = ConfigHandlerProvider.getExtensionProperties();
-			if (extendFiles != null) {
-				String group = ConfigHandlerProvider.getConfigGroup();
-				loadFiles(extendFiles,group);
-			}
-			
-			//获取全局文件
-			if (StringUtil.isNotEmpty(ConfClient.getGlobalGroup())) {
-				String[] globalFiles = ConfigHandlerProvider.getGlobalProperties();
-				if (globalFiles != null) {
-					loadFiles(extendFiles, ConfigHandlerProvider.getGlobalConfigGroup());
-				}
-			}
-
-		
+			logger.info("nacos init success");
 		} catch (NacosException e) {
 			logger.error(e);
 			throw new IllegalArgumentException(Constant.CONFIG_REGISTRY_ADDRESS_NAME + ":"+ConfClient.getConfigRegistryAddress()+" is not correct ");
 		}
 	}
 	
-	private void loadFiles (String[] extendFiles, String group) {
-		for (String file : extendFiles) {
-			addListener(file, group, new ConfListener() {
-				@Override
-				public void receive(String propertyContent) {
-					if (StringUtil.isNotEmpty(propertyContent)) {
-						String[] contents = propertyContent.split(Constant.LINE_SEP);
-						Map<String, String> cache = new HashMap<>();
-						for (String content : contents) {
-							String[] keyvalue = ConfigHandlerProvider.getKeyValue(content);
-							if (keyvalue != null) {
-								cache.put(keyvalue[0], keyvalue[1]);
-							}
-						}
-						ConfigHandlerProvider.updateCache(file, cache);
-					}
-				}
-			});
-	    }
-	}
-	
-
-	// 获取key,value
-	public String getConfig(String key, String fileName, String group) {
-		//配置文件
-    	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
-    		return null;
-    	}
-    	if (configService == null) {
-    		synchronized(this) {
-    			if (configService == null) {
-    				iniConfNacos();
-    			}
-    		}
-    	}
-    	
-		try {
-			String propertyContent = configService.getConfig(fileName, group, 5000);
-			if (StringUtil.isNotEmpty(propertyContent)) {
-				String[] contents = propertyContent.split(Constant.LINE_SEP);
-				for (String content : contents) {
-					String[] keyvalue = ConfigHandlerProvider.getKeyValue(content);
-					if (keyvalue != null && keyvalue[0].equals(key)) {
-						return keyvalue[1];
-					}
-				}
-			}
-
-		} catch (NacosException e) {
-			logger.error(e);
-		}
-		return null;
-	}
 	
 	// 获取文件内容
 	public String getConfig(String fileName, String group) {

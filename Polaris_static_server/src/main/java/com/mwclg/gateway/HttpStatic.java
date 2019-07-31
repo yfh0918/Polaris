@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.pagehelper.util.StringUtil;
-import com.polaris.comm.Constant;
-import com.polaris.comm.config.ConfClient;
-import com.polaris.comm.config.ConfListener;
-import com.polaris.comm.config.ConfigHandlerProvider;
+import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.ConfHandlerSupport;
+import com.polaris.core.config.ConfListener;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -63,7 +63,7 @@ public class HttpStatic {
         for (String detail : contents) {
         	detail = detail.replace("\n", "");
         	detail = detail.replace("\r", "");
-            String[] keyvalue = ConfigHandlerProvider.getKeyValue(detail);
+            String[] keyvalue = ConfHandlerSupport.getKeyValue(detail);
             Map<String, String> contentMap = new HashMap<>();
             if (keyvalue != null) {
             	String[] parameters = keyvalue[1].split(";");
@@ -73,13 +73,13 @@ public class HttpStatic {
             	
             	//第二个
             	if (parameters.length > 1) {
-            		String[] parameterKV = ConfigHandlerProvider.getKeyValue(parameters[1]);
+            		String[] parameterKV = ConfHandlerSupport.getKeyValue(parameters[1]);
             		contentMap.put(parameterKV[0], parameterKV[1]);
             	}
             	
             	//第三个
             	if (parameters.length > 2) {
-            		String[] parameterKV = ConfigHandlerProvider.getKeyValue(parameters[2]);
+            		String[] parameterKV = ConfHandlerSupport.getKeyValue(parameters[2]);
             		contentMap.put(parameterKV[0], parameterKV[1]);
             	}
             	
