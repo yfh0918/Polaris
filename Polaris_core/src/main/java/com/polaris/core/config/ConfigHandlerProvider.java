@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
@@ -21,7 +22,6 @@ public  class ConfigHandlerProvider {
 
 	// 监听所有扩展的文件
     private ConfigHandlerProvider() {
-    	
     }
     
     // 载入文件到缓存
@@ -83,16 +83,26 @@ public  class ConfigHandlerProvider {
     			}
     		}
     	}
+    	
+    	//获取本地本间
 		return ConfHandlerSupport.getLocalFileContent(fileName);
 	}
 	
 	//监听自定义文件变化
 	public static void addListener(String fileName, boolean isGlobal, ConfListener listener) {
 		if (!Constant.DEFAULT_CONFIG_NAME.equals(fileName)) {
+			boolean isExtends = false;
 			for (ConfigHandler handler : serviceLoader) {
 				handler.addListener(fileName, ConfHandlerSupport.getGroup(isGlobal), listener);
+				isExtends = true;
+			}
+
+			//走本地需要监听本地文件
+			if (!isExtends) {
+				ConfHandlerSupport.listionLocalFile(fileName, listener,10000, TimeUnit.MILLISECONDS);//每隔10秒监听一次
 			}
 		}
+		
 	}
 	
     //获取配置文件

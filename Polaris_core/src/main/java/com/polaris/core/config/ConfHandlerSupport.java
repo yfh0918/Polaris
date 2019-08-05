@@ -6,16 +6,28 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.util.PropertyUtils;
 
+import cn.hutool.core.thread.NamedThreadFactory;
+
 public class ConfHandlerSupport {
 
-
+	//定时器-守护线程
+	private static ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
+            new NamedThreadFactory("polaris-localfile-auto-refresh-task", true));
+	
+	//记录文件的最后的更新日期
+	private static volatile Map<String, File> lastModifiedFileMap = new HashMap<>();
+	private static volatile Map<String, Long> lastModifiedTimeMap = new HashMap<>();
 
 
 	/**
@@ -95,6 +107,9 @@ public class ConfHandlerSupport {
 	@SuppressWarnings("rawtypes")
 	public static String getLocalFileContent(String fileName) {
 		
+		//更新文件
+		isModifiedByFile(fileName);
+
 		// propertyies
 		if (fileName.toLowerCase().endsWith(".properties")) {
 			StringBuffer buffer = new StringBuffer();
@@ -107,7 +122,7 @@ public class ConfHandlerSupport {
 	                buffer.append(Constant.LINE_SEP);
 	            }
 	        } catch (IOException e) {
-	           // nothing;
+	        	e.printStackTrace();
 	        }
 			return buffer.toString();
 		}
@@ -128,9 +143,57 @@ public class ConfHandlerSupport {
 	        	return content;
 	        }
         } catch (IOException e) {
-        	//nothing
+        	e.printStackTrace();
         }
+		
 		return null;
+	}
+	
+	/**
+	* 启动监听线程
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
+	public static void listionLocalFile(String fileName, ConfListener listener, long recommendRefresh, TimeUnit timeUnit) {
+		
+	        service.scheduleAtFixedRate(new Runnable() {
+	            @Override
+	            public void run() {
+	                try {
+	            		
+	            		//是否修改过
+	            		if (isModifiedByFile(fileName)) {
+	            			listener.receive(getLocalFileContent(fileName));
+	            		}
+	                } catch (Throwable e) {
+	                	e.printStackTrace();
+	                }
+	            }
+	        }, recommendRefresh, recommendRefresh, timeUnit);
+	}
+	
+	//文件是否发生修改
+	private static boolean isModifiedByFile(String fileName) {
+		boolean isModified = true;
+		if (lastModifiedFileMap.containsKey(fileName)) {
+			File file = lastModifiedFileMap.get(fileName);
+			if (file.lastModified() == lastModifiedTimeMap.get(fileName).longValue()) {
+				isModified = false;
+			} else {
+				lastModifiedTimeMap.put(fileName, file.lastModified());
+			}
+		} else {
+			try {
+				File file = new File(PropertyUtils.getFilePath(Constant.CONFIG + File.separator + fileName));
+	    		lastModifiedFileMap.put(fileName, file);
+				lastModifiedTimeMap.put(fileName, file.lastModified());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return isModified;
 	}
 	
 	//获取分组名称
