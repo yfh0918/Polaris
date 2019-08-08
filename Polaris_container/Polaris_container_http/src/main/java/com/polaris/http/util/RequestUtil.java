@@ -68,12 +68,15 @@ public final class RequestUtil {
 	}
 	
 	public static <T> T convertParameterToObject(HttpServletRequest request, Class<T> clazz) {
+		return convertParameterToObject(request, clazz, new Feature[0]);
+	}
+	public static <T> T convertParameterToObject(HttpServletRequest request, Class<T> clazz, Feature... feature) {
 		
 		//获取转换的对象Map
 		Map<String, Object> parameterMap = convertParameterToMap(request);
 		
 		//系统认定的
-		T rtnObject = JSONObject.parseObject(JSONObject.toJSONString(parameterMap), clazz);
+		T rtnObject = JSONObject.parseObject(JSONObject.toJSONString(parameterMap), clazz, feature);
 	    if (rtnObject instanceof ParameterDto) {
 	    	((ParameterDto)rtnObject).setParameterMap(parameterMap);
 	    } else if (rtnObject instanceof ResultDto) {
@@ -116,16 +119,12 @@ public final class RequestUtil {
 	}
 	
 	public static <T> T getRequestBodyToObject(HttpServletRequest request, Class<T> clazz) {
-		return getRequestBodyToObject(request, clazz, null);
+		return getRequestBodyToObject(request, clazz, new Feature[0]);
 	}
 	
-	public static <T> T getRequestBodyToObject(HttpServletRequest request, Class<T> clazz, Feature feature) {
+	public static <T> T getRequestBodyToObject(HttpServletRequest request, Class<T> clazz, Feature... feature) {
 		String body = getRequestBody(request);
-		if (feature == null) {
-			return JSONObject.parseObject(body, clazz);
-		}
-		Feature[] features = {Feature.AutoCloseSource, feature};
-		return JSONObject.parseObject(body, clazz, features);
+		return JSONObject.parseObject(body, clazz, feature);
 	}
 
 	
