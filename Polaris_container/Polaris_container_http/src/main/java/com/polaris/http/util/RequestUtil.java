@@ -11,8 +11,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.beanutils.BeanUtils;
-
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.Feature;
 import com.polaris.core.dto.ParameterDto;
 import com.polaris.core.dto.ResultDto;
 import com.polaris.core.util.LogUtil;
@@ -52,7 +52,6 @@ public final class RequestUtil {
 		        	parameterMap.put(key, value);
 		        }
 	        }
-	        
 	    } 
 	    
 	    //载入map
@@ -64,8 +63,25 @@ public final class RequestUtil {
 	    		parameterMap.put(entry.getKey(), valueList);
 	    	}
 	    }
+		logger.debug("requestMap:{}",parameterMap);
 	    return parameterMap;
 	}
+	
+	public static <T> T convertParameterToObject(HttpServletRequest request, Class<T> clazz) {
+		
+		//获取转换的对象Map
+		Map<String, Object> parameterMap = convertParameterToMap(request);
+		
+		//系统认定的
+		T rtnObject = JSONObject.parseObject(JSONObject.toJSONString(parameterMap), clazz);
+	    if (rtnObject instanceof ParameterDto) {
+	    	((ParameterDto)rtnObject).setParameterMap(parameterMap);
+	    } else if (rtnObject instanceof ResultDto) {
+	    	((ResultDto)rtnObject).setParameterMap(parameterMap);
+	    }
+    	return rtnObject;
+	}
+
 	
 	public static String getRequestBody(HttpServletRequest request) {
 		String requestBody = "";
@@ -95,78 +111,23 @@ public final class RequestUtil {
 		    }
 		}
 		requestBody = stringBuilder.toString();
+		logger.debug("requestBody:{}",requestBody);
 		return requestBody;
 	}
 	
-	@SuppressWarnings("rawtypes")
-	public static <T> T convertParameterToObject(HttpServletRequest request, Class<T> clazz) {
-		
-		Map<String, Object> parameterMap = new LinkedHashMap<>();
-		T rtnObject;
-		try {
-			rtnObject = clazz.newInstance();
-		} catch (InstantiationException e) {
-			logger.error(e);
-			return null;
-		} catch (IllegalAccessException e) {
-			logger.error(e);
-			return null;
-		}
-		//获取所有的request参数
-		Map requestMap = request.getParameterMap();  
-	    Set keSet = requestMap.entrySet(); 
-	    for(Iterator itr=keSet.iterator();itr.hasNext();){  
-	        Map.Entry me=(Map.Entry)itr.next();  
-	        String key = me.getKey().toString();  
-	        Object ov =me.getValue(); 
-	        if (key == null || ov == null||StringUtil.isEmptyOfStrict(ov.toString())) {
-	        	continue;
-	        }
-	        if (key.indexOf('[') >= 0) {
-	        	key = key.substring(0, key.indexOf('['));
-	        }
-	        String value;  
-	        if(ov instanceof String[]){  
-	            value=((String[])ov)[0];  
-	        }else{  
-	            value=ov.toString();  
-	        }
-	        if (parameterMap.get(key) != null) {
-	        	parameterMap.put(key, parameterMap.get(key).toString() + "|polaris|" + value);//自定义分割协议
-	        } else {
-	        	parameterMap.put(key, value);
-	        }
-	    } 
-	    
-	    //载入map
-	    for (Map.Entry<String, Object> entry : parameterMap.entrySet()) {
-	    	String[] valueList = entry.getValue().toString().split("\\|polaris\\|");//自定义分割协议
-	    	if (valueList.length == 1) {
-	    		parameterMap.put(entry.getKey(), valueList[0]);
-	    		try {
-        			BeanUtils.setProperty(rtnObject, entry.getKey(), valueList[0]);
-	    		} catch (Exception ex) {
-					//nothing
-	        	}
-	    	} else {
-	    		parameterMap.put(entry.getKey(), valueList);
-	    		try {
-        			BeanUtils.setProperty(rtnObject, entry.getKey(), valueList);
-	    		} catch (Exception ex) {
-					//nothing
-	        	}
-	    	}
-	    }
-	    if (rtnObject instanceof ParameterDto) {
-	    	((ParameterDto)rtnObject).setParameterMap(parameterMap);
-	    }
-	    
-	    if (rtnObject instanceof ResultDto) {
-	    	((ResultDto)rtnObject).setParameterMap(parameterMap);
-	    }
-	    return rtnObject;
+	public static <T> T getRequestBodyToObject(HttpServletRequest request, Class<T> clazz) {
+		return getRequestBodyToObject(request, clazz, null);
 	}
 	
+	public static <T> T getRequestBodyToObject(HttpServletRequest request, Class<T> clazz, Feature feature) {
+		String body = getRequestBody(request);
+		if (feature == null) {
+			return JSONObject.parseObject(body, clazz);
+		}
+		Feature[] features = {Feature.AutoCloseSource, feature};
+		return JSONObject.parseObject(body, clazz, features);
+	}
+
 	
     /**
      * 判断一个请求是ajax
