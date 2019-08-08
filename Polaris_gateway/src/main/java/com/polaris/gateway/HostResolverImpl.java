@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.littleshoot.proxy.HostResolver;
@@ -15,15 +16,17 @@ import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.config.ConfListener;
 import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
 
+import cn.hutool.core.collection.ConcurrentHashSet;
+
 /**
  * @author:Tom.Yu Description:
  */
 public class HostResolverImpl implements HostResolver {
 
     private volatile static HostResolverImpl singleton;
-    private volatile Map<String, String> serverMap = new ConcurrentHashMap<>();
-    private volatile Map<String, String> staticServerMap = new ConcurrentHashMap<>();
-    private volatile Map<String, String> uriMap = new ConcurrentHashMap<>();
+    private volatile Map<String, String> portServerMap = new ConcurrentHashMap<>();
+    private volatile Set<String> staticServerSet = new ConcurrentHashSet<>();
+    private volatile Map<String, String> uriPortMap = new ConcurrentHashMap<>();
     public static final String UPSTREAM = "upstream.txt";
     private static final String STATIC_RESOURCE_PREFIX = "static:";
 
@@ -32,30 +35,38 @@ public class HostResolverImpl implements HostResolver {
         if (StringUtil.isEmpty(content)) {
             return;
         }
-        Map<String, String> tempStaticServerMap = new ConcurrentHashMap<>();
-        Map<String, String> tempServerMap = new ConcurrentHashMap<>();
-        Map<String, String> tempUriMap = new ConcurrentHashMap<>();
+        Set<String> tempStaticServerSet = new ConcurrentHashSet<>();
+        Map<String, String> tempPortServerMap = new ConcurrentHashMap<>();
+        Map<String, String> tempUriPortMap = new ConcurrentHashMap<>();
         String[] contents = content.split(Constant.LINE_SEP);
         int port = 7000;
         for (String detail : contents) {
         	detail = detail.replace("\n", "");
         	detail = detail.replace("\r", "");
-            String[] keyvalue = ConfHandlerSupport.getKeyValue(detail);
-            if (keyvalue != null) {
-                tempServerMap.put(String.valueOf(port), keyvalue[1]);
-                if (keyvalue[0].startsWith(STATIC_RESOURCE_PREFIX)) {
-                	String key = keyvalue[0].substring(STATIC_RESOURCE_PREFIX.length());
-                	tempStaticServerMap.put(key, key);
-                    tempUriMap.put(key, String.valueOf(port));
+            String[] contextUrl = ConfHandlerSupport.getKeyValue(detail);
+            
+            //获取context和服务名称(url)
+            if (contextUrl != null) {
+            	
+            	//key=端口号，value=服务
+            	tempPortServerMap.put(String.valueOf(port), contextUrl[1]);
+            	
+            	//是否包含[static:]
+                if (contextUrl[0].startsWith(STATIC_RESOURCE_PREFIX)) {
+                	String key = contextUrl[0].substring(STATIC_RESOURCE_PREFIX.length());
+                	tempStaticServerSet.add(key);//记录今天服务的set
+                	tempUriPortMap.put(key, String.valueOf(port)); //key = context, value = 端口号
                 } else {
-                    tempUriMap.put(keyvalue[0], String.valueOf(port));
+                	tempUriPortMap.put(contextUrl[0], String.valueOf(port)); //key = context, value = 端口号
                 }
+                
+                //端口号累加（临时的端口号）
                 port++;
             }
         }
-        staticServerMap = tempStaticServerMap;
-        serverMap = tempServerMap;
-        uriMap = tempUriMap;
+        staticServerSet = tempStaticServerSet;
+        portServerMap = tempPortServerMap;
+        uriPortMap = tempUriPortMap;
         ServerDiscoveryHandlerProvider.getInstance().reset();
     }
 
@@ -87,15 +98,16 @@ public class HostResolverImpl implements HostResolver {
 
     //获取服务
     String getServers(String key) {
-        return serverMap.get(key);
+        return portServerMap.get(key);
     }
 
+    //根据服务，反向获取端口号
     String getPort(String uri) {
     	if (!uri.substring(1).contains("/")) {
     		uri = uri + "/";
     	}
         if (uri != null) {
-            for (Entry<String, String> entry : uriMap.entrySet()) {
+            for (Entry<String, String> entry : uriPortMap.entrySet()) {
                 if (uri.startsWith(entry.getKey()+"/")) {
                     return entry.getValue();
                 }
@@ -104,8 +116,8 @@ public class HostResolverImpl implements HostResolver {
         }
 
         // default
-        if (uriMap.containsKey(GatewayConstant.DEFAULT)) {
-            return uriMap.get(GatewayConstant.DEFAULT);
+        if (uriPortMap.containsKey(GatewayConstant.DEFAULT)) {
+            return uriPortMap.get(GatewayConstant.DEFAULT);
         }
 
         //异常
@@ -115,22 +127,28 @@ public class HostResolverImpl implements HostResolver {
     @Override
     public InetSocketAddress resolve(String host, int port)
             throws UnknownHostException {
-        String defaultUri = ServerDiscoveryHandlerProvider.getInstance().getUrl(serverMap.get(uriMap.get(GatewayConstant.DEFAULT)));
-        String key = String.valueOf(port);
-        if (serverMap.containsKey(key)) {
-            String uri = ServerDiscoveryHandlerProvider.getInstance().getUrl(serverMap.get(key));
+    	
+    	//端口号
+        String strPort = String.valueOf(port);
+        String[] si = null;
+        
+        //存在端口号
+        if (portServerMap.containsKey(strPort)) {
+            String uri = ServerDiscoveryHandlerProvider.getInstance().getUrl(portServerMap.get(strPort));
             if (StringUtil.isNotEmpty(uri)) {
-
-                String[] si = uri.split(":");
-                return new InetSocketAddress(si[0], Integer.parseInt(si[1]));
-            } else {
-                String[] si = defaultUri.split(":");
-                return new InetSocketAddress(si[0], Integer.parseInt(si[1]));
-            }
-        } else {
-            String[] si = defaultUri.split(":");
-            return new InetSocketAddress(si[0], Integer.parseInt(si[1]));
+                si = uri.split(":");
+            } 
         }
+        if (si == null) {
+        	String defaultUri = ServerDiscoveryHandlerProvider.getInstance().getUrl(portServerMap.get(uriPortMap.get(GatewayConstant.DEFAULT)));
+            si = defaultUri.split(":");
+        }
+        
+        //返回地址列表
+        if (si.length == 1) {
+            return new InetSocketAddress(si[0], 80);
+        }
+        return new InetSocketAddress(si[0], Integer.parseInt(si[1]));
     }
     
     //是否是静态资源（静态资源不需要拦截）
@@ -138,7 +156,7 @@ public class HostResolverImpl implements HostResolver {
     	if (StringUtil.isEmpty(url)) {
     		return false;
     	}
-    	for (String key : staticServerMap.keySet()) {
+    	for (String key : staticServerSet) {
     		if (url.startsWith(key)) {
     			return true;
     		}
