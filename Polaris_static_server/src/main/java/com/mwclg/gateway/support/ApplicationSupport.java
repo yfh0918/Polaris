@@ -14,7 +14,7 @@ import com.mwclg.gateway.HostResolverImpl;
 import com.mwclg.gateway.HttpFilterAdapterImpl;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
+import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
 import com.polaris.core.util.SpringUtil;
 import com.polaris.http.util.NetUtils;
 

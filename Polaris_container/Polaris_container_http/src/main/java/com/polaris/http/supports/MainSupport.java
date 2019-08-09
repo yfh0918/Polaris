@@ -2,7 +2,7 @@ package com.polaris.http.supports;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
+import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
 import com.polaris.http.factory.ContainerServerFactory;
 import com.polaris.http.util.NetUtils;
 

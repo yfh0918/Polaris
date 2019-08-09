@@ -50,9 +50,9 @@ import org.apache.http.util.EntityUtils;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
 import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.StringUtil;
-import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
  
 /**
  * HttpClient工具类

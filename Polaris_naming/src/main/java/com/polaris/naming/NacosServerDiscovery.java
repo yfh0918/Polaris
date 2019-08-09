@@ -11,7 +11,7 @@ import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerSupport;
-import com.polaris.core.connect.ServerDiscoveryHandler;
+import com.polaris.core.naming.ServerDiscoveryHandler;
 import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.StringUtil;
 

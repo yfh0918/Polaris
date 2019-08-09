@@ -14,7 +14,7 @@ import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.config.ConfListener;
-import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
+import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import io.netty.handler.codec.http.HttpRequest;

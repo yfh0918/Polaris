@@ -12,8 +12,8 @@ import org.littleshoot.proxy.impl.ClientToProxyConnection;
 import org.littleshoot.proxy.impl.ProxyToServerConnection;
 
 import com.polaris.core.Constant;
-import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
 import com.polaris.core.dto.ResultDto;
+import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
 import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.UuidUtil;
 import com.polaris.gateway.request.HttpRequestFilter;
