@@ -1,4 +1,4 @@
-package com.mwclg.gateway;
+package com.polaris.gateway;
 
 import java.io.File;
 import java.io.IOException;
@@ -91,17 +91,33 @@ public class HttpStatic {
         urlMap = tempUriMap;
     }
     
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected static HttpResponse showStatic(HttpRequest request,ChannelHandlerContext ctx) throws Exception {
-		
-        // 获取URI
+    public static boolean isStatic(HttpRequest request) {
+    	// 获取URI
         String uri = request.uri();
+
+        //设置uri
+        if (!uri.substring(1).contains("/")) {
+    		uri = uri + "/";
+    	}
         
+        //判断url
+        for (Map.Entry<String, Map<String, String>> entry : urlMap.entrySet()) { 
+        	if (uri.startsWith(entry.getKey() +"/")) {
+        		return true;
+        	}
+        }
+    	return false;
+    }
+    
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static HttpResponse showStatic(HttpRequest request,ChannelHandlerContext ctx) throws Exception {
+		
         // 设置不支持favicon.ico文件
+        String uri = request.uri();
         if ("favicon.ico".equals(uri)) {
             return null;
         }
-        
+
         // 获取URI
         if (!uri.substring(1).contains("/")) {
     		uri = uri + "/";
@@ -116,7 +132,7 @@ public class HttpStatic {
         Map<String, String> urls = null;
         String context = null;
         for (Map.Entry<String, Map<String, String>> entry : urlMap.entrySet()) { 
-        	if (uri.startsWith(entry.getKey() + "/")) {
+        	if (uri.startsWith(entry.getKey() +"/")) {
         		context = entry.getKey();
         		urls = entry.getValue();
         		break;

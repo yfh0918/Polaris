@@ -17,6 +17,7 @@ import com.polaris.core.config.ConfListener;
 import com.polaris.core.connect.ServerDiscoveryHandlerProvider;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
+import io.netty.handler.codec.http.HttpRequest;
 
 /**
  * @author:Tom.Yu Description:
@@ -122,6 +123,36 @@ public class HostResolverImpl implements HostResolver {
 
         //异常
         throw new NullPointerException("url is null");
+    }
+    
+    //替换host 通过uri可见的端口号替换成 uriPortMap中的端口号
+    void replaceHost(HttpRequest httpRequest) {
+    	
+    	//获取HOST
+    	String host = httpRequest.headers().get(GatewayConstant.HOST);
+    	if (!host.contains(":")) {
+    		host = host + ":" + ConfClient.get("server.port", "80");
+    	}
+    	
+    	//获取HOST中的的端口号
+    	String oldPort = host.substring(host.indexOf(":") + 1);
+    	
+    	//获取URI中新的端口号
+		String uri = httpRequest.uri();
+		String port = HostResolverImpl.getSingleton().getPort(uri);
+		
+		//移除就得HOST
+		httpRequest.headers().remove(GatewayConstant.HOST);
+		
+		//添加新的HOST
+		httpRequest.headers().add(GatewayConstant.HOST, host.replace(oldPort, port));
+    }
+    //replaceHost的反操作
+    void resetHost(HttpRequest httpRequest) {
+		String host = httpRequest.headers().get(GatewayConstant.HOST);
+    	String oldPort = host.substring(host.indexOf(":") + 1);
+		httpRequest.headers().remove(GatewayConstant.HOST);
+		httpRequest.headers().add(GatewayConstant.HOST, host.replace(oldPort, ConfClient.get("server.port","80")));
     }
 
     @Override
