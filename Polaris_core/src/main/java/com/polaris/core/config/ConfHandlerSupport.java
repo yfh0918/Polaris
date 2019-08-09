@@ -114,6 +114,9 @@ public class ConfHandlerSupport {
 		if (fileName.toLowerCase().endsWith(".properties")) {
 			StringBuffer buffer = new StringBuffer();
 			try (InputStream in = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + fileName)) {
+				if (in == null) {
+					return null;
+				}
 	            Properties p = new Properties();
 	            p.load(in);
 	            for (Map.Entry entry : p.entrySet()) {
@@ -129,6 +132,9 @@ public class ConfHandlerSupport {
 		
 		// 非propertyies
 		try (InputStream inputStream = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + fileName)) {
+			if (inputStream == null) {
+				return null;
+			}
 			InputStreamReader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
 			BufferedReader bf= new BufferedReader(reader);
 			StringBuffer buffer = new StringBuffer();
