@@ -5,9 +5,10 @@ import java.util.ServiceLoader;
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 
-import org.eclipse.jetty.util.component.AbstractLifeCycle;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler.ServletContainerInitializerCaller;
 
-public class ServerHandlerLifeCycle extends AbstractLifeCycle {
+public class ServerHandlerLifeCycle implements ServletContainerInitializerCaller {
 	ServletContext sc;
 	private final ServiceLoader<ServletContainerInitializer> serviceLoader = ServiceLoader.load(ServletContainerInitializer.class);
 	
@@ -18,10 +19,61 @@ public class ServerHandlerLifeCycle extends AbstractLifeCycle {
     {
 		for (ServletContainerInitializer servletContainerInitializer : serviceLoader) {
 			try {
+				ContextHandler.getCurrentContext().setExtendedListenerTypes(true);
 				servletContainerInitializer.onStartup(null, sc);
 			} catch (Exception e) {
-				//nothing
+			} finally {
+				ContextHandler.getCurrentContext().setExtendedListenerTypes(false);
 			}
 		}
     }
+	@Override
+	public void start() throws Exception {
+		doStart();
+	}
+	@Override
+	public void stop() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public boolean isRunning() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean isStarted() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean isStarting() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean isStopping() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean isStopped() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public boolean isFailed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	@Override
+	public void addLifeCycleListener(Listener listener) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void removeLifeCycleListener(Listener listener) {
+		// TODO Auto-generated method stub
+		
+	}
 }

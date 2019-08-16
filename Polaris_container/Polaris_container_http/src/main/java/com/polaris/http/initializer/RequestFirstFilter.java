@@ -1,4 +1,4 @@
-package com.polaris.http.filter;
+package com.polaris.http.initializer;
 
 import java.io.IOException;
 

@@ -1,1 +1,1 @@
-com.polaris.http.filter.FilterInitializer
+com.polaris.http.initializer.Initializer

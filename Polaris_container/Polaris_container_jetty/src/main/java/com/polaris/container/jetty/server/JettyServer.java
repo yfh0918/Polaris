@@ -8,11 +8,11 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 
+import com.polaris.container.jetty.listener.ServerHandlerLifeCycle;
+import com.polaris.container.jetty.listener.ServerHandlerListerner;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.PropertyUtils;
-import com.polaris.container.jetty.listener.ServerHandlerLifeCycle;
-import com.polaris.container.jetty.listener.ServerHandlerListerner;
 
 /**
  * Class Name : JettyServer
@@ -63,6 +63,7 @@ public class JettyServer {
             context.setResourceBase(resDir.getCanonicalPath());
             context.setMaxFormContentSize(Integer.parseInt(ConfClient.get("server.maxSavePostSize",String.valueOf(MAX_SAVE_POST_SIZE))));
             
+            //context加入server
             this.server.setHandler(context); // 将Application注册到服务器
             context.addBean(new ServerHandlerLifeCycle(context.getServletContext()),true);
             this.server.addLifeCycleListener(ServerHandlerListerner.getInstance());//监听handler
