@@ -306,3 +306,7 @@
 /Polaris_container/Polaris_container_resteasy/.classpath
 /Polaris_container/Polaris_container_resteasy/.gitignore
 /Polaris_container/Polaris_container_resteasy/.project
+/Polaris_container/Polaris_container_springmvc/.gitignore
+/Polaris_container/Polaris_container_springmvc/.project
+/Polaris_container/Polaris_container_springmvc/.settings
+/Polaris_container/Polaris_container_springmvc/.classpath

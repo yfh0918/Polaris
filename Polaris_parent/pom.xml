@@ -91,6 +91,11 @@
 	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_container_springmvc</artifactId>
+	            <version>${project.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_container_jetty</artifactId>
 	            <version>${project.version}</version>
 	        </dependency>

@@ -14,6 +14,7 @@
   <modules>
 	<module>Polaris_container_http</module>
 	<module>Polaris_container_resteasy</module>
+	<module>Polaris_container_springmvc</module>
 	<module>Polaris_container_jetty</module>
 	<module>Polaris_container_tomcat</module>
   </modules>
