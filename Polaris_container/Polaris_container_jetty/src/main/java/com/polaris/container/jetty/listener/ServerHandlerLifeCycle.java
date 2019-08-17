@@ -22,6 +22,7 @@ public class ServerHandlerLifeCycle implements ServletContainerInitializerCaller
 				ContextHandler.getCurrentContext().setExtendedListenerTypes(true);
 				servletContainerInitializer.onStartup(null, sc);
 			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				ContextHandler.getCurrentContext().setExtendedListenerTypes(false);
 			}

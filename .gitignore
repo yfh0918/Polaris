@@ -302,3 +302,7 @@
 /Polaris_workflow/Polaris_workflow_web/.project
 /Polaris_workflow/Polaris_workflow_web/.settings
 /Polaris_workflow/Polaris_workflow/target
+/Polaris_container/Polaris_container_resteasy/.settings
+/Polaris_container/Polaris_container_resteasy/.classpath
+/Polaris_container/Polaris_container_resteasy/.gitignore
+/Polaris_container/Polaris_container_resteasy/.project
