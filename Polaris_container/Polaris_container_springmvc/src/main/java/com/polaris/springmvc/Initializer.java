@@ -2,7 +2,6 @@ package com.polaris.springmvc;
 
 import javax.servlet.ServletRegistration;
 
-import com.polaris.core.config.ConfClient;
 import com.polaris.http.initializer.AbsHttpInitializer;
 
 public class Initializer extends  AbsHttpInitializer { 
@@ -10,7 +9,6 @@ public class Initializer extends  AbsHttpInitializer {
 	@Override
 	public void addInitParameter() {
 		servletContext.setInitParameter("contextConfigLocation", "classpath:META-INF\\spring\\applicationContext.xml");
-		servletContext.setInitParameter("spring.profiles.default", "production");
 	}
 
 	@Override
@@ -30,7 +28,6 @@ public class Initializer extends  AbsHttpInitializer {
 	    servletRegistration.setInitParameter("contextConfigLocation", "classpath*:/spring-context-mvc.xml");
 	    servletRegistration.setLoadOnStartup(1);
 	    servletRegistration.addMapping("/*");	
-	    servletContext.setSessionTimeout(Integer.parseInt(ConfClient.get("session.config.timeout", "30")));
 	} 
 	
 
