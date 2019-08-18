@@ -1,5 +1,7 @@
 package com.polaris.resteasy.initializer;
 
+import javax.servlet.ServletRegistration;
+
 import com.polaris.core.config.ConfClient;
 import com.polaris.http.initializer.AbsHttpInitializer;
 
@@ -25,16 +27,16 @@ public class Initializer extends  AbsHttpInitializer {
 
 	@Override
 	public void addFilter() {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void addServlet() {
-		servletContext.
-	    addServlet("dispatcher", "org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher").
-	    addMapping("/*");
-	} 
-	
+		ServletRegistration.Dynamic servletRegistration = servletContext.
+			    addServlet("dispatcher", org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.class);
+			    servletRegistration.setInitParameter("contextConfigLocation", "classpath*:/spring-context-mvc.xml");
+			    servletRegistration.setLoadOnStartup(1);
+			    servletRegistration.addMapping("/*");	
+			    servletContext.setSessionTimeout(Integer.parseInt(ConfClient.get("session.config.timeout", "1440")));
 
+	} 
 }

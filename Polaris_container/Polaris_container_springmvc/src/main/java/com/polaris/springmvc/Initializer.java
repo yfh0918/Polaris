@@ -4,7 +4,9 @@ import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
+import javax.servlet.ServletRegistration;
 
+import com.polaris.core.config.ConfClient;
 import com.polaris.http.initializer.AbsHttpInitializer;
 
 public class Initializer extends  AbsHttpInitializer { 
@@ -31,9 +33,12 @@ public class Initializer extends  AbsHttpInitializer {
 
 	@Override
 	public void addServlet() {
-		servletContext.
-	    addServlet("dispatcher", org.springframework.web.servlet.DispatcherServlet.class).
-	    addMapping("/*");	
+		ServletRegistration.Dynamic servletRegistration = servletContext.
+	    addServlet("dispatcher", org.springframework.web.servlet.DispatcherServlet.class);
+	    servletRegistration.setInitParameter("contextConfigLocation", "classpath*:/spring-context-mvc.xml");
+	    servletRegistration.setLoadOnStartup(1);
+	    servletRegistration.addMapping("/*");	
+	    servletContext.setSessionTimeout(Integer.parseInt(ConfClient.get("session.config.timeout", "1440")));
 	} 
 	
 
