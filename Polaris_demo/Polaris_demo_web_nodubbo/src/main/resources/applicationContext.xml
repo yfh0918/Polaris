@@ -18,11 +18,6 @@
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 	
-	<!-- 读入配置文件 -->
-	<bean id="propertyConfigurer" class="com.polaris.core.config.ConfPropertyPlaceholderConfigurer">  
-        <property name="fileEncoding" value="utf-8" /> 
-    </bean>
-    
     <!-- 引入swagger2 -->
     <bean id="apiListingResourceJSON" class="io.swagger.jaxrs.listing.ApiListingResource"/>
     <bean id="apiDeclarationProvider" class="io.swagger.jaxrs.listing.SwaggerSerializers"/>

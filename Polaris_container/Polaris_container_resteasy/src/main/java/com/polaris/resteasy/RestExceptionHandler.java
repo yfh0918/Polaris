@@ -1,4 +1,4 @@
-package com.polaris.resteasy.exception;
+package com.polaris.resteasy;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;

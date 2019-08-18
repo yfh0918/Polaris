@@ -30,7 +30,7 @@ public class Initializer extends  AbsHttpInitializer {
 	    servletRegistration.setInitParameter("contextConfigLocation", "classpath*:/spring-context-mvc.xml");
 	    servletRegistration.setLoadOnStartup(1);
 	    servletRegistration.addMapping("/*");	
-	    servletContext.setSessionTimeout(Integer.parseInt(ConfClient.get("session.config.timeout", "1440")));
+	    servletContext.setSessionTimeout(Integer.parseInt(ConfClient.get("session.config.timeout", "30")));
 	} 
 	
 

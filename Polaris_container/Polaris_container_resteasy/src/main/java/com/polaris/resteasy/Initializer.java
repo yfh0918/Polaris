@@ -1,4 +1,4 @@
-package com.polaris.resteasy.initializer;
+package com.polaris.resteasy;
 
 import javax.servlet.ServletRegistration;
 
@@ -13,7 +13,7 @@ public class Initializer extends  AbsHttpInitializer {
 	public void addInitParameter() {
 		servletContext.setInitParameter("contextConfigLocation", "classpath:META-INF\\spring\\applicationContext.xml");
 		String globalException = 
-				ConfClient.get(POLARIS_WEB_GLOBAL_EXCEPTION, "com.polaris.resteasy.exception.RestExceptionHandler");
+				ConfClient.get(POLARIS_WEB_GLOBAL_EXCEPTION, "com.polaris.resteasy.RestExceptionHandler");
 		servletContext.setInitParameter("resteasy.providers", globalException);
 
 		
@@ -36,7 +36,5 @@ public class Initializer extends  AbsHttpInitializer {
 			    servletRegistration.setInitParameter("contextConfigLocation", "classpath*:/spring-context-mvc.xml");
 			    servletRegistration.setLoadOnStartup(1);
 			    servletRegistration.addMapping("/*");	
-			    servletContext.setSessionTimeout(Integer.parseInt(ConfClient.get("session.config.timeout", "1440")));
-
 	} 
 }
