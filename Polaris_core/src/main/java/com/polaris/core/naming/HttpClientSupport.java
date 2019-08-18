@@ -29,15 +29,16 @@ import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
-import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.StringUtil;
 
 @Deprecated
 public class HttpClientSupport {
 
-    private static LogUtil LOGGER = LogUtil.getInstance(HttpClientSupport.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(HttpClientSupport.class);
     private static final String TRACE_ID = "traceId";
 
     public static String doGet(String url) {
@@ -265,7 +266,7 @@ public class HttpClientSupport {
                 }
 
                 public void failed(final Exception ex) {
-                	LOGGER.error(ex);
+                	LOGGER.error(ex.getMessage());
                 	try {
                 		httpclient.notifyAll();
                 		httpclient.close();
@@ -326,7 +327,7 @@ public class HttpClientSupport {
                 }
 
                 public void failed(final Exception ex) {
-                	LOGGER.error(ex);
+                	LOGGER.error(ex.getMessage());
                 	try {
                 		httpclient.notifyAll();
                 		httpclient.close();

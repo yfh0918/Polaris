@@ -2,8 +2,8 @@ package com.polaris.container.jetty.listener;
 
 import org.eclipse.jetty.util.component.AbstractLifeCycle.AbstractLifeCycleListener;
 import org.eclipse.jetty.util.component.LifeCycle;
-
-import com.polaris.core.util.LogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class Name : ServerHandler
@@ -15,7 +15,7 @@ import com.polaris.core.util.LogUtil;
 
 public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	
-	private static final LogUtil logger = LogUtil.getInstance(ServerHandlerListerner.class);
+	private static final Logger logger = LoggerFactory.getLogger(ServerHandlerListerner.class);
 	/**
 	 * 服务器监听器集合
 	 */

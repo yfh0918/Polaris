@@ -7,11 +7,12 @@ import java.net.InetSocketAddress;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.polaris.container.jetty.listener.ServerHandlerLifeCycle;
 import com.polaris.container.jetty.listener.ServerHandlerListerner;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.PropertyUtils;
 
 /**
@@ -22,7 +23,7 @@ import com.polaris.core.util.PropertyUtils;
  */
 
 public class JettyServer {
-    private static final LogUtil logger = LogUtil.getInstance(JettyServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(JettyServer.class);
     private static final String MAX_THREADS = "300";//和tomcat保持一致
     private static final  int MAX_SAVE_POST_SIZE = 4 * 1024;
 
@@ -68,7 +69,7 @@ public class JettyServer {
             context.addBean(new ServerHandlerLifeCycle(context.getServletContext()),false);
             this.server.addLifeCycleListener(ServerHandlerListerner.getInstance());//监听handler
         } catch (IOException e) {
-            logger.error(e);
+            logger.error(e.getMessage());
         } 
 
     }
@@ -131,7 +132,7 @@ public class JettyServer {
 
             //启动出错的话，清空服务
             this.server = null;
-            logger.error(e);
+            logger.error(e.getMessage());
         }
 
 
@@ -151,7 +152,7 @@ public class JettyServer {
                 }
             }
         } catch (Exception e) {
-            logger.error(e);
+            logger.error(e.getMessage());
         } finally {
 
             //停止了就清空服务

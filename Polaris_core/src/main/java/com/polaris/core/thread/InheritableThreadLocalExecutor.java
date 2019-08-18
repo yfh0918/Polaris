@@ -8,15 +8,15 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.polaris.core.thread.InheritablePolarisThreadLocal;
-import com.polaris.core.util.LogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 支持可继承的线程变量的线程池（配合InheritableThreadLocal使用）
  */
 public class InheritableThreadLocalExecutor extends ThreadPoolExecutor {
 
-	private static LogUtil logger = LogUtil.getInstance(InheritableThreadLocalExecutor.class);
+	private static Logger logger = LoggerFactory.getLogger(InheritableThreadLocalExecutor.class);
 
 	public InheritableThreadLocalExecutor(int corePoolSize,
 	                                      int maximumPoolSize,

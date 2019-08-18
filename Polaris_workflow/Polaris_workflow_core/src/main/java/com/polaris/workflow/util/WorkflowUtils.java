@@ -9,15 +9,15 @@ import java.util.Map;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.ProcessDefinition;
 import org.apache.commons.io.FileUtils;
-
-import com.polaris.core.util.LogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author HenryYan
  */
 public class WorkflowUtils {
 
-    private static LogUtil logger = LogUtil.getInstance(WorkflowUtils.class);
+    private static Logger logger = LoggerFactory.getLogger(WorkflowUtils.class);
 
     /**
      * 转换流程节点类型为中文说明

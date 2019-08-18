@@ -1,6 +1,8 @@
 package com.polaris.container.tomcat.main;
 
-import com.polaris.core.util.LogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.polaris.container.tomcat.server.TomcatServer;
 import com.polaris.http.factory.ContainerDiscoveryHandler;
 
@@ -10,7 +12,7 @@ import com.polaris.http.factory.ContainerDiscoveryHandler;
  */
 public class Main implements ContainerDiscoveryHandler {
 
-	private static LogUtil logger = LogUtil.getInstance(Main.class);
+	private static Logger logger = LoggerFactory.getLogger(Main.class);
 	/**
      * 服务启动
      *

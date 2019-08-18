@@ -3,10 +3,11 @@ package com.polaris.gateway.request;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.polaris.gateway.GatewayConstant;
-import com.polaris.core.util.LogUtil;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -20,7 +21,7 @@ import io.netty.handler.codec.http.HttpRequest;
  */
 @Service
 public class ScannerHttpRequestFilter extends HttpRequestFilter {
-	private static LogUtil logger = LogUtil.getInstance(ScannerHttpRequestFilter.class);
+	private static Logger logger = LoggerFactory.getLogger(ScannerHttpRequestFilter.class);
 
     @Override
     public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {

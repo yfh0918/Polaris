@@ -163,6 +163,11 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.7</version>
         </dependency>
+	    <dependency>
+	        <groupId>org.slf4j</groupId>
+	        <artifactId>slf4j-ext</artifactId>
+            <version>1.7.7</version>
+	    </dependency>
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -170,11 +175,6 @@
             <version>2.11.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>2.11.1</version>
-        </dependency>
         
 		<!-- apache http -->
         <dependency>

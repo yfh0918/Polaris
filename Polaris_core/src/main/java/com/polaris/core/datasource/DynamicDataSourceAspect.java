@@ -4,12 +4,12 @@ import java.lang.reflect.Method;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-
-import com.polaris.core.util.LogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DynamicDataSourceAspect {
 
-    private static final LogUtil logger =  LogUtil.getInstance(DynamicDataSourceAspect.class);
+    private static final Logger logger =  LoggerFactory.getLogger(DynamicDataSourceAspect.class);
 
     public void before(JoinPoint point) {
         Object target = point.getTarget();
@@ -28,7 +28,7 @@ public class DynamicDataSourceAspect {
         	}
             
         } catch (Exception e) {
-            logger.error(e);
+            logger.error(e.getMessage());
         }
     }
 }

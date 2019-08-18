@@ -5,12 +5,14 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.fastjson.JSONObject;
-import com.polaris.core.util.LogUtil;
 
 public class ResponseUtil {
 
-    private static final LogUtil logger = LogUtil.getInstance(ResponseUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResponseUtil.class);
 
     /**
      * 封装返回信息

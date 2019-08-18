@@ -47,12 +47,12 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
-import com.polaris.core.util.LogUtil;
-import com.polaris.core.util.StringUtil;
  
 /**
  * HttpClient工具类
@@ -69,7 +69,7 @@ public class HttpClientUtil {
 	private static final String POOL_CONN_MAX_PERROUTE = "http.connect.max.per.route.count";
 	private static final String POOL_CONN_DEFAULT_PERROUTE = "http.connect.default.per.route.count";
 	private static final String UTF8 = "UTF-8";
-	private static LogUtil LOGGER = LogUtil.getInstance(HttpClientUtil.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(HttpClientUtil.class);
     static final int TIME_OUT = 10 * 1000;
  
     private static CloseableHttpClient httpClient = null;

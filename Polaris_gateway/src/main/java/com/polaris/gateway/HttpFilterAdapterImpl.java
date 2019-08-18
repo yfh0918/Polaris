@@ -10,11 +10,13 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.littleshoot.proxy.HttpFiltersAdapter;
 import org.littleshoot.proxy.impl.ClientToProxyConnection;
 import org.littleshoot.proxy.impl.ProxyToServerConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
 import com.polaris.core.dto.ResultDto;
+import com.polaris.core.log.ExtendedLogger;
 import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
-import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.UuidUtil;
 import com.polaris.gateway.request.HttpRequestFilter;
 import com.polaris.gateway.request.HttpRequestFilterChain;
@@ -42,7 +44,7 @@ import io.netty.util.CharsetUtil;
  *
  */
 public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
-	private static LogUtil logger = LogUtil.getInstance(HttpFilterAdapterImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(HttpFilterAdapterImpl.class);
 
     //构造过滤器适配器
     public HttpFilterAdapterImpl(HttpRequest originalRequest, ChannelHandlerContext ctx) {
@@ -90,7 +92,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     	//清除线程池残余值
 		RequestUtil.remove();
 		HostResolverImpl.getSingleton().replaceHost(httpRequest);
-		httpRequest.headers().set(LogUtil.TRACE_ID, UuidUtil.generateUuid());
+		httpRequest.headers().set(ExtendedLogger.TRACE_ID, UuidUtil.generateUuid());
     }
     
     @Override

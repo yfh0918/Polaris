@@ -12,6 +12,8 @@ import java.util.Enumeration;
 
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @标题: UnZipUtil.java
@@ -22,7 +24,7 @@ import org.apache.tools.zip.ZipFile;
  */
 public class UnZipUtil {
 
-    private static LogUtil logger = LogUtil.getInstance(UnZipUtil.class);
+    private static Logger logger = LoggerFactory.getLogger(UnZipUtil.class);
 
     private UnZipUtil() {
     }

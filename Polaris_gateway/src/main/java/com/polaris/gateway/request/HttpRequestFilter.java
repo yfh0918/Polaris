@@ -2,9 +2,10 @@ package com.polaris.gateway.request;
 
 import javax.annotation.PostConstruct;
 
-import com.polaris.gateway.HttpFilterOrder;
+import org.slf4j.Logger;
+
 import com.polaris.core.dto.ResultDto;
-import com.polaris.core.util.LogUtil;
+import com.polaris.gateway.HttpFilterOrder;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -67,7 +68,7 @@ public abstract class HttpRequestFilter extends HttpFilterOrder {
      * @param type   匹配的类型
      * @param cause  被拦截的原因
      */
-    public void hackLog(LogUtil logger, String realIp, String type, String cause) {
+    public void hackLog(Logger logger, String realIp, String type, String cause) {
         if (isBlacklist()) {
             logger.info("type:{},realIp:{},cause:{}", type, realIp, cause);
         } else {

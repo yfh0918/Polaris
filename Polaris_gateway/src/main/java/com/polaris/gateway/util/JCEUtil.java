@@ -6,7 +6,8 @@ import java.security.Permission;
 import java.security.PermissionCollection;
 import java.util.Map;
 
-import com.polaris.core.util.LogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author:Tom.Yu
@@ -15,7 +16,7 @@ import com.polaris.core.util.LogUtil;
  *
  */
 public class JCEUtil {
-	private static LogUtil logger = LogUtil.getInstance(JCEUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(JCEUtil.class);
 
     public static void removeCryptographyRestrictions() {
 

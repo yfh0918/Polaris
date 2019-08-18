@@ -53,6 +53,8 @@ import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
@@ -62,7 +64,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.workflow.api.dto.WorkflowDto;
 import com.polaris.workflow.util.Page;
@@ -77,7 +78,7 @@ import cn.hutool.core.util.StrUtil;
 public class WorkflowProcessService {
 
     //日志
-    private static LogUtil logger = LogUtil.getInstance(WorkflowProcessService.class);
+    private static Logger logger = LoggerFactory.getLogger(WorkflowProcessService.class);
 
     @Autowired
     private RuntimeService runtimeService;
@@ -1012,9 +1013,9 @@ public class WorkflowProcessService {
             }
             dto.setData(resultMap);
         } catch (XMLStreamException e) {
-            logger.error(e);
+            logger.error(e.getMessage());
         } catch (UnsupportedEncodingException e) {
-            logger.error(e);
+            logger.error(e.getMessage());
         }
         return dto;
     }

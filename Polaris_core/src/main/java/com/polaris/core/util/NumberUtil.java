@@ -2,9 +2,12 @@ package com.polaris.core.util;
 
 import java.math.BigDecimal;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class NumberUtil {
 
-	private static final LogUtil logger =  LogUtil.getInstance(NumberUtil.class);
+	private static final Logger logger =  LoggerFactory.getLogger(NumberUtil.class);
 	
 	private NumberUtil() {
 	}

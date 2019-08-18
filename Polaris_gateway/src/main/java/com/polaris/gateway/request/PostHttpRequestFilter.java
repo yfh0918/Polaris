@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.util.ConfUtil;
 import com.polaris.gateway.util.RequestUtil;
-import com.polaris.core.util.LogUtil;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,7 +27,7 @@ import io.netty.handler.codec.http.HttpRequest;
  */
 @Service
 public class PostHttpRequestFilter extends HttpRequestFilter {
-	private static LogUtil logger = LogUtil.getInstance(PostHttpRequestFilter.class);
+	private static Logger logger = LoggerFactory.getLogger(PostHttpRequestFilter.class);
     private static Pattern filePattern = Pattern.compile("Content-Disposition: form-data;(.+)filename=\"(.+)\\.(.*)\"");
 
     @Override

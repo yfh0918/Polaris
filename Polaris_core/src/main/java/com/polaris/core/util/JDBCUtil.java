@@ -16,12 +16,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.datasource.DynamicDataSource;
 
 public class JDBCUtil {
 
-	private static final LogUtil logger =  LogUtil.getInstance(JDBCUtil.class);
+	private static final Logger logger =  LoggerFactory.getLogger(JDBCUtil.class);
 
 	private static final int FETCHSIZE = 10000;
 	private static final String QUEUEEND = "end";
@@ -73,14 +76,14 @@ public class JDBCUtil {
 			queue.put(endData);
 			logger.info("buildQueryTOQueue  将sql 查询数据放入队列结束");
 		} catch (Exception ex) {
-			logger.error(ex);
+			logger.error(ex.getMessage());
 		} finally {
 			if (rSet != null) {
 				try {
 					rSet.close();
 					rSet = null;
 				} catch (SQLException e) {
-					logger.error(e);
+					logger.error(e.getMessage());
 				}
 			}
 			if (ps != null) {
@@ -88,7 +91,7 @@ public class JDBCUtil {
 					ps.close();
 					ps = null;
 				} catch (SQLException e) {
-					logger.error(e);
+					logger.error(e.getMessage());
 				}
 			}
 			if (connection != null) {
@@ -96,7 +99,7 @@ public class JDBCUtil {
 					connection.close();
 					connection = null;
 				} catch (SQLException e) {
-					logger.error(e);
+					logger.error(e.getMessage());
 				}
 			}
 		}
@@ -135,14 +138,14 @@ public class JDBCUtil {
 			}
 
 		} catch (Exception ex) {
-			logger.error(ex);
+			logger.error(ex.getMessage());
 		} finally {
 			if (rSet != null) {
 				try {
 					rSet.close();
 					rSet = null;
 				} catch (SQLException e) {
-					logger.error(e);
+					logger.error(e.getMessage());
 				}
 			}
 			if (ps != null) {
@@ -150,7 +153,7 @@ public class JDBCUtil {
 					ps.close();
 					ps = null;
 				} catch (SQLException e) {
-					logger.error(e);
+					logger.error(e.getMessage());
 				}
 			}
 			if (connection != null) {
@@ -158,7 +161,7 @@ public class JDBCUtil {
 					connection.close();
 					connection = null;
 				} catch (SQLException e) {
-					logger.error(e);
+					logger.error(e.getMessage());
 				}
 			}
 		}
@@ -184,14 +187,14 @@ public class JDBCUtil {
                 return rs.getLong(1);
             }
         } catch (Exception ex) {
-            logger.error(ex);
+            logger.error(ex.getMessage());
         } finally {
             if (rs != null) {
                 try {
                     rs.close();
                     rs = null;
                 } catch (SQLException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage());
                 }
             }
             if (statement != null) {
@@ -199,7 +202,7 @@ public class JDBCUtil {
                     statement.close();
                     statement = null;
                 } catch (SQLException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage());
                 }
             }
             if (connection != null) {
@@ -207,7 +210,7 @@ public class JDBCUtil {
                     connection.close();
                     connection = null;
                 } catch (SQLException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage());
                 }
             }
         }
@@ -245,12 +248,12 @@ public class JDBCUtil {
                     saveBatch(sList);
                 }
             } else {
-            	logger.error(ex);
+            	logger.error(ex.getMessage());
             	if (connection != null) {
     				try {
     					connection.rollback();
     				} catch (SQLException e) {
-    					logger.error(e);
+    					logger.error(e.getMessage());
     				}
     			}
             }
@@ -260,7 +263,7 @@ public class JDBCUtil {
 					statement.close();
 					statement = null;
 				} catch (SQLException e) {
-					logger.error(e);
+					logger.error(e.getMessage());
 				}
 			}
 			if (connection != null) {
@@ -268,7 +271,7 @@ public class JDBCUtil {
 					connection.close();
 					connection = null;
 				} catch (SQLException e) {
-					logger.error(e);
+					logger.error(e.getMessage());
 				}
 			}
 		}

@@ -7,12 +7,12 @@ import java.util.Date;
 import org.apache.commons.beanutils.Converter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
-
-import com.polaris.core.util.LogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DateConverter implements Converter {
 
-    private static final LogUtil logger = LogUtil.getInstance(DateConverter.class);
+    private static final Logger logger = LoggerFactory.getLogger(DateConverter.class);
 
     private static final String DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
@@ -29,7 +29,7 @@ public class DateConverter implements Converter {
             try {
                 result = doConvertToDate(value);
             } catch (ParseException e) {
-            	logger.error(e);
+            	logger.error(e.getMessage());
             }
         } else if (type == String.class) {
             result = doConvertToString(value);

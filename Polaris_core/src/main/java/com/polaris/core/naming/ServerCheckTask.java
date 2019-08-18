@@ -10,13 +10,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.WeightedRoundRobinScheduling;
 
 public class ServerCheckTask implements Runnable {
 	
-	private static LogUtil logger = LogUtil.getInstance(ServerCheckTask.class);
+	private static Logger logger = LoggerFactory.getLogger(ServerCheckTask.class);
     private final HttpClient client = HttpClientBuilder.create().build();
     private Map<String, WeightedRoundRobinScheduling> serverMap = new ConcurrentHashMap<>();
 

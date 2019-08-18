@@ -4,6 +4,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.google.common.cache.CacheBuilder;
@@ -11,7 +13,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.RateLimiter;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.LogUtil;
 import com.polaris.gateway.GatewayConstant;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -33,7 +34,7 @@ import io.netty.handler.codec.http.HttpRequest;
  */
 @Service
 public class CCHttpRequestFilter extends HttpRequestFilter {
-	private static LogUtil logger = LogUtil.getInstance(CCHttpRequestFilter.class);
+	private static Logger logger = LoggerFactory.getLogger(CCHttpRequestFilter.class);
 	
 	//控制每个IP地址的访问率
 	private volatile LoadingCache<String, AtomicInteger> loadingCache;
@@ -114,7 +115,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
                 	return true;
                 }
             } catch (ExecutionException e) {
-            	logger.error(e);
+            	logger.error(e.getMessage());
             	return true;
             }
         }

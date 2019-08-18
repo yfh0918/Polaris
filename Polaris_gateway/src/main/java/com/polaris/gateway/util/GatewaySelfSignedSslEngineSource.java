@@ -17,9 +17,10 @@ import javax.net.ssl.X509TrustManager;
 
 import org.joda.time.DateTime;
 import org.littleshoot.proxy.SslEngineSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.StringUtil;
 
 import net.lightbody.bmp.mitm.CertificateInfo;
@@ -34,7 +35,7 @@ import net.lightbody.bmp.mitm.keys.RSAKeyGenerator;
  *
  */
 public class GatewaySelfSignedSslEngineSource implements SslEngineSource {
-	private static LogUtil logger = LogUtil.getInstance(GatewaySelfSignedSslEngineSource.class);
+	private static Logger logger = LoggerFactory.getLogger(GatewaySelfSignedSslEngineSource.class);
 
     public static final String KeyStoreType_STR = "JKS";
     private static final String PROTOCOL = "TLS";

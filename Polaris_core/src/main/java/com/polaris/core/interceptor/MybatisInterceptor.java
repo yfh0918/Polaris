@@ -21,15 +21,15 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
-
-import com.polaris.core.util.LogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Intercepts({
 		@Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }),
 		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class,
 				RowBounds.class, ResultHandler.class }) })
 public class MybatisInterceptor implements Interceptor {
-	private static final LogUtil logger = LogUtil.getInstance(MybatisInterceptor.class);
+	private static final Logger logger = LoggerFactory.getLogger(MybatisInterceptor.class);
 
 
 	@Override

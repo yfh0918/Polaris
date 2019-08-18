@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -21,7 +24,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 
 public class PDFUtil {
-    private static final LogUtil logger = LogUtil.getInstance(PDFUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(PDFUtil.class);
 
     private PDFUtil() {
     }

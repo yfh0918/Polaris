@@ -6,15 +6,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.polaris.core.util.LogUtil;
-import com.polaris.core.util.PropertyUtils;
-import com.polaris.core.util.StringUtil;
 import com.polaris.conf.admin.Constant;
 import com.polaris.config.zk.ConfZkClient;
+import com.polaris.core.util.PropertyUtils;
+import com.polaris.core.util.StringUtil;
 
 public class AdminSupport {
-	private static LogUtil logger = LogUtil.getInstance(AdminSupport.class);
+	private static Logger logger = LoggerFactory.getLogger(AdminSupport.class);
 	//载入配置
 	@SuppressWarnings("unchecked")
 	public static boolean loadProperties() {
@@ -97,7 +98,7 @@ public class AdminSupport {
 			
 			
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 			return false;
 		}
 		return true;

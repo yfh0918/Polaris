@@ -8,12 +8,15 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.polaris.core.Constant;
 
 
 
 public class EncryptUtil {
-	private static final LogUtil logger = LogUtil.getInstance(EncryptUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(EncryptUtil.class);
 
 	private static String strDefaultKey = "Tom.Yu";
 	private Cipher encryptCipher = null;
@@ -252,7 +255,7 @@ public class EncryptUtil {
 
 			return "{" + algorithm + "}" + byte2hex(sha.digest());
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		}
 		return null;
 	}

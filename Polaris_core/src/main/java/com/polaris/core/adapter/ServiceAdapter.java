@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.polaris.core.util.LogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.polaris.core.util.MapUtil;
 import com.polaris.core.util.SpringUtil;
 
@@ -16,7 +18,7 @@ import com.polaris.core.util.SpringUtil;
  */
 public class ServiceAdapter {
 	
-	private static final LogUtil logger = LogUtil.getInstance(ServiceAdapter.class);
+	private static final Logger logger = LoggerFactory.getLogger(ServiceAdapter.class);
 
 	//获取指定的service
     public static <T>T findServiceImpl(Class<T> cls) {
@@ -54,7 +56,7 @@ public class ServiceAdapter {
                 	classMap.put(entry.getValue(), getSuperClassNumber(entry.getValue().getClass()));
             	}
         	} catch (Exception ex) {
-        		logger.error(ex);
+        		logger.error(ex.getMessage());
         		return null;
         	}
         }

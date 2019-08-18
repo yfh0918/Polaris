@@ -7,9 +7,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class MapUtil {
 	
-	private static final LogUtil logger = LogUtil.getInstance(MapUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(MapUtil.class);
 
 	//根据key排序
 	public static <K extends Comparable<? super K>, V > LinkedHashMap<K, V> sortByKey(Map<K, V> map) {
@@ -40,7 +43,7 @@ public class MapUtil {
 		    tail.setAccessible(true);
 		    return (Entry<K, V>) tail.get(map);
 		} catch (Exception ex) {
-			logger.error(ex);
+			logger.error(ex.getMessage());
 			return null;
 		}
 	}

@@ -10,12 +10,13 @@ import org.littleshoot.proxy.HttpFiltersSourceAdapter;
 import org.littleshoot.proxy.HttpProxyServerBootstrap;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 import org.littleshoot.proxy.impl.ThreadPoolConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
-import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.SpringUtil;
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.HostResolverImpl;
@@ -28,7 +29,7 @@ import io.netty.handler.codec.http.HttpRequest;
 
 public class ApplicationSupport {
 	
-	private static LogUtil logger = LogUtil.getInstance(ApplicationSupport.class);
+	private static Logger logger = LoggerFactory.getLogger(ApplicationSupport.class);
 	
     //启动网关应用
     @SuppressWarnings("resource")

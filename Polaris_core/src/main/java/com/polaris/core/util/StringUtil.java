@@ -18,6 +18,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import net.sf.json.JSONNull;
 
@@ -31,7 +33,7 @@ import net.sf.json.JSONNull;
  */
 
 public class StringUtil {
-    private static final LogUtil logger = LogUtil.getInstance(StringUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(StringUtil.class);
     private static final String RTN_CODE = "\\r|\\n";
 
     private StringUtil() {

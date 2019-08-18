@@ -11,16 +11,18 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
 import com.polaris.core.dto.ParameterDto;
 import com.polaris.core.dto.ResultDto;
-import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.StringUtil;
 
 public final class RequestUtil {
 
-	private static final LogUtil logger =  LogUtil.getInstance(RequestUtil.class);
+	private static final Logger logger =  LoggerFactory.getLogger(RequestUtil.class);
 
 	@SuppressWarnings("rawtypes")
 	public static Map<String, Object> convertParameterToMap(HttpServletRequest request) {

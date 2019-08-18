@@ -6,6 +6,8 @@ import javax.persistence.PersistenceContext;
 
 import org.activiti.engine.delegate.event.ActivitiEntityEvent;
 import org.activiti.engine.delegate.event.ActivitiEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionDefinition;
@@ -13,7 +15,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.LogUtil;
 
 /**
  * 流程结束监听器
@@ -23,7 +24,7 @@ import com.polaris.core.util.LogUtil;
 @Component
 public class WorkflowProcessEndListener {
 
-    protected LogUtil logger = LogUtil.getInstance(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -58,9 +59,9 @@ public class WorkflowProcessEndListener {
         private String dialect;
         private EntityManager entityManager;
         private JpaTransactionManager tm;
-        private LogUtil logger;
+        private Logger logger;
 
-        public DeleteVariablesThread(String processInstanceId, String dialect, EntityManager entityManager, JpaTransactionManager tm, LogUtil logger) {
+        public DeleteVariablesThread(String processInstanceId, String dialect, EntityManager entityManager, JpaTransactionManager tm, Logger logger) {
             this.entityManager = entityManager;
             this.processInstanceId = processInstanceId;
             this.dialect = dialect;

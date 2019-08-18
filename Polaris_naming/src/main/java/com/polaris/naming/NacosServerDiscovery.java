@@ -5,6 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
@@ -12,12 +15,11 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.naming.ServerDiscoveryHandler;
-import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.StringUtil;
 
 
 public class NacosServerDiscovery implements ServerDiscoveryHandler {
-	private static final LogUtil logger = LogUtil.getInstance(NacosServerDiscovery.class, false);
+	private static final Logger logger = LoggerFactory.getLogger(NacosServerDiscovery.class);
 	private volatile NamingService naming;
 	public NacosServerDiscovery() {
     	if (StringUtil.isEmpty(ConfClient.getNamingRegistryAddress())) {
@@ -35,7 +37,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
         try {
 			naming = NamingFactory.createNamingService(properties);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 			throw new IllegalArgumentException(Constant.NAMING_REGISTRY_ADDRESS_NAME + ":"+ConfClient.getNamingRegistryAddress() + " is not correct ");
 		}
 	}
@@ -134,7 +136,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 			}
         	naming.registerInstance(ConfClient.getAppName(), group, instance);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -152,7 +154,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 
 			naming.deregisterInstance(ConfClient.getAppName(), group, ip, port, cluster);
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		}
 	}
 	

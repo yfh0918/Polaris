@@ -10,8 +10,8 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-
-import com.polaris.core.util.LogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Jackson util
@@ -22,7 +22,7 @@ import com.polaris.core.util.LogUtil;
  * @author xuxueli 2015-9-25 18:02:56
  */
 public class JacksonUtil {
-	private static LogUtil logger = LogUtil.getInstance(JacksonUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(JacksonUtil.class);
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
     

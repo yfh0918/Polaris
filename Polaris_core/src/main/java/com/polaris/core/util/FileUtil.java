@@ -1,17 +1,27 @@
 package com.polaris.core.util;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 用于文件相关操作的工具类，集成了log4j，需要log4j包的支持。
  */
 public final class FileUtil {
-    private static LogUtil log4j = LogUtil.getInstance(FileUtil.class);
+    private static Logger log4j = LoggerFactory.getLogger(FileUtil.class);
 
     private FileUtil() {
 

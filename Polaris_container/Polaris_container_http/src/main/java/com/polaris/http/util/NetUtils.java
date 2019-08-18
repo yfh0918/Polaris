@@ -10,7 +10,8 @@ import java.util.Enumeration;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-import com.polaris.core.util.LogUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author:Tom.Yu
@@ -19,7 +20,7 @@ import com.polaris.core.util.LogUtil;
  *
  */
 public class NetUtils extends com.polaris.core.util.NetUtils{
-	private static LogUtil logger = LogUtil.getInstance(NetUtils.class);
+	private static Logger logger = LoggerFactory.getLogger(NetUtils.class);
     public static final String LOCALHOST = "127.0.0.1";
     public static final String ANYHOST = "0.0.0.0";
     private static final int RND_PORT_START = 30000;

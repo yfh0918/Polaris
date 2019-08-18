@@ -2,15 +2,15 @@ package com.polaris.workflow.listener;
 
 import org.activiti.engine.delegate.event.ActivitiEvent;
 import org.activiti.engine.delegate.event.ActivitiEventListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.polaris.core.util.LogUtil;
-
 @Component
 public class WorkflowListener implements ActivitiEventListener {
-    protected LogUtil logger = LogUtil.getInstance(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private WorkflowVariableCreateListener workflowVariableCreateListener;//变量创建

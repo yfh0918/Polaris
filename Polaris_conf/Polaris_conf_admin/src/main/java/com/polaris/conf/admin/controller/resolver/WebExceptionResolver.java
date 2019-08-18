@@ -3,12 +3,13 @@ package com.polaris.conf.admin.controller.resolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.polaris.core.util.LogUtil;
 import com.polaris.conf.admin.core.util.JacksonUtil;
 import com.polaris.conf.admin.core.util.ReturnT;
 
@@ -16,7 +17,7 @@ import com.polaris.conf.admin.core.util.ReturnT;
  * common exception resolver
  */
 public class WebExceptionResolver implements HandlerExceptionResolver {
-	private static transient LogUtil logger = LogUtil.getInstance(WebExceptionResolver.class);
+	private static transient Logger logger = LoggerFactory.getLogger(WebExceptionResolver.class);
 
 	@Override
 	public ModelAndView resolveException(HttpServletRequest request,

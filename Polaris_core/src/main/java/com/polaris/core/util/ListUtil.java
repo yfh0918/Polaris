@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -25,7 +27,7 @@ import com.google.common.collect.Lists;
  * @version 1.0 2009-3-19
  */
 public class ListUtil {
-    private static LogUtil log =  LogUtil.getInstance(ListUtil.class);
+    private static Logger log =  LoggerFactory.getLogger(ListUtil.class);
     
     private ListUtil() {
     }

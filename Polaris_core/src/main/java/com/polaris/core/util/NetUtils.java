@@ -13,6 +13,9 @@ import java.util.Enumeration;
 import java.util.Random;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * @author:Tom.Yu
@@ -21,7 +24,7 @@ import java.util.regex.Pattern;
  *
  */
 public class NetUtils  {
-	private static LogUtil logger = LogUtil.getInstance(NetUtils.class);
+	private static Logger logger = LoggerFactory.getLogger(NetUtils.class);
     private static volatile String LOCAL_MAC = null;
     private static final String DEFAULT_MAC = "E0-94-67-CE-04-60";
 
@@ -111,14 +114,14 @@ public class NetUtils  {
 			}
 
         } catch (IOException e) {
-        	logger.error(e);
+        	logger.error(e.getMessage());
         } finally {
             try {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
             } catch (IOException e1) {
-				logger.error(e1);
+				logger.error(e1.getMessage());
             }
             bufferedReader = null;
             process = null;

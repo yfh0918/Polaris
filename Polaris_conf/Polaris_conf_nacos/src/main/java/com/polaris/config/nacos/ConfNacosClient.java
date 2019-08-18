@@ -3,6 +3,9 @@ package com.polaris.config.nacos;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.nacos.api.NacosFactory;
 import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.config.ConfigService;
@@ -11,12 +14,11 @@ import com.alibaba.nacos.api.exception.NacosException;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfListener;
-import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.StringUtil;
 
 public class ConfNacosClient { 
 	
-	private static final LogUtil logger = LogUtil.getInstance(ConfNacosClient.class, false);
+	private static final Logger logger = LoggerFactory.getLogger(ConfNacosClient.class);
 	private volatile static ConfNacosClient INSTANCE;
 	private volatile ConfigService configService;
 
@@ -48,7 +50,7 @@ public class ConfNacosClient {
 			configService = NacosFactory.createConfigService(properties);
 			logger.info("nacos init success");
 		} catch (NacosException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 			throw new IllegalArgumentException(Constant.CONFIG_REGISTRY_ADDRESS_NAME + ":"+ConfClient.getConfigRegistryAddress()+" is not correct ");
 		}
 	}
@@ -74,7 +76,7 @@ public class ConfNacosClient {
 			return propertyContent;
 
 		} catch (NacosException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
@@ -108,7 +110,7 @@ public class ConfNacosClient {
 				}
 			});
 		} catch (NacosException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		}
 	}
 

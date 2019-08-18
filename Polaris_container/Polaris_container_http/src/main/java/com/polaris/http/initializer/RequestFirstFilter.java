@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
-import com.polaris.core.util.LogUtil;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.log.ExtendedLogger;
 import com.polaris.core.util.UuidUtil;
 
 /**
@@ -30,14 +31,14 @@ public class RequestFirstFilter implements Filter {
 	@Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
-		if (StringUtil.isNotEmpty(((HttpServletRequest)request).getHeader(LogUtil.TRACE_ID))) {
-			Constant.setContext(LogUtil.TRACE_ID, ((HttpServletRequest)request).getHeader(LogUtil.TRACE_ID));
+		if (StringUtil.isNotEmpty(((HttpServletRequest)request).getHeader(ExtendedLogger.TRACE_ID))) {
+			Constant.setContext(ExtendedLogger.TRACE_ID, ((HttpServletRequest)request).getHeader(ExtendedLogger.TRACE_ID));
 		} else {
-			Constant.setContext(LogUtil.TRACE_ID, UuidUtil.generateUuid());
+			Constant.setContext(ExtendedLogger.TRACE_ID, UuidUtil.generateUuid());
 		}
 		try {
-			request.setCharacterEncoding(Constant.UTF_CODE);
-	        response.setCharacterEncoding(Constant.UTF_CODE);
+			request.setCharacterEncoding(ConfClient.get("encoding",Constant.UTF_CODE));
+	        response.setCharacterEncoding(ConfClient.get("encoding",Constant.UTF_CODE));
 	        chain.doFilter(request, response);
 		} finally {
 	        Constant.removeContext();

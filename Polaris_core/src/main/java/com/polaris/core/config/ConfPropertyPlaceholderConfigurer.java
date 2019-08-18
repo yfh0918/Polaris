@@ -2,6 +2,8 @@ package com.polaris.core.config;
 
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -10,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringValueResolver;
 
 import com.polaris.core.util.EncryptUtil;
-import com.polaris.core.util.LogUtil;
 
 /**
  * rewrite PropertyPlaceholderConfigurer
@@ -21,7 +22,7 @@ import com.polaris.core.util.LogUtil;
  */
 @Component
 public class ConfPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
-	private static final LogUtil logger = LogUtil.getInstance(ConfPropertyPlaceholderConfigurer.class);
+	private static final Logger logger = LoggerFactory.getLogger(ConfPropertyPlaceholderConfigurer.class);
 
 	@Override
 	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {

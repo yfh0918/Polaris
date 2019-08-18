@@ -16,7 +16,7 @@ import io.netty.handler.codec.http.HttpRequest;
 public class TokenHttpRequestFilter extends HttpRequestFilter {
 
 
-//	private static LogUtil logger = LogUtil.getInstance(TokenHttpRequestFilter.class);
+//	private static Logger logger = LoggerFactory.getLogger(TokenHttpRequestFilter.class);
 //    private volatile static List<String> CHECK_CONTEXT = new ArrayList<>();
 //    
 //    private volatile static Map<String, List<String>> UNCHECKED_PATHS_MAP = new HashMap<>();

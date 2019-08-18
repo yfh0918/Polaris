@@ -10,9 +10,10 @@ import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.tomcat.util.scan.StandardJarScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.PropertyUtils;
 
 /**
@@ -23,7 +24,7 @@ import com.polaris.core.util.PropertyUtils;
  */
 
 public class TomcatServer {
-    private static final LogUtil logger = LogUtil.getInstance(TomcatServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(TomcatServer.class);
     private static final String MAX_THREADS = "300";//和jetty保持一致
     private static final  int MAX_SAVE_POST_SIZE = 4 * 1024;
     private static final  int MAX_HTTP_HEADER_SIZE = 8 * 1024;
@@ -104,7 +105,7 @@ public class TomcatServer {
             tomcat.getHost().addChild(standardContext);
 
         } catch (Exception e) {
-            logger.error(e);
+            logger.error(e.getMessage());
         }
 
     }
@@ -166,7 +167,7 @@ public class TomcatServer {
 
             //启动出错的话，清空服务
             this.tomcat = null;
-            logger.error(e);
+            logger.error(e.getMessage());
         }
 
 
@@ -184,7 +185,7 @@ public class TomcatServer {
                 this.tomcat.stop();
             }
         } catch (Exception e) {
-            logger.error(e);
+            logger.error(e.getMessage());
         } finally {
 
             //停止了就清空服务

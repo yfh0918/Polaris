@@ -23,12 +23,13 @@ import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.polaris.core.Constant;
-import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.workflow.api.dto.WorkflowDto;
 import com.polaris.workflow.api.exception.WorkflowException;
@@ -41,7 +42,7 @@ import com.polaris.workflow.util.WorkflowUtils;
  */
 @Component
 public class WorkflowTraceService {
-    protected LogUtil logger = LogUtil.getInstance(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     protected RuntimeService runtimeService;

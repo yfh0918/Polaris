@@ -13,10 +13,11 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfigHandlerProvider;
-import com.polaris.core.util.LogUtil;
 import com.polaris.core.util.StringUtil;
 
 
@@ -51,7 +52,7 @@ public class ConfZkClient implements Watcher {
 	
 
 	    
-	private static final LogUtil logger = LogUtil.getInstance(ConfZkClient.class, false);
+	private static final Logger logger = LoggerFactory.getLogger(ConfZkClient.class);
 
 	// ------------------------------ zookeeper client ------------------------------
 	private static ZooKeeper zooKeeper;
@@ -104,9 +105,9 @@ public class ConfZkClient implements Watcher {
 										} 
 									}
 								} catch (KeeperException e) {
-									logger.error(e);
+									logger.error(e.getMessage());
 								} catch (InterruptedException e) {
-									logger.error(e);
+									logger.error(e.getMessage());
 								}
 							}
 						});
@@ -118,9 +119,9 @@ public class ConfZkClient implements Watcher {
 					}
                 }
 			} catch (InterruptedException e) {
-				logger.error(e);
+				logger.error(e.getMessage());
 			} catch (IOException e) {
-				logger.error(e);
+				logger.error(e.getMessage());
 			}
 		}
 		if (zooKeeper == null) {
@@ -207,9 +208,9 @@ public class ConfZkClient implements Watcher {
 			}
 			return getInstance().exists(path, false);
 		} catch (KeeperException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		} catch (InterruptedException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
@@ -232,9 +233,9 @@ public class ConfZkClient implements Watcher {
 				logger.info(">>>>>>>>>> zookeeper node path not found :{}", key);
 			}
 		} catch (KeeperException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		} catch (InterruptedException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		}
 		return false;
 	}
@@ -261,7 +262,7 @@ public class ConfZkClient implements Watcher {
 			}
 			return true;
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		}
 		return false;
 	}
@@ -281,9 +282,9 @@ public class ConfZkClient implements Watcher {
 				return appsKey;
 			}
 		} catch (KeeperException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		} catch (InterruptedException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		}
 		return  appsKey;
 	}
@@ -306,9 +307,9 @@ public class ConfZkClient implements Watcher {
 				logger.info(">>>>>>>>>> znodeKey[{}] not found.", temppath);
 			}
 		} catch (KeeperException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		} catch (InterruptedException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
@@ -340,11 +341,11 @@ public class ConfZkClient implements Watcher {
 				logger.info(">>>>>>>>>> znodeKey[{}] not found.", path);
 			}
 		} catch (KeeperException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		} catch (InterruptedException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		}
 		return null;
 	}
@@ -356,7 +357,7 @@ public class ConfZkClient implements Watcher {
 				zooKeeper = null;
 			}
 		} catch (InterruptedException e) {
-			logger.error(e);
+			logger.error(e.getMessage());
 		}
 	}
 }

@@ -6,13 +6,15 @@ import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
-import com.polaris.core.util.LogUtil;
 
 public  class ConfigHandlerProvider {
 
-	private static final LogUtil logger = LogUtil.getInstance(ConfigHandlerProvider.class);
+	private static final Logger logger = LoggerFactory.getLogger(ConfigHandlerProvider.class);
 	
     private static final ServiceLoader<ConfigHandler> serviceLoader = ServiceLoader.load(ConfigHandler.class);
     
