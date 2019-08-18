@@ -1,9 +1,5 @@
 package com.polaris.springmvc;
 
-import java.util.EnumSet;
-
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
 import javax.servlet.ServletRegistration;
 
 import com.polaris.core.config.ConfClient;
@@ -25,10 +21,6 @@ public class Initializer extends  AbsHttpInitializer {
 
 	@Override
 	public void addFilter() {
-		FilterRegistration.Dynamic filter = servletContext.addFilter("encodingFilter", org.springframework.web.filter.CharacterEncodingFilter.class);
-		filter.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-		filter.setInitParameter("encoding", "UTF-8");
-		filter.setInitParameter("forceEncoding", "true");
 	}
 
 	@Override
