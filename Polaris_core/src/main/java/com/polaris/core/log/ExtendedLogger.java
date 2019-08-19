@@ -9,6 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.spi.AbstractLogger;
 import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 import org.slf4j.Marker;
@@ -62,8 +63,6 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
      * The children of this logger. A logger may have zero or more children.
      */
     transient private List<ExtendedLogger> childrenList;
-
-//    private final ExtendedLoggerWrapper  logger; 
     
 	public ExtendedLogger(String rootLoggerName, Object object, ExtendedLoggerContext loggerContext) {
 		// TODO Auto-generated constructor stub
@@ -124,22 +123,27 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	}
 
 	public boolean isTraceEnabled(Marker marker) {
-		return false;
+		return logger.isTraceEnabled(MarkerManager.getMarker(marker.getName()));
 	}
 
 	public void trace(Marker marker, String msg) {
+		logger.logIfEnabled(FQCN, Level.TRACE, MarkerManager.getMarker(marker.getName()), getMessage(msg), (Throwable) null);
 	}
 
 	public void trace(Marker marker, String format, Object arg) {
+		logger.logIfEnabled(FQCN, Level.TRACE, MarkerManager.getMarker(marker.getName()), getMessage(format), arg);
 	}
 
 	public void trace(Marker marker, String format, Object arg1, Object arg2) {
+		logger.logIfEnabled(FQCN, Level.TRACE, MarkerManager.getMarker(marker.getName()), getMessage(format), arg1, arg2);
 	}
 
 	public void trace(Marker marker, String format, Object... argArray) {
+		logger.logIfEnabled(FQCN, Level.TRACE, MarkerManager.getMarker(marker.getName()), getMessage(format), argArray);
 	}
 
 	public void trace(Marker marker, String msg, Throwable t) {
+		logger.logIfEnabled(FQCN, Level.TRACE, MarkerManager.getMarker(marker.getName()), getMessage(msg), t);
 	}
 
 	public boolean isDebugEnabled() {
@@ -167,22 +171,27 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	}
 
 	public boolean isDebugEnabled(Marker marker) {
-		return false;
+		return logger.isDebugEnabled(MarkerManager.getMarker(marker.getName()));
 	}
 
-	public void debug(Marker marker, String msg) {
+	public void debug(Marker marker,String msg) {
+		logger.logIfEnabled(FQCN, Level.DEBUG, MarkerManager.getMarker(marker.getName()), getMessage(msg), (Throwable) null);
 	}
 
-	public void debug(Marker marker, String format, Object arg) {
+	public void debug(Marker marker,String format, Object arg) {
+		logger.logIfEnabled(FQCN, Level.DEBUG, MarkerManager.getMarker(marker.getName()), getMessage(format), arg);
 	}
 
-	public void debug(Marker marker, String format, Object arg1, Object arg2) {
+	public void debug(Marker marker,String format, Object arg1, Object arg2) {
+		logger.logIfEnabled(FQCN, Level.DEBUG, MarkerManager.getMarker(marker.getName()), getMessage(format), arg1, arg2);
 	}
 
-	public void debug(Marker marker, String format, Object... arguments) {
+	public void debug(Marker marker,String format, Object... arguments) {
+		logger.logIfEnabled(FQCN, Level.DEBUG, MarkerManager.getMarker(marker.getName()), getMessage(format), arguments);
 	}
 
-	public void debug(Marker marker, String msg, Throwable t) {
+	public void debug(Marker marker,String msg, Throwable t) {
+		logger.logIfEnabled(FQCN, Level.DEBUG, MarkerManager.getMarker(marker.getName()), getMessage(msg), t);
 	}
 
 	public boolean isInfoEnabled() {
@@ -210,24 +219,28 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	}
 
 	public boolean isInfoEnabled(Marker marker) {
-		return false;
+		return logger.isInfoEnabled(MarkerManager.getMarker(marker.getName()));
 	}
 
-	public void info(Marker marker, String msg) {
+	public void info(Marker marker,String msg) {
+		logger.logIfEnabled(FQCN, Level.INFO, MarkerManager.getMarker(marker.getName()), getMessage(msg), (Throwable) null);
 	}
 
-	public void info(Marker marker, String format, Object arg) {
+	public void info(Marker marker,String format, Object arg) {
+		logger.logIfEnabled(FQCN, Level.INFO, MarkerManager.getMarker(marker.getName()), getMessage(format), arg);
 	}
 
-	public void info(Marker marker, String format, Object arg1, Object arg2) {
+	public void info(Marker marker,String format, Object arg1, Object arg2) {
+		logger.logIfEnabled(FQCN, Level.INFO, MarkerManager.getMarker(marker.getName()), getMessage(format), arg1, arg2);
 	}
 
-	public void info(Marker marker, String format, Object... arguments) {
+	public void info(Marker marker,String format, Object... arguments) {
+		logger.logIfEnabled(FQCN, Level.INFO, MarkerManager.getMarker(marker.getName()), getMessage(format), arguments);
 	}
 
-	public void info(Marker marker, String msg, Throwable t) {
+	public void info(Marker marker,String msg, Throwable t) {
+		logger.logIfEnabled(FQCN, Level.INFO, MarkerManager.getMarker(marker.getName()), getMessage(msg), t);
 	}
-
 	public boolean isWarnEnabled() {
 		return logger.isWarnEnabled();
 	}
@@ -253,22 +266,27 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	}
 
 	public boolean isWarnEnabled(Marker marker) {
-		return false;
+		return logger.isWarnEnabled(MarkerManager.getMarker(marker.getName()));
 	}
 
-	public void warn(Marker marker, String msg) {
+	public void warn(Marker marker,String msg) {
+		logger.logIfEnabled(FQCN, Level.WARN, MarkerManager.getMarker(marker.getName()), getMessage(msg), (Throwable) null);
 	}
 
-	public void warn(Marker marker, String format, Object arg) {
+	public void warn(Marker marker,String format, Object arg) {
+		logger.logIfEnabled(FQCN, Level.WARN, MarkerManager.getMarker(marker.getName()), getMessage(format), arg);
 	}
 
-	public void warn(Marker marker, String format, Object arg1, Object arg2) {
+	public void warn(Marker marker,String format, Object arg1, Object arg2) {
+		logger.logIfEnabled(FQCN, Level.WARN, MarkerManager.getMarker(marker.getName()), getMessage(format), arg1, arg2);
 	}
 
-	public void warn(Marker marker, String format, Object... arguments) {
+	public void warn(Marker marker,String format, Object... arguments) {
+		logger.logIfEnabled(FQCN, Level.WARN, MarkerManager.getMarker(marker.getName()), getMessage(format), arguments);
 	}
 
-	public void warn(Marker marker, String msg, Throwable t) {
+	public void warn(Marker marker,String msg, Throwable t) {
+		logger.logIfEnabled(FQCN, Level.WARN, MarkerManager.getMarker(marker.getName()), getMessage(msg), t);
 	}
 
 	public boolean isErrorEnabled() {
@@ -296,22 +314,27 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	}
 
 	public boolean isErrorEnabled(Marker marker) {
-		return false;
+		return logger.isErrorEnabled(MarkerManager.getMarker(marker.getName()));
 	}
 
-	public void error(Marker marker, String msg) {
+	public void error(Marker marker,String msg) {
+		logger.logIfEnabled(FQCN, Level.ERROR, MarkerManager.getMarker(marker.getName()), getMessage(msg), (Throwable) null);
 	}
 
-	public void error(Marker marker, String format, Object arg) {
+	public void error(Marker marker,String format, Object arg) {
+		logger.logIfEnabled(FQCN, Level.ERROR, MarkerManager.getMarker(marker.getName()), getMessage(format), arg);
 	}
 
-	public void error(Marker marker, String format, Object arg1, Object arg2) {
+	public void error(Marker marker,String format, Object arg1, Object arg2) {
+		logger.logIfEnabled(FQCN, Level.ERROR, MarkerManager.getMarker(marker.getName()), getMessage(format), arg1, arg2);
 	}
 
-	public void error(Marker marker, String format, Object... arguments) {
+	public void error(Marker marker,String format, Object... arguments) {
+		logger.logIfEnabled(FQCN, Level.ERROR, MarkerManager.getMarker(marker.getName()), getMessage(format), arguments);
 	}
 
-	public void error(Marker marker, String msg, Throwable t) {
+	public void error(Marker marker,String msg, Throwable t) {
+		logger.logIfEnabled(FQCN, Level.ERROR, MarkerManager.getMarker(marker.getName()), getMessage(msg), t);
 	}
 
 	public void setLevel(int debug) {
