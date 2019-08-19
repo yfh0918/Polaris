@@ -18,11 +18,17 @@
   并且在application.properties中引入需要放入配置中心的配置文件
   #extension files
   #project.extension.properties=main.properties,redis.properties
+  可以引入全局配置,比如关于redis集群配置，数据库的整体配置等等
+  #global files
+  #project.global.group=global
+  #project.global.properties=redis.properties,database.properties
 
 6:Polaris_workflow是现有的服务（工作流activity内核）
+  提供dubbo接口和http接口两种方式，没有画面，具体请参考模块的配置
 
 7:Polaris_gateway是现有的api网管，提供api的统一入口服务(基于netty http实现)
   具体的api代理请参考config\upstream.txt,其中static:开头的代理的存静态文件会跳过所有的filter
+  另外支持静态文件配置，可以在config\static.txt增增加静态文件路径
 
 8:支持Sentinel（流量监控类），需要在自己的配置文件中设置如下
   #sentinel
@@ -32,8 +38,29 @@
   需要在自己的服务pom.xml中引入 Polaris_sentinel
   该接口主要用于提供api的servlet
 
-9,如何启动，打开eclipse后启动application.java文件（pom.xml中提供 tomcat和jetty两种启动模式）
-  参数中可以配置是否启动websocket可以参考Polaris_demo_web_nodubbo的application.properties
+9,如何启动，打开eclipse后启动application.java文件
+
+  9.1 pom.xml中提供 tomcat和jetty两种启动模式,并且提供resteasy和springmvc组合的方式
+      具体参考pom.xml
+	  <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_container_jetty</artifactId>  ->可修改成Polaris_container_tomcat
+        </dependency>
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_container_springmvc</artifactId> ->可修改成Polaris_container_resteasy
+        </dependency>
+  assembly目录下的配置文件不用修改，
+  applicationContext.xml文件需要简单修改,比如扫描路径配置，数据库配置，swagger配置等等，如果有dubbo调用需要配置dubbo信息
+  支持applicationContext-xxx.xml扩展
+  如果Polaris_container_springmvc，需要增加spring-context-mvc.xml配置文件
+  application.properties 定义服务的project.name,context,port,是否开启websocket(目前只支持Polaris_container_tomcat)，是否开启servlet限流，等等
 
 10,新增了基于netty的静态文件服务器（不支持jsp和servlet）
    具体context配置参照config\static.txt
+   
+11，支持整体调用链路的跟踪，比如traceId, moduleId, parentId, 
+    日志采用slf4j的 Logger xLogger = LoggerFactory.getLogger(xxx.class);只需引入Polaris_core包
+	另外如果采用线程池的方式，需要InheritableThreadLocalExecutor和InheritablePolarisThreadLocal搭配方式使用，线程池中的traceId信息也会进行传递
+	采用dubbo方式 需要映入polaris_dubbo模块，帮你做了traceID的传递，
+	http方式 采用HttpClientUtil方式，帮你做了traceID的传递
