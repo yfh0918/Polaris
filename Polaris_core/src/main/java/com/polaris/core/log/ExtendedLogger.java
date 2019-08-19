@@ -9,10 +9,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.spi.AbstractLogger;
 import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 import org.slf4j.Marker;
+import org.slf4j.impl.StaticMarkerBinder;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
@@ -123,27 +123,27 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	}
 
 	public boolean isTraceEnabled(Marker marker) {
-		return logger.isTraceEnabled(MarkerManager.getMarker(marker.getName()));
+		return logger.isTraceEnabled(getMarker(marker));
 	}
 
 	public void trace(Marker marker, String msg) {
-		logger.logIfEnabled(FQCN, Level.TRACE, MarkerManager.getMarker(marker.getName()), getMessage(msg), (Throwable) null);
+		logger.logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(msg), (Throwable) null);
 	}
 
 	public void trace(Marker marker, String format, Object arg) {
-		logger.logIfEnabled(FQCN, Level.TRACE, MarkerManager.getMarker(marker.getName()), getMessage(format), arg);
+		logger.logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(format), arg);
 	}
 
 	public void trace(Marker marker, String format, Object arg1, Object arg2) {
-		logger.logIfEnabled(FQCN, Level.TRACE, MarkerManager.getMarker(marker.getName()), getMessage(format), arg1, arg2);
+		logger.logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(format), arg1, arg2);
 	}
 
 	public void trace(Marker marker, String format, Object... argArray) {
-		logger.logIfEnabled(FQCN, Level.TRACE, MarkerManager.getMarker(marker.getName()), getMessage(format), argArray);
+		logger.logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(format), argArray);
 	}
 
 	public void trace(Marker marker, String msg, Throwable t) {
-		logger.logIfEnabled(FQCN, Level.TRACE, MarkerManager.getMarker(marker.getName()), getMessage(msg), t);
+		logger.logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(msg), t);
 	}
 
 	public boolean isDebugEnabled() {
@@ -171,27 +171,27 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	}
 
 	public boolean isDebugEnabled(Marker marker) {
-		return logger.isDebugEnabled(MarkerManager.getMarker(marker.getName()));
+		return logger.isDebugEnabled(getMarker(marker));
 	}
 
 	public void debug(Marker marker,String msg) {
-		logger.logIfEnabled(FQCN, Level.DEBUG, MarkerManager.getMarker(marker.getName()), getMessage(msg), (Throwable) null);
+		logger.logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(msg), (Throwable) null);
 	}
 
 	public void debug(Marker marker,String format, Object arg) {
-		logger.logIfEnabled(FQCN, Level.DEBUG, MarkerManager.getMarker(marker.getName()), getMessage(format), arg);
+		logger.logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(format), arg);
 	}
 
 	public void debug(Marker marker,String format, Object arg1, Object arg2) {
-		logger.logIfEnabled(FQCN, Level.DEBUG, MarkerManager.getMarker(marker.getName()), getMessage(format), arg1, arg2);
+		logger.logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(format), arg1, arg2);
 	}
 
 	public void debug(Marker marker,String format, Object... arguments) {
-		logger.logIfEnabled(FQCN, Level.DEBUG, MarkerManager.getMarker(marker.getName()), getMessage(format), arguments);
+		logger.logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(format), arguments);
 	}
 
 	public void debug(Marker marker,String msg, Throwable t) {
-		logger.logIfEnabled(FQCN, Level.DEBUG, MarkerManager.getMarker(marker.getName()), getMessage(msg), t);
+		logger.logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(msg), t);
 	}
 
 	public boolean isInfoEnabled() {
@@ -219,27 +219,27 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	}
 
 	public boolean isInfoEnabled(Marker marker) {
-		return logger.isInfoEnabled(MarkerManager.getMarker(marker.getName()));
+		return logger.isInfoEnabled(getMarker(marker));
 	}
 
 	public void info(Marker marker,String msg) {
-		logger.logIfEnabled(FQCN, Level.INFO, MarkerManager.getMarker(marker.getName()), getMessage(msg), (Throwable) null);
+		logger.logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(msg), (Throwable) null);
 	}
 
 	public void info(Marker marker,String format, Object arg) {
-		logger.logIfEnabled(FQCN, Level.INFO, MarkerManager.getMarker(marker.getName()), getMessage(format), arg);
+		logger.logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(format), arg);
 	}
 
 	public void info(Marker marker,String format, Object arg1, Object arg2) {
-		logger.logIfEnabled(FQCN, Level.INFO, MarkerManager.getMarker(marker.getName()), getMessage(format), arg1, arg2);
+		logger.logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(format), arg1, arg2);
 	}
 
 	public void info(Marker marker,String format, Object... arguments) {
-		logger.logIfEnabled(FQCN, Level.INFO, MarkerManager.getMarker(marker.getName()), getMessage(format), arguments);
+		logger.logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(format), arguments);
 	}
 
 	public void info(Marker marker,String msg, Throwable t) {
-		logger.logIfEnabled(FQCN, Level.INFO, MarkerManager.getMarker(marker.getName()), getMessage(msg), t);
+		logger.logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(msg), t);
 	}
 	public boolean isWarnEnabled() {
 		return logger.isWarnEnabled();
@@ -266,27 +266,27 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	}
 
 	public boolean isWarnEnabled(Marker marker) {
-		return logger.isWarnEnabled(MarkerManager.getMarker(marker.getName()));
+		return logger.isWarnEnabled(getMarker(marker));
 	}
 
 	public void warn(Marker marker,String msg) {
-		logger.logIfEnabled(FQCN, Level.WARN, MarkerManager.getMarker(marker.getName()), getMessage(msg), (Throwable) null);
+		logger.logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(msg), (Throwable) null);
 	}
 
 	public void warn(Marker marker,String format, Object arg) {
-		logger.logIfEnabled(FQCN, Level.WARN, MarkerManager.getMarker(marker.getName()), getMessage(format), arg);
+		logger.logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(format), arg);
 	}
 
 	public void warn(Marker marker,String format, Object arg1, Object arg2) {
-		logger.logIfEnabled(FQCN, Level.WARN, MarkerManager.getMarker(marker.getName()), getMessage(format), arg1, arg2);
+		logger.logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(format), arg1, arg2);
 	}
 
 	public void warn(Marker marker,String format, Object... arguments) {
-		logger.logIfEnabled(FQCN, Level.WARN, MarkerManager.getMarker(marker.getName()), getMessage(format), arguments);
+		logger.logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(format), arguments);
 	}
 
 	public void warn(Marker marker,String msg, Throwable t) {
-		logger.logIfEnabled(FQCN, Level.WARN, MarkerManager.getMarker(marker.getName()), getMessage(msg), t);
+		logger.logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(msg), t);
 	}
 
 	public boolean isErrorEnabled() {
@@ -314,27 +314,27 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	}
 
 	public boolean isErrorEnabled(Marker marker) {
-		return logger.isErrorEnabled(MarkerManager.getMarker(marker.getName()));
+		return logger.isErrorEnabled(getMarker(marker));
 	}
 
 	public void error(Marker marker,String msg) {
-		logger.logIfEnabled(FQCN, Level.ERROR, MarkerManager.getMarker(marker.getName()), getMessage(msg), (Throwable) null);
+		logger.logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(msg), (Throwable) null);
 	}
 
 	public void error(Marker marker,String format, Object arg) {
-		logger.logIfEnabled(FQCN, Level.ERROR, MarkerManager.getMarker(marker.getName()), getMessage(format), arg);
+		logger.logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(format), arg);
 	}
 
 	public void error(Marker marker,String format, Object arg1, Object arg2) {
-		logger.logIfEnabled(FQCN, Level.ERROR, MarkerManager.getMarker(marker.getName()), getMessage(format), arg1, arg2);
+		logger.logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(format), arg1, arg2);
 	}
 
 	public void error(Marker marker,String format, Object... arguments) {
-		logger.logIfEnabled(FQCN, Level.ERROR, MarkerManager.getMarker(marker.getName()), getMessage(format), arguments);
+		logger.logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(format), arguments);
 	}
 
 	public void error(Marker marker,String msg, Throwable t) {
-		logger.logIfEnabled(FQCN, Level.ERROR, MarkerManager.getMarker(marker.getName()), getMessage(msg), t);
+		logger.logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(msg), t);
 	}
 
 	public void setLevel(int debug) {
@@ -415,4 +415,15 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 		strB.append(str);
 		return strB.toString();
 	}
+	
+    private org.apache.logging.log4j.Marker getMarker(final Marker marker) {
+        if (marker == null) {
+            return null;
+        } else if (marker instanceof Log4jMarker) {
+            return ((Log4jMarker) marker).getLog4jMarker();
+        } else {
+            final Log4jMarkerFactory factory = (Log4jMarkerFactory) StaticMarkerBinder.SINGLETON.getMarkerFactory();
+            return ((Log4jMarker) factory.getMarker(marker)).getLog4jMarker();
+        }
+    }
 }
