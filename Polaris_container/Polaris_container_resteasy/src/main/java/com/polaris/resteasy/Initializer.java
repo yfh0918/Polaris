@@ -33,7 +33,6 @@ public class Initializer extends  AbsHttpInitializer {
 	public void addServlet() {
 		ServletRegistration.Dynamic servletRegistration = servletContext.
 			    addServlet("dispatcher", org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.class);
-			    servletRegistration.setInitParameter("contextConfigLocation", "classpath*:/spring-context-mvc.xml");
 			    servletRegistration.setLoadOnStartup(1);
 			    servletRegistration.addMapping("/*");	
 	} 
