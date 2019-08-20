@@ -16,15 +16,4 @@
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 	
-	<!-- 读入配置文件 -->
-	<bean id="propertyConfigurer" class="com.polaris.core.config.EncryptPropertyPlaceholderConfigurer">  
-        <property name="locations">
-	     	<list>
-	        	 <value>classpath:config/application.properties</value>
-	        </list>
-   		</property>
-        <property name="fileEncoding" value="utf-8" /> 
-    </bean>
-    
-
 </beans>

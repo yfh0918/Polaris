@@ -19,17 +19,24 @@
 	</context:component-scan>
 	
    	<!--自定义数据源-->
-	<bean id="dataSource_db" class="com.mchange.v2.c3p0.ComboPooledDataSource"
-		destroy-method="close">
-		<property name="driverClass" value="${db.driverClassName}" />
-		<property name="jdbcUrl" value="${db.url}" />
-		<property name="user" value="${db.username}" />
-		<property name="password" value="${db.password}" /> 
-		<property name="initialPoolSize" value="${db.initialPoolSize}" />
-		<property name="maxPoolSize" value="${db.maxPoolSize}" />
-		<property name="minPoolSize" value="${db.minPoolSize}" />
-		<property name="maxIdleTime" value="${db.maxIdleTime}" />
-	</bean>
+	<!-- 数据源 -->
+    <bean id="dataSource_zh" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+        <property name="driverClassName" value="${db.driverClassName}" />
+        <property name="jdbcUrl" value="${db.url}" />
+        <property name="username" value="${db.username}" />
+        <property name="password" value="${db.password}" />
+        <!-- 连接只读数据库时配置为true， 保证安全 -->
+        <property name="readOnly" value="false" />
+        <!-- 等待连接池分配连接的最大时长（毫秒），超过这个时长还没可用的连接则发生SQLException， 缺省:30秒 -->
+        <property name="connectionTimeout" value="30000" />
+        <!-- 一个连接idle状态的最大时长（毫秒），超时则被释放（retired），缺省:10分钟 -->
+        <property name="idleTimeout" value="600000" />
+        <!-- 一个连接的生命时长（毫秒），超时而且没被使用则被释放（retired），缺省:30分钟，建议设置比数据库超时时长少30秒，参考MySQL wait_timeout参数（show variables like '%timeout%';） -->
+        <property name="maxLifetime" value="1800000" />
+        <!-- 连接池中允许的最大连接数。缺省值：10；推荐的公式：((core_count * 2) + effective_spindle_count) -->
+        <property name="maximumPoolSize" value="100" />
+        <property name="minimumIdle" value="5" />
+    </bean>
 	<bean id="dataSource" class="com.polaris.core.datasource.DynamicDataSource">
 		<property name="targetDataSources">
 			<map key-type="java.lang.String">
@@ -37,7 +44,7 @@
 			</map>
 		</property>
 		<property name="defaultTargetDataSource" ref="dataSource_db"/>
-	</bean>
+	</bean>	
 	
     <!-- Jpa Entity Manager 配置 -->
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">

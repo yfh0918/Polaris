@@ -16,7 +16,10 @@
 			<groupId>com.polaris</groupId>
 			<artifactId>Polaris_container_jetty</artifactId>
 		</dependency>
-		
+	    <dependency>
+			<groupId>com.polaris</groupId>
+			<artifactId>Polaris_container_springmvc</artifactId>
+		</dependency>		
 		<dependency>
 			<groupId>com.polaris</groupId>
 			<artifactId>Polaris_conf_zk</artifactId>
