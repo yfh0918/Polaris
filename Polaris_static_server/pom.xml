@@ -129,7 +129,7 @@
         </dependency>   
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_naming</artifactId>
+            <artifactId>Polaris_naming_nacos</artifactId>
         </dependency>   
 
 		<dependency>
