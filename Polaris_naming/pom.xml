@@ -1,67 +1,29 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<parent>
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.polaris</groupId>
+    <artifactId>Polaris_parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>Polaris_naming</artifactId>
+  <packaging>pom</packaging>
+  <name>Polaris_naming</name>
+  
+  <modules>
+	<module>Polaris_naming_nacos</module>
+  </modules>
+  
+  <dependencies>
+  
+ 	<!-- common -->
+	<dependency>
 		<groupId>com.polaris</groupId>
-		<artifactId>Polaris_parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>Polaris_naming</artifactId>
-	<packaging>jar</packaging>
-	<name>Polaris_naming</name>
-
-    <properties>
-        <!-- nacos -->
-        <nacos.version>1.0.0</nacos.version>
-    </properties>
-
-	<dependencies>
-		<dependency>
-			<groupId>com.polaris</groupId>
-			<artifactId>Polaris_core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.alibaba.nacos</groupId>
-			<artifactId>nacos-client</artifactId>
-			<version>${nacos.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>logback-classic</artifactId>
-					<groupId>ch.qos.logback</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>logback-core</artifactId>
-					<groupId>ch.qos.logback</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.alibaba.nacos</groupId>
-			<artifactId>nacos-common</artifactId>
-			<version>${nacos.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.alibaba.nacos</groupId>
-			<artifactId>nacos-api</artifactId>
-			<version>${nacos.version}</version>
-		</dependency>
-	</dependencies>
-
-	<build>
-		<plugins>
-			<!-- Source attach plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+		<artifactId>Polaris_core</artifactId>
+	</dependency>
+  
+	
+	
+  </dependencies>
 </project>

@@ -5,10 +5,10 @@
 3:提供两种类型的 demo（调用dubbo应用 和 无dubbo应用）
   主要参数可以参考Polaris_demo_web_nodubbo的application.properties
 
-4:集群部署服务的时候需要注册中心，目前仅支持nacos（需要自行下载nacos的server）
+4:集群部署服务的时候需要注册中心，目前仅支持nacos（需要自行下载nacos的server）,后续支持eureka
   每一个服务 需要在自己的配置文件中设置注册中心
   #name.registry.address=127.0.0.1:8848
-  需要在自己的服务pom.xml中引入 Polaris_naming
+  需要在自己的服务pom.xml中引入 Polaris_naming_nacos
   
 
 5:配置中心支持两种模式（zookeeper,nacos,apollo的ConfigFile），需要在自己的配置文件中设置配置中心
