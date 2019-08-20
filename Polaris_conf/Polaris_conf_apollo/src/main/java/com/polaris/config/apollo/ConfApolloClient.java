@@ -1,5 +1,7 @@
 package com.polaris.config.apollo;
 
+import java.io.File;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,7 +10,10 @@ import com.ctrip.framework.apollo.ConfigFileChangeListener;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.model.ConfigFileChangeEvent;
+import com.github.pagehelper.util.StringUtil;
+import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfListener;
+import com.polaris.core.util.PropertyUtils;
 
 public class ConfApolloClient { 
 	
@@ -18,6 +23,19 @@ public class ConfApolloClient {
 		return INSTANCE;
 	}
 	private ConfApolloClient() {
+		try {
+			String appFile = PropertyUtils.getFilePath("META-INF"+File.separator+"app.properties");
+			PropertyUtils.writeData(appFile, "app.id", ConfClient.getAppName(), true);
+			PropertyUtils.writeData(appFile, "apollo.meta", ConfClient.getConfigRegistryAddress(), true);
+			if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
+				PropertyUtils.writeData(appFile, "apollo.env", ConfClient.getEnv(), true);
+			}
+			if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
+				System.setProperty("apollo.cluster", ConfClient.getCluster());
+			}
+		} catch (Exception e) {
+			logger.error("create META-INF/app.properties error,cause:{}",e.getMessage());
+		}
 	}
 	
 	
