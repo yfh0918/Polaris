@@ -11,8 +11,15 @@
   需要在自己的服务pom.xml中引入 Polaris_naming
   
 
-5:配置中心支持两种模式（zookeeper和nacos），需要在自己的配置文件中设置配置中心
+5:配置中心支持两种模式（zookeeper,nacos,apollo的ConfigFile），需要在自己的配置文件中设置配置中心
   #config.registry.address=127.0.0.1:8848
+  apollo的配置采用
+  #classpath目录下新建META-INF/app.properties
+  ## 应用ID(在Apollo服务端新增项目添加的应用ID)
+  # app.id=project.name（是服务名称）
+  # apollo-configservice地址
+  # apollo.meta=config.registry.address(是IP地址)
+  
   需要在自己的服务pom.xml中引入 Polaris_conf_nacos
   引入配置中心后，所有的properties文件都可以放入nacos（除了application.properties 和 log4j.properties）
   并且在application.properties中引入需要放入配置中心的配置文件

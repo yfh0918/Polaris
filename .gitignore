@@ -311,3 +311,8 @@
 /Polaris_container/Polaris_container_springmvc/.settings
 /Polaris_container/Polaris_container_springmvc/.classpath
 /Polaris_container/Polaris_container_springmvc/target
+/Polaris_conf/Polaris_conf_apollo/.classpath
+/Polaris_conf/Polaris_conf_apollo/.gitignore
+/Polaris_conf/Polaris_conf_apollo/.project
+/Polaris_conf/Polaris_conf_apollo/.settings
+/Polaris_conf/Polaris_conf_apollo/target
