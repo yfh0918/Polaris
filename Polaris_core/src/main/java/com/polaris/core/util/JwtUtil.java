@@ -1,4 +1,4 @@
-package com.polaris.gateway.util;
+package com.polaris.core.util;
 
 import java.util.Date;
 import java.util.Map;
@@ -19,6 +19,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
  */
 public class JwtUtil {
 
+	private final static String RANDOM_UUID = UUID.randomUUID().toString();
     /**
      * 用户登录成功后生成Jwt
      * 使用Hs256算法  私匙使用用户密码
@@ -36,18 +37,11 @@ public class JwtUtil {
         Date now = new Date(nowMillis);
 
         //创建payload的私有声明（根据特定的业务需要添加，如果要拿这个做验证，一般是需要和jwt的接收方提前沟通好验证方式的）
-//        Map<String, Object> claims = new HashMap<String, Object>();
-//        claims.put("id", user.getId());
-//        claims.put("username", user.getUsername());
-//        claims.put("password", user.getPassword());
-
         //生成签名的时候使用的秘钥secret,这个方法本地封装了的，一般可以从本地配置文件中读取，切记这个秘钥不能外露哦。它就是你服务端的私钥，在任何场景都不应该流露出去。一旦客户端得知这个secret, 那就意味着客户端是可以自我签发jwt了。
-        String key = user.get("password").toString();
+        String key = ConfClient.get("jwt.sign.key", RANDOM_UUID);
 
         //生成签发人
         String subject = user.get("username").toString();
-
-
 
         //下面就是在为payload添加各种标准声明和私有声明了
         //这里其实就是new一个JwtBuilder，设置jwt的body
@@ -78,9 +72,9 @@ public class JwtUtil {
      * @param user  用户的对象
      * @return
      */
-    public static Claims parseJWT(String token, Map<String, Object> user ) {
+    public static Claims parseJWT(String token) {
         //签名秘钥，和生成的签名的秘钥一模一样
-        String key = user.get("password").toString();
+        String key = ConfClient.get("jwt.sign.key", RANDOM_UUID);
 
         //得到DefaultJwtParser
         Claims claims = Jwts.parser()
@@ -92,29 +86,6 @@ public class JwtUtil {
     }
 
 
-    /**
-     * 校验token
-     * 在这里可以使用官方的校验，我这里校验的是token中携带的密码于数据库一致的话就校验通过
-     * @param token
-     * @param user
-     * @return
-     */
-    public static Boolean isVerify(String token, Map<String, Object> user) {
-        //签名秘钥，和生成的签名的秘钥一模一样
-    	String key = user.get("password").toString();
 
-        //得到DefaultJwtParser
-        Claims claims = Jwts.parser()
-                //设置签名的秘钥
-                .setSigningKey(key)
-                //设置需要解析的jwt
-                .parseClaimsJws(token).getBody();
-
-        if (claims.get("password").equals(ConfClient.get("jwt.signing.key"))) {
-            return true;
-        }
-
-        return false;
-    }
 
 }
