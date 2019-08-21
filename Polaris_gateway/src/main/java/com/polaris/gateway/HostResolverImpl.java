@@ -15,6 +15,7 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.config.ConfListener;
 import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
+import com.polaris.core.naming.ServerDiscoveryHandlerSupport;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import io.netty.handler.codec.http.HttpRequest;
@@ -68,7 +69,7 @@ public class HostResolverImpl implements HostResolver {
         staticServerSet = tempStaticServerSet;
         portServerMap = tempPortServerMap;
         uriPortMap = tempUriPortMap;
-        ServerDiscoveryHandlerProvider.getInstance().reset();
+        ServerDiscoveryHandlerSupport.reset();
     }
 
     //构造函数（单例）

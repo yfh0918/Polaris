@@ -11,7 +11,10 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.WeightedRoundRobinScheduling;
 import com.polaris.core.util.WeightedRoundRobinScheduling.Server;
 
-public class ServerDiscovery {
+public class ServerDiscoveryHandlerSupport {
+	public static final String HTTP_PREFIX = "http://";
+	public static final String HTTPS_PREFIX = "https://";
+
     private static Map<String, WeightedRoundRobinScheduling> serverMap = new ConcurrentHashMap<>();
     private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = null;
 
@@ -23,7 +26,7 @@ public class ServerDiscovery {
     	
     	//初期化定时器
 		if (scheduledThreadPoolExecutor == null) {
-			synchronized(ServerDiscovery.class){
+			synchronized(ServerDiscoveryHandlerSupport.class){
 				if (scheduledThreadPoolExecutor == null) {
 					scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
 			        scheduledThreadPoolExecutor.scheduleAtFixedRate(new ServerCheckTask(serverMap), 
@@ -79,6 +82,40 @@ public class ServerDiscovery {
     }
     
 
+	public static List<String> getRemoteAddress(String serverInfo) {
+		List<String> serverList = new ArrayList<>(3);
+		if (serverInfo.toLowerCase().startsWith(HTTP_PREFIX)) {
+			serverList.add(HTTP_PREFIX);
+			serverInfo = serverInfo.substring(HTTP_PREFIX.length());
+		} else if (serverInfo.toLowerCase().startsWith(HTTPS_PREFIX)) {
+			serverList.add(HTTPS_PREFIX);
+			serverInfo = serverInfo.substring(HTTPS_PREFIX.length());
+		} else {
+			serverList.add("");
+		}
+		int suffixIndex = serverInfo.indexOf("/");
+		if (suffixIndex > 0) {
+			serverList.add(serverInfo.substring(0, suffixIndex));
+			serverList.add(serverInfo.substring(suffixIndex));
+		} else {
+			serverList.add(serverInfo);
+			serverList.add("");
+		}
+        return serverList;
+    }
+	public static boolean isSkip(String key) {
+		if (key.toLowerCase().startsWith("www.")) {
+			return true;
+		}
+		if (key.toLowerCase().endsWith(".com") || key.toLowerCase().endsWith(".cn")) {
+			return true;
+		}
+		if (key.contains(",") || key.contains(":")) {
+			return true;
+		}
+		return false;
+	}
+	
     public static void main(String[] args) {
     	for (int i0 = 0; i0 < 6; i0++) {
     		String url = getUrl("localhost:8080,localhost:8081");
