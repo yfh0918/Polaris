@@ -13,6 +13,7 @@
   
   <modules>
 	<module>Polaris_naming_nacos</module>
+	<module>Polaris_naming_eureka</module>
   </modules>
   
   <dependencies>

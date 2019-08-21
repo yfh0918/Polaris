@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<groupId>com.polaris</groupId>
+		<artifactId>Polaris_naming</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>Polaris_naming_eureka</artifactId>
+	<packaging>jar</packaging>
+	<name>Polaris_naming_eureka</name>
+	<properties>
+        <!-- nacos -->
+        <eureka.version>1.9.12</eureka.version>
+    </properties>
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/com.netflix.eureka/eureka-client -->
+		<dependency>
+			<groupId>com.netflix.eureka</groupId>
+			<artifactId>eureka-client</artifactId>
+			<version>${eureka.version}</version>
+			<exclusions>
+		        <exclusion>
+		          <groupId>javax.servlet</groupId>
+		          <artifactId>servlet-api</artifactId>
+		        </exclusion>
+		        <exclusion>
+		          <groupId>com.google.guava</groupId>
+		          <artifactId>guava</artifactId>
+		        </exclusion>
+		        <exclusion>
+		          <groupId>com.fasterxml.jackson.core</groupId>
+		          <artifactId>jackson-annotations</artifactId>
+		        </exclusion>
+		        <exclusion>
+		          <groupId>javax.ws.rs</groupId>
+		          <artifactId>jsr311-api</artifactId>
+		        </exclusion>
+		    </exclusions>
+
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.netflix.eureka/eureka-core -->
+		<dependency>
+			<groupId>com.netflix.eureka</groupId>
+			<artifactId>eureka-core</artifactId>
+			<version>${eureka.version}</version>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!-- Source attach plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
