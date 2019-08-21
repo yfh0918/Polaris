@@ -17,6 +17,10 @@
             <artifactId>Polaris_container_jetty</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_container_resteasy</artifactId>
+        </dependency>
+        <dependency>
 			<groupId>com.polaris</groupId>
 			<artifactId>Polaris_dubbo</artifactId>
 		</dependency>
@@ -24,10 +28,6 @@
 			<groupId>com.polaris_demo</groupId>
 			<artifactId>Polaris_demo_api</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>com.polaris</groupId>
-			<artifactId>Polaris_container_http</artifactId>
 		</dependency>
     </dependencies>
 

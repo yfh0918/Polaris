@@ -1,6 +1,6 @@
 package com.polaris.dubbo.filter;
 
-import org.apache.dubbo.common.Constants;
+import org.apache.dubbo.common.constants.CommonConstants;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.rpc.Filter;
 import org.apache.dubbo.rpc.Invocation;
@@ -11,7 +11,7 @@ import org.apache.dubbo.rpc.RpcContext;
 import com.polaris.core.log.ExtendedLogger;
 import com.polaris.dubbo.Constant;
 
-@Activate(group = Constants.CONSUMER)
+@Activate(group = CommonConstants.CONSUMER)
 public class ConsumerFilter implements Filter {
 
     @Override
