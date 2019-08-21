@@ -19,7 +19,7 @@ import com.polaris.http.util.NetUtils;
 * @version
 *
 */
-public class MainSupport extends com.polaris.core.supports.MainSupport{
+public class MainSupport {
 	
 	/**
 	* 创建一个新的实例 MainSupport.

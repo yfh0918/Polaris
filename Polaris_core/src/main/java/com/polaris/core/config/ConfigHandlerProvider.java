@@ -128,29 +128,14 @@ public  class ConfigHandlerProvider {
 	}
 	
 	//一下对缓存的处理都只针对 非全局缓存
-	public static void removeCache(String fileName) {
-		Map<String, String> cache = cacheFileMap.get(fileName);
-		if (cache != null) {
-			logger.info(">>>>>>>>>> conf: 删除配置：file:{} ", fileName);
-			cacheFileMap.remove(fileName);
-		}
-	}
-	public static void removeCache(String key, String fileName) {
+	public static void removeValue(String key, String fileName) {
 		Map<String, String> cache = cacheFileMap.get(fileName);
 		if (cache != null) {
 			logger.info(">>>>>>>>>> conf: 删除配置：file:{}, key:{} ", fileName, key);
 			cache.remove(key);
 		}
 	}
-	
-	public static void updateCache(String fileName, Map<String, String> cache) {
-		updateCache(fileName, cache, false);
-	}
-	public static void updateCache(String fileName, Map<String, String> cache, boolean isGlobal) {
-		logger.info(">>>>>>>>>> conf: 跟新配置：file:{}", fileName);
-		cacheFileMap.put(fileName, cache);
-	}
-	public static void updateCache(String key, String value, String fileName) {
+	public static void updateValue(String key, String value, String fileName) {
 		Map<String, String> cache = cacheFileMap.get(fileName);
 		boolean isAdd = false;
 		if (cache == null) {
@@ -174,6 +159,4 @@ public  class ConfigHandlerProvider {
 		}
 		cache.put(key, value);
 	}
-	
-	
 }

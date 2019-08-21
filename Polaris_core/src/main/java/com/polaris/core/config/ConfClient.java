@@ -36,60 +36,60 @@ public class ConfClient {
 			//配置中心
 			String config = System.getProperty(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
 			if (StringUtil.isNotEmpty(config)) {
-				ConfigHandlerProvider.updateCache(Constant.CONFIG_REGISTRY_ADDRESS_NAME, config, Constant.DEFAULT_CONFIG_NAME);
+				ConfigHandlerProvider.updateValue(Constant.CONFIG_REGISTRY_ADDRESS_NAME, config, Constant.DEFAULT_CONFIG_NAME);
 			} 
 			
 			//环境（production, pre,dev,pre etc）
 			String env = System.getProperty(Constant.PROJECT_ENV_NAME);
 			if (StringUtil.isNotEmpty(env)) {
-				ConfigHandlerProvider.updateCache(Constant.PROJECT_ENV_NAME, env, Constant.DEFAULT_CONFIG_NAME);
+				ConfigHandlerProvider.updateValue(Constant.PROJECT_ENV_NAME, env, Constant.DEFAULT_CONFIG_NAME);
 			} 
 			
 			//工程名称
 			String project = System.getProperty(Constant.PROJECT_NAME);
 			if (StringUtil.isNotEmpty(project)) {
-				ConfigHandlerProvider.updateCache(Constant.PROJECT_NAME, project, Constant.DEFAULT_CONFIG_NAME);
+				ConfigHandlerProvider.updateValue(Constant.PROJECT_NAME, project, Constant.DEFAULT_CONFIG_NAME);
 			}
 			
 			//命名空间(注册中心和配置中心)
 			String namespace = System.getProperty(Constant.PROJECR_NAMESPACE_NAME);
 			if (StringUtil.isNotEmpty(namespace)) {
-				ConfigHandlerProvider.updateCache(Constant.PROJECR_NAMESPACE_NAME, namespace, Constant.DEFAULT_CONFIG_NAME);
+				ConfigHandlerProvider.updateValue(Constant.PROJECR_NAMESPACE_NAME, namespace, Constant.DEFAULT_CONFIG_NAME);
 			} 
 			
 			//Group(注册中心和dubbo)
 			String group = System.getProperty(Constant.PROJECR_GROUP_NAME);
 			if (StringUtil.isNotEmpty(group)) {
-				ConfigHandlerProvider.updateCache(Constant.PROJECR_GROUP_NAME, group, Constant.DEFAULT_CONFIG_NAME);
+				ConfigHandlerProvider.updateValue(Constant.PROJECR_GROUP_NAME, group, Constant.DEFAULT_CONFIG_NAME);
 			} 
 
 			//集群名称(注册中心和配置中心)
 			String cluster = System.getProperty(Constant.PROJECR_CLUSTER_NAME);
 			if (StringUtil.isNotEmpty(cluster)) {
-				ConfigHandlerProvider.updateCache(Constant.PROJECR_CLUSTER_NAME, cluster, Constant.DEFAULT_CONFIG_NAME);
+				ConfigHandlerProvider.updateValue(Constant.PROJECR_CLUSTER_NAME, cluster, Constant.DEFAULT_CONFIG_NAME);
 			} 
 			
 			//服务端口
 			String serverport = System.getProperty(Constant.SERVER_PORT_NAME);
 			if (StringUtil.isNotEmpty(serverport)) {
-				ConfigHandlerProvider.updateCache(Constant.SERVER_PORT_NAME, serverport, Constant.DEFAULT_CONFIG_NAME);
+				ConfigHandlerProvider.updateValue(Constant.SERVER_PORT_NAME, serverport, Constant.DEFAULT_CONFIG_NAME);
 			}
 			
 			//注册中心
 			String name = System.getProperty(Constant.NAMING_REGISTRY_ADDRESS_NAME);
 			if (StringUtil.isNotEmpty(name)) {
-				ConfigHandlerProvider.updateCache(Constant.NAMING_REGISTRY_ADDRESS_NAME, name, Constant.DEFAULT_CONFIG_NAME);
+				ConfigHandlerProvider.updateValue(Constant.NAMING_REGISTRY_ADDRESS_NAME, name, Constant.DEFAULT_CONFIG_NAME);
 			}
 			
 			//dubbo服务端口
 			String dubboport = System.getProperty(Constant.DUBBO_PROTOCOL_PORT_NAME);
 			if (StringUtil.isNotEmpty(dubboport)) {
-				ConfigHandlerProvider.updateCache(Constant.DUBBO_PROTOCOL_PORT_NAME, dubboport, Constant.DEFAULT_CONFIG_NAME);
+				ConfigHandlerProvider.updateValue(Constant.DUBBO_PROTOCOL_PORT_NAME, dubboport, Constant.DEFAULT_CONFIG_NAME);
 			}
 			//dubbo注册中心
 			String dubboname = System.getProperty(Constant.DUBBO_REGISTRY_ADDRESS_NAME);
 			if (StringUtil.isNotEmpty(dubboname)) {
-				ConfigHandlerProvider.updateCache(Constant.DUBBO_REGISTRY_ADDRESS_NAME, dubboname, Constant.DEFAULT_CONFIG_NAME);
+				ConfigHandlerProvider.updateValue(Constant.DUBBO_REGISTRY_ADDRESS_NAME, dubboname, Constant.DEFAULT_CONFIG_NAME);
 			}
 			
 			//载入扩展文件
@@ -160,7 +160,7 @@ public class ConfClient {
 		
 		//默认值
 		if (StringUtil.isNotEmpty(defaultVal)) {
-			ConfigHandlerProvider.updateCache(key, defaultVal, Constant.DEFAULT_CONFIG_NAME);
+			ConfigHandlerProvider.updateValue(key, defaultVal, Constant.DEFAULT_CONFIG_NAME);
 		}
 		
 		//返回默认值

@@ -97,11 +97,11 @@ public class ConfZkClient implements Watcher {
 										// add One-time trigger
 										zooKeeper.exists(path, true);
 										if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
-											ConfigHandlerProvider.removeCache(key, Constant.DEFAULT_CONFIG_NAME);
+											ConfigHandlerProvider.removeValue(key, Constant.DEFAULT_CONFIG_NAME);
 										} else if (watchedEvent.getType() == Event.EventType.NodeDataChanged || 
 												watchedEvent.getType() == Event.EventType.NodeCreated) {
 											String data = getPathData(path, false);
-											ConfigHandlerProvider.updateCache(key, data, Constant.DEFAULT_CONFIG_NAME);
+											ConfigHandlerProvider.updateValue(key, data, Constant.DEFAULT_CONFIG_NAME);
 										} 
 									}
 								} catch (KeeperException e) {
