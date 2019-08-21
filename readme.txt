@@ -65,3 +65,15 @@
 	另外如果采用线程池的方式，需要InheritableThreadLocalExecutor和InheritablePolarisThreadLocal搭配方式使用，线程池中的traceId信息也会进行传递
 	采用dubbo方式 需要映入polaris_dubbo模块，帮你做了traceID的传递，
 	http方式 采用HttpClientUtil方式，帮你做了traceID的传递
+	
+12,缓存模块Polaris_cache,
+   CacheFactory.getCache(cachename);获取缓存，默认采用EHCache, 
+   根据缓存配置参数可以动态切换 RedisSingle和RedisCluster
+   参数配置如下
+   cache.xxx.type=ehcache
+   cache.xxx.type=redis
+   cache.xxx.type=rediscluster
+   其他参数
+   可以采用注解com.polaris.cache.Cacheable
+   目前支持的方法参考com.polaris.cache.Cache接口
+   缓存 序列化可以自己配置，默认KryoSerializer
