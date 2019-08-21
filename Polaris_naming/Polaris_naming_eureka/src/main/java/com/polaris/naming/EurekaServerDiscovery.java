@@ -67,6 +67,24 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 		}
 		
 		//负载均衡
+//		IRule rule = new AvailabilityFilteringRule();
+//		Provider<DiscoveryClient> eurekaProvider = new Provider<DiscoveryClient> (){
+//
+//		    @Override
+//		    public DiscoveryClient get() {
+//		        return eurekaClient;
+//		    }
+//
+//		};
+//        ServerList<DiscoveryEnabledServer> list = new DiscoveryEnabledNIWSServerList(key);
+//        ServerListFilter<DiscoveryEnabledServer> filter = new ZoneAffinityServerListFilter<DiscoveryEnabledServer>();
+//        ZoneAwareLoadBalancer<DiscoveryEnabledServer> lb = LoadBalancerBuilder.<DiscoveryEnabledServer>newBuilder()
+//                .withDynamicServerList(list)
+//                .withRule(rule)
+//                .withServerListFilter(filter)
+//                .buildDynamicServerListLoadBalancer();   
+//        DiscoveryEnabledServer server = (DiscoveryEnabledServer) lb.chooseServer();   
+//        InstanceInfo serverInfo = server.getInstanceInfo();
 		InstanceInfo serverInfo = eurekaClient.getNextServerFromEureka(key, false);
 		if (serverInfo != null) {
 		    String realServerName = serverInfo.getIPAddr() + ":" + serverInfo.getPort();
@@ -84,7 +102,7 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 		if (StringUtil.isEmpty(key)) {
 			return null;
 		}
-		List<InstanceInfo> serverInfos = eurekaClient.getInstancesById(key);
+		List<InstanceInfo> serverInfos = eurekaClient.getInstancesByVipAddress(key,false);
 		if (serverInfos == null) {
 			return null;
 		}

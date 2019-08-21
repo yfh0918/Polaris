@@ -45,6 +45,18 @@
 			<artifactId>eureka-core</artifactId>
 			<version>${eureka.version}</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.netflix.ribbon/ribbon-loadbalancer -->
+		<dependency>
+		    <groupId>com.netflix.ribbon</groupId>
+		    <artifactId>ribbon-loadbalancer</artifactId>
+		    <version>2.7.17</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.netflix.ribbon/ribbon-eureka -->
+		<dependency>
+		    <groupId>com.netflix.ribbon</groupId>
+		    <artifactId>ribbon-eureka</artifactId>
+		    <version>2.7.17</version>
+		</dependency>
 
 	</dependencies>
 
