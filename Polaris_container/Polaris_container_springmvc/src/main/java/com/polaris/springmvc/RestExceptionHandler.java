@@ -12,7 +12,7 @@ abstract class RestExceptionHandler {
 	@ExceptionHandler(Exception.class)
     public String exceptionHandler(Exception ex){
     	ResultDto responseDto = new ResultDto();
-    	responseDto.setStatus(Constant.STATUS_FAILED);
+    	responseDto.setStatus(String.valueOf(Constant.STATUS_FAILED));
     	if (ex instanceof RuntimeException) {
         	responseDto.setMsgContent(Constant.MESSAGE_GLOBAL_ERROR);
     	} else {

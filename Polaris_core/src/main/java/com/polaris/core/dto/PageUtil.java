@@ -1,8 +1,6 @@
-package com.polaris.workflow.util;
+package com.polaris.core.dto;
 
 import org.apache.commons.lang3.StringUtils;
-
-import com.polaris.workflow.api.dto.WorkflowDto;
 
 /**
  * 分页工具
@@ -13,7 +11,7 @@ public class PageUtil {
 
     public static final int PAGE_SIZE = 10;
 
-    public static int[] init(Page<?> page, WorkflowDto dto) {
+    public static int[] init(Page<?> page, PageDto dto) {
         int pageNumber = dto.getPageIndex();
         page.setPageNo(pageNumber);
         int pageSize = Integer.parseInt(StringUtils.defaultIfBlank(String.valueOf(dto.getPageSize()), String.valueOf(PAGE_SIZE)));

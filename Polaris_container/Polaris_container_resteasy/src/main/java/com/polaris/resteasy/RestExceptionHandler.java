@@ -21,7 +21,7 @@ public class RestExceptionHandler implements ExceptionMapper<Exception>{
     @Override  
     public Response toResponse(Exception ex) {
     	ResultDto responseDto = new ResultDto();
-    	responseDto.setStatus(Constant.STATUS_FAILED);
+    	responseDto.setStatus(String.valueOf(Constant.STATUS_FAILED));
     	if (ex instanceof RuntimeException) {
         	responseDto.setMsgContent(Constant.MESSAGE_GLOBAL_ERROR);
     	} else {

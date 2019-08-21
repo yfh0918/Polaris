@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class SpringUtil implements ApplicationContextAware {
 	private static ApplicationContext context = null;
-//	private static Map<String, Map<String, ReferenceBean<?>>> referenceBeanMap = new ConcurrentHashMap<>();
 	public static final String SPRING_PATH = "META-INF/spring/applicationContext.xml";
 	
 	/*

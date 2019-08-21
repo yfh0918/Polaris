@@ -1,4 +1,4 @@
-package com.polaris.workflow.util;
+package com.polaris.core.dto;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;

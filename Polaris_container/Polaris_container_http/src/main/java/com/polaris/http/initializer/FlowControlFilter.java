@@ -16,6 +16,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson.JSON;
+import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.dto.ResultDto;
 
@@ -144,7 +145,7 @@ public class FlowControlFilter implements Filter {
 		httpServletResponse.setStatus(200);
 		ResultDto responseDto = new ResultDto();
 		responseDto.setMsgContent(FLOW_CONTROL_MESSAGE);
-		responseDto.setStatus(1);
+		responseDto.setStatus(String.valueOf(Constant.STATUS_FAILED));
 		httpServletResponse.getWriter().write(JSON.toJSONString(responseDto));
 		httpServletResponse.getWriter().flush();
 	}
