@@ -35,21 +35,47 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 		properties.setProperty("eureka.preferIpAddress", ConfClient.get("eureka.preferIpAddress", "true"));
 		properties.setProperty("eureka.preferSameZone", ConfClient.get("eureka.preferSameZone", "true"));
 		properties.setProperty("eureka.shouldUseDns", ConfClient.get("eureka.shouldUseDns", "false"));
-		properties.setProperty("eureka.serviceUrl.default", ConfClient.get("eureka.serviceUrl.default", ConfClient.getNamingRegistryAddress() +"/eureka/"));
+		String prefixNamingUrl = null;
+		if (ConfClient.getNamingRegistryAddress().startsWith("http://")) {
+			prefixNamingUrl = ConfClient.get("eureka.serviceUrl.default", ConfClient.getNamingRegistryAddress());
+		} else {
+			prefixNamingUrl = "http://"+ConfClient.getNamingRegistryAddress();
+		}
+		properties.setProperty("eureka.serviceUrl.default", prefixNamingUrl +"/eureka/");
 		properties.setProperty("eureka.decoderName", ConfClient.get("eureka.decoderName", "JacksonJson"));
+		
+		String prefixLocalUrl = "http://"+ip+port+ConfClient.get("server.contextPath", "");		
+		if (StringUtil.isNotEmpty(ConfClient.get("eureka.homePageUrl"))) {
+			properties.setProperty("eureka.homePageUrl",prefixLocalUrl + ConfClient.get("eureka.homePageUrl"));
+		}
+		if (StringUtil.isNotEmpty(ConfClient.get("eureka.healthCheckUrl"))) {
+			properties.setProperty("eureka.healthCheckUrl",prefixLocalUrl + ConfClient.get("eureka.healthCheckUrl"));
+		}
+		if (StringUtil.isNotEmpty(ConfClient.get("eureka.statusPageUrl"))) {
+			properties.setProperty("eureka.statusPageUrl",prefixLocalUrl + ConfClient.get("eureka.statusPageUrl"));
+		}
 					
         //应用配置#应用配置
-        properties.setProperty("server.port", ConfClient.get("server.port"));
+		String group = "default";
+        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
+        	group = ConfClient.getGroup();
+		}
+		properties.setProperty("eureka.appGroup", group);
         properties.setProperty("eureka.name", ConfClient.getAppName());
         properties.setProperty("eureka.vipAddress", ConfClient.getAppName());
         properties.setProperty("eureka.port", String.valueOf(port));
         properties.setProperty("eureka.ipAddr", ip);
-        String instanceId = properties.getProperty("eureka.ipAddr") + ":" + properties.getProperty("eureka.port") + "/" + properties.getProperty("eureka.name");
+        String instanceId = properties.getProperty("eureka.ipAddr") + ":" + properties.getProperty("eureka.port");
         properties.setProperty("eureka.instanceId", instanceId);
-
+		
         //载入配置
         ConfigurationManager.loadProperties(properties);
-        MyDataCenterInstanceConfig instanceConfig = new MyDataCenterInstanceConfig();
+        MyDataCenterInstanceConfig instanceConfig = null;
+        if (StringUtil.isNotEmpty(ConfClient.getNameSpace())) {
+            instanceConfig = new MyDataCenterInstanceConfig(ConfClient.getNameSpace());
+        } else {
+            instanceConfig = new MyDataCenterInstanceConfig();
+        }
         InstanceInfo instanceInfo = new EurekaConfigBasedInstanceInfoProvider(instanceConfig).get();
         applicationInfoManager = new ApplicationInfoManager(instanceConfig, instanceInfo);
         DefaultEurekaClientConfig clientConfig = new DefaultEurekaClientConfig();
@@ -67,24 +93,6 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 		}
 		
 		//负载均衡
-//		IRule rule = new AvailabilityFilteringRule();
-//		Provider<DiscoveryClient> eurekaProvider = new Provider<DiscoveryClient> (){
-//
-//		    @Override
-//		    public DiscoveryClient get() {
-//		        return eurekaClient;
-//		    }
-//
-//		};
-//        ServerList<DiscoveryEnabledServer> list = new DiscoveryEnabledNIWSServerList(key);
-//        ServerListFilter<DiscoveryEnabledServer> filter = new ZoneAffinityServerListFilter<DiscoveryEnabledServer>();
-//        ZoneAwareLoadBalancer<DiscoveryEnabledServer> lb = LoadBalancerBuilder.<DiscoveryEnabledServer>newBuilder()
-//                .withDynamicServerList(list)
-//                .withRule(rule)
-//                .withServerListFilter(filter)
-//                .buildDynamicServerListLoadBalancer();   
-//        DiscoveryEnabledServer server = (DiscoveryEnabledServer) lb.chooseServer();   
-//        InstanceInfo serverInfo = server.getInstanceInfo();
 		InstanceInfo serverInfo = eurekaClient.getNextServerFromEureka(key, false);
 		if (serverInfo != null) {
 		    String realServerName = serverInfo.getIPAddr() + ":" + serverInfo.getPort();
@@ -177,5 +185,43 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
             }
         }).start();
     }
+	
+	//内置robbin负载均衡
+	/*
+	private InstanceInfo getServerInfoFromRobbin(String key) {
+		
+		String strClazz = ConfClient.get("robbin.loadbalancer",AvailabilityFilteringRule.class.getName());
+		IRule rule = null;
+		try {
+			rule = (IRule)Class.forName(strClazz).newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error("create robbin rule error, please check robbin.loadbalancer:{} from properties",strClazz);
+			return null;
+		} 
+		
+		Provider<EurekaClient> eurekaProvider = new Provider<EurekaClient> (){
+		    @Override
+		    public EurekaClient get() {
+		        return eurekaClient;
+		    }
+
+		};
+		IClientConfig clientConfig = ClientConfigFactory.DEFAULT.newConfig();
+		clientConfig.set(Keys.DeploymentContextBasedVipAddresses, key);
+        ServerList<DiscoveryEnabledServer> list = new DiscoveryEnabledNIWSServerList(clientConfig,eurekaProvider);
+        ServerListFilter<DiscoveryEnabledServer> filter = new ZoneAffinityServerListFilter<DiscoveryEnabledServer>(clientConfig);
+        ZoneAwareLoadBalancer<DiscoveryEnabledServer> lb = LoadBalancerBuilder.<DiscoveryEnabledServer>newBuilder()
+              .withDynamicServerList(list)
+              .withRule(rule)
+              .withServerListFilter(filter)
+              .buildDynamicServerListLoadBalancer();   
+        DiscoveryEnabledServer server = (DiscoveryEnabledServer) lb.chooseServer();   
+        InstanceInfo serverInfo = server.getInstanceInfo();
+        return serverInfo;
+	}
+	*/
+	
+
 
 }

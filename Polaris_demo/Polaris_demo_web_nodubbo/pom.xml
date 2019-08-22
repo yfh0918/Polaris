@@ -20,6 +20,10 @@
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_container_resteasy</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_naming_eureka</artifactId>
+        </dependency>
 
 		<dependency>
 		    <groupId>io.swagger</groupId>
