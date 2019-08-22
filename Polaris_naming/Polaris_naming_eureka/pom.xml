@@ -12,6 +12,8 @@
 	<properties>
         <!-- nacos -->
         <eureka.version>1.9.12</eureka.version>
+        <ribbon.version>2.7.17</ribbon.version>
+        
     </properties>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/com.netflix.eureka/eureka-client -->
@@ -37,10 +39,33 @@
 		          <artifactId>jsr311-api</artifactId>
 		        </exclusion>
 		    </exclusions>
-
 		</dependency>
 
-
+        <dependency>
+            <groupId>com.netflix.ribbon</groupId>
+            <artifactId>ribbon-eureka</artifactId>
+            <version>${ribbon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.ribbon</groupId>
+            <artifactId>ribbon</artifactId>
+            <version>${ribbon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.ribbon</groupId>
+            <artifactId>ribbon-core</artifactId>
+            <version>${ribbon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.ribbon</groupId>
+            <artifactId>ribbon-httpclient</artifactId>
+            <version>${ribbon.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.ribbon</groupId>
+            <artifactId>ribbon-loadbalancer</artifactId>
+            <version>${ribbon.version}</version>
+        </dependency>
 	</dependencies>
 
 	<build>

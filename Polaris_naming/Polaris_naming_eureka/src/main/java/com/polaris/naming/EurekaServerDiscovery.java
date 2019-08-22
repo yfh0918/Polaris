@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import javax.inject.Provider;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,9 +13,22 @@ import com.netflix.appinfo.ApplicationInfoManager;
 import com.netflix.appinfo.InstanceInfo;
 import com.netflix.appinfo.MyDataCenterInstanceConfig;
 import com.netflix.appinfo.providers.EurekaConfigBasedInstanceInfoProvider;
+import com.netflix.client.config.ClientConfigFactory;
+import com.netflix.client.config.IClientConfig;
+import com.netflix.client.config.IClientConfigKey.Keys;
 import com.netflix.config.ConfigurationManager;
 import com.netflix.discovery.DefaultEurekaClientConfig;
 import com.netflix.discovery.DiscoveryClient;
+import com.netflix.discovery.EurekaClient;
+import com.netflix.loadbalancer.AvailabilityFilteringRule;
+import com.netflix.loadbalancer.IRule;
+import com.netflix.loadbalancer.LoadBalancerBuilder;
+import com.netflix.loadbalancer.ServerList;
+import com.netflix.loadbalancer.ServerListFilter;
+import com.netflix.loadbalancer.ZoneAffinityServerListFilter;
+import com.netflix.loadbalancer.ZoneAwareLoadBalancer;
+import com.netflix.niws.loadbalancer.DiscoveryEnabledNIWSServerList;
+import com.netflix.niws.loadbalancer.DiscoveryEnabledServer;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.ServerDiscoveryHandler;
 import com.polaris.core.util.StringUtil;
@@ -93,7 +108,10 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 		}
 		
 		//负载均衡
-		InstanceInfo serverInfo = eurekaClient.getNextServerFromEureka(key, false);
+		InstanceInfo serverInfo = getServerInfoFromRobbin(ConfClient.getAppName());
+		if (serverInfo == null) {
+			serverInfo = eurekaClient.getNextServerFromEureka(key, false);
+		}
 		if (serverInfo != null) {
 		    String realServerName = serverInfo.getIPAddr() + ":" + serverInfo.getPort();
 		    return realServerName;
@@ -175,10 +193,12 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
                             
                         }
                     } catch (Throwable e) {
+                    	continue;
                     }
                     try {
                         Thread.sleep(5000);
                     } catch (Exception e1) {
+                    	continue;
                     }
                     logger.info("Waiting 5s... verifying service registration with eureka ...");
                 }
@@ -187,40 +207,45 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
     }
 	
 	//内置robbin负载均衡
-	/*
+	
 	private InstanceInfo getServerInfoFromRobbin(String key) {
 		
-		String strClazz = ConfClient.get("robbin.loadbalancer",AvailabilityFilteringRule.class.getName());
-		IRule rule = null;
 		try {
-			rule = (IRule)Class.forName(strClazz).newInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("create robbin rule error, please check robbin.loadbalancer:{} from properties",strClazz);
-			return null;
-		} 
-		
-		Provider<EurekaClient> eurekaProvider = new Provider<EurekaClient> (){
-		    @Override
-		    public EurekaClient get() {
-		        return eurekaClient;
-		    }
+			String strClazz = ConfClient.get("robbin.loadbalancer",AvailabilityFilteringRule.class.getName());
+			IRule rule = null;
+			try {
+				rule = (IRule)Class.forName(strClazz).newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("create robbin rule error, please check robbin.loadbalancer:{} from properties",strClazz);
+				return null;
+			} 
+			
+			Provider<EurekaClient> eurekaProvider = new Provider<EurekaClient> (){
+			    @Override
+			    public EurekaClient get() {
+			        return eurekaClient;
+			    }
 
-		};
-		IClientConfig clientConfig = ClientConfigFactory.DEFAULT.newConfig();
-		clientConfig.set(Keys.DeploymentContextBasedVipAddresses, key);
-        ServerList<DiscoveryEnabledServer> list = new DiscoveryEnabledNIWSServerList(clientConfig,eurekaProvider);
-        ServerListFilter<DiscoveryEnabledServer> filter = new ZoneAffinityServerListFilter<DiscoveryEnabledServer>(clientConfig);
-        ZoneAwareLoadBalancer<DiscoveryEnabledServer> lb = LoadBalancerBuilder.<DiscoveryEnabledServer>newBuilder()
-              .withDynamicServerList(list)
-              .withRule(rule)
-              .withServerListFilter(filter)
-              .buildDynamicServerListLoadBalancer();   
-        DiscoveryEnabledServer server = (DiscoveryEnabledServer) lb.chooseServer();   
-        InstanceInfo serverInfo = server.getInstanceInfo();
-        return serverInfo;
+			};
+			IClientConfig clientConfig = ClientConfigFactory.DEFAULT.newConfig();
+			clientConfig.set(Keys.DeploymentContextBasedVipAddresses, key);
+	        ServerList<DiscoveryEnabledServer> list = new DiscoveryEnabledNIWSServerList(clientConfig,eurekaProvider);
+	        ServerListFilter<DiscoveryEnabledServer> filter = new ZoneAffinityServerListFilter<DiscoveryEnabledServer>(clientConfig);
+	        ZoneAwareLoadBalancer<DiscoveryEnabledServer> lb = LoadBalancerBuilder.<DiscoveryEnabledServer>newBuilder()
+	              .withDynamicServerList(list)
+	              .withRule(rule)
+	              .withServerListFilter(filter)
+	              .buildDynamicServerListLoadBalancer();   
+	        DiscoveryEnabledServer server = (DiscoveryEnabledServer) lb.chooseServer();   
+	        InstanceInfo serverInfo = server.getInstanceInfo();
+	        return serverInfo;
+		} catch (Exception ex) {
+			logger.error("robbin banlancer failed,caused by {}", ex.getMessage());
+		}
+		return null;
 	}
-	*/
+	
 	
 
 
