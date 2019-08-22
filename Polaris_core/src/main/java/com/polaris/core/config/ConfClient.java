@@ -233,5 +233,4 @@ public class ConfClient {
 		return globalGroupName == null ? "" :globalGroupName;
 	}
 	
-	
 }

@@ -207,7 +207,6 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
     }
 	
 	//内置robbin负载均衡
-	
 	private InstanceInfo getServerInfoFromRobbin(String key) {
 		
 		try {

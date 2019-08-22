@@ -324,3 +324,8 @@
 /Polaris_naming/Polaris_naming_eureka/.gitignore
 /Polaris_naming/Polaris_naming_eureka/.project
 /Polaris_naming/Polaris_naming_eureka/.settings
+/Polaris_naming/Polaris_naming_nacos/target/classes/META-INF/*.MF
+/Polaris_naming/Polaris_naming_nacos/target/classes/META-INF/maven/com.polaris/Polaris_naming_nacos/*.properties
+/Polaris_naming/Polaris_naming_nacos/target/classes/META-INF/maven/com.polaris/Polaris_naming_nacos/*.xml
+/Polaris_naming/Polaris_naming_nacos/target/classes/META-INF/services/*.ServerDiscoveryHandler
+/Polaris_naming/Polaris_naming_nacos/target/classes/com/polaris/naming/*.class

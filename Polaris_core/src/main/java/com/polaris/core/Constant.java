@@ -161,11 +161,4 @@ public class Constant {
 	public static final String UUID_WORKID = "uuid.wokerId";
 	public static final String UUID_DATACENTERID="uuid.datacenterId";
 	
-
-	//外部可以设置路径
-	public static void setConfigPath(String path, String fileName) {
-		DEFAULT_CONFIG_NAME = fileName;
-		CONFIG = path;
-		PROJECT_PROPERTY = CONFIG + File.separator + DEFAULT_CONFIG_NAME;
-	}
 }

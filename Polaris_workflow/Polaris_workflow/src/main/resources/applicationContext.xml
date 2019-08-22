@@ -22,12 +22,7 @@
 	
 	<!-- 注解扫描 -->
 	<context:component-scan base-package="com.polaris" />
-    
-    <!-- 读入配置文件 -->
-	<bean id="propertyConfigurer" class="com.polaris.core.config.ConfPropertyPlaceholderConfigurer">  
-        <property name="fileEncoding" value="utf-8" /> 
-    </bean>
-    
+        
 	<!--自定义数据源-->
 	<bean id="dataSource_db" class="com.mchange.v2.c3p0.ComboPooledDataSource"
 		destroy-method="close">
