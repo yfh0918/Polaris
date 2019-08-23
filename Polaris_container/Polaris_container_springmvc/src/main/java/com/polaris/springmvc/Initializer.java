@@ -25,7 +25,7 @@ public class Initializer extends  AbsHttpInitializer {
 	public void addServlet() {
 		ServletRegistration.Dynamic servletRegistration = servletContext.
 	    addServlet("dispatcher", org.springframework.web.servlet.DispatcherServlet.class);
-	    servletRegistration.setInitParameter("contextConfigLocation", "classpath*:/spring-context-mvc.xml");
+	    servletRegistration.setInitParameter("contextConfigLocation", "classpath:META-INF\\spring\\spring-context-mvc.xml");
 	    servletRegistration.setLoadOnStartup(1);
 	    servletRegistration.addMapping("/*");	
 	} 

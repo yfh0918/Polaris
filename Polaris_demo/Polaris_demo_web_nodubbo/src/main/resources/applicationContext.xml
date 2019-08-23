@@ -18,7 +18,7 @@
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 	
-    <!-- 引入swagger2 -->
+    <!-- 引入swagger2 以下仅支持resteasy, spring mvc不需要以下配置 -->
     <bean id="apiListingResourceJSON" class="io.swagger.jaxrs.listing.ApiListingResource"/>
     <bean id="apiDeclarationProvider" class="io.swagger.jaxrs.listing.SwaggerSerializers"/>
     <bean id="beanConfig" class="io.swagger.jaxrs.config.BeanConfig">

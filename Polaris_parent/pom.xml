@@ -1093,6 +1093,7 @@
                 	<exclude>**/config-*/</exclude>
                     <exclude>applicationContext.xml</exclude>
                     <exclude>applicationContext-*.xml</exclude>
+                    <exclude>spring-context-mvc.xml</exclude>
                     <exclude>assembly/</exclude>
                     <exclude>scripts/</exclude>
                 </excludes>
@@ -1107,6 +1108,7 @@
                 <includes>
                     <include>applicationContext.xml</include>
                     <include>applicationContext-*.xml</include>
+                    <include>spring-context-mvc.xml</include>
                 </includes>
             </resource>
         </resources>
