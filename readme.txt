@@ -40,7 +40,7 @@
   需要在自己的服务pom.xml中引入 Polaris_sentinel
   该接口主要用于提供api的servlet
 
-9,如何启动，打开eclipse后启动application.java文件
+9,如何启动，打开eclipse后启动Application.java文件（所有新建web工程都需要copy该文件到根目录下启动）
 
   9.1 pom.xml中提供 tomcat和jetty两种启动模式,并且提供resteasy和springmvc组合的方式
       具体参考pom.xml
