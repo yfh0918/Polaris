@@ -11,8 +11,8 @@ import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.RpcException;
 
+import com.polaris.core.GlobalContext;
 import com.polaris.core.util.StringUtil;
-import com.polaris.dubbo.Constant;
 
 @Activate(group = CommonConstants.PROVIDER)
 public class ProviderFilter implements Filter {
@@ -24,12 +24,12 @@ public class ProviderFilter implements Filter {
         	//传递参数
         	for (Map.Entry<String, String> entry : RpcContext.getContext().getAttachments().entrySet()) {
         		if (StringUtil.isNotEmpty(entry.getValue())) {
-        			Constant.setContext(entry.getKey(), entry.getValue());
+        			GlobalContext.setContext(entry.getKey(), entry.getValue());
         		}
             }
             return invoker.invoke(invocation);
         } finally {
-        	Constant.removeContext();
+        	GlobalContext.removeContext();
         }
     }
 }

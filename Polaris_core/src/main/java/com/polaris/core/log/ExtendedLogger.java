@@ -1,7 +1,6 @@
 package com.polaris.core.log;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -15,6 +14,7 @@ import org.slf4j.Marker;
 import org.slf4j.impl.StaticMarkerBinder;
 
 import com.polaris.core.Constant;
+import com.polaris.core.GlobalContext;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
@@ -24,8 +24,16 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	static {
 		//载入日志文件
 		try {
-			System.setProperty("log4j.configurationFile", PropertyUtils.getFilePath(Constant.CONFIG + File.separator + Constant.LOG4J));
-		} catch (IOException e) {
+			//日志文件
+			//从本地获取
+			String logFile = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.LOG_CONFIG, false);
+			if (StringUtil.isNotEmpty(logFile)) {
+				System.setProperty("log4j.configurationFile", PropertyUtils.getFilePath(Constant.CONFIG + File.separator + logFile));
+			} else {
+				System.setProperty("log4j.configurationFile", PropertyUtils.getFilePath(Constant.CONFIG + File.separator + Constant.LOG4J));
+			}
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -75,19 +83,19 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	}
 
 	public String getTraceId() {
-		return Constant.getContext(TRACE_ID);
+		return GlobalContext.getContext(TRACE_ID);
 	}
 
 	public void setTraceId(String traceId) {
-		Constant.setContext(TRACE_ID, traceId);
+		GlobalContext.setContext(TRACE_ID, traceId);
 	}
 	
 	public String getParentId() {
-		return Constant.getContext(PARENT_ID);
+		return GlobalContext.getContext(PARENT_ID);
 	}
 
 	public void setParentId(String parentId) {
-	        Constant.setContext(PARENT_ID, parentId);
+		GlobalContext.setContext(PARENT_ID, parentId);
 	}
 
 	public static String getModuleId() {

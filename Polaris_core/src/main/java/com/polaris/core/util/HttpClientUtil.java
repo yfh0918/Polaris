@@ -50,7 +50,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.core.Constant;
+import com.polaris.core.GlobalContext;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
  
@@ -422,8 +422,8 @@ public class HttpClientUtil {
     }
     
     private static void trace(HttpRequestBase request) {
-    	if (StringUtil.isNotEmpty(Constant.getContext(TRACE_ID))) {
-        	request.addHeader(TRACE_ID, Constant.getContext(TRACE_ID));
+    	if (StringUtil.isNotEmpty(GlobalContext.getContext(TRACE_ID))) {
+        	request.addHeader(TRACE_ID, GlobalContext.getContext(TRACE_ID));
     	}
     }
 }

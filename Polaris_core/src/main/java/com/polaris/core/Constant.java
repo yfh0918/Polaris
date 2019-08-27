@@ -75,31 +75,6 @@ public class Constant {
 	//请求内容
 	public static final String REQUEST_BODY = "requestBody";
 	
-	//构造函数
-	private static final InheritablePolarisThreadLocal<Map<String, String>> holder=new InheritablePolarisThreadLocal<Map<String,String>>(){
-		@Override protected Map<String,String>initialValue(){
-			return new HashMap<String,String>();
-		}
-	};
-
-	public static void setContext(String key, String value) {
-		Map<String, String> map = holder.get();
-		map.put(key, value);
-		holder.set(map);
-	}
-	public static String getContext(String key) {
-		return holder.get().get(key);
-	}
-	public static void removeContext(String key) {
-		holder.get().remove(key);
-	}
-	public static Map<String,String> getContext() {
-		return holder.get();
-	}
-	public static void removeContext() {
-		holder.remove();
-	}
-	
 	public static final String SLASH = "/";
 	public static final String DEFAULT_VALUE = "default";
 	public static final long WARCH_TIME = 30000L;
@@ -146,6 +121,7 @@ public class Constant {
 	
 	// 日志
 	public static final String LOG4J = "log4j.properties";
+	public static final String LOG_CONFIG="logging.config";
 	
 	//换行
 	public static final String LINE_SEP = System.getProperty("line.separator");

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
+import com.polaris.core.GlobalContext;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.log.ExtendedLogger;
 import com.polaris.core.util.UuidUtil;
@@ -32,16 +33,16 @@ public class RequestFirstFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
 		if (StringUtil.isNotEmpty(((HttpServletRequest)request).getHeader(ExtendedLogger.TRACE_ID))) {
-			Constant.setContext(ExtendedLogger.TRACE_ID, ((HttpServletRequest)request).getHeader(ExtendedLogger.TRACE_ID));
+			GlobalContext.setContext(ExtendedLogger.TRACE_ID, ((HttpServletRequest)request).getHeader(ExtendedLogger.TRACE_ID));
 		} else {
-			Constant.setContext(ExtendedLogger.TRACE_ID, UuidUtil.generateUuid());
+			GlobalContext.setContext(ExtendedLogger.TRACE_ID, UuidUtil.generateUuid());
 		}
 		try {
 			request.setCharacterEncoding(ConfClient.get("encoding",Constant.UTF_CODE));
 	        response.setCharacterEncoding(ConfClient.get("encoding",Constant.UTF_CODE));
 	        chain.doFilter(request, response);
 		} finally {
-	        Constant.removeContext();
+			GlobalContext.removeContext();
 		}
     }
 
