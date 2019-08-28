@@ -24,7 +24,5 @@
 		<artifactId>Polaris_core</artifactId>
 	</dependency>
   
-	
-	
   </dependencies>
 </project>

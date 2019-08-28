@@ -1,11 +1,5 @@
 package com.polaris.core;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
-import com.polaris.core.thread.InheritablePolarisThreadLocal;
-
 public class Constant {
 	
 	/**
@@ -84,7 +78,6 @@ public class Constant {
      */
 	public static String CONFIG = "config";
 	public static String DEFAULT_CONFIG_NAME = "application.properties";
-	public static String PROJECT_PROPERTY = CONFIG + File.separator + DEFAULT_CONFIG_NAME;
 	
 	public static String PROJECT_EXTENSION_PROPERTIES = "project.extension.properties";
 	public static String PROJECT_GLOBAL_PROPERTIES = "project.global.properties";
@@ -94,6 +87,7 @@ public class Constant {
 
 	// 应用名称
 	public static String PROJECT_NAME = "project.name";
+	public static String SPRING_BOOT_NAME = "spring.application.name";//融合springboot
 	
 	// server端口号和注册中心
 	public static String SERVER_PORT_NAME = "server.port";

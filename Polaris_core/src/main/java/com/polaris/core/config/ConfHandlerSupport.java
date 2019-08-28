@@ -40,7 +40,7 @@ public class ConfHandlerSupport {
 	public static String[] getExtensionProperties() {
 		try {
 			//从本地获取
-			String files = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_EXTENSION_PROPERTIES, false);
+			String files = PropertyUtils.readData(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME), Constant.PROJECT_EXTENSION_PROPERTIES, false);
 			return files.split(",");
 		} catch (Exception ex) {
 			//nothing
@@ -58,7 +58,7 @@ public class ConfHandlerSupport {
 	public static String[] getGlobalProperties() {
 		try {
 			//从本地获取
-			String files = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.PROJECT_GLOBAL_PROPERTIES, false);
+			String files = PropertyUtils.readData(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME), Constant.PROJECT_GLOBAL_PROPERTIES, false);
 			return files.split(",");
 		} catch (Exception ex) {
 			//nothing
@@ -113,7 +113,7 @@ public class ConfHandlerSupport {
 		// propertyies
 		if (fileName.toLowerCase().endsWith(".properties")) {
 			StringBuffer buffer = new StringBuffer();
-			try (InputStream in = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + fileName)) {
+			try (InputStream in = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(ConfClient.getConfigFileName(fileName))) {
 				if (in == null) {
 					return null;
 				}
@@ -131,7 +131,7 @@ public class ConfHandlerSupport {
 		}
 		
 		// 非propertyies
-		try (InputStream inputStream = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + fileName)) {
+		try (InputStream inputStream = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(ConfClient.getConfigFileName(fileName))) {
 			if (inputStream == null) {
 				return null;
 			}
@@ -192,7 +192,7 @@ public class ConfHandlerSupport {
 			}
 		} else {
 			try {
-				File file = new File(PropertyUtils.getFilePath(Constant.CONFIG + File.separator + fileName));
+				File file = new File(PropertyUtils.getFilePath(ConfClient.getConfigFileName(fileName)));
 	    		lastModifiedFileMap.put(fileName, file);
 				lastModifiedTimeMap.put(fileName, file.lastModified());
 			} catch (IOException e) {
@@ -202,40 +202,5 @@ public class ConfHandlerSupport {
 		return isModified;
 	}
 	
-	//获取分组名称
-	public static String getGroup(boolean isGlobal) {
-		if (isGlobal) {
-			return getGlobalConfigGroup();
-		}
-		return getConfigGroup();
-	}
-	// 获取配置中心的分组
-	public static String getConfigGroup() {
-		StringBuilder group = new StringBuilder();
-		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
-			group.append(ConfClient.getEnv());
-			group.append(":");
-		}
-		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
-			group.append(ConfClient.getCluster());
-			group.append(":");
-		}
-		group.append(ConfClient.getAppName());
-		return group.toString();
-	}
-	
-	// 获取全局配置中心的分组
-	public static String getGlobalConfigGroup() {
-		StringBuilder group = new StringBuilder();
-		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
-			group.append(ConfClient.getEnv());
-			group.append(":");
-		}
-		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
-			group.append(ConfClient.getCluster());
-			group.append(":");
-		}
-		group.append(ConfClient.getGlobalGroup());
-		return group.toString();
-	}
+
 }

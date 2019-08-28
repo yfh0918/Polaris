@@ -1,6 +1,5 @@
 package com.polaris.core.log;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -26,11 +25,11 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 		try {
 			//日志文件
 			//从本地获取
-			String logFile = PropertyUtils.readData(Constant.PROJECT_PROPERTY, Constant.LOG_CONFIG, false);
+			String logFile = PropertyUtils.readData(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME), Constant.LOG_CONFIG, false);
 			if (StringUtil.isNotEmpty(logFile)) {
-				System.setProperty("log4j.configurationFile", PropertyUtils.getFilePath(Constant.CONFIG + File.separator + logFile));
+				System.setProperty("log4j.configurationFile", PropertyUtils.getFilePath(ConfClient.getConfigFileName(logFile)));
 			} else {
-				System.setProperty("log4j.configurationFile", PropertyUtils.getFilePath(Constant.CONFIG + File.separator + Constant.LOG4J));
+				System.setProperty("log4j.configurationFile", PropertyUtils.getFilePath(ConfClient.getConfigFileName(Constant.LOG4J)));
 			}
 
 		} catch (Exception e) {

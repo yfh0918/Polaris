@@ -1,5 +1,7 @@
 package com.polaris.core.config;
 
+import java.io.File;
+
 import com.polaris.core.Constant;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
@@ -21,8 +23,11 @@ public class ConfClient {
 	
 	
 	//初始化操作
-	public static void init() {
+	public static void init(String conigRootPath) {
 		try {
+			
+			//设置配置文件root路径
+			Constant.CONFIG = conigRootPath;
 			
 	    	// 启动字符集
 	    	System.setProperty("file.encoding", "UTF-8");
@@ -170,6 +175,9 @@ public class ConfClient {
 	//在设置应用名称的时候启动各项参数载入
 	public static String getAppName() {
 		String appName = ConfigHandlerProvider.getValue(Constant.PROJECT_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		if (StringUtil.isEmpty(appName)) {
+			appName = ConfigHandlerProvider.getValue(Constant.SPRING_BOOT_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		}
 		return appName == null ? "" :appName;
 	}
 
@@ -233,4 +241,48 @@ public class ConfClient {
 		return globalGroupName == null ? "" :globalGroupName;
 	}
 	
+	
+	//获取分组名称
+	public static String getConfigGroup(boolean isGlobal) {
+		if (isGlobal) {
+			return getGlobalConfigGroup();
+		}
+		return getConfigGroup();
+	}
+	// 获取配置中心的分组
+	public static String getConfigGroup() {
+		StringBuilder group = new StringBuilder();
+		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
+			group.append(ConfClient.getEnv());
+			group.append(":");
+		}
+		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
+			group.append(ConfClient.getCluster());
+			group.append(":");
+		}
+		group.append(ConfClient.getAppName());
+		return group.toString();
+	}
+	
+	// 获取全局配置中心的分组
+	public static String getGlobalConfigGroup() {
+		StringBuilder group = new StringBuilder();
+		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
+			group.append(ConfClient.getEnv());
+			group.append(":");
+		}
+		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
+			group.append(ConfClient.getCluster());
+			group.append(":");
+		}
+		group.append(ConfClient.getGlobalGroup());
+		return group.toString();
+	}
+	
+	public static String getConfigFileName(String fileName) {
+		if (StringUtil.isNotEmpty(Constant.CONFIG)) {
+			return Constant.CONFIG + File.separator + fileName;
+		}
+		return fileName;
+	}
 }

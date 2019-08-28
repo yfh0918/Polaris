@@ -79,7 +79,7 @@ public  class ConfigHandlerProvider {
 		//扩展点
     	if (!Constant.DEFAULT_CONFIG_NAME.equals(fileName)) {
     		for (ConfigHandler handler : serviceLoader) {
-    			String config = handler.getConfig(fileName,ConfHandlerSupport.getGroup(isGlobal));
+    			String config = handler.getConfig(fileName,ConfClient.getConfigGroup(isGlobal));
     			if (StringUtil.isNotEmpty(config)) {
     				return config;
     			}
@@ -95,7 +95,7 @@ public  class ConfigHandlerProvider {
 		if (!Constant.DEFAULT_CONFIG_NAME.equals(fileName)) {
 			boolean isExtends = false;
 			for (ConfigHandler handler : serviceLoader) {
-				handler.addListener(fileName, ConfHandlerSupport.getGroup(isGlobal), listener);
+				handler.addListener(fileName, ConfClient.getConfigGroup(isGlobal), listener);
 				isExtends = true;
 			}
 
