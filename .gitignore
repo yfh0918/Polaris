@@ -329,3 +329,7 @@
 /Polaris_naming/Polaris_naming_nacos/target/classes/META-INF/maven/com.polaris/Polaris_naming_nacos/*.xml
 /Polaris_naming/Polaris_naming_nacos/target/classes/META-INF/services/*.ServerDiscoveryHandler
 /Polaris_naming/Polaris_naming_nacos/target/classes/com/polaris/naming/*.class
+/Polaris_logger/.gitignore
+/Polaris_logger/.project
+/Polaris_logger/.settings
+/Polaris_logger/.classpath

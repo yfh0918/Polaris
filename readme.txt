@@ -78,3 +78,25 @@
    可以采用注解com.polaris.cache.Cacheable
    目前支持的方法参考com.polaris.cache.Cache接口
    缓存 序列化可以自己配置，默认KryoSerializer
+   
+13，和Springboot的融合
+    单独映入注册中心
+	<dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_naming_nacos</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+		
+		单独映入配置中心
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_conf_nacos</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+         </dependency>
+		
+		在代码启动前加入如下
+		//配置
+    	ConfClient.init(null);
+    	
+    	//注册中心
+    	NameingClient.register();

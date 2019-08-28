@@ -14,6 +14,7 @@
         <module>Polaris_dubbo</module>
         <module>Polaris_conf</module>
         <module>Polaris_naming</module>
+        <module>Polaris_logger</module>
         <module>Polaris_cache</module>
         <module>Polaris_sentinel</module>
         <module>Polaris_distributed_lock</module>

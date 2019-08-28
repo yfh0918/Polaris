@@ -26,6 +26,10 @@
 		<groupId>com.polaris</groupId>
 		<artifactId>Polaris_core</artifactId>
 	</dependency>
+	<dependency>
+		<groupId>com.polaris</groupId>
+		<artifactId>Polaris_logger</artifactId>
+	</dependency>
   
 	<!-- servlet and resteasy -->
 	<dependency>
