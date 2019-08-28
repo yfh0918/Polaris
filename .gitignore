@@ -333,3 +333,7 @@
 /Polaris_logger/.project
 /Polaris_logger/.settings
 /Polaris_logger/.classpath
+/Polaris_demo/springboot-sample/target
+/Polaris_demo/springboot-sample/.classpath
+/Polaris_demo/springboot-sample/.project
+/Polaris_demo/springboot-sample/.settings
