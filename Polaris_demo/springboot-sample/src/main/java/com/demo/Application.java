@@ -18,7 +18,7 @@ public class Application {
     public static void main(String[] args) {
     	
     	//配置
-    	ConfClient.init(null);
+    	ConfClient.init();
     	
     	//注册中心
     	NameingClient.register();

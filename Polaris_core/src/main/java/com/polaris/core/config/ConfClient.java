@@ -21,8 +21,10 @@ import com.polaris.core.util.StringUtil;
 */
 public class ConfClient {
 	
-	
 	//初始化操作
+	public static void init() {
+		init("");
+	}
 	public static void init(String conigRootPath) {
 		try {
 			

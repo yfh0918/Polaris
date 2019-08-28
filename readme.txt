@@ -96,7 +96,7 @@
 		
 		在代码启动前加入如下
 		//配置
-    	ConfClient.init(null);
+    	ConfClient.init();
     	
     	//注册中心
     	NameingClient.register();
