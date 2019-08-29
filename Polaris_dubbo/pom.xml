@@ -12,6 +12,7 @@
 
     <properties>
         <dubbo-version>2.7.3</dubbo-version>
+        <sentinel-version>1.6.3</sentinel-version>
     </properties>
     
 	<dependencies>
@@ -46,6 +47,11 @@
 	        <artifactId>dubbo-registry-nacos</artifactId>
 	        <version>${dubbo-version}</version>
 	    </dependency>	  
+		<dependency>
+		    <groupId>com.alibaba.csp</groupId>
+		    <artifactId>sentinel-core</artifactId>
+		    <version>${sentinel-version}</version>
+		</dependency>
         
         <dependency>
 			<groupId>io.netty</groupId>
