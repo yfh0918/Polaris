@@ -302,13 +302,9 @@ public class EncryptUtil {
 	 * @return
 	 */
 	public static void main(String[] args) throws Exception { 
-		String value = System.getProperty("value");
-		if (StringUtil.isEmpty(value)) {
-			System.out.println("请输入需要加密的字符串 -Dvalue=xxxxxxx");
-			return;
-		}
+		
 		EncryptUtil en = EncryptUtil.getInstance();
-		String result = en.encrypt(EncryptUtil.START_WITH, value);
+		String result = en.encrypt(EncryptUtil.START_WITH, "testaddas");
 		System.out.println(result);
     }
 }

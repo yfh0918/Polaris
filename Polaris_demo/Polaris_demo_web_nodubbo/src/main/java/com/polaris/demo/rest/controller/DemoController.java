@@ -10,6 +10,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.swagger.annotations.Api;
@@ -29,6 +30,8 @@ import io.swagger.annotations.ApiResponses;
 public class DemoController {
 
 
+	@Value("${test.password}")
+	private String ssss;
     /**
      * 用户登入
      *
@@ -40,7 +43,7 @@ public class DemoController {
     @Path("/test")
     @ApiOperation(value = "获取一个订单", notes = "返回一个订单", response = String.class)
     public String demotest(@Context HttpServletRequest request) {
-
+    	System.out.println("ssss"+ssss);
         System.out.println("hello1234");
 
         
@@ -53,6 +56,7 @@ public class DemoController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of param value", response = DemoController.class) })
     public Response printMessage(@PathParam("param") String msg) {
+    	System.out.println("ssss"+ssss);
         String result = "Hello " + msg + "!";
         return Response.status(200).entity(result).build();
     }
