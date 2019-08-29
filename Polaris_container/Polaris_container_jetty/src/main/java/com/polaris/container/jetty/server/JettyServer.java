@@ -14,6 +14,7 @@ import com.polaris.container.jetty.listener.ServerHandlerLifeCycle;
 import com.polaris.container.jetty.listener.ServerHandlerListerner;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.PropertyUtils;
+import com.polaris.http.supports.ServerListener;
 
 /**
  * Class Name : JettyServer
@@ -26,7 +27,6 @@ public class JettyServer {
     private static final Logger logger = LoggerFactory.getLogger(JettyServer.class);
     private static final String MAX_THREADS = "300";//和tomcat保持一致
     private static final  int MAX_SAVE_POST_SIZE = 4 * 1024;
-
     /**
      * 服务器
      */
@@ -41,7 +41,7 @@ public class JettyServer {
     /**
      * 服务器初始化
      */
-    private void init() {
+    private void init(ServerListener listener) {
         // 构造服务器
         try {
 
@@ -67,7 +67,7 @@ public class JettyServer {
             //context加入server
             this.server.setHandler(context); // 将Application注册到服务器
             context.addBean(new ServerHandlerLifeCycle(context.getServletContext()),false);
-            this.server.addLifeCycleListener(ServerHandlerListerner.getInstance());//监听handler
+            this.server.addLifeCycleListener(ServerHandlerListerner.getInstance(listener));//监听handler
         } catch (IOException e) {
             logger.error(e.getMessage());
         } 
@@ -98,7 +98,7 @@ public class JettyServer {
      *
      * @throws Exception
      */
-    public void start() {
+    public void start(ServerListener listener) {
 
         try {
 
@@ -110,7 +110,7 @@ public class JettyServer {
 
             //没有初始化过，需要重新初始化
             if (this.server == null) {
-                init();
+                init(listener);
             }
 
             //启动服务

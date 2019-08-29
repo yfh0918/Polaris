@@ -40,11 +40,17 @@ public class MainSupport {
     	
     	//各类参数载入
     	ConfClient.init(Constant.CONFIG);
-    	
-		//注册服务
-    	NameingClient.register();
 		
     	//启动
-    	ContainerServerFactory.startServer();
+    	ContainerServerFactory.startServer(new ServerListener() {
+
+			@Override
+			public void started() {
+				//注册服务
+		    	NameingClient.register();
+				
+			}
+    		
+    	});
     }
 }

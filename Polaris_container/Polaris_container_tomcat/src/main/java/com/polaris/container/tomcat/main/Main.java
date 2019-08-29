@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.container.tomcat.server.TomcatServer;
 import com.polaris.http.factory.ContainerDiscoveryHandler;
+import com.polaris.http.supports.ServerListener;
 
 /**
  * 入口启动类
@@ -18,14 +19,14 @@ public class Main implements ContainerDiscoveryHandler {
      *
      */
 	@Override
-	public void start() {
+	public void start(ServerListener listener) {
 		//启动tomcat
     	new Thread(new Runnable() {
 			@Override
 			public void run() {
 				logger.info("tomcat启动！");
 				TomcatServer server = TomcatServer.getInstance();
-				server.start();
+				server.start(listener);
 			}
 		}).start();
 	}

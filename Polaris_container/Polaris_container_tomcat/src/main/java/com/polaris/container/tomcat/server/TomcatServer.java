@@ -13,8 +13,10 @@ import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.container.tomcat.listener.ServerHandlerListerner;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.PropertyUtils;
+import com.polaris.http.supports.ServerListener;
 
 /**
  * Class Name : TomcatServer
@@ -44,7 +46,7 @@ public class TomcatServer {
     /**
      * 服务器初始化
      */
-    private void init() {
+    private void init(ServerListener serverlistener) {
 
         // 构造服务器
         try {
@@ -91,6 +93,8 @@ public class TomcatServer {
             standardContext.setDocBase(docBase);//文件目录位置
             standardContext.addLifecycleListener(new Tomcat.DefaultWebXmlListener());
             standardContext.addLifecycleListener(new ContextConfig());
+            standardContext.addLifecycleListener(new ServerHandlerListerner(serverlistener));
+            
 
             //关闭jarScan
             StandardJarScanner jarScanner = new StandardJarScanner();
@@ -134,7 +138,7 @@ public class TomcatServer {
      *
      * @throws Exception
      */
-    public void start() {
+    public void start(ServerListener listener) {
 
         try {
 
@@ -146,7 +150,7 @@ public class TomcatServer {
 
             //没有初始化过，需要重新初始化
             if (this.tomcat == null) {
-                init();
+                init(listener);
             }
 
             //启动服务

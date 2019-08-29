@@ -5,6 +5,8 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.http.supports.ServerListener;
+
 /**
  * Class Name : ServerHandler
  * Description : 服务器Handler
@@ -20,19 +22,21 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 服务器监听器集合
 	 */
 	private static ServerHandlerListerner instance = null;
+	private ServerListener listener;
 
-	private ServerHandlerListerner() {
+	private ServerHandlerListerner(ServerListener listener) {
+		this.listener = listener;
 	}
 
 	/**
 	 * 获取单实例公共静态方法
 	 * @return 单实例
 	 */
-	public static ServerHandlerListerner getInstance() {
+	public static ServerHandlerListerner getInstance(ServerListener listener) {
 		if (instance == null) {
 			synchronized(ServerHandlerListerner.class) {
 				if (instance == null) {
-					instance = new ServerHandlerListerner();
+					instance = new ServerHandlerListerner(listener);
 				}
 			}
 		}
@@ -52,6 +56,7 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 */
     public void lifeCycleStarted(LifeCycle event) {
     	logger.info("JettyServer启动成功！");
+    	listener.started();
     }
     
 	/**

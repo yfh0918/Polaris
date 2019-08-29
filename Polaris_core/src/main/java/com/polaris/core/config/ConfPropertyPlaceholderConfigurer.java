@@ -61,7 +61,7 @@ public class ConfPropertyPlaceholderConfigurer extends PropertyPlaceholderConfig
 		super.doProcessProperties(beanFactoryToProcess, valueResolver);
 	}
 	
-	private String parseStringValue(
+	public String parseStringValue(
 			String value, Set<String> visitedPlaceholders) {
 
 		StringBuilder result = new StringBuilder(value);
