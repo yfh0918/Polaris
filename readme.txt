@@ -96,7 +96,19 @@
 		
 		在代码启动前加入如下
 		//配置
+    	//配置
     	ConfClient.init();
     	
-    	//注册中心
-    	NameingClient.register();
+		//服务启动
+        SpringApplication springApplication = new SpringApplication(Application.class);
+        springApplication.addListeners(new ApplicationListener<ContextRefreshedEvent>() {
+
+			@Override
+			public void onApplicationEvent(ContextRefreshedEvent event) {
+				
+				//注册中心
+		    	NameingClient.register();
+			}
+        	
+        });
+        springApplication.run(args);
