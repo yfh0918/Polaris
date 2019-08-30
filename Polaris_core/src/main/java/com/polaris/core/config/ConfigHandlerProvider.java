@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
+import com.polaris.core.config.value.AutoUpdateConfigChangeListener;
+import com.polaris.core.util.SpringUtil;
 
 public  class ConfigHandlerProvider {
 
@@ -48,6 +50,14 @@ public  class ConfigHandlerProvider {
 					} else {
 						cacheFileMap.put(fileName, cache);
 					}
+					SpringUtil.getBean(AutoUpdateConfigChangeListener.class).onChange(cache);//监听配置
+					
+				} else {
+					if (isGlobal) {
+			    		gobalCacheFileMap.remove(fileName);
+					} else {
+						cacheFileMap.remove(fileName);
+					}
 				}
 			}
 			});
@@ -69,6 +79,12 @@ public  class ConfigHandlerProvider {
 	    		gobalCacheFileMap.put(fileName, cache);
 			} else {
 				cacheFileMap.put(fileName, cache);
+			}
+		} else {
+			if (isGlobal) {
+	    		gobalCacheFileMap.remove(fileName);
+			} else {
+				cacheFileMap.remove(fileName);
 			}
 		}
 
