@@ -1,8 +1,10 @@
-package com.polaris.core.config.value;
+package com.polaris.core.config;
 
 import java.util.Set;
 import java.util.Stack;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanExpressionContext;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -11,6 +13,8 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.polaris.core.util.EncryptUtil;
+import com.polaris.core.util.StringUtil;
 
 /**
  * Placeholder helper functions.
@@ -23,6 +27,8 @@ public class PlaceholderHelper {
   private static final String SIMPLE_PLACEHOLDER_PREFIX = "{";
   private static final String EXPRESSION_PREFIX = "#{";
   private static final String EXPRESSION_SUFFIX = "}";
+  private static boolean ignoreUnresolvablePlaceholders = true;
+  private static final Logger logger = LoggerFactory.getLogger(PlaceholderHelper.class);
 
   /**
    * Resolve placeholder property values, e.g.
@@ -161,4 +167,92 @@ public class PlaceholderHelper {
     }
     return -1;
   }
+  
+	public static String parseStringValue(
+			String value, Set<String> visitedPlaceholders) {
+
+		StringBuilder result = new StringBuilder(value);
+
+		int startIndex = value.indexOf(PLACEHOLDER_PREFIX);
+		while (startIndex != -1) {
+			int endIndex = findPlaceholderEndIndex(result, startIndex);
+			if (endIndex != -1) {
+				String placeholder = result.substring(startIndex + PLACEHOLDER_PREFIX.length(), endIndex);
+				String originalPlaceholder = placeholder;
+				if (!visitedPlaceholders.add(originalPlaceholder)) {
+					throw new IllegalArgumentException(
+							"Circular placeholder reference '" + originalPlaceholder + "' in property definitions");
+				}
+				// Recursive invocation, parsing placeholders contained in the placeholder key.
+				placeholder = parseStringValue(placeholder, visitedPlaceholders);
+				// Now obtain the value for the fully resolved key...
+				String propVal = ConfClient.get(placeholder);
+				if (StringUtil.isEmpty(propVal)) {
+					propVal = resolveSystemProperty(placeholder);
+				}
+				if (StringUtil.isEmpty(propVal) && VALUE_SEPARATOR != null) {
+					int separatorIndex = placeholder.indexOf(VALUE_SEPARATOR);
+					if (separatorIndex != -1) {
+						String actualPlaceholder = placeholder.substring(0, separatorIndex);
+						String defaultValue = placeholder.substring(separatorIndex + VALUE_SEPARATOR.length());
+						propVal = ConfClient.get(actualPlaceholder);
+						if (StringUtil.isEmpty(propVal)) {
+							propVal = resolveSystemProperty(placeholder);
+						}
+						if (StringUtil.isEmpty(propVal)) {
+							propVal = defaultValue;
+						}
+					}
+				}
+				if (StringUtil.isNotEmpty(propVal)) {
+					//解密操作
+					try {
+						EncryptUtil encrypt = EncryptUtil.getInstance();
+						propVal = encrypt.decrypt(EncryptUtil.START_WITH, propVal);
+					} catch (Exception ex) {
+						//nothing
+					}
+					
+					// Recursive invocation, parsing placeholders contained in the
+					// previously resolved placeholder value.
+					propVal = parseStringValue(propVal,  visitedPlaceholders);
+					result.replace(startIndex, endIndex + PLACEHOLDER_SUFFIX.length(), propVal);
+					if (logger.isTraceEnabled()) {
+						logger.trace("Resolved placeholder '" + placeholder + "'");
+					}
+					startIndex = result.indexOf(PLACEHOLDER_PREFIX, startIndex + propVal.length());
+				}
+				else if (ignoreUnresolvablePlaceholders) {
+					// Proceed with unprocessed value.
+					startIndex = result.indexOf(PLACEHOLDER_PREFIX, endIndex + PLACEHOLDER_SUFFIX.length());
+				}
+				else {
+					throw new IllegalArgumentException("Could not resolve placeholder '" +
+							placeholder + "'" + " in value \"" + value + "\"");
+				}
+				visitedPlaceholders.remove(originalPlaceholder);
+			}
+			else {
+				startIndex = -1;
+			}
+		}
+
+		return result.toString();
+	}
+	
+	private static String resolveSystemProperty(String key) {
+		try {
+			String value = System.getProperty(key);
+			if (value == null) {
+				value = System.getenv(key);
+			}
+			return value;
+		}
+		catch (Throwable ex) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Could not access system property '" + key + "': " + ex);
+			}
+			return null;
+		}
+	}
 }

@@ -12,7 +12,7 @@
   需要在自己的服务pom.xml中引入 Polaris_naming_nacos
   
 
-5:配置中心支持两种模式（zookeeper,nacos,apollo的ConfigFile），需要在自己的配置文件中设置配置中心
+5:配置中心支持两种模式（zookeeper,nacos,apollo的ConfigFile以及本地文件file），需要在自己的配置文件中设置配置中心
   #config.registry.address=127.0.0.1:8848
   
   需要在自己的服务pom.xml中引入 Polaris_conf_nacos
@@ -83,21 +83,22 @@
    缓存 序列化可以自己配置，默认KryoSerializer
    
 13，和Springboot的融合，单独映入注册中心
-	    <dependency>
+	<dependency>
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_naming_nacos</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 		
-		单独映入配置中心
+	单独映入配置中心
         <dependency>
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_conf_nacos</artifactId>
             <version>1.0.0-SNAPSHOT</version>
          </dependency>
 		
-		在代码启动前加入如下
-		//配置
+	在代码启动前加入如下
+	@SpringBootApplication
+	@ComponentScan(basePackages = {"com.polaris","自己的package",})
     	//配置
     	ConfClient.init();
     	

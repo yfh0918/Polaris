@@ -1,33 +1,15 @@
 package com.polaris.core.config;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.util.PropertyUtils;
 
-import cn.hutool.core.thread.NamedThreadFactory;
-
 public class ConfHandlerSupport {
 
-	//定时器-守护线程
-	private static ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
-            new NamedThreadFactory("polaris-localfile-auto-refresh-task", true));
-	
-	//记录文件的最后的更新日期
-	private static volatile Map<String, File> lastModifiedFileMap = new HashMap<>();
-	private static volatile Map<String, Long> lastModifiedTimeMap = new HashMap<>();
+	private static final Logger logger = LoggerFactory.getLogger(ConfHandlerSupport.class);
 
 
 	/**
@@ -41,9 +23,12 @@ public class ConfHandlerSupport {
 		try {
 			//从本地获取
 			String files = PropertyUtils.readData(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME), Constant.PROJECT_EXTENSION_PROPERTIES, false);
+			if (StringUtil.isEmpty(files)) {
+				return null;
+			}
 			return files.split(",");
 		} catch (Exception ex) {
-			//nothing
+			logger.error("getExtensionProperties is error");
 		}
 		return null;
 	}
@@ -59,9 +44,12 @@ public class ConfHandlerSupport {
 		try {
 			//从本地获取
 			String files = PropertyUtils.readData(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME), Constant.PROJECT_GLOBAL_PROPERTIES, false);
+			if (StringUtil.isEmpty(files)) {
+				return null;
+			}
 			return files.split(",");
 		} catch (Exception ex) {
-			//nothing
+			logger.error("getGlobalProperties is error");
 		}
 		return null;
 	}
@@ -97,110 +85,7 @@ public class ConfHandlerSupport {
 		return null;
 	}
 	
-	/**
-	* 获取整个文件的内容
-	* @param 
-	* @return 
-	* @Exception 
-	* @since 
-	*/
-	@SuppressWarnings("rawtypes")
-	public static String getLocalFileContent(String fileName) {
-		
-		//更新文件
-		isModifiedByFile(fileName);
 
-		// propertyies
-		if (fileName.toLowerCase().endsWith(".properties")) {
-			StringBuffer buffer = new StringBuffer();
-			try (InputStream in = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(ConfClient.getConfigFileName(fileName))) {
-				if (in == null) {
-					return null;
-				}
-	            Properties p = new Properties();
-	            p.load(in);
-	            for (Map.Entry entry : p.entrySet()) {
-	                String key = (String) entry.getKey();
-	                buffer.append(key + "=" + entry.getValue());
-	                buffer.append(Constant.LINE_SEP);
-	            }
-	        } catch (IOException e) {
-	        	e.printStackTrace();
-	        }
-			return buffer.toString();
-		}
-		
-		// 非propertyies
-		try (InputStream inputStream = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(ConfClient.getConfigFileName(fileName))) {
-			if (inputStream == null) {
-				return null;
-			}
-			InputStreamReader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
-			BufferedReader bf= new BufferedReader(reader);
-			StringBuffer buffer = new StringBuffer();
-			String line = bf.readLine();
-	        while (line != null) {
-	        	buffer.append(line);
-	            line = bf.readLine();
-	        	buffer.append(Constant.LINE_SEP);
-	        }
-	        String content = buffer.toString();
-	        if (StringUtil.isNotEmpty(content)) {
-	        	return content;
-	        }
-        } catch (IOException e) {
-        	e.printStackTrace();
-        }
-		
-		return null;
-	}
-	
-	/**
-	* 启动监听线程
-	* @param 
-	* @return 
-	* @Exception 
-	* @since 
-	*/
-	public static void listionLocalFile(String fileName, ConfListener listener, long recommendRefresh, TimeUnit timeUnit) {
-		
-	        service.scheduleAtFixedRate(new Runnable() {
-	            @Override
-	            public void run() {
-	                try {
-	            		
-	            		//是否修改过
-	            		if (isModifiedByFile(fileName)) {
-	            			listener.receive(getLocalFileContent(fileName));
-	            		}
-	                } catch (Throwable e) {
-	                	e.printStackTrace();
-	                }
-	            }
-	        }, recommendRefresh, recommendRefresh, timeUnit);
-	}
-	
-	//文件是否发生修改
-	private static boolean isModifiedByFile(String fileName) {
-		boolean isModified = true;
-		if (lastModifiedFileMap.containsKey(fileName)) {
-			File file = lastModifiedFileMap.get(fileName);
-			if (file.lastModified() == lastModifiedTimeMap.get(fileName).longValue()) {
-				isModified = false;
-			} else {
-				lastModifiedTimeMap.put(fileName, file.lastModified());
-			}
-		} else {
-			try {
-				File file = new File(PropertyUtils.getFilePath(ConfClient.getConfigFileName(fileName)));
-	    		lastModifiedFileMap.put(fileName, file);
-				lastModifiedTimeMap.put(fileName, file.lastModified());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return isModified;
-	}
 	
 
 }

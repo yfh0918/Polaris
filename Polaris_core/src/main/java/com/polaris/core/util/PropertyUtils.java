@@ -2,15 +2,19 @@ package com.polaris.core.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
 import com.polaris.core.Constant;
+import com.polaris.core.config.ConfigHandlerProvider;
 
 public class PropertyUtils {
 
@@ -195,4 +199,24 @@ public class PropertyUtils {
 		   }
 	   }
   }
+  
+	@SuppressWarnings("rawtypes")
+	public static String getPropertiesFileContent(String fileName) {
+		StringBuffer buffer = new StringBuffer();
+		try (InputStream in = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(fileName)) {
+			if (in == null) {
+				return null;
+			}
+          Properties p = new Properties();
+          p.load(in);
+          for (Map.Entry entry : p.entrySet()) {
+              String key = (String) entry.getKey();
+              buffer.append(key + "=" + entry.getValue());
+              buffer.append(Constant.LINE_SEP);
+          }
+      } catch (IOException e) {
+      	e.printStackTrace();
+      }
+		return buffer.toString();
+	}
 }

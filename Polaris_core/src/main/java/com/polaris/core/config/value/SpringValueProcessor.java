@@ -19,6 +19,8 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
+import com.polaris.core.config.PlaceholderHelper;
+
 @Component
 public class SpringValueProcessor implements BeanFactoryAware, BeanPostProcessor, PriorityOrdered{
 	private static final Logger logger = LoggerFactory.getLogger(SpringValueProcessor.class);

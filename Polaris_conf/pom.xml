@@ -16,6 +16,7 @@
 	<module>Polaris_conf_zk_admin</module>
 	<module>Polaris_conf_nacos</module>
 	<module>Polaris_conf_apollo</module>
+	<module>Polaris_conf_file</module>
   </modules>
   
   <dependencies>

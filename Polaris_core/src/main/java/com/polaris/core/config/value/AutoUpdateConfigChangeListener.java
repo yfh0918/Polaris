@@ -17,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.PlaceholderHelper;
 
 
 @Component

@@ -134,6 +134,11 @@
 	            <artifactId>Polaris_conf_apollo</artifactId>
 	            <version>${project.version}</version>
 	        </dependency> 
+	        <dependency>
+	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_conf_file</artifactId>
+	            <version>${project.version}</version>
+	        </dependency> 
 	       	<dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_naming</artifactId>

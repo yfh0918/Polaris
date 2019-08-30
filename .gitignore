@@ -337,3 +337,7 @@
 /Polaris_demo/springboot-sample/.classpath
 /Polaris_demo/springboot-sample/.project
 /Polaris_demo/springboot-sample/.settings
+/Polaris_conf/Polaris_conf_file/.project
+/Polaris_conf/Polaris_conf_file/.settings
+/Polaris_conf/Polaris_conf_file/target
+/Polaris_conf/Polaris_conf_file/.classpath

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.config.value.AutoUpdateConfigChangeListener;
+import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.SpringUtil;
 
 public  class ConfigHandlerProvider {
@@ -100,24 +100,17 @@ public  class ConfigHandlerProvider {
     				return config;
     			}
     		}
+    	} else {
+    		return PropertyUtils.getPropertiesFileContent(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME));
     	}
-    	
-    	//获取本地本间
-		return ConfHandlerSupport.getLocalFileContent(fileName);
+    	return null;
 	}
 	
 	//监听自定义文件变化
 	public static void addListener(String fileName, boolean isGlobal, ConfListener listener) {
 		if (!Constant.DEFAULT_CONFIG_NAME.equals(fileName)) {
-			boolean isExtends = false;
 			for (ConfigHandler handler : serviceLoader) {
 				handler.addListener(fileName, ConfClient.getConfigGroup(isGlobal), listener);
-				isExtends = true;
-			}
-
-			//走本地需要监听本地文件
-			if (!isExtends) {
-				ConfHandlerSupport.listionLocalFile(fileName, listener,10000, TimeUnit.MILLISECONDS);//每隔10秒监听一次
 			}
 		}
 		
