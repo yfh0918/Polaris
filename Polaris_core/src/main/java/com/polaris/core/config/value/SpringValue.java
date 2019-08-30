@@ -7,12 +7,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import org.springframework.core.MethodParameter;
 
-/**
- * Spring @Value method info
- *
- * @author github.com/zhegexiaohuozi  seimimaster@gmail.com
- * @since 2018/2/6.
- */
 public class SpringValue {
 
   private MethodParameter methodParameter;

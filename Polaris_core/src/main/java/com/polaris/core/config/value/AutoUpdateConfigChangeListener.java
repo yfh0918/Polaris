@@ -18,9 +18,7 @@ import org.springframework.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.polaris.core.config.ConfClient;
 
-/**
- * Create by zhangzheng on 2018/3/6
- */
+
 @Component
 public class AutoUpdateConfigChangeListener implements BeanFactoryAware{
   private static final Logger logger = LoggerFactory.getLogger(AutoUpdateConfigChangeListener.class);
