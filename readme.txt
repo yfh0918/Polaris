@@ -24,6 +24,9 @@
   #global files
   #project.global.group=global
   #project.global.properties=redis.properties,database.properties
+  
+  默认支持Spring注解@Value的自动更新
+  可以用value.auto.update=false来关闭，频繁更新配置会影响性能（配置更新采用文件形式）
 
 6:Polaris_workflow是现有的服务（工作流activity内核）
   提供dubbo接口和http接口两种方式，没有画面，具体请参考模块的配置
@@ -79,9 +82,8 @@
    目前支持的方法参考com.polaris.cache.Cache接口
    缓存 序列化可以自己配置，默认KryoSerializer
    
-13，和Springboot的融合
-    单独映入注册中心
-	<dependency>
+13，和Springboot的融合，单独映入注册中心
+	    <dependency>
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_naming_nacos</artifactId>
             <version>1.0.0-SNAPSHOT</version>

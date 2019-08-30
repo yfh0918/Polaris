@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_naming_eureka</artifactId>
+            <artifactId>Polaris_conf_nacos</artifactId>
         </dependency>
 
 		<dependency>
