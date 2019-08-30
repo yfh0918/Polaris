@@ -27,6 +27,10 @@
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_workflow_core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_conf_file</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

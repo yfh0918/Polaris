@@ -53,8 +53,11 @@ public class ConfFileClient {
 	
 	// 获取文件内容
 	public String getConfig(String fileName, String group) {
-		//更新文件
-		isModifiedByFile(fileName);
+		
+		//可以监听的文件有效
+		if (canListen(fileName)) {
+			isModifiedByFile(fileName);
+		}
 
 		// propertyies
 		if (fileName.toLowerCase().endsWith(".properties")) {
@@ -89,6 +92,12 @@ public class ConfFileClient {
 	
 	// 监听需要关注的内容
 	public void addListener(String fileName, String group, ConfListener listener) {
+		//farjar或者配置文件放到jar包或者不存在配置文件的不用监听
+		if (!canListen(fileName)) {
+			return;
+		}
+		
+		//配置文件存在的监听
 		service.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
@@ -99,6 +108,7 @@ public class ConfFileClient {
             			listener.receive(getConfig(fileName, group));
             		}
                 } catch (Throwable e) {
+                	logger.error("addListener error:{}",e.getMessage());
                 	e.printStackTrace();
                 }
             }
@@ -125,6 +135,20 @@ public class ConfFileClient {
 			}
 		}
 		return isModified;
+	}
+	
+	//farjar或者配置文件放到jar包或者不存在配置文件的不用监听
+	private static boolean canListen(String fileName) {
+		try {
+			File file = new File(PropertyUtils.getFilePath(ConfClient.getConfigFileName(fileName)));
+			if (file.exists()) {
+				return true;
+			}
+		} catch (IOException e) {
+			logger.error("addListener error:{}",e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
 	}
 		
 }

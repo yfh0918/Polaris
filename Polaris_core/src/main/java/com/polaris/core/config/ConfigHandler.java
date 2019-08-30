@@ -6,7 +6,4 @@ public interface ConfigHandler {
 	default String getConfig(String fileName, String group) {
 		return null;
 	}
-	default String getValue(String key, String fileName) {
-		return null;
-	}
 }
