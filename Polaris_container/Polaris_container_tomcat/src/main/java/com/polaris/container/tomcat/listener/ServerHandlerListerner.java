@@ -6,7 +6,7 @@ import org.apache.catalina.LifecycleListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.http.supports.ServerListener;
+import com.polaris.http.listener.ServerListener;
 
 /**
  * Class Name : ServerHandler
@@ -30,12 +30,17 @@ public class ServerHandlerListerner implements LifecycleListener{
 		// Process the event that has occurred
         if (event.getType().equals(Lifecycle.CONFIGURE_START_EVENT)) {
         } else if (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) {
+        	serverlistener.starting();
+        	logger.info("TomcatServer启动中！");
         } else if (event.getType().equals(Lifecycle.AFTER_START_EVENT)) {
         	serverlistener.started();
         	logger.info("TomcatServer启动成功！");
-            // Restore docBase for management tools
-         } else if (event.getType().equals(Lifecycle.CONFIGURE_STOP_EVENT)) {
-        } else if (event.getType().equals(Lifecycle.AFTER_INIT_EVENT)) {
+        } else if (event.getType().equals(Lifecycle.BEFORE_STOP_EVENT)) {
+        	serverlistener.stopping();
+        	logger.info("TomcatServer停止中！");
+        } else if (event.getType().equals(Lifecycle.AFTER_STOP_EVENT)) {
+        	serverlistener.stopped();
+        	logger.info("TomcatServer已经停止！");
         } else if (event.getType().equals(Lifecycle.AFTER_DESTROY_EVENT)) {
         }
 		

@@ -5,7 +5,7 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.http.supports.ServerListener;
+import com.polaris.http.listener.ServerListener;
 
 /**
  * Class Name : ServerHandler
@@ -48,6 +48,8 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 启动中
 	 */
 	public void lifeCycleStarting(LifeCycle event) {
+		listener.starting();
+    	logger.info("JettyServer启动中！");
 	}
 	
 	/**
@@ -55,8 +57,8 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 启动结束
 	 */
     public void lifeCycleStarted(LifeCycle event) {
-    	logger.info("JettyServer启动成功！");
     	listener.started();
+    	logger.info("JettyServer启动成功！");
     }
     
 	/**
@@ -64,6 +66,7 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 异常
 	 */
     public void lifeCycleFailure(LifeCycle event,Throwable cause) {
+    	listener.failure();
     	logger.info("JettyServer启动失败！");
     }
     
@@ -72,7 +75,8 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 结束中
 	 */
    public void lifeCycleStopping(LifeCycle event) {
-	   //结束中不需要任何信息
+	   listener.stopping();
+	   logger.info("JettyServer已经中！");
    }
    
 	/**
@@ -80,6 +84,7 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 结束
 	 */
     public void lifeCycleStopped(LifeCycle event) {
+    	listener.stopped();
     	logger.info("JettyServer已经停止！");
     }
     
