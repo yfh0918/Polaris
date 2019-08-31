@@ -45,11 +45,7 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 		Properties properties = new Properties();
 		
 		//全局配置
-		String namespace = ConfClient.getNameSpace();
-		if (StringUtil.isNotEmpty(namespace)) {
-			namespace = "default";
-		}
-		properties.setProperty("eureka.region", namespace);
+		properties.setProperty("eureka.region", ConfClient.get("eureka.region", "default"));
 		properties.setProperty("eureka.registration.enabled", ConfClient.get("eureka.registration.enabled", "true"));
 		properties.setProperty("eureka.preferIpAddress", ConfClient.get("eureka.preferIpAddress", "true"));
 		properties.setProperty("eureka.preferSameZone", ConfClient.get("eureka.preferSameZone", "true"));
