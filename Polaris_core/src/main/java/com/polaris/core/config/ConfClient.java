@@ -59,9 +59,9 @@ public class ConfClient {
 			} 
 			
 			//集群名称(注册中心和配置中心)
-			String cluster = System.getProperty(Constant.PROJECR_CLUSTER_NAME);
-			if (StringUtil.isNotEmpty(cluster)) {
-				ConfigHandlerProvider.updateValue(Constant.PROJECR_CLUSTER_NAME, cluster, Constant.DEFAULT_CONFIG_NAME);
+			String group = System.getProperty(Constant.PROJECR_GROUP_NAME);
+			if (StringUtil.isNotEmpty(group)) {
+				ConfigHandlerProvider.updateValue(Constant.PROJECR_GROUP_NAME, group, Constant.DEFAULT_CONFIG_NAME);
 			} 
 			
 			//服务端口
@@ -196,9 +196,9 @@ public class ConfClient {
 		return namespace == null ? "" :namespace;
 	}
 
-	public static String getCluster() {
-		String cluster = ConfigHandlerProvider.getValue(Constant.PROJECR_CLUSTER_NAME, Constant.DEFAULT_CONFIG_NAME, false);
-		return cluster == null ? "" :cluster;
+	public static String getGroup() {
+		String group = ConfigHandlerProvider.getValue(Constant.PROJECR_GROUP_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		return group == null ? "" :group;
 	}
 	public static String getNamingRegistryAddress() {
 		String naming = ConfigHandlerProvider.getValue(Constant.NAMING_REGISTRY_ADDRESS_NAME, Constant.DEFAULT_CONFIG_NAME, false);
@@ -227,31 +227,11 @@ public class ConfClient {
 	//获取分组名称
 	public static String getConfig(boolean isGlobal) {
 		if (isGlobal) {
-			return getGlobalConfig();
+			return ConfClient.getGlobalConfigName();
 		}
-		return getConfig();
+		return ConfClient.getAppName();
 	}
-	// 获取配置中心的分组
-	public static String getConfig() {
-		StringBuilder group = new StringBuilder();
-		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
-			group.append(ConfClient.getCluster());
-			group.append(":");
-		}
-		group.append(ConfClient.getAppName());
-		return group.toString();
-	}
-	
-	// 获取全局配置中心的分组
-	public static String getGlobalConfig() {
-		StringBuilder group = new StringBuilder();
-		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
-			group.append(ConfClient.getCluster());
-			group.append(":");
-		}
-		group.append(ConfClient.getGlobalConfigName());
-		return group.toString();
-	}
+
 	
 	public static String getConfigFileName(String fileName) {
 		if (StringUtil.isNotEmpty(Constant.CONFIG)) {

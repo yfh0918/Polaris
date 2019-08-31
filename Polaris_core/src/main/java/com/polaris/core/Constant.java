@@ -99,7 +99,7 @@ public class Constant {
 	public static final String PROJECR_NAMESPACE_NAME="project.namespace";
 	
 	// 集群名称(注册中心，配置中心公用)
-	public static final String PROJECR_CLUSTER_NAME = "project.cluster";
+	public static final String PROJECR_GROUP_NAME = "project.group";
 	
 	//全局global的名称(配置中心用)
 	public static final String PROJECR_GLOBAL_CONFIG_NAME = "project.global.config.name";

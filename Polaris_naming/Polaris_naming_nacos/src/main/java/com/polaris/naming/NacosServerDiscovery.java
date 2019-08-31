@@ -60,12 +60,12 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		//获取有效URL
 		try {
 			Instance instance = null;
-	        String clusterName = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-	        if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
-	        	clusterName = ConfClient.getCluster();
+	        String groupName = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+	        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
+	        	groupName = ConfClient.getGroup();
 			}
 
-			instance = naming.selectOneHealthyInstance(key, clusterName);
+			instance = naming.selectOneHealthyInstance(key, groupName);
 			if (instance != null) {
 				return instance.toInetAddr();
 			}
@@ -97,12 +97,12 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		//获取有效URL
 		try {
 			List<Instance> instances = null;
-	        String clusterName = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-	        if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
-	        	clusterName = ConfClient.getCluster();
+	        String groupName = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+	        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
+	        	groupName = ConfClient.getGroup();
 			}
 
-			instances = naming.selectInstances(key, clusterName, true);
+			instances = naming.selectInstances(key, groupName, true);
 
 			List<String> urls = new ArrayList<>();
 			if (instances != null && instances.size() > 0) {
@@ -134,11 +134,11 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	        instance.setWeight(weight);
 	        boolean ephemeral = Boolean.parseBoolean(ConfClient.get(Constant.PROJECT_EPHEMERAL, Constant.PROJECT_EPHEMERAL_DEFAULT));
 	        instance.setEphemeral(ephemeral);
-	        String clusterName = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-	        if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
-	        	clusterName = ConfClient.getCluster();
+	        String groupName = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+	        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
+	        	groupName = ConfClient.getGroup();
 			}
-        	naming.registerInstance(ConfClient.getAppName(), clusterName, instance);
+        	naming.registerInstance(ConfClient.getAppName(), groupName, instance);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -151,12 +151,12 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		}
 		 try {
 	        //String cluster = ConfClient.getCluster();
-	        String cluster = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-	        if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
-	        	cluster = ConfClient.getCluster();
+	        String groupName = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+	        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
+	        	groupName = ConfClient.getGroup();
 			}
 
-			naming.deregisterInstance(ConfClient.getAppName(), cluster, ip, port);
+			naming.deregisterInstance(ConfClient.getAppName(), groupName, ip, port);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}

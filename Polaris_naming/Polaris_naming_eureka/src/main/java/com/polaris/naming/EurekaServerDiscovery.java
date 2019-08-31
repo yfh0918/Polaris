@@ -76,8 +76,8 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 					
         //应用配置#应用配置
 		String group = "default";
-        if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
-        	group = ConfClient.getCluster();
+        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
+        	group = ConfClient.getGroup();
 		}
 		properties.setProperty("eureka.appGroup", group);
         properties.setProperty("eureka.name", ConfClient.getAppName());

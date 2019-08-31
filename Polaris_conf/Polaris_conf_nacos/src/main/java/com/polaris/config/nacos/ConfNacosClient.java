@@ -72,7 +72,7 @@ public class ConfNacosClient {
     	
 		
 		try {
-			String propertyContent = configService.getConfig(fileName, group, 5000);
+			String propertyContent = configService.getConfig(fileName, getGroup(group), 5000);
 			return propertyContent;
 
 		} catch (NacosException e) {
@@ -82,7 +82,7 @@ public class ConfNacosClient {
 	}
 	
 	// 监听需要关注的内容
-	public void addListener(String dataId, String group, ConfListener listener) {
+	public void addListener(String fileName, String group, ConfListener listener) {
 		//配置文件
     	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
     		return;
@@ -96,7 +96,7 @@ public class ConfNacosClient {
     	}
     	
 		try {
-			configService.addListener(dataId, group.toString(), new Listener() {
+			configService.addListener(fileName, getGroup(group), new Listener() {
 				@Override
 				public void receiveConfigInfo(String configInfo) {
 					if (listener != null) {
@@ -114,6 +114,14 @@ public class ConfNacosClient {
 		}
 	}
 
-
+	public String getGroup(String group) {
+		StringBuilder groupSb = new StringBuilder();
+		if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
+			groupSb.append(ConfClient.getGroup());
+			groupSb.append(":");
+		}
+		groupSb.append(group);
+		return groupSb.toString();
+	}
 		
 }

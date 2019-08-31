@@ -30,8 +30,8 @@ public class ConfApolloClient {
 			if (StringUtil.isNotEmpty(ConfClient.getNameSpace())) {
 				PropertyUtils.writeData(appFile, "apollo.env", ConfClient.getNameSpace(), true);
 			}
-			if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
-				System.setProperty("apollo.cluster", ConfClient.getCluster());
+			if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
+				System.setProperty("apollo.cluster", ConfClient.getGroup());
 			}
 		} catch (Exception e) {
 			logger.error("create META-INF/app.properties error,cause:{}",e.getMessage());
