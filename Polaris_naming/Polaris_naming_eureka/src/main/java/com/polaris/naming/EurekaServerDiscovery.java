@@ -45,7 +45,11 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 		Properties properties = new Properties();
 		
 		//全局配置
-		properties.setProperty("eureka.region", ConfClient.get("eureka.region", "default"));
+		String namespace = ConfClient.getNameSpace();
+		if (StringUtil.isNotEmpty(namespace)) {
+			namespace = "default";
+		}
+		properties.setProperty("eureka.region", namespace);
 		properties.setProperty("eureka.registration.enabled", ConfClient.get("eureka.registration.enabled", "true"));
 		properties.setProperty("eureka.preferIpAddress", ConfClient.get("eureka.preferIpAddress", "true"));
 		properties.setProperty("eureka.preferSameZone", ConfClient.get("eureka.preferSameZone", "true"));
@@ -72,8 +76,8 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 					
         //应用配置#应用配置
 		String group = "default";
-        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
-        	group = ConfClient.getGroup();
+        if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
+        	group = ConfClient.getCluster();
 		}
 		properties.setProperty("eureka.appGroup", group);
         properties.setProperty("eureka.name", ConfClient.getAppName());

@@ -46,12 +46,6 @@ public class ConfClient {
 				ConfigHandlerProvider.updateValue(Constant.CONFIG_REGISTRY_ADDRESS_NAME, config, Constant.DEFAULT_CONFIG_NAME);
 			} 
 			
-			//环境（production, pre,dev,pre etc）
-			String env = System.getProperty(Constant.PROJECT_ENV_NAME);
-			if (StringUtil.isNotEmpty(env)) {
-				ConfigHandlerProvider.updateValue(Constant.PROJECT_ENV_NAME, env, Constant.DEFAULT_CONFIG_NAME);
-			} 
-			
 			//工程名称
 			String project = System.getProperty(Constant.PROJECT_NAME);
 			if (StringUtil.isNotEmpty(project)) {
@@ -64,12 +58,6 @@ public class ConfClient {
 				ConfigHandlerProvider.updateValue(Constant.PROJECR_NAMESPACE_NAME, namespace, Constant.DEFAULT_CONFIG_NAME);
 			} 
 			
-			//Group(注册中心和dubbo)
-			String group = System.getProperty(Constant.PROJECR_GROUP_NAME);
-			if (StringUtil.isNotEmpty(group)) {
-				ConfigHandlerProvider.updateValue(Constant.PROJECR_GROUP_NAME, group, Constant.DEFAULT_CONFIG_NAME);
-			} 
-
 			//集群名称(注册中心和配置中心)
 			String cluster = System.getProperty(Constant.PROJECR_CLUSTER_NAME);
 			if (StringUtil.isNotEmpty(cluster)) {
@@ -108,7 +96,7 @@ public class ConfClient {
 			}
 			
 			//载入全局文件
-			if (StringUtil.isNotEmpty(ConfClient.getGlobalGroup())) {
+			if (StringUtil.isNotEmpty(ConfClient.getGlobalConfigName())) {
 				String[] globalProperties = ConfHandlerSupport.getGlobalProperties();
 				if (globalProperties != null) {
 					for (String file : globalProperties) {
@@ -153,7 +141,7 @@ public class ConfClient {
 		}
 		
 		//全局
-		if (StringUtil.isNotEmpty(ConfClient.getGlobalGroup())) {
+		if (StringUtil.isNotEmpty(ConfClient.getGlobalConfigName())) {
 			String[] globalProperties = ConfHandlerSupport.getGlobalProperties();
 			if (globalProperties != null) {
 				for (String file : globalProperties) {
@@ -207,18 +195,10 @@ public class ConfClient {
 		String namespace = ConfigHandlerProvider.getValue(Constant.PROJECR_NAMESPACE_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		return namespace == null ? "" :namespace;
 	}
-	public static String getGroup() {
-		String group = ConfigHandlerProvider.getValue(Constant.PROJECR_GROUP_NAME, Constant.DEFAULT_CONFIG_NAME, false);
-		return group == null ? "" :group;
-	}
 
 	public static String getCluster() {
 		String cluster = ConfigHandlerProvider.getValue(Constant.PROJECR_CLUSTER_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		return cluster == null ? "" :cluster;
-	}
-	public static String getEnv() {
-		String env = ConfigHandlerProvider.getValue(Constant.PROJECT_ENV_NAME, Constant.DEFAULT_CONFIG_NAME, false);
-		return env == null ? "" :env;
 	}
 	public static String getNamingRegistryAddress() {
 		String naming = ConfigHandlerProvider.getValue(Constant.NAMING_REGISTRY_ADDRESS_NAME, Constant.DEFAULT_CONFIG_NAME, false);
@@ -238,26 +218,22 @@ public class ConfClient {
 		}
 		return Long.parseLong(datacenterId.trim());
 	}	
-	public static String getGlobalGroup() {
-		String globalGroupName = ConfigHandlerProvider.getValue(Constant.PROJECR_GLOBAL_GROUP_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+	public static String getGlobalConfigName() {
+		String globalGroupName = ConfigHandlerProvider.getValue(Constant.PROJECR_GLOBAL_CONFIG_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		return globalGroupName == null ? "" :globalGroupName;
 	}
 	
 	
 	//获取分组名称
-	public static String getConfigGroup(boolean isGlobal) {
+	public static String getConfig(boolean isGlobal) {
 		if (isGlobal) {
-			return getGlobalConfigGroup();
+			return getGlobalConfig();
 		}
-		return getConfigGroup();
+		return getConfig();
 	}
 	// 获取配置中心的分组
-	public static String getConfigGroup() {
+	public static String getConfig() {
 		StringBuilder group = new StringBuilder();
-		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
-			group.append(ConfClient.getEnv());
-			group.append(":");
-		}
 		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
 			group.append(ConfClient.getCluster());
 			group.append(":");
@@ -267,17 +243,13 @@ public class ConfClient {
 	}
 	
 	// 获取全局配置中心的分组
-	public static String getGlobalConfigGroup() {
+	public static String getGlobalConfig() {
 		StringBuilder group = new StringBuilder();
-		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
-			group.append(ConfClient.getEnv());
-			group.append(":");
-		}
 		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
 			group.append(ConfClient.getCluster());
 			group.append(":");
 		}
-		group.append(ConfClient.getGlobalGroup());
+		group.append(ConfClient.getGlobalConfigName());
 		return group.toString();
 	}
 	

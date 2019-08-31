@@ -57,10 +57,6 @@ public class NacosDataSourceInit {
 	// 获取分组信息
 	private String getGroup() {
 		StringBuilder group = new StringBuilder();
-		if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
-			group.append(ConfClient.getEnv());
-			group.append(":");
-		}
 		if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
 			group.append(ConfClient.getCluster());
 			group.append(":");

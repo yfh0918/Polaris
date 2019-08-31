@@ -27,8 +27,8 @@ public class ConfApolloClient {
 			String appFile = PropertyUtils.getFilePath("META-INF"+File.separator+"app.properties");
 			PropertyUtils.writeData(appFile, "app.id", ConfClient.getAppName(), true);
 			PropertyUtils.writeData(appFile, "apollo.meta", ConfClient.getConfigRegistryAddress(), true);
-			if (StringUtil.isNotEmpty(ConfClient.getEnv())) {
-				PropertyUtils.writeData(appFile, "apollo.env", ConfClient.getEnv(), true);
+			if (StringUtil.isNotEmpty(ConfClient.getNameSpace())) {
+				PropertyUtils.writeData(appFile, "apollo.env", ConfClient.getNameSpace(), true);
 			}
 			if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
 				System.setProperty("apollo.cluster", ConfClient.getCluster());

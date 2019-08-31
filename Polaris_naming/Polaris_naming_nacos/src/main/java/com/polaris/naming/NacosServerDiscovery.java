@@ -1,7 +1,6 @@
 package com.polaris.naming;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -13,7 +12,6 @@ import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.naming.ServerDiscoveryHandler;
 import com.polaris.core.util.StringUtil;
 
@@ -62,8 +60,12 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		//获取有效URL
 		try {
 			Instance instance = null;
-			String[] keyInfo = getKeyInfo(key);
-			instance = naming.selectOneHealthyInstance(keyInfo[0], keyInfo[1], getClusters(keyInfo[2]));
+	        String clusterName = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+	        if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
+	        	clusterName = ConfClient.getCluster();
+			}
+
+			instance = naming.selectOneHealthyInstance(key, clusterName);
 			if (instance != null) {
 				return instance.toInetAddr();
 			}
@@ -95,8 +97,12 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		//获取有效URL
 		try {
 			List<Instance> instances = null;
-			String[] keyInfo = getKeyInfo(key);
-			instances = naming.selectInstances(keyInfo[0], keyInfo[1], getClusters(keyInfo[2]), true);
+	        String clusterName = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+	        if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
+	        	clusterName = ConfClient.getCluster();
+			}
+
+			instances = naming.selectInstances(key, clusterName, true);
 
 			List<String> urls = new ArrayList<>();
 			if (instances != null && instances.size() > 0) {
@@ -128,13 +134,11 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	        instance.setWeight(weight);
 	        boolean ephemeral = Boolean.parseBoolean(ConfClient.get(Constant.PROJECT_EPHEMERAL, Constant.PROJECT_EPHEMERAL_DEFAULT));
 	        instance.setEphemeral(ephemeral);
-	        String clusterName = ConfClient.getCluster();
-	        instance.setClusterName(clusterName);
-	        String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-	        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
-	        	group = ConfClient.getGroup();
+	        String clusterName = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+	        if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
+	        	clusterName = ConfClient.getCluster();
 			}
-        	naming.registerInstance(ConfClient.getAppName(), group, instance);
+        	naming.registerInstance(ConfClient.getAppName(), clusterName, instance);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -146,13 +150,13 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 			return;
 		}
 		 try {
-	        String cluster = ConfClient.getCluster();
-	        String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-	        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
-	        	group = ConfClient.getGroup();
+	        //String cluster = ConfClient.getCluster();
+	        String cluster = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+	        if (StringUtil.isNotEmpty(ConfClient.getCluster())) {
+	        	cluster = ConfClient.getCluster();
 			}
 
-			naming.deregisterInstance(ConfClient.getAppName(), group, ip, port, cluster);
+			naming.deregisterInstance(ConfClient.getAppName(), cluster, ip, port);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -167,70 +171,70 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 //			Instance instance = naming.selectOneHealthyInstance("mwclg-sso");
 //			System.out.println(instance.toInetAddr());
 //		}
-		NacosServerDiscovery ddd = new NacosServerDiscovery();
-		String key1="polaris-demo";
-		String key2="polaris-demo&group=xxx";
-		String key3="polaris-demo&clusters=yyyy1";
-		String key4="polaris-demo&group=xxx&clusters=yyyy1,yyyy2";
-		String[] keyinfo1 = ddd.getKeyInfo(key1);
-		System.out.println(keyinfo1[0]);
-		System.out.println(keyinfo1[1]);
-		System.out.println(ddd.getClusters(keyinfo1[2]));
-		String[] keyinfo2 = ddd.getKeyInfo(key2);
-		System.out.println(keyinfo2[0]);
-		System.out.println(keyinfo2[1]);
-		System.out.println(ddd.getClusters(keyinfo2[2]));
-		String[] keyinfo3 = ddd.getKeyInfo(key3);
-		System.out.println(keyinfo3[0]);
-		System.out.println(keyinfo3[1]);
-		System.out.println(ddd.getClusters(keyinfo3[2]));
-		String[] keyinfo4 = ddd.getKeyInfo(key4);
-		System.out.println(keyinfo4[0]);
-		System.out.println(keyinfo4[1]);
-		System.out.println(ddd.getClusters(keyinfo4[2]));
+//		NacosServerDiscovery ddd = new NacosServerDiscovery();
+//		String key1="polaris-demo";
+//		String key2="polaris-demo&group=xxx";
+//		String key3="polaris-demo&clusters=yyyy1";
+//		String key4="polaris-demo&group=xxx&clusters=yyyy1,yyyy2";
+//		String[] keyinfo1 = ddd.getKeyInfo(key1);
+//		System.out.println(keyinfo1[0]);
+//		System.out.println(keyinfo1[1]);
+//		System.out.println(ddd.getClusters(keyinfo1[2]));
+//		String[] keyinfo2 = ddd.getKeyInfo(key2);
+//		System.out.println(keyinfo2[0]);
+//		System.out.println(keyinfo2[1]);
+//		System.out.println(ddd.getClusters(keyinfo2[2]));
+//		String[] keyinfo3 = ddd.getKeyInfo(key3);
+//		System.out.println(keyinfo3[0]);
+//		System.out.println(keyinfo3[1]);
+//		System.out.println(ddd.getClusters(keyinfo3[2]));
+//		String[] keyinfo4 = ddd.getKeyInfo(key4);
+//		System.out.println(keyinfo4[0]);
+//		System.out.println(keyinfo4[1]);
+//		System.out.println(ddd.getClusters(keyinfo4[2]));
     }
 	
-	//key: polaris-demo&group=xxx&clusters=yyyy1,yyyy2
-	//key: polaris-demo&group=xxx
-	//key: polaris-demo&clusters=yyyy1
-	//key: polaris-demo
-	private String[] getKeyInfo(String key) {
-		String[] keyInfo = key.split("&");
-		if (keyInfo.length == 1) {
-			return new String[] {keyInfo[0],com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP,""};
-		} else if (keyInfo.length == 2) {
-			if (StringUtil.isEmpty(keyInfo[1])) {
-				String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-				String clusters = "";
-				return new String[] {keyInfo[0],group,clusters};
-			}
-			if (keyInfo[1].indexOf("group") > -1) {
-				return new String[] {keyInfo[0],ConfHandlerSupport.getKeyValue(keyInfo[1])[1],""};
-			}
-			if (keyInfo[1].indexOf("clusters") > -1) {
-				String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-				return new String[] {keyInfo[0],group, ConfHandlerSupport.getKeyValue(keyInfo[1])[1]};
-			}
-			return new String[] {keyInfo[0],"",""};
-		} else {
-			String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-			if (StringUtil.isNotEmpty(keyInfo[1]) && keyInfo[1].indexOf("group") > -1) {
-				group = ConfHandlerSupport.getKeyValue(keyInfo[1])[1];
-			}
-			String clusters = "";
-			if (StringUtil.isNotEmpty(keyInfo[2]) && keyInfo[2].indexOf("clusters") > -1) {
-				clusters = ConfHandlerSupport.getKeyValue(keyInfo[2])[1];
-			}
-			return new String[] {keyInfo[0],group,clusters};
-		}
-	}
+//	//key: polaris-demo&group=xxx&clusters=yyyy1,yyyy2
+//	//key: polaris-demo&group=xxx
+//	//key: polaris-demo&clusters=yyyy1
+//	//key: polaris-demo
+//	private String[] getKeyInfo(String key) {
+//		String[] keyInfo = key.split("&");
+//		if (keyInfo.length == 1) {
+//			return new String[] {keyInfo[0],com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP,""};
+//		} else if (keyInfo.length == 2) {
+//			if (StringUtil.isEmpty(keyInfo[1])) {
+//				String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+//				String clusters = "";
+//				return new String[] {keyInfo[0],group,clusters};
+//			}
+//			if (keyInfo[1].indexOf("group") > -1) {
+//				return new String[] {keyInfo[0],ConfHandlerSupport.getKeyValue(keyInfo[1])[1],""};
+//			}
+//			if (keyInfo[1].indexOf("clusters") > -1) {
+//				String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+//				return new String[] {keyInfo[0],group, ConfHandlerSupport.getKeyValue(keyInfo[1])[1]};
+//			}
+//			return new String[] {keyInfo[0],"",""};
+//		} else {
+//			String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
+//			if (StringUtil.isNotEmpty(keyInfo[1]) && keyInfo[1].indexOf("group") > -1) {
+//				group = ConfHandlerSupport.getKeyValue(keyInfo[1])[1];
+//			}
+//			String clusters = "";
+//			if (StringUtil.isNotEmpty(keyInfo[2]) && keyInfo[2].indexOf("clusters") > -1) {
+//				clusters = ConfHandlerSupport.getKeyValue(keyInfo[2])[1];
+//			}
+//			return new String[] {keyInfo[0],group,clusters};
+//		}
+//	}
 	
 
-	private List<String> getClusters(String value) {
-		if (StringUtil.isEmpty(value)) {
-			return new ArrayList<>();
-		}
-		return Arrays.asList(value.split(","));
-	}
+//	private List<String> getClusters(String value) {
+//		if (StringUtil.isEmpty(value)) {
+//			return new ArrayList<>();
+//		}
+//		return Arrays.asList(value.split(","));
+//	}
 	
 }

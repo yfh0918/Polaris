@@ -83,9 +83,6 @@ public class Constant {
 	public static String PROJECT_GLOBAL_PROPERTIES = "project.global.properties";
 	
 	// 应用名称
-	public static String PROJECT_ENV_NAME = "project.env";
-
-	// 应用名称
 	public static String PROJECT_NAME = "project.name";
 	public static String SPRING_BOOT_NAME = "spring.application.name";//融合springboot
 	
@@ -104,11 +101,8 @@ public class Constant {
 	// 集群名称(注册中心，配置中心公用)
 	public static final String PROJECR_CLUSTER_NAME = "project.cluster";
 	
-	// 分组名称(注册中心,dubbo)
-	public static final String PROJECR_GROUP_NAME = "project.group";
-	
-	//全局global的名称(配置中心公用)
-	public static final String PROJECR_GLOBAL_GROUP_NAME = "project.global.group";
+	//全局global的名称(配置中心用)
+	public static final String PROJECR_GLOBAL_CONFIG_NAME = "project.global.config.name";
 
 	// 配置中心
 	public static final String CONFIG_REGISTRY_ADDRESS_NAME = "config.registry.address";
