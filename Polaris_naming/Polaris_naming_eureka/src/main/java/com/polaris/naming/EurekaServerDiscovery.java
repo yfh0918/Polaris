@@ -29,8 +29,10 @@ import com.netflix.loadbalancer.ZoneAffinityServerListFilter;
 import com.netflix.loadbalancer.ZoneAwareLoadBalancer;
 import com.netflix.niws.loadbalancer.DiscoveryEnabledNIWSServerList;
 import com.netflix.niws.loadbalancer.DiscoveryEnabledServer;
+import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.ServerDiscoveryHandler;
+import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
 
@@ -41,12 +43,12 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 	public EurekaServerDiscovery() {
 	}
 	
-	private void iniEurekaServer(String ip, int port) {
+	private void iniEurekaServer(String ip, int port,String isRegistry) {
 		Properties properties = new Properties();
 		
 		//全局配置
 		properties.setProperty("eureka.region", ConfClient.get("eureka.region", "default"));
-		properties.setProperty("eureka.registration.enabled", ConfClient.get("eureka.registration.enabled", "true"));
+		properties.setProperty("eureka.registration.enabled", isRegistry);
 		properties.setProperty("eureka.preferIpAddress", ConfClient.get("eureka.preferIpAddress", "true"));
 		properties.setProperty("eureka.preferSameZone", ConfClient.get("eureka.preferSameZone", "true"));
 		properties.setProperty("eureka.shouldUseDns", ConfClient.get("eureka.shouldUseDns", "false"));
@@ -100,12 +102,25 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 	
 	@Override
 	public String getUrl(String key) {
-		if (eurekaClient == null) {
-			return null;
-		}
 		if (StringUtil.isEmpty(key)) {
 			return null;
 		}
+		if (eurekaClient == null) {
+			synchronized(this) {
+				if (eurekaClient == null) {
+					String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
+					String port = ConfClient.get(Constant.SERVER_PORT_NAME,ConfClient.get(Constant.DUBBO_PROTOCOL_PORT_NAME,""));
+					if (StringUtil.isEmpty(port)) {
+						return null;
+					}
+					iniEurekaServer(registerIp,Integer.parseInt(port), "false");
+				}
+			}
+		}
+		if (eurekaClient == null) {
+			return null;
+		}
+
 		
 		//负载均衡
 		InstanceInfo serverInfo = getServerInfoFromRobbin(ConfClient.getAppName());
@@ -122,12 +137,25 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 
 	@Override
 	public List<String> getAllUrls(String key) {
-		if (eurekaClient == null) {
-			return null;
-		}
 		if (StringUtil.isEmpty(key)) {
 			return null;
 		}
+		if (eurekaClient == null) {
+			synchronized(this) {
+				if (eurekaClient == null) {
+					String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
+					String port = ConfClient.get(Constant.SERVER_PORT_NAME,ConfClient.get(Constant.DUBBO_PROTOCOL_PORT_NAME,""));
+					if (StringUtil.isEmpty(port)) {
+						return null;
+					}
+					iniEurekaServer(registerIp,Integer.parseInt(port), "false");
+				}
+			}
+		}
+		if (eurekaClient == null) {
+			return null;
+		}
+		
 		List<InstanceInfo> serverInfos = eurekaClient.getInstancesByVipAddress(key,false);
 		if (serverInfos == null) {
 			return null;
@@ -149,7 +177,7 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
     	if (StringUtil.isEmpty(ConfClient.getNamingRegistryAddress())) {
     		return;
     	}
-    	iniEurekaServer(ip,port);
+    	iniEurekaServer(ip,port, "true");
         waitForRegistrationWithEureka(ip,port);
 	}
 

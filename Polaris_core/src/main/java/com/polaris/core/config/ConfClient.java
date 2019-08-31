@@ -218,10 +218,6 @@ public class ConfClient {
 		}
 		return Long.parseLong(datacenterId.trim());
 	}	
-	public static String getGlobalConfigName() {
-		String globalGroupName = ConfigHandlerProvider.getValue(Constant.PROJECR_GLOBAL_CONFIG_NAME, Constant.DEFAULT_CONFIG_NAME, false);
-		return globalGroupName == null ? "" :globalGroupName;
-	}
 	
 	
 	//获取分组名称
@@ -230,6 +226,10 @@ public class ConfClient {
 			return ConfClient.getGlobalConfigName();
 		}
 		return ConfClient.getAppName();
+	}
+	private static String getGlobalConfigName() {
+		String globalGroupName = ConfigHandlerProvider.getValue(Constant.PROJECR_GLOBAL_CONFIG_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		return globalGroupName == null ? "" :globalGroupName;
 	}
 
 	

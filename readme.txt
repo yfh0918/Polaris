@@ -5,14 +5,18 @@
 3:提供两种类型的 demo（调用dubbo应用 和 无dubbo应用）
   主要参数可以参考Polaris_demo_web_nodubbo的application.properties
 
-4:集群部署服务的时候需要注册中心，支持nacos（需要自行下载nacos的server）,
+4:集群部署服务的时候需要注册中心，
+  支持nacos（需要自行下载nacos的server）,
   支持eureka(内置robbin负载均衡)，负载均衡策略 根据参数robbin.loadbalancer=com.netflix.loadbalancer.AvailabilityFilteringRule(可以选择其他的rule)
+  后续版本支持zookeeper注册中心(web这一块)
   每一个服务 需要在自己的配置文件中设置注册中心
   #name.registry.address=127.0.0.1:8848
   需要在自己的服务pom.xml中引入 Polaris_naming_nacos
   
 
 5:配置中心支持两种模式（zookeeper,nacos,apollo的ConfigFile以及本地文件file），需要在自己的配置文件中设置配置中心
+  所有的配置种类，需自己下载软件，比如nacos,apollo,zookeeper的建议使用ZooViewer（https://github.com/HelloKittyNII/ZooViewer）
+  #zookeeper需要设置config.zk.root.path默认值【/polaris_conf】
   #config.registry.address=127.0.0.1:8848
   
   需要在自己的服务pom.xml中引入 Polaris_conf_nacos

@@ -1,8 +1,8 @@
 package com.polaris.config.zk;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.ConfigHandlerProvider;
+import com.polaris.core.config.ConfListener;
 import com.polaris.core.util.StringUtil;
 
 
@@ -50,19 +50,21 @@ import com.polaris.core.util.StringUtil;
  */
 public class ConfZkClient implements Watcher {
 	
-
-	    
 	private static final Logger logger = LoggerFactory.getLogger(ConfZkClient.class);
 
 	// ------------------------------ zookeeper client ------------------------------
 	private static ZooKeeper zooKeeper;
 	private static ReentrantLock INSTANCE_INIT_LOCK = new ReentrantLock(true);
+	
+	private static Map<String, ConfListener> confListenerMap = new HashMap<>();
 	public static ZooKeeper getInstance(){
 		return getInstance(false);
 	}
 
 	public static ZooKeeper getInstance(boolean refresh){
-		setZkAddress();
+    	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
+    		throw new NullPointerException(Constant.CONFIG_REGISTRY_ADDRESS_NAME + " is null");
+    	}
 		if (zooKeeper==null || refresh) {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
@@ -92,18 +94,20 @@ public class ConfZkClient implements Watcher {
 									if (StringUtil.isEmpty(path)) {
 										return;
 									}
-									String key = pathToKey(path);
-									if (key != null) {
-										// add One-time trigger
-										zooKeeper.exists(path, true);
-										if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
-											ConfigHandlerProvider.removeValue(key, Constant.DEFAULT_CONFIG_NAME);
-										} else if (watchedEvent.getType() == Event.EventType.NodeDataChanged || 
-												watchedEvent.getType() == Event.EventType.NodeCreated) {
-											String data = getPathData(path, false);
-											ConfigHandlerProvider.updateValue(key, data, Constant.DEFAULT_CONFIG_NAME);
-										} 
+									// add One-time trigger
+									zooKeeper.exists(path, true);
+									
+									//获取监听者
+									ConfListener confListener = confListenerMap.get(path);
+									if (confListener == null) {
+										return;
 									}
+									if (watchedEvent.getType() == Event.EventType.NodeDeleted) {
+										confListener.receive(null);
+									} else if (watchedEvent.getType() == Event.EventType.NodeDataChanged || 
+											watchedEvent.getType() == Event.EventType.NodeCreated) {
+										confListener.receive(getPathData(path));
+									} 
 								} catch (KeeperException e) {
 									logger.error(e.getMessage());
 								} catch (InterruptedException e) {
@@ -111,9 +115,6 @@ public class ConfZkClient implements Watcher {
 								}
 							}
 						});
-						if (zooKeeper != null) {
-							ConfZkClient.createWithParent(Constant.CONF_DATA_PATH);	// init cfg root path
-						}
 					} finally {
 						INSTANCE_INIT_LOCK.unlock();
 					}
@@ -130,20 +131,7 @@ public class ConfZkClient implements Watcher {
 		return zooKeeper;
 	}
 	
-	/**
-    * setZkAddress(Zookeeper地址设置)
-    * @param 
-    * @return 
-    * @Exception 
-    * @since 
-    */
-    private static void setZkAddress() {
-    	
-    	//配置文件
-    	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
-    		throw new NullPointerException(Constant.CONFIG_REGISTRY_ADDRESS_NAME + " is null");
-    	}
-    }
+
 	    
 	/**
 	 * 监控所有被触发的事件(One-time trigger)
@@ -153,30 +141,7 @@ public class ConfZkClient implements Watcher {
 
 	}
 
-	// ------------------------------ util ------------------------------
-	/**
-	 * path 2 key
-	 * @param nodePath
-	 * @return ZnodeKey
-	 */
-	private static String pathToKey(String nodePath){
-		if (nodePath.lastIndexOf(Constant.SLASH) > 0) {
-			return nodePath.substring(nodePath.lastIndexOf(Constant.SLASH) + 1);
-		}
-		return null;
-	}
 
-	/**
-	 * key 2 path
-	 * @param nodeKey
-	 * @return znodePath
-	 */
-	private static String keyToPath(String nodeKey){
-		if (StringUtil.isEmpty(nodeKey)) {
-			return Constant.CONF_DATA_PATH;
-		}
-		return Constant.CONF_DATA_PATH + Constant.SLASH + nodeKey;
-	}
 
 	/**
 	 * create node path with parent path (如果父节点不存在,循环创建父节点, 因为父节点不存在zookeeper会抛异常)
@@ -216,120 +181,14 @@ public class ConfZkClient implements Watcher {
 	}
 
 	/**
-	 * delete path by key
-	 * @param key
-	 */
-	public static boolean deletePathByKey(String key){
-		return deletePathByKey(key, true);
-	}
-	public static boolean deletePathByKey(String key, boolean isWatch){
-		String path = keyToPath(key);
-		try {
-			Stat stat = getInstance().exists(path, isWatch);
-			if (stat != null) {
-				getInstance().delete(path, stat.getVersion());
-				return true;
-			} else {
-				logger.info(">>>>>>>>>> zookeeper node path not found :{}", key);
-			}
-		} catch (KeeperException e) {
-			logger.error(e.getMessage());
-		} catch (InterruptedException e) {
-			logger.error(e.getMessage());
-		}
-		return false;
-	}
-
-	/**
-	 * set data to node
-	 * @param key
-	 * @param data
-	 * @return
-	 */
-	public static boolean setPathDataByKey(String key, String data) {
-		return setPathDataByKey(key, data, true);
-	}
-	public static boolean setPathDataByKey(String key, String data, boolean isWatch) {
-		String path = keyToPath(key);
-		try {
-			Stat stat = getInstance().exists(path, isWatch);
-			if (stat == null) {
-				createWithParent(path);
-				stat = getInstance().exists(path, false);
-			}
-			if (data != null) {
-				zooKeeper.setData(path, data.getBytes(Constant.UTF_CODE),stat.getVersion());
-			}
-			return true;
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return false;
-	}
-
-	/**
-	 * 根据应用名称获取ZK中所有的key
-	 * @param appName
-	 * @return
-	 */
-	public static List<String> getAllKeyByAppName(String appName, boolean isWatch){
-        List<String> appsKey = new ArrayList<>();
-		try {
-			String path = keyToPath(appName);
-			Stat stat = getInstance().exists(path, isWatch);
-			if (stat != null) {
-				appsKey = getInstance().getChildren(keyToPath(appName) ,isWatch);
-				return appsKey;
-			}
-		} catch (KeeperException e) {
-			logger.error(e.getMessage());
-		} catch (InterruptedException e) {
-			logger.error(e.getMessage());
-		}
-		return  appsKey;
-	}
-
-	/**
-	 * get children from path
-	 * @param key
-	 * @return
-	 */
-	public static List<String> getChildren(String path){
-		return getChildren(path, true);
-	}
-	public static List<String>  getChildren(String path, boolean isWatch){
-		String temppath = keyToPath(path);
-		try {
-			Stat stat = getInstance().exists(temppath, isWatch);
-			if (stat != null) {
-				return getInstance().getChildren(temppath, isWatch);
-			} else {
-				logger.info(">>>>>>>>>> znodeKey[{}] not found.", temppath);
-			}
-		} catch (KeeperException e) {
-			logger.error(e.getMessage());
-		} catch (InterruptedException e) {
-			logger.error(e.getMessage());
-		}
-		return null;
-	}
-
-	
-	/**
 	 * get data from node
 	 * @param key
 	 * @return
 	 */
-	public static String getPathDataByKey(String key){
-		return getPathDataByKey(key, true);
-	}
-	public static String getPathDataByKey(String key, boolean isWatch){
-		String path = keyToPath(key);
-		return getPathData(path, isWatch);
-	}
-	private static String getPathData(String path, boolean isWatch){
+
+	public static String getPathData(String path){
 		try {
-			Stat stat = getInstance().exists(path, isWatch);//add watch
+			Stat stat = getInstance().exists(path, false);//add watch
 			if (stat != null) {
 				String znodeValue = null;
 				byte[] resultData = getInstance().getData(path, false, null);
@@ -349,6 +208,21 @@ public class ConfZkClient implements Watcher {
 		}
 		return null;
 	}
+	public static void setWatchForPath(String path) {
+		try {
+			Stat stat = getInstance().exists(path, true);
+			if (stat == null) {
+				logger.info(">>>>>>>>>> znodeKey[{}] not found.", path);
+			}
+		} catch (KeeperException e) {
+			logger.error(e.getMessage());
+		} catch (InterruptedException e) {
+			logger.error(e.getMessage());
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+	}
+	
 	
 	public static void close() {
 		try {
@@ -359,5 +233,46 @@ public class ConfZkClient implements Watcher {
 		} catch (InterruptedException e) {
 			logger.error(e.getMessage());
 		}
+	}
+	
+	public static String getConfig(String fileName, String group) {
+		getInstance();
+		String path = getPath(fileName,group);
+		createWithParent(path);//创建路径
+		return getPathData(path);//获取数据
+	}
+	public static void addListener(String fileName, String group, ConfListener listener) {
+		String path = getPath(fileName,group);
+		setWatchForPath(path);
+		confListenerMap.put(path, listener);
+	}
+	
+	private static String getPath(String fileName, String group) {
+		StringBuilder groupSb = new StringBuilder();
+		
+		//rootPath
+		groupSb.append(ConfClient.get("config.zk.root.path",Constant.CONF_DATA_PATH));
+		groupSb.append(Constant.SLASH);
+
+		//namespace
+		String nameSpace = ConfClient.getNameSpace();
+		if (StringUtil.isNotEmpty(nameSpace)) {
+			groupSb.append(nameSpace);
+			groupSb.append(Constant.SLASH);
+		}
+		
+		//cluster
+		if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
+			groupSb.append(ConfClient.getGroup());
+			groupSb.append(Constant.SLASH);
+		}
+		
+		//service
+		groupSb.append(group);
+		groupSb.append(Constant.SLASH);
+		
+		//fileName
+		groupSb.append(fileName);
+		return groupSb.toString();
 	}
 }

@@ -14,7 +14,7 @@ import com.polaris.core.naming.NameingClient;
  * 入口启动类
  *
  */
-//@EnableEurekaServer
+@EnableEurekaServer
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.demo","com.polaris"})
 public class Application {
