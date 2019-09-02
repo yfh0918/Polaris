@@ -56,16 +56,17 @@
         </profile>
     </profiles>
 	<distributionManagement>
-        <repository>
-            <id>releases</id>
-            <name>Nexus Release Repository</name>
-            <url>http://10.2.16.29:8081/nexus/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <url>http://10.2.16.29:8081/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+	    <repository>
+	        <id>releases</id>
+	        <name>Releases</name>
+	        <url>http://106.14.6.89:8081/nexus/repository/maven-releases/</url>
+	    </repository>
+	    <snapshotRepository>
+	        <id>snapshots</id>
+	        <name>snapshots</name>
+	        <url>http://106.14.6.89:8081/nexus/repository/maven-snapshots/</url>
+	    </snapshotRepository>
+	</distributionManagement>
 
     <dependencyManagement>
         <dependencies>
