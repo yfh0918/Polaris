@@ -1,14 +1,19 @@
 ﻿<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+         
+  <parent>
     <groupId>com.polaris</groupId>
-    <artifactId>Polaris</artifactId>
+    <artifactId>Polaris_parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>Polaris</artifactId>
     <packaging>pom</packaging>
     <name>Polaris</name>
     
-	<modules>
-		<module>Polaris_parent</module>
+    <modules>
+        <module>Polaris_parent</module>
         <module>Polaris_core</module>
         <module>Polaris_container</module>
         <module>Polaris_dubbo</module>
@@ -20,5 +25,7 @@
         <module>Polaris_distributed_lock</module>
         <module>Polaris_gateway</module>
     </modules>
- 
+
+  
+
 </project>
