@@ -66,6 +66,17 @@
             <artifactId>ribbon-loadbalancer</artifactId>
             <version>${ribbon.version}</version>
         </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.archaius</groupId>
+            <artifactId>archaius-core</artifactId>
+            <version>0.7.6</version>
+        </dependency>
+        
 	</dependencies>
 
 	<build>
