@@ -11,13 +11,15 @@ public abstract class NameingClient {
 		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {
 			String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
 			ServerDiscoveryHandlerProvider.getInstance().register(registerIp, Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME)));
-			
-			// add shutdown hook to stop server
-	        Runtime.getRuntime().addShutdownHook(new Thread() {
-	            public void run() {
-	            	ServerDiscoveryHandlerProvider.getInstance().deregister(registerIp, Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME)));
-	            }
-	        });
+					
+		}
+	}
+	
+	public static void unRegister() {
+		//注册中心
+		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {
+			String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
+        	ServerDiscoveryHandlerProvider.getInstance().deregister(registerIp, Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME)));
 		}
 	}
 }

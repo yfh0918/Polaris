@@ -49,6 +49,12 @@ public class MainSupport {
 		    	NameingClient.register();
 				
 			}
+			
+			@Override
+			public void stopped() {
+				//注销服务
+		    	NameingClient.unRegister();
+			}
     		
     	});
     }
