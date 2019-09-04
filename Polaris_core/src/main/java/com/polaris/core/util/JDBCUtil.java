@@ -22,17 +22,12 @@ import org.slf4j.LoggerFactory;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.datasource.DynamicDataSource;
 
-public class JDBCUtil {
+abstract public class JDBCUtil {
 
 	private static final Logger logger =  LoggerFactory.getLogger(JDBCUtil.class);
 
 	private static final int FETCHSIZE = 10000;
 	private static final String QUEUEEND = "end";
-	
-	//不能实例化
-	private JDBCUtil() {
-		//nothing
-	}
 	
 	/**
 	 * jdbc 游标方式 执行Sql
@@ -42,6 +37,9 @@ public class JDBCUtil {
 	 */
 	public static void buildQueryTOQueue(String sql, LinkedBlockingQueue<Map<String, Object>> queue) {
 		DataSource dSource = SpringUtil.getBean(DynamicDataSource.class);
+		buildQueryTOQueue(sql,queue,dSource);
+	}
+	public static void buildQueryTOQueue(String sql, LinkedBlockingQueue<Map<String, Object>> queue, DataSource dSource) {
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rSet = null;
@@ -112,8 +110,11 @@ public class JDBCUtil {
 	 * @param queue
 	 * @author: XuChuanHou
 	 */
-	public static List<Map<String, Object>> getQueryResult(String sql) {
+	public List<Map<String, Object>> getQueryResult(String sql) {
 		DataSource dSource = SpringUtil.getBean(DynamicDataSource.class);
+		return getQueryResult(sql,dSource);
+	}
+	public static List<Map<String, Object>> getQueryResult(String sql, DataSource dSource) {
 		Connection connection = null;
 		PreparedStatement ps = null;
 		ResultSet rSet = null;
@@ -175,7 +176,11 @@ public class JDBCUtil {
      * @author: 
      */
     public static long queryCount(String sql) {
-		DataSource dSource = SpringUtil.getBean(DynamicDataSource.class);
+    	DataSource dSource = SpringUtil.getBean(DynamicDataSource.class);
+    	return queryCount(sql,dSource);
+    }
+    public static long queryCount(String sql,DataSource dSource) {
+		
         Connection connection = null;
         Statement statement = null;
         ResultSet rs = null;
@@ -224,6 +229,10 @@ public class JDBCUtil {
 	 */
 	public static boolean saveBatch(List<String> sqlList) {
 		DataSource dSource = SpringUtil.getBean(DynamicDataSource.class);
+		return saveBatch(sqlList,dSource);
+	}
+	public static boolean saveBatch(List<String> sqlList,DataSource dSource) {
+		
 		Connection connection = null;
 		Statement statement = null;
 		try {
