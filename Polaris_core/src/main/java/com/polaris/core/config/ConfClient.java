@@ -64,10 +64,16 @@ public class ConfClient {
 				ConfigHandlerProvider.updateValue(Constant.PROJECR_GROUP_NAME, group, Constant.DEFAULT_CONFIG_NAME);
 			} 
 			
+			//IP地址
+			String serverIp = System.getProperty(Constant.IP_ADDRESS);
+			if (StringUtil.isNotEmpty(serverIp)) {
+				ConfigHandlerProvider.updateValue(Constant.IP_ADDRESS, serverIp, Constant.DEFAULT_CONFIG_NAME);
+			}
+			
 			//服务端口
-			String serverport = System.getProperty(Constant.SERVER_PORT_NAME);
-			if (StringUtil.isNotEmpty(serverport)) {
-				ConfigHandlerProvider.updateValue(Constant.SERVER_PORT_NAME, serverport, Constant.DEFAULT_CONFIG_NAME);
+			String serverPort = System.getProperty(Constant.SERVER_PORT_NAME);
+			if (StringUtil.isNotEmpty(serverPort)) {
+				ConfigHandlerProvider.updateValue(Constant.SERVER_PORT_NAME, serverPort, Constant.DEFAULT_CONFIG_NAME);
 			}
 			
 			//注册中心
@@ -77,14 +83,14 @@ public class ConfClient {
 			}
 			
 			//dubbo服务端口
-			String dubboport = System.getProperty(Constant.DUBBO_PROTOCOL_PORT_NAME);
-			if (StringUtil.isNotEmpty(dubboport)) {
-				ConfigHandlerProvider.updateValue(Constant.DUBBO_PROTOCOL_PORT_NAME, dubboport, Constant.DEFAULT_CONFIG_NAME);
+			String dubboPort = System.getProperty(Constant.DUBBO_PROTOCOL_PORT_NAME);
+			if (StringUtil.isNotEmpty(dubboPort)) {
+				ConfigHandlerProvider.updateValue(Constant.DUBBO_PROTOCOL_PORT_NAME, dubboPort, Constant.DEFAULT_CONFIG_NAME);
 			}
 			//dubbo注册中心
-			String dubboname = System.getProperty(Constant.DUBBO_REGISTRY_ADDRESS_NAME);
-			if (StringUtil.isNotEmpty(dubboname)) {
-				ConfigHandlerProvider.updateValue(Constant.DUBBO_REGISTRY_ADDRESS_NAME, dubboname, Constant.DEFAULT_CONFIG_NAME);
+			String dubboName = System.getProperty(Constant.DUBBO_REGISTRY_ADDRESS_NAME);
+			if (StringUtil.isNotEmpty(dubboName)) {
+				ConfigHandlerProvider.updateValue(Constant.DUBBO_REGISTRY_ADDRESS_NAME, dubboName, Constant.DEFAULT_CONFIG_NAME);
 			}
 			
 			//载入扩展文件
