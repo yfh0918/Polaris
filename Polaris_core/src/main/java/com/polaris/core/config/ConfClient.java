@@ -3,6 +3,7 @@ package com.polaris.core.config;
 import java.io.File;
 
 import com.polaris.core.Constant;
+import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 
@@ -68,13 +69,15 @@ public class ConfClient {
 			String serverIp = System.getProperty(Constant.IP_ADDRESS);
 			if (StringUtil.isNotEmpty(serverIp)) {
 				ConfigHandlerProvider.updateValue(Constant.IP_ADDRESS, serverIp, Constant.DEFAULT_CONFIG_NAME);
+			} else {
+				ConfigHandlerProvider.updateValue(Constant.IP_ADDRESS, NetUtils.getLocalHost(), Constant.DEFAULT_CONFIG_NAME);
 			}
 			
 			//服务端口
 			String serverPort = System.getProperty(Constant.SERVER_PORT_NAME);
 			if (StringUtil.isNotEmpty(serverPort)) {
 				ConfigHandlerProvider.updateValue(Constant.SERVER_PORT_NAME, serverPort, Constant.DEFAULT_CONFIG_NAME);
-			}
+			} 
 			
 			//注册中心
 			String name = System.getProperty(Constant.NAMING_REGISTRY_ADDRESS_NAME);
