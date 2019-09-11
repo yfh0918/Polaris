@@ -219,7 +219,7 @@ public class HttpClientUtil {
      */
     public static String post(String orgurl, Map<String, Object> params) {
     	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
-    	LOGGER.info(url);
+    	LOGGER.debug(url);
         CloseableHttpResponse response = null;
         try {
             HttpPost httppost = new HttpPost(url);
@@ -256,7 +256,7 @@ public class HttpClientUtil {
      */
     public static String post(String orgurl, String body) {
     	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
-    	LOGGER.info(url);
+    	LOGGER.debug(url);
         CloseableHttpResponse response = null;
         try {
             HttpPost httppost = new HttpPost(url);
@@ -304,7 +304,7 @@ public class HttpClientUtil {
     }
     public static String get(String orgurl,  Map<String, Object> params) {
     	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
-    	LOGGER.info(url);
+    	LOGGER.debug(url);
     	CloseableHttpResponse response = null;
         try {
         	URIBuilder builder = new URIBuilder(url);
