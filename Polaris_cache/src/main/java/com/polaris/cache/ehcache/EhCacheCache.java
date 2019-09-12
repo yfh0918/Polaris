@@ -1,9 +1,11 @@
 package com.polaris.cache.ehcache;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import com.polaris.core.Constant;
 
+import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
 public class EhCacheCache implements com.polaris.cache.Cache {
@@ -79,5 +81,12 @@ public class EhCacheCache implements com.polaris.cache.Cache {
 			return element.getObjectValue();
 		}
 		return null;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+	public List getKeys() {
+		Cache ehcache = EhCacheFactory.getEhCache(cacheName);
+		return ehcache.getKeys();
 	}
 }

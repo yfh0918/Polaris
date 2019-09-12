@@ -1,5 +1,7 @@
 package com.polaris.cache;
 
+import java.util.List;
+
 public interface Cache {
 	//cache参数
 	public static final String CACHE_DEFAULT_NAME="PolarisCache";
@@ -14,4 +16,8 @@ public interface Cache {
 	void remove(Object key);
 	void removeAll();
 	Object get(Object key);
+	@SuppressWarnings("rawtypes")
+	default List getKeys() {
+		return null;
+	}
 }
