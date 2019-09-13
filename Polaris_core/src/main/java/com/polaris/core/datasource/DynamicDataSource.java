@@ -5,6 +5,8 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import java.util.logging.Logger;
 
+import javax.sql.DataSource;
+
 public class DynamicDataSource extends AbstractRoutingDataSource {
     @Override
     protected Object determineCurrentLookupKey() {
@@ -15,6 +17,11 @@ public class DynamicDataSource extends AbstractRoutingDataSource {
     public Logger getParentLogger() {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    @Override
+    public DataSource determineTargetDataSource() {
+    	return super.determineTargetDataSource();
     }
 
 }
