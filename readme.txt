@@ -106,8 +106,10 @@
     	//配置
     	ConfClient.init();
     	
-		//服务启动
+	//服务启动
         SpringApplication springApplication = new SpringApplication(Application.class);
+        
+        //注册服务
         springApplication.addListeners(new ApplicationListener<ContextRefreshedEvent>() {
 
 			@Override
@@ -118,4 +120,23 @@
 			}
         	
         });
+        
+        //注销服务
+        springApplication.addListeners(new ApplicationListener<ContextStoppedEvent>() {
+
+			@Override
+			public void onApplicationEvent(ContextStoppedEvent event) {
+				
+				//注册中心
+		    	NameingClient.unRegister();
+			}
+        	
+        });
         springApplication.run(args);
+        
+        如果需要配置日志，则需引入如下配置，并且需要排除默认的logback
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_logger</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency> 

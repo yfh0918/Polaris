@@ -24,10 +24,16 @@
     </properties>
 
     <dependencies>
- 
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+     	<!--spring boot-->
+ 		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -36,15 +42,6 @@
             <scope>test</scope>
         </dependency>
         
-        <dependency>
-		    <groupId>org.springframework.cloud</groupId>
-		    <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
-		</dependency>
-
-		<dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_naming_nacos</artifactId>
@@ -55,9 +52,11 @@
             <artifactId>Polaris_conf_nacos</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
-        
-
-        
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_logger</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>          
     </dependencies>
 
  <dependencyManagement>
