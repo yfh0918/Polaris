@@ -4,4 +4,6 @@ import com.polaris.http.listener.ServerListener;
 
 public interface ContainerDiscoveryHandler {
 	void start(ServerListener listener);
+	default void stop() {	
+	}
 }

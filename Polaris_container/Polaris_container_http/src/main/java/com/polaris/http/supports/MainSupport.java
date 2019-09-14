@@ -58,4 +58,17 @@ public class MainSupport {
     		
     	});
     }
+    
+    /**
+     * stopWebServer(关闭web容器)
+     * @param 
+     * @return 
+     * @Exception 
+     * @since 
+     */
+     public static void stopWebServer() {
+     	
+     	//关闭
+    	 ContainerServerFactory.stopServer();
+     }
 }

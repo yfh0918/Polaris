@@ -14,6 +14,7 @@ import com.polaris.http.listener.ServerListener;
 public class Main implements ContainerDiscoveryHandler {
 
 	private static Logger logger = LoggerFactory.getLogger(Main.class);
+	
 	/**
      * 服务启动
      *
@@ -31,5 +32,20 @@ public class Main implements ContainerDiscoveryHandler {
 		}).start();
 	}
 
-
+	/**
+     * 服务关闭
+     *
+     */
+	@Override
+	public void stop() {
+		//启动tomcat
+    	new Thread(new Runnable() {
+			@Override
+			public void run() {
+				logger.info("tomcat关闭！");
+				TomcatServer server = TomcatServer.getInstance();
+		        server.stop();
+			}
+    	}).start();
+	}
 }

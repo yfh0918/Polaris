@@ -125,4 +125,6 @@ public class Constant {
 	public static final String UUID_WORKID = "uuid.wokerId";
 	public static final String UUID_DATACENTERID="uuid.datacenterId";
 	
+	public static final String CLASS_PATH = "classpath:";
+	
 }

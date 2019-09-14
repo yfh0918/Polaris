@@ -15,4 +15,10 @@ public class ContainerServerFactory {
     		break;
 		}
     }
+    public static void stopServer() {
+    	for (ContainerDiscoveryHandler container : containers) {
+    		container.stop();
+    		break;
+		}
+    }
 }
