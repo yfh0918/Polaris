@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.polaris</groupId>
     <artifactId>Polaris_parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>${polaris-version}</version>
     <packaging>pom</packaging>
     <name>Polaris_parent</name>
 
@@ -20,6 +20,7 @@
         <cxf.version>2.7.13</cxf.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <swagger-version>2.9.2</swagger-version>
+        <polaris-version>1.0.0-SNAPSHOT</polaris-version>
     </properties>
     <profiles>
         <profile>
@@ -73,129 +74,129 @@
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_core</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency> 
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_container</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency> 
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_container_http</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_container_resteasy</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_container_springmvc</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_container_jetty</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_container_tomcat</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>	        	        	        
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_dubbo</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency> 
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_conf</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>   
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_conf_zk</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>   
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_conf_nacos</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency> 
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_conf_apollo</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency> 
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_conf_file</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency> 
 	       	<dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_naming</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>   
 	       	<dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_naming_nacos</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>   
 	       	<dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_naming_eureka</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>   
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_logger</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>   
 	        
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_cache</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>   
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_sentinel</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>  
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_distributed_lock</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>  
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_gateway</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>  
 
 	       	<dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_workflow_parent</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_workflow</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_workflow_api</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_workflow_core</artifactId>
-	            <version>${project.version}</version>
+	            <version>${polaris-version}</version>
 	        </dependency>	    
 	            
             <!-- common通用类 -->
