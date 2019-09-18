@@ -16,7 +16,6 @@ import com.alibaba.csp.sentinel.slots.system.SystemRuleManager;
 import com.alibaba.csp.sentinel.transport.util.WritableDataSourceRegistry;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.polaris.core.util.PropertyUtils;
 
 /**
 *
@@ -36,7 +35,7 @@ public class FileDataSourceInit {
 	 public void init() throws Exception {
 
 		//创建文件
-        String rulePath = PropertyUtils.getAppPath() +File.separator + "sentinel" +File.separator + "rule";
+        String rulePath = System.getProperty("user.home") +File.separator + "sentinel" +File.separator + "rule";
         File folder = new File(rulePath);
         folder.mkdirs();
         File flow = new File(rulePath + File.separator + "FlowRule.json");

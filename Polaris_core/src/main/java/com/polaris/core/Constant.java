@@ -108,7 +108,6 @@ public class Constant {
 	public static final String CONFIG_REGISTRY_ADDRESS_NAME = "config.registry.address";
 	
 	// 日志
-	public static final String LOG4J = "log4j.properties";
 	public static final String LOG_CONFIG="logging.config";
 	
 	//换行

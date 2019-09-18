@@ -57,7 +57,7 @@ public class TomcatServer {
             String serverPort = ConfClient.get("server.port","");
 
             //工作路径
-            String resourceBase = PropertyUtils.getFilePath("WebContent");
+            String resourceBase = PropertyUtils.getFullPath("WebContent");
             File resDir = new File(resourceBase);
             if (!resDir.exists()) {
             	resDir.mkdirs();

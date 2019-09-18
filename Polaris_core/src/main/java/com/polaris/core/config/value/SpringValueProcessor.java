@@ -32,6 +32,7 @@ public class SpringValueProcessor implements BeanFactoryAware, BeanPostProcessor
 	    return Ordered.LOWEST_PRECEDENCE;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		Class clazz = bean.getClass();
@@ -98,7 +99,8 @@ public class SpringValueProcessor implements BeanFactoryAware, BeanPostProcessor
 	    }
 	  }
 	  
-	  private List<Field> findAllField(Class clazz) {
+	  @SuppressWarnings("rawtypes")
+	private List<Field> findAllField(Class clazz) {
 	    final List<Field> res = new LinkedList<>();
 	    ReflectionUtils.doWithFields(clazz, new ReflectionUtils.FieldCallback() {
 	      @Override
@@ -109,7 +111,8 @@ public class SpringValueProcessor implements BeanFactoryAware, BeanPostProcessor
 	    return res;
 	  }
 
-	  private List<Method> findAllMethod(Class clazz) {
+	  @SuppressWarnings("rawtypes")
+	private List<Method> findAllMethod(Class clazz) {
 	    final List<Method> res = new LinkedList<>();
 	    ReflectionUtils.doWithMethods(clazz, new ReflectionUtils.MethodCallback() {
 	      @Override

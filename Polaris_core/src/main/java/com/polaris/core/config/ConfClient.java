@@ -4,7 +4,6 @@ import java.io.File;
 
 import com.polaris.core.Constant;
 import com.polaris.core.util.NetUtils;
-import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 
 /**
@@ -35,9 +34,6 @@ public class ConfClient {
 	    	// 启动字符集
 	    	System.setProperty("file.encoding", "UTF-8");
 	    	
-			// user.home
-	        System.setProperty("user.home", PropertyUtils.getAppPath());
-
 	        //载入application.properties
 			ConfigHandlerProvider.loadConfig(Constant.DEFAULT_CONFIG_NAME,false);									
 						

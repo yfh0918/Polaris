@@ -22,7 +22,7 @@ public class ConfHandlerSupport {
 	public static String[] getExtensionProperties() {
 		try {
 			//从本地获取
-			String files = PropertyUtils.readData(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME), Constant.PROJECT_EXTENSION_PROPERTIES, false);
+			String files = PropertyUtils.readData(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME), Constant.PROJECT_EXTENSION_PROPERTIES);
 			if (StringUtil.isEmpty(files)) {
 				return null;
 			}
@@ -43,7 +43,7 @@ public class ConfHandlerSupport {
 	public static String[] getGlobalProperties() {
 		try {
 			//从本地获取
-			String files = PropertyUtils.readData(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME), Constant.PROJECT_GLOBAL_PROPERTIES, false);
+			String files = PropertyUtils.readData(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME), Constant.PROJECT_GLOBAL_PROPERTIES);
 			if (StringUtil.isEmpty(files)) {
 				return null;
 			}

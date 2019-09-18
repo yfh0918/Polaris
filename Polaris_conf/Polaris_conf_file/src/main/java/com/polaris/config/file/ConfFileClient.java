@@ -127,7 +127,7 @@ public class ConfFileClient {
 			}
 		} else {
 			try {
-				File file = new File(PropertyUtils.getFilePath(ConfClient.getConfigFileName(fileName)));
+				File file = new File(PropertyUtils.getFullPath(ConfClient.getConfigFileName(fileName)));
 	    		lastModifiedFileMap.put(fileName, file);
 				lastModifiedTimeMap.put(fileName, file.lastModified());
 			} catch (IOException e) {
@@ -140,7 +140,7 @@ public class ConfFileClient {
 	//farjar或者配置文件放到jar包或者不存在配置文件的不用监听
 	private static boolean canListen(String fileName) {
 		try {
-			File file = new File(PropertyUtils.getFilePath(ConfClient.getConfigFileName(fileName)));
+			File file = new File(PropertyUtils.getFullPath(ConfClient.getConfigFileName(fileName)));
 			if (file.exists()) {
 				return true;
 			}

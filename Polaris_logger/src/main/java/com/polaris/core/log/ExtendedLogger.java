@@ -23,18 +23,8 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	static {
 		//载入日志文件
 		try {
-			//日志文件
-			//从本地获取
-			String logFile = PropertyUtils.readData(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME), Constant.LOG_CONFIG, false);
-			if (StringUtil.isNotEmpty(logFile)) {
-				if (logFile.startsWith(Constant.CLASS_PATH)) {
-					System.setProperty("log4j.configurationFile", logFile);
-				} else {
-					System.setProperty("log4j.configurationFile", PropertyUtils.getFilePath(ConfClient.getConfigFileName(logFile)));
-				}
-			} else {
-				System.setProperty("log4j.configurationFile", PropertyUtils.getFilePath(ConfClient.getConfigFileName(Constant.LOG4J)));
-			}
+			String logFile = PropertyUtils.readData(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME), Constant.LOG_CONFIG);
+			System.setProperty("log4j.configurationFile", logFile);
 
 		} catch (Exception e) {
 			e.printStackTrace();

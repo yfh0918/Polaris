@@ -59,7 +59,7 @@ public class JettyServer {
             WebAppContext context = new WebAppContext();
             context.setDefaultsDescriptor("webdefault.xml");
             context.setContextPath(ConfClient.get("server.contextPath","")); // Application访问路径
-            String resourceBase = PropertyUtils.getFilePath("WebContent");
+            String resourceBase = PropertyUtils.getFullPath("WebContent");
             File resDir = new File(resourceBase);
             context.setResourceBase(resDir.getCanonicalPath());
             context.setMaxFormContentSize(Integer.parseInt(ConfClient.get("server.maxSavePostSize",String.valueOf(MAX_SAVE_POST_SIZE))));
