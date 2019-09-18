@@ -1,6 +1,5 @@
 package com.polaris.dubbo.supports;
 
-import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 
 /**
@@ -33,7 +32,7 @@ public class MainSupport {
     */
     public static void startDubboServer(String[] args) {
     	//载入参数
-    	ConfClient.init(Constant.CONFIG);
+    	ConfClient.init();
 		//启动
 		org.apache.dubbo.container.Main.main(args);
     }

@@ -16,9 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfListener;
-import com.polaris.core.config.ConfigHandlerProvider;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 
@@ -55,17 +53,18 @@ public class ConfFileClient {
 	public String getConfig(String fileName, String group) {
 		
 		//可以监听的文件有效
-		if (canListen(fileName)) {
-			isModifiedByFile(fileName);
+		File file = PropertyUtils.getFileNotInJar(fileName);
+		if (file != null) {
+			isModifiedByFile(fileName, file);
 		}
 
 		// propertyies
 		if (fileName.toLowerCase().endsWith(".properties")) {
-			return PropertyUtils.getPropertiesFileContent(ConfClient.getConfigFileName(fileName));
+			return PropertyUtils.getPropertiesFileContent(fileName);
 		}
 		
 		// 非propertyies
-		try (InputStream inputStream = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(ConfClient.getConfigFileName(fileName))) {
+		try (InputStream inputStream = PropertyUtils.getStream(fileName)) {
 			if (inputStream == null) {
 				return null;
 			}
@@ -93,7 +92,8 @@ public class ConfFileClient {
 	// 监听需要关注的内容
 	public void addListener(String fileName, String group, ConfListener listener) {
 		//farjar或者配置文件放到jar包或者不存在配置文件的不用监听
-		if (!canListen(fileName)) {
+		File file = PropertyUtils.getFileNotInJar(fileName);
+		if (file == null) {
 			return;
 		}
 		
@@ -104,7 +104,7 @@ public class ConfFileClient {
                 try {
             		
             		//是否修改过
-            		if (isModifiedByFile(fileName)) {
+            		if (isModifiedByFile(fileName,file)) {
             			listener.receive(getConfig(fileName, group));
             		}
                 } catch (Throwable e) {
@@ -116,39 +116,22 @@ public class ConfFileClient {
 	}
 
 	//文件是否发生修改
-	private static boolean isModifiedByFile(String fileName) {
+	private static boolean isModifiedByFile(String fileName, File file) {
 		boolean isModified = true;
 		if (lastModifiedFileMap.containsKey(fileName)) {
-			File file = lastModifiedFileMap.get(fileName);
+			file = lastModifiedFileMap.get(fileName);
 			if (file.lastModified() == lastModifiedTimeMap.get(fileName).longValue()) {
 				isModified = false;
 			} else {
 				lastModifiedTimeMap.put(fileName, file.lastModified());
 			}
 		} else {
-			try {
-				File file = new File(PropertyUtils.getFullPath(ConfClient.getConfigFileName(fileName)));
-	    		lastModifiedFileMap.put(fileName, file);
-				lastModifiedTimeMap.put(fileName, file.lastModified());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+    		lastModifiedFileMap.put(fileName, file);
+			lastModifiedTimeMap.put(fileName, file.lastModified());
 		}
 		return isModified;
 	}
 	
-	//farjar或者配置文件放到jar包或者不存在配置文件的不用监听
-	private static boolean canListen(String fileName) {
-		try {
-			File file = new File(PropertyUtils.getFullPath(ConfClient.getConfigFileName(fileName)));
-			if (file.exists()) {
-				return true;
-			}
-		} catch (IOException e) {
-			logger.error("addListener error:{}",e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
+	
 		
 }

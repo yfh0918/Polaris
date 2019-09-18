@@ -1,6 +1,7 @@
 package com.polaris.core.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -10,7 +11,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfigHandlerProvider;
 
 public class PropertyUtils {
 
@@ -38,7 +38,7 @@ public class PropertyUtils {
 	public static String readData(String propertyName, String key) throws IOException{
 		
 		   //创建文件夹
-		   try (InputStream in = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(propertyName)) {
+		   try (InputStream in = getStream(propertyName)) {
 				if (in == null) {
 					return null;
 				}
@@ -71,7 +71,7 @@ public class PropertyUtils {
 	@SuppressWarnings("rawtypes")
 	public static String getPropertiesFileContent(String fileName) {
 		StringBuffer buffer = new StringBuffer();
-		try (InputStream in = ConfigHandlerProvider.class.getClassLoader().getResourceAsStream(fileName)) {
+		try (InputStream in = getStream(fileName)) {
 			if (in == null) {
 				return null;
 			}
@@ -86,5 +86,45 @@ public class PropertyUtils {
       	e.printStackTrace();
       }
 	  return buffer.toString();
+	}
+	
+	public static InputStream getStream(String fileName) throws IOException {
+		
+		//先判断目录下的文件夹
+		File file = new File(PropertyUtils.getFullPath(Constant.CONFIG + File.separator + fileName));
+		if (file.exists()) {
+			return new FileInputStream(file);
+		}
+		
+		//更目录下
+		file = new File(PropertyUtils.getFullPath(fileName));
+		if (file.exists()) {
+			return new FileInputStream(file);
+		}
+		
+		//classpath:config/filename
+		InputStream inputStream = PropertyUtils.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + fileName);
+		if (inputStream != null) {
+			return inputStream;
+		}
+		
+		//classpath:filename
+		return PropertyUtils.class.getClassLoader().getResourceAsStream(fileName);
+	}
+	
+	public static File getFileNotInJar(String fileName)  {
+		try {
+			File file = new File(PropertyUtils.getFullPath(Constant.CONFIG + File.separator + fileName));
+			if (file.exists()) {
+				return file;
+			}
+			file = new File(PropertyUtils.getFullPath(fileName));
+			if (file.exists()) {
+				return file;
+			}
+		} catch (IOException ex) {
+			//ingore
+		}
+		return null;
 	}
 }

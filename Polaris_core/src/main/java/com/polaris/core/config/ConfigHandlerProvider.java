@@ -30,7 +30,7 @@ public  class ConfigHandlerProvider {
     
     // 载入文件到缓存
     public static void loadConfig(String fileName, boolean isGlobal) {
-    	
+
     	//增加监听
     	addListener(fileName, isGlobal, new ConfListener() {
 			@Override
@@ -101,7 +101,7 @@ public  class ConfigHandlerProvider {
     			}
     		}
     	} else {
-    		return PropertyUtils.getPropertiesFileContent(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME));
+    		return PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME);
     	}
     	return null;
 	}

@@ -1,7 +1,5 @@
 package com.polaris.core.config;
 
-import java.io.File;
-
 import com.polaris.core.Constant;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
@@ -23,13 +21,7 @@ public class ConfClient {
 	
 	//初始化操作
 	public static void init() {
-		init("");
-	}
-	public static void init(String conigRootPath) {
 		try {
-			
-			//设置配置文件root路径
-			Constant.CONFIG = conigRootPath;
 			
 	    	// 启动字符集
 	    	System.setProperty("file.encoding", "UTF-8");
@@ -237,11 +229,4 @@ public class ConfClient {
 		return globalGroupName == null ? "" :globalGroupName;
 	}
 
-	
-	public static String getConfigFileName(String fileName) {
-		if (StringUtil.isNotEmpty(Constant.CONFIG)) {
-			return Constant.CONFIG + File.separator + fileName;
-		}
-		return fileName;
-	}
 }

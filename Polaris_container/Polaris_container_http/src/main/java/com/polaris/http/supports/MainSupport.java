@@ -1,6 +1,5 @@
 package com.polaris.http.supports;
 
-import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.NameingClient;
 import com.polaris.http.factory.ContainerServerFactory;
@@ -38,7 +37,7 @@ public class MainSupport {
     public static void startWebServer(String[] args) {
     	
     	//各类参数载入
-    	ConfClient.init(Constant.CONFIG);
+    	ConfClient.init();
 		
     	//启动
     	ContainerServerFactory.startServer(new ServerListener() {

@@ -28,7 +28,7 @@ public class ApplicationSupport {
 	public static void startGateway() {
     	
     	//载入参数
-    	ConfClient.init(Constant.CONFIG);
+    	ConfClient.init();
 
     	//载入spring.xml
     	new ClassPathXmlApplicationContext(SpringUtil.SPRING_PATH);

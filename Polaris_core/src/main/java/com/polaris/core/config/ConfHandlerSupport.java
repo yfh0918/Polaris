@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
-import com.polaris.core.util.PropertyUtils;
 
 public class ConfHandlerSupport {
 
@@ -22,7 +21,7 @@ public class ConfHandlerSupport {
 	public static String[] getExtensionProperties() {
 		try {
 			//从本地获取
-			String files = PropertyUtils.readData(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME), Constant.PROJECT_EXTENSION_PROPERTIES);
+			String files = ConfigHandlerProvider.getValue(Constant.PROJECT_EXTENSION_PROPERTIES,Constant.DEFAULT_CONFIG_NAME,false);
 			if (StringUtil.isEmpty(files)) {
 				return null;
 			}
@@ -43,7 +42,7 @@ public class ConfHandlerSupport {
 	public static String[] getGlobalProperties() {
 		try {
 			//从本地获取
-			String files = PropertyUtils.readData(ConfClient.getConfigFileName(Constant.DEFAULT_CONFIG_NAME), Constant.PROJECT_GLOBAL_PROPERTIES);
+			String files = ConfigHandlerProvider.getValue(Constant.PROJECT_GLOBAL_PROPERTIES,Constant.DEFAULT_CONFIG_NAME,false);
 			if (StringUtil.isEmpty(files)) {
 				return null;
 			}
