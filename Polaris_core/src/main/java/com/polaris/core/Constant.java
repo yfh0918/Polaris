@@ -109,6 +109,7 @@ public class Constant {
 	
 	// 日志
 	public static final String LOG_CONFIG="logging.config";
+	public static final String DEFAULT_LOG_FILE = "log4j2.xml";
 	
 	//换行
 	public static final String LINE_SEP = System.getProperty("line.separator");

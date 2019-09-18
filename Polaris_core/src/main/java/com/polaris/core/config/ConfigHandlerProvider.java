@@ -23,6 +23,8 @@ public  class ConfigHandlerProvider {
 	private static volatile Map<String, Map<String, String>> cacheFileMap = new ConcurrentHashMap<>();
 
 	private static volatile Map<String, Map<String, String>> gobalCacheFileMap = new ConcurrentHashMap<>();
+	
+	public static final String APPLICATION_PROPERTIES_CONTENT = PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME);
 
 	// 监听所有扩展的文件
     private ConfigHandlerProvider() {
@@ -31,6 +33,36 @@ public  class ConfigHandlerProvider {
     // 载入文件到缓存
     public static void loadConfig(String fileName, boolean isGlobal) {
 
+    	//是否已经载入
+    	if (isLoaded(fileName, isGlobal)) {
+    		return;
+    	}
+    	
+		//载入配置到缓存
+    	String config = getConfig(fileName, isGlobal);
+		if (StringUtil.isNotEmpty(config)) {
+			String[] contents = config.split(Constant.LINE_SEP);
+			Map<String, String> cache = new HashMap<>();
+			for (String content : contents) {
+				String[] keyvalue = ConfHandlerSupport.getKeyValue(content);
+				if (keyvalue != null) {
+					cache.put(keyvalue[0], keyvalue[1]);
+					logger.info(">>>>>>>>>> conf: 更新配置：file:{}, key:{} , value:{}", fileName, keyvalue[0], keyvalue[1]);
+				}
+			}
+	    	if (isGlobal) {
+	    		gobalCacheFileMap.put(fileName, cache);
+			} else {
+				cacheFileMap.put(fileName, cache);
+			}
+		} else {
+			if (isGlobal) {
+	    		gobalCacheFileMap.remove(fileName);
+			} else {
+				cacheFileMap.remove(fileName);
+			}
+		}
+		
     	//增加监听
     	addListener(fileName, isGlobal, new ConfListener() {
 			@Override
@@ -62,31 +94,7 @@ public  class ConfigHandlerProvider {
 			}
 			});
 
-		//载入配置到缓存
-    	String config = getConfig(fileName, isGlobal);
-		if (StringUtil.isNotEmpty(config)) {
-			String[] contents = config.split(Constant.LINE_SEP);
-			Map<String, String> cache = new HashMap<>();
-			for (String content : contents) {
-				String[] keyvalue = ConfHandlerSupport.getKeyValue(content);
-				if (keyvalue != null) {
-					cache.put(keyvalue[0], keyvalue[1]);
-					logger.info(">>>>>>>>>> conf: 更新配置：file:{}, key:{} , value:{}", fileName, keyvalue[0], keyvalue[1]);
 
-				}
-			}
-	    	if (isGlobal) {
-	    		gobalCacheFileMap.put(fileName, cache);
-			} else {
-				cacheFileMap.put(fileName, cache);
-			}
-		} else {
-			if (isGlobal) {
-	    		gobalCacheFileMap.remove(fileName);
-			} else {
-				cacheFileMap.remove(fileName);
-			}
-		}
 
     }
 	
@@ -101,7 +109,7 @@ public  class ConfigHandlerProvider {
     			}
     		}
     	} else {
-    		return PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME);
+    		return APPLICATION_PROPERTIES_CONTENT;
     	}
     	return null;
 	}
@@ -114,6 +122,14 @@ public  class ConfigHandlerProvider {
 			}
 		}
 		
+	}
+	
+	//判断是否已经载入过配置
+	public static boolean isLoaded(String fileName, boolean isGlobal) {
+		if (!isGlobal) {
+			return cacheFileMap.containsKey(fileName);
+		}
+		return gobalCacheFileMap.containsKey(fileName);
 	}
 	
     //获取配置文件

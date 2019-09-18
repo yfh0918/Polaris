@@ -5,12 +5,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import com.polaris.core.Constant;
+import com.polaris.core.config.ConfHandlerSupport;
 
 public class PropertyUtils {
 
@@ -28,45 +27,59 @@ public class PropertyUtils {
         return java.net.URLDecoder.decode(url.getPath(),"utf-8") + File.separator + fileDir;
     }
     
-	/**  
-	  * 根据Key 读取Value  
-	  *   
-	  * @param key  
-	  * @return  
-	  */ 
-	@SuppressWarnings("unchecked")
-	public static String readData(String propertyName, String key) throws IOException{
+//	/**  
+//	  * 根据Key 读取Value  
+//	  *   
+//	  * @param key  
+//	  * @return  
+//	  */ 
+//	@SuppressWarnings("unchecked")
+//	public static String readData(String propertyName, String key) throws IOException{
+//		
+//		   //创建文件夹
+//		   try (InputStream in = getStream(propertyName)) {
+//				if (in == null) {
+//					return null;
+//				}
+//	            Properties config = new Properties();
+//	            config.load(in);
+//	            Object result = config.getProperty(key);
+//	 		   if(result == null) {
+//	 			   return null;
+//	 		   } else {
+//	 			   if (result instanceof ArrayList) {
+//	 				   StringBuilder strB = new StringBuilder();
+//	 				   for (String temp : ((List<String>)result)) {
+//	 					   if (StringUtil.isEmpty(strB.toString())) {
+//	 						   strB.append(temp);
+//	 					   } else {
+//	 						   strB.append(",");
+//	 						   strB.append(temp);
+//	 					   }
+//	 				   }
+//	 				   return strB.toString();
+//	 			   }
+//	 			   return result.toString();
+//	 		   }
+//	      } catch (IOException e) {
+//	      	e.printStackTrace();
+//	      }
+//		  return "";
+//   }
+	
+	public static String readData(String content, String key, String defaultValue) throws IOException{
 		
-		   //创建文件夹
-		   try (InputStream in = getStream(propertyName)) {
-				if (in == null) {
-					return null;
+		String[] contents = content.split(Constant.LINE_SEP);
+		for (String line : contents) {
+			String[] keyvalue = ConfHandlerSupport.getKeyValue(line);
+			if (keyvalue != null) {
+				if (keyvalue[0].equals(Constant.LOG_CONFIG)) {
+					return keyvalue[1];
 				}
-	            Properties config = new Properties();
-	            config.load(in);
-	            Object result = config.getProperty(key);
-	 		   if(result == null) {
-	 			   return null;
-	 		   } else {
-	 			   if (result instanceof ArrayList) {
-	 				   StringBuilder strB = new StringBuilder();
-	 				   for (String temp : ((List<String>)result)) {
-	 					   if (StringUtil.isEmpty(strB.toString())) {
-	 						   strB.append(temp);
-	 					   } else {
-	 						   strB.append(",");
-	 						   strB.append(temp);
-	 					   }
-	 				   }
-	 				   return strB.toString();
-	 			   }
-	 			   return result.toString();
-	 		   }
-	      } catch (IOException e) {
-	      	e.printStackTrace();
-	      }
-		  return "";
-   }
+			}
+		}
+		return defaultValue;
+}
 
 	@SuppressWarnings("rawtypes")
 	public static String getPropertiesFileContent(String fileName) {
@@ -96,7 +109,7 @@ public class PropertyUtils {
 			return new FileInputStream(file);
 		}
 		
-		//更目录下
+		//根目录下
 		file = new File(PropertyUtils.getFullPath(fileName));
 		if (file.exists()) {
 			return new FileInputStream(file);
