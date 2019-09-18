@@ -14,7 +14,7 @@
   需要在自己的服务pom.xml中引入 Polaris_naming_nacos
   
 
-5:配置中心支持两种模式（zookeeper,nacos,apollo的ConfigFile以及本地文件file），需要在自己的配置文件中设置配置中心
+5:配置中心支持多种模式（zookeeper,nacos,apollo的ConfigFile以及本地文件file），需要在自己的配置文件中设置配置中心
   所有的配置种类，需自己下载软件，比如nacos,apollo,zookeeper的建议使用ZooViewer（https://github.com/HelloKittyNII/ZooViewer）
   #zookeeper需要设置config.zk.root.path默认值【/polaris_conf】
   #config.registry.address=127.0.0.1:8848
@@ -86,7 +86,7 @@
    目前支持的方法参考com.polaris.cache.Cache接口
    缓存 序列化可以自己配置，默认KryoSerializer
    
-13，和Springboot的融合，单独映入注册中心
+13，和Springboot的融合，单独引入注册中心
 	<dependency>
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_naming_nacos</artifactId>
@@ -110,10 +110,10 @@
         SpringApplication springApplication = new SpringApplication(Application.class);
         
         //注册服务
-        springApplication.addListeners(new ApplicationListener<ContextRefreshedEvent>() {
+        springApplication.addListeners(new ApplicationListener<ContextStartedEvent>() {
 
 			@Override
-			public void onApplicationEvent(ContextRefreshedEvent event) {
+			public void onApplicationEvent(ContextStartedEvent event) {
 				
 				//注册中心
 		    	NameingClient.register();
