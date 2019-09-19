@@ -17,7 +17,7 @@ public class PropertyUtils {
 	}
 	
     /** 
-     * 判断文件是否存在. 
+     * classpath下的路径 
      * @param fileDir  文件路径 
      * @return 
      */  
@@ -104,13 +104,13 @@ public class PropertyUtils {
 	public static InputStream getStream(String fileName) throws IOException {
 		
 		//先判断目录下的文件夹
-		File file = new File(PropertyUtils.getFullPath(Constant.CONFIG + File.separator + fileName));
+		File file = new File(Constant.CONFIG + File.separator + fileName);
 		if (file.exists()) {
 			return new FileInputStream(file);
 		}
 		
 		//根目录下
-		file = new File(PropertyUtils.getFullPath(fileName));
+		file = new File(fileName);
 		if (file.exists()) {
 			return new FileInputStream(file);
 		}
@@ -126,17 +126,13 @@ public class PropertyUtils {
 	}
 	
 	public static File getFileNotInJar(String fileName)  {
-		try {
-			File file = new File(PropertyUtils.getFullPath(Constant.CONFIG + File.separator + fileName));
-			if (file.exists()) {
-				return file;
-			}
-			file = new File(PropertyUtils.getFullPath(fileName));
-			if (file.exists()) {
-				return file;
-			}
-		} catch (IOException ex) {
-			//ingore
+		File file = new File(Constant.CONFIG + File.separator + fileName);
+		if (file.exists()) {
+			return file;
+		}
+		file = new File(fileName);
+		if (file.exists()) {
+			return file;
 		}
 		return null;
 	}
