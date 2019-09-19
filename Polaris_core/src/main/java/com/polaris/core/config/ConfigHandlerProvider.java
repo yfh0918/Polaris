@@ -24,7 +24,7 @@ public  class ConfigHandlerProvider {
 
 	private static volatile Map<String, Map<String, String>> gobalCacheFileMap = new ConcurrentHashMap<>();
 	
-	public static final String APPLICATION_PROPERTIES_CONTENT = PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME);
+	public static volatile String APPLICATION_PROPERTIES_CONTENT = PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME);
 
 	// 监听所有扩展的文件
     private ConfigHandlerProvider() {
