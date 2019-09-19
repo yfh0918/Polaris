@@ -29,6 +29,12 @@ public class ConfClient {
 	    	// 启动字符集
 	    	System.setProperty("file.encoding", "UTF-8");
 	    	
+	    	// 设置文件
+	    	String projectConfigLocation = System.getProperty(Constant.PROJECT_CONFIG_NAME);
+	    	if (StringUtil.isNotEmpty(projectConfigLocation)) {
+	    		Constant.DEFAULT_CONFIG_NAME = projectConfigLocation;
+	    	}
+	    	
 	        //载入application.properties
 			ConfigHandlerProvider.loadConfig(Constant.DEFAULT_CONFIG_NAME,false);									
 						
