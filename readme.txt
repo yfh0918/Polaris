@@ -1,11 +1,9 @@
-1:先install Polaris_parent
+1:install 全体
 
-2:在install 全体
-
-3:提供两种类型的 demo（调用dubbo应用 和 无dubbo应用）
+2:提供两种类型的 demo（调用dubbo应用 和 无dubbo应用）
   主要参数可以参考Polaris_demo_web_nodubbo的application.properties
 
-4:集群部署服务的时候需要注册中心，
+3:集群部署服务的时候需要注册中心，
   支持nacos（需要自行下载nacos的server）,
   支持eureka(内置robbin负载均衡)，负载均衡策略 根据参数robbin.loadbalancer=com.netflix.loadbalancer.AvailabilityFilteringRule(可以选择其他的rule)
   后续版本支持zookeeper注册中心(web这一块)
@@ -14,7 +12,7 @@
   需要在自己的服务pom.xml中引入 Polaris_naming_nacos
   
 
-5:配置中心支持多种模式（zookeeper,nacos,apollo的ConfigFile以及本地文件file），需要在自己的配置文件中设置配置中心
+4:配置中心支持多种模式（zookeeper,nacos,apollo的ConfigFile以及本地文件file），需要在自己的配置文件中设置配置中心
   所有的配置种类，需自己下载软件，比如nacos,apollo,zookeeper的建议使用ZooViewer（https://github.com/HelloKittyNII/ZooViewer）
   #zookeeper需要设置config.zk.root.path默认值【/polaris_conf】
   #config.registry.address=127.0.0.1:8848
@@ -32,14 +30,14 @@
   默认支持Spring注解@Value的自动更新
   可以用value.auto.update=false来关闭，频繁更新配置会影响性能（配置更新采用文件形式）
 
-6:Polaris_workflow是现有的服务（工作流activity内核）
+5:Polaris_workflow是现有的服务（工作流activity内核）
   提供dubbo接口和http接口两种方式，没有画面，具体请参考模块的配置
 
-7:Polaris_gateway是现有的api网管，提供api的统一入口服务(基于netty http实现)
+6:Polaris_gateway是现有的api网管，提供api的统一入口服务(基于netty http实现)
   具体的api代理请参考config\upstream.txt,其中static:开头的代理的存静态文件会跳过所有的filter
   另外支持静态文件配置，可以在config\static.txt增增加静态文件路径
 
-8:支持Sentinel（流量监控类），需要在自己的配置文件中设置如下
+7:支持Sentinel（流量监控类），需要在自己的配置文件中设置如下
   #sentinel
   #csp.sentinel.dashboard.server=127.0.0.1:8858
   #csp.sentinel.heartbeat.interval.ms=5000
@@ -47,9 +45,9 @@
   需要在自己的服务pom.xml中引入 Polaris_sentinel
   该接口主要用于提供api的servlet
 
-9,如何启动，打开eclipse后启动Application.java文件（所有新建web工程都需要copy该文件到根目录下启动）
+8,如何启动，打开eclipse后启动Application.java文件（所有新建web工程都需要copy该文件到根目录下启动）
 
-  9.1 pom.xml中提供 tomcat和jetty两种启动模式,并且提供resteasy和springmvc组合的方式
+  8.1 pom.xml中提供 tomcat和jetty两种启动模式,并且提供resteasy和springmvc组合的方式
       具体参考pom.xml
 	  <dependency>
             <groupId>com.polaris</groupId>
@@ -65,16 +63,16 @@
   如果Polaris_container_springmvc，需要增加spring-context-mvc.xml配置文件
   application.properties 定义服务的project.name,context,port,是否开启websocket(目前只支持Polaris_container_tomcat)，是否开启servlet限流，等等
 
-10,新增了基于netty的静态文件服务器（不支持jsp和servlet）
+9,新增了基于netty的静态文件服务器（不支持jsp和servlet）
    具体context配置参照config\static.txt
    
-11，支持整体调用链路的跟踪，比如traceId, moduleId, parentId, 
+10，支持整体调用链路的跟踪，比如traceId, moduleId, parentId, 
     日志采用slf4j的 Logger xLogger = LoggerFactory.getLogger(xxx.class);只需引入Polaris_core包
 	另外如果采用线程池的方式，需要InheritableThreadLocalExecutor和InheritablePolarisThreadLocal搭配方式使用，线程池中的traceId信息也会进行传递
 	采用dubbo方式 需要映入polaris_dubbo模块，帮你做了traceID的传递，
 	http方式 采用HttpClientUtil方式，帮你做了traceID的传递
 	
-12,缓存模块Polaris_cache,
+11,缓存模块Polaris_cache,
    CacheFactory.getCache(cachename);获取缓存，默认采用EHCache, 
    根据缓存配置参数可以动态切换 RedisSingle和RedisCluster
    参数配置如下
@@ -86,7 +84,7 @@
    目前支持的方法参考com.polaris.cache.Cache接口
    缓存 序列化可以自己配置，默认KryoSerializer
    
-13，和Springboot的融合，单独引入注册中心
+12，和Springboot的融合，单独引入注册中心
 	<dependency>
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_naming_nacos</artifactId>
@@ -140,3 +138,4 @@
             <artifactId>Polaris_logger</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency> 
+   配置中心建议 在resource目录下建立config文件夹
