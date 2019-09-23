@@ -58,9 +58,7 @@
             <artifactId>Polaris_container_springmvc</artifactId> ->可修改成Polaris_container_resteasy
         </dependency>
   assembly目录下的配置文件不用修改，
-  applicationContext.xml文件需要简单修改,比如扫描路径配置，数据库配置，swagger配置等等，如果有dubbo调用需要配置dubbo信息
-  支持applicationContext-xxx.xml扩展
-  如果Polaris_container_springmvc，需要增加spring-context-mvc.xml配置文件
+  采用注解配置，详细参考Polaris_demo_web_nodubbo，请参考注掉的代码
   application.properties 定义服务的project.name,context,port,是否开启websocket(目前只支持Polaris_container_tomcat)，是否开启servlet限流，等等
 
 9,新增了基于netty的静态文件服务器（不支持jsp和servlet）

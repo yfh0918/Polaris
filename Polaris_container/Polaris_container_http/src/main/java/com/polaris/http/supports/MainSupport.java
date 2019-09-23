@@ -3,6 +3,7 @@ package com.polaris.http.supports;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.NameingClient;
 import com.polaris.http.factory.ContainerServerFactory;
+import com.polaris.http.initializer.WebConfigInitializer;
 import com.polaris.http.listener.ServerListener;
 
 /**
@@ -38,7 +39,7 @@ public class MainSupport {
     	
     	//各类参数载入
     	ConfClient.init();
-		
+    	
     	//启动
     	ContainerServerFactory.startServer(new ServerListener() {
 
@@ -56,6 +57,18 @@ public class MainSupport {
 			}
     		
     	});
+    }
+    
+    public static void startWebServer(String[] args, Class<?>[] rootConfig, Class<?>[] webConfig) {
+    	
+    	//载入RootConfig
+    	WebConfigInitializer.loadRootConfig(rootConfig);
+		
+    	//载入WebConfig
+    	WebConfigInitializer.loadWebConfig(webConfig);
+    	
+    	//启动
+    	startWebServer(args);
     }
     
     /**

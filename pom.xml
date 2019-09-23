@@ -1111,25 +1111,9 @@
                 </includes>
                 <excludes>
                 	<exclude>**/config-*/</exclude>
-                    <exclude>applicationContext.xml</exclude>
-                    <exclude>applicationContext-*.xml</exclude>
-                    <exclude>spring-context-mvc.xml</exclude>
                     <exclude>assembly/</exclude>
                     <exclude>scripts/</exclude>
                 </excludes>
-            </resource>
-
-            <!-- 结合com.alibaba.dubbo.Container.Main -->
-            <!-- 如果要用dubbo提供的main方法启动,则会默认读取sping.xml配置 -->
-            <resource>
-                <targetPath>${project.build.directory}/classes/META-INF/spring</targetPath>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <includes>
-                    <include>applicationContext.xml</include>
-                    <include>applicationContext-*.xml</include>
-                    <include>spring-context-mvc.xml</include>
-                </includes>
             </resource>
         </resources>
 

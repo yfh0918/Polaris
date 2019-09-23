@@ -13,6 +13,6 @@ public class Application
     {
 
 		//启动WEB
-    	MainSupport.startWebServer(args);
+    	MainSupport.startWebServer(args,null,null);
     }
 }

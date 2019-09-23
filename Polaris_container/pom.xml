@@ -48,10 +48,6 @@
 	    <groupId>org.jboss.resteasy</groupId>  
 	    <artifactId>resteasy-jackson-provider</artifactId>  
 	</dependency>
-	<dependency>  
-	    <groupId>org.jboss.resteasy</groupId>  
-	    <artifactId>resteasy-spring</artifactId>  
-	</dependency>
 	
   </dependencies>
 </project>

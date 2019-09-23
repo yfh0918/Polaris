@@ -9,8 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 /**
- * 上传图片
- * @author liuweitao
+ * 
+ * @author yufenghua
  *
  */
 @Controller

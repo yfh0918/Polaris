@@ -1,4 +1,4 @@
-package com.polaris.http.initializer;
+package com.polaris.http.filter;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
