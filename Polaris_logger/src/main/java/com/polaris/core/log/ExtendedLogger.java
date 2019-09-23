@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.spi.AbstractLogger;
 import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 import org.slf4j.Marker;
+import org.slf4j.helpers.SubstituteLogger;
 import org.slf4j.impl.StaticMarkerBinder;
 
 import com.polaris.core.Constant;
@@ -50,7 +51,7 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	public static final String PARENT_ID = "parentId";// 调用关系ID
 	public static final String MODULE_ID = "moduleId";// 本模块ID
 	public static final String LOG_SEPARATOR = "->";// 分割符号
-	private static final String FQCN = ExtendedLogger.class.getName();
+	private static final String FQCN = SubstituteLogger.class.getName();
 	
 	// The effective levelInt is the assigned levelInt and if null, a levelInt is
     // inherited form a parent.
