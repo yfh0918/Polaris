@@ -21,7 +21,7 @@ public class Application
 //    	WebConfigInitializer.loadInitParameters(key, value);
 //    	WebConfigInitializer.loadFilter(filterName, filter, urlPatterns);
 //    	WebConfigInitializer.loadListener(listener);
-//    	MainSupport.startWebServer(args, new Class[]{RootConig.class}, null);//resteasy
+//    	MainSupport.startWebServer(args);//resteasy
     	
 		//启动WEB
     	MainSupport.startWebServer(args, new Class[]{RootConig.class}, new Class[]{WebConfig.class});//springmvc
