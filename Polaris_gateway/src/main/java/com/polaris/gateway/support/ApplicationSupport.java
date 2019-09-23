@@ -12,6 +12,7 @@ import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 import org.littleshoot.proxy.impl.ThreadPoolConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.polaris.core.Constant;
@@ -38,8 +39,8 @@ public class ApplicationSupport {
     	//载入参数
     	ConfClient.init();
     	
-		//载入spring.xml
-    	new ClassPathXmlApplicationContext(SpringUtil.SPRING_PATH);
+		//载入spring
+    	new AnnotationConfigApplicationContext("com.polaris");
     	
     	//注册服务
 		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {
