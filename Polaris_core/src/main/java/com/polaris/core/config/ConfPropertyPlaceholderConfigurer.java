@@ -7,7 +7,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.core.Ordered;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringValueResolver;
 
 /**
@@ -17,7 +16,6 @@ import org.springframework.util.StringValueResolver;
  * <bean id="confPropertyPlaceholderConfigurer" class="com.polaris_conf_core.spring.ConfPropertyPlaceholderConfigurer" />
  *
  */
-@Component
 public class ConfPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
 
 	@Override

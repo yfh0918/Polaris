@@ -45,16 +45,21 @@ public class AutoUpdateConfigChangeListener implements BeanFactoryAware{
     }
     for (String key : cache.keySet()) {
       // 1. check whether the changed key is relevant
+      onChange(key);
+    }
+  }
+  
+  public void onChange(String key) {
+	// 1. check whether the changed key is relevant
       Collection<SpringValue> targetValues = SpringValueRegistry.get(beanFactory, key);
       if (targetValues == null || targetValues.isEmpty()) {
-        continue;
+        return;
       }
 
       // 2. update the value
       for (SpringValue val : targetValues) {
         updateSpringValue(val);
       }
-    }
   }
 
   private void updateSpringValue(SpringValue springValue) {
