@@ -7,14 +7,12 @@ import javax.ws.rs.ext.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.dto.ResultDto;
 
-@Component
 @Provider  
 public class RestExceptionHandler implements ExceptionMapper<Exception>{  
     
