@@ -10,7 +10,7 @@ import java.util.Set;
 import javax.servlet.Filter;
 import javax.servlet.ServletContextListener;
 
-import com.polaris.http.configurer.DefaultRootConfig;
+import com.polaris.core.config.DefaultRootConfig;
 
 abstract public class WebConfigInitializer {
 
