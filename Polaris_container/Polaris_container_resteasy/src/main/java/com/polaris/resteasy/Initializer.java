@@ -2,7 +2,6 @@ package com.polaris.resteasy;
 
 import javax.servlet.ServletRegistration;
 
-import org.jboss.resteasy.plugins.server.servlet.ResteasyContextParameters;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.polaris.http.initializer.AbsHttpInitializer;
@@ -21,7 +20,6 @@ public class Initializer extends  AbsHttpInitializer {
 	@Override
 	public void addInitParameter() {
         servletContext.setInitParameter("javax.ws.rs.core.Application", "com.polaris.resteasy.ResteasyApplication");
-        servletContext.setInitParameter(ResteasyContextParameters.RESTEASY_PROVIDERS, "com.polaris.resteasy.RestExceptionHandler");
         super.addInitParameter();
 	}
 
