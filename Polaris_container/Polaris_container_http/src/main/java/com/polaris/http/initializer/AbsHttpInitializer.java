@@ -1,17 +1,14 @@
 package com.polaris.http.initializer;
 
 import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletContextListener;
 
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.StringUtil;
 import com.polaris.http.filter.FlowControlFilter;
 import com.polaris.http.filter.RequestFirstFilter;
-import com.polaris.http.initializer.WebConfigInitializer.InnerFilter;
 
 public abstract class AbsHttpInitializer implements HttpInitializer {
 	protected ServletContext servletContext = null;
@@ -25,18 +22,22 @@ public abstract class AbsHttpInitializer implements HttpInitializer {
 	}
 	public abstract void loadContext();
 	public void addInitParameter() {
-		Map<String, String> initParameters = WebConfigInitializer.getInitParameters();
-		if (initParameters != null) {
-			for (Map.Entry<String, String> entry : initParameters.entrySet()) {
-				servletContext.setInitParameter(entry.getKey(), entry.getValue());
+		String names = ConfClient.get("servlet.init.parameter.names");
+		String values = ConfClient.get("servlet.init.parameter.values");
+		if (StringUtil.isNotEmpty(names) && StringUtil.isNotEmpty(values)) {
+			String[] nameArray = names.split(",");
+			String[] valueArray = values.split(",");
+			for (int i0 = 0; i0 < nameArray.length; i0++) {
+				servletContext.setInitParameter(nameArray[i0], valueArray[i0]);
 			}
 		}
 	}
 	public void addListener() {
-		List<ServletContextListener> listeners = WebConfigInitializer.getListeners();
-		if (listeners != null) {
-			for (ServletContextListener listener : listeners) {
-				servletContext.addListener(listener.getClass());
+		String listeners = ConfClient.get("servlet.listeners");
+		if (StringUtil.isNotEmpty(listeners)) {
+			String[] listenerArray = listeners.split(",");
+			for (String listener : listenerArray) {
+				servletContext.addListener(listener);
 			}
 		}
 	}
@@ -54,11 +55,17 @@ public abstract class AbsHttpInitializer implements HttpInitializer {
 			  .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 		}
 		
-		List<InnerFilter> listeners = WebConfigInitializer.getFilters();
-		if (listeners != null) {
-			for (InnerFilter innerFilter : listeners) {
-				servletContext.addFilter(innerFilter.getFilterName(), innerFilter.getFilter())
-				  .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, innerFilter.getUrlPatterns());
+		//其他filter
+		String names = ConfClient.get("servlet.filter.names");
+		String values = ConfClient.get("servlet.filter.values");
+		String urls = ConfClient.get("servlet.filter.urls");
+		if (StringUtil.isNotEmpty(names) && StringUtil.isNotEmpty(values) && StringUtil.isNotEmpty(urls)) {
+			String[] nameArray = names.split(",");
+			String[] valueArray = values.split(",");
+			String[] urlArray = urls.split(",");
+			for (int i0 = 0; i0 < nameArray.length; i0++) {
+				servletContext.addFilter(nameArray[i0], valueArray[i0])
+				  .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, urlArray[i0]);
 			}
 		}
 		

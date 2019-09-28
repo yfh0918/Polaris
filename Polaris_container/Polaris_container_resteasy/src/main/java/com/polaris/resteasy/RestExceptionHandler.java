@@ -44,7 +44,7 @@ public class RestExceptionHandler implements ExceptionMapper<Exception>{
     	Response response = Response.status(200).entity(responseDto.toJSON()).build();
     	response.getHeaders().remove("Content-Type");
     	response.getHeaders().add("Content-Type", MediaType.APPLICATION_JSON);
-    	logger.error(ex.getMessage());
+    	logger.error(ex.toString());
         return response;  
     }
 }  

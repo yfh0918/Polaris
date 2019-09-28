@@ -2,6 +2,8 @@ package com.polaris.http.factory;
 
 import java.util.ServiceLoader;
 
+import com.polaris.core.config.DefaultRootConfig;
+import com.polaris.http.initializer.WebConfigInitializer;
 import com.polaris.http.listener.ServerListener;
 
 public class ContainerServerFactory {
@@ -9,11 +11,28 @@ public class ContainerServerFactory {
     private ContainerServerFactory() {
     }
 
-    public static void startServer(ServerListener listener) {
+    public static void startServer(Class<?>[] rootConfig, Class<?>[] webConfig, ServerListener listener) {
+    	
+    	//root context
+    	if (rootConfig != null) {
+    		WebConfigInitializer.loadRootConfig(rootConfig);
+    	} else {
+    		WebConfigInitializer.loadRootConfig(DefaultRootConfig.class);
+    	}
+    	
+    	//web context
+    	if (webConfig != null) {
+    		WebConfigInitializer.loadWebConfig(webConfig);
+    	}
+    	
+    	//start server
     	for (ContainerDiscoveryHandler container : containers) {
     		container.start(listener);
     		break;
 		}
+    }
+    public static void startServer(Class<?>[] rootConfig, ServerListener listener) {
+    	startServer(rootConfig, null, listener);
     }
     public static void stopServer() {
     	for (ContainerDiscoveryHandler container : containers) {
