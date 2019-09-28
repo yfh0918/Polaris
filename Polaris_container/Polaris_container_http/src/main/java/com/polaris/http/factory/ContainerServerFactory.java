@@ -14,10 +14,9 @@ public class ContainerServerFactory {
     public static void startServer(Class<?>[] rootConfig, Class<?>[] webConfig, ServerListener listener) {
     	
     	//root context
+    	WebConfigInitializer.loadRootConfig(DefaultRootConfig.class);
     	if (rootConfig != null) {
     		WebConfigInitializer.loadRootConfig(rootConfig);
-    	} else {
-    		WebConfigInitializer.loadRootConfig(DefaultRootConfig.class);
     	}
     	
     	//web context
