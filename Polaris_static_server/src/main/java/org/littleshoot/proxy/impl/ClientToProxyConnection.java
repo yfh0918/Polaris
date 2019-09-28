@@ -33,7 +33,7 @@ import org.littleshoot.proxy.ProxyAuthenticator;
 import org.littleshoot.proxy.SslEngineSource;
 
 import com.google.common.io.BaseEncoding;
-import com.mwclg.gateway.HttpStatic;
+import com.polaris.gateway.HttpStatic;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

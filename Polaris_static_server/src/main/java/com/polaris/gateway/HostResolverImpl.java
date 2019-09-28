@@ -1,4 +1,4 @@
-package com.mwclg.gateway;
+package com.polaris.gateway;
 
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;

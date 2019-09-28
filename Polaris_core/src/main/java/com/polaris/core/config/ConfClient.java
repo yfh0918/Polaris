@@ -1,10 +1,12 @@
 package com.polaris.core.config;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
-import com.polaris.core.util.NetUtils;
+import com.polaris.core.util.EnvironmentUtil;
 import com.polaris.core.util.StringUtil;
 
 /**
@@ -22,12 +24,13 @@ import com.polaris.core.util.StringUtil;
 */
 public class ConfClient {
 	final static Logger logger = LoggerFactory.getLogger(ConfClient.class);
+	
 	//初始化操作
 	public static void init() {
 		try {
 			
 	    	// 启动字符集
-	    	System.setProperty("file.encoding", "UTF-8");
+	    	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
 	    	
 	    	// 设置文件
 	    	String projectConfigLocation = System.getProperty(Constant.PROJECT_CONFIG_NAME);
@@ -36,61 +39,20 @@ public class ConfClient {
 	    	}
 	    	
 	        //载入application.properties
-			ConfigHandlerProvider.loadConfig(Constant.DEFAULT_CONFIG_NAME,false);									
-						
-			//配置中心
-			String config = System.getProperty(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
-			if (StringUtil.isNotEmpty(config)) {
-				ConfigHandlerProvider.updateValue(Constant.CONFIG_REGISTRY_ADDRESS_NAME, config, Constant.DEFAULT_CONFIG_NAME);
-			} 
+			ConfigHandlerProvider.loadConfig(Constant.DEFAULT_CONFIG_NAME,false);
 			
-			//工程名称
-			String project = System.getProperty(Constant.PROJECT_NAME);
-			if (StringUtil.isNotEmpty(project)) {
-				ConfigHandlerProvider.updateValue(Constant.PROJECT_NAME, project, Constant.DEFAULT_CONFIG_NAME);
+			//查询所有systemenv
+			for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemEnvironment().entrySet()) {
+				if (StringUtil.isNotEmpty(entry.getValue())) {
+					ConfigHandlerProvider.updateValue(entry.getKey(), entry.getValue(), Constant.DEFAULT_CONFIG_NAME);
+				}
 			}
 			
-			//命名空间(注册中心和配置中心)
-			String namespace = System.getProperty(Constant.PROJECR_NAMESPACE_NAME);
-			if (StringUtil.isNotEmpty(namespace)) {
-				ConfigHandlerProvider.updateValue(Constant.PROJECR_NAMESPACE_NAME, namespace, Constant.DEFAULT_CONFIG_NAME);
-			} 
-			
-			//集群名称(注册中心和配置中心)
-			String group = System.getProperty(Constant.PROJECR_GROUP_NAME);
-			if (StringUtil.isNotEmpty(group)) {
-				ConfigHandlerProvider.updateValue(Constant.PROJECR_GROUP_NAME, group, Constant.DEFAULT_CONFIG_NAME);
-			} 
-			
-			//IP地址
-			String serverIp = System.getProperty(Constant.IP_ADDRESS);
-			if (StringUtil.isNotEmpty(serverIp)) {
-				ConfigHandlerProvider.updateValue(Constant.IP_ADDRESS, serverIp, Constant.DEFAULT_CONFIG_NAME);
-			} else {
-				ConfigHandlerProvider.updateValue(Constant.IP_ADDRESS, NetUtils.getLocalHost(), Constant.DEFAULT_CONFIG_NAME);
-			}
-			
-			//服务端口
-			String serverPort = System.getProperty(Constant.SERVER_PORT_NAME);
-			if (StringUtil.isNotEmpty(serverPort)) {
-				ConfigHandlerProvider.updateValue(Constant.SERVER_PORT_NAME, serverPort, Constant.DEFAULT_CONFIG_NAME);
-			} 
-			
-			//注册中心
-			String name = System.getProperty(Constant.NAMING_REGISTRY_ADDRESS_NAME);
-			if (StringUtil.isNotEmpty(name)) {
-				ConfigHandlerProvider.updateValue(Constant.NAMING_REGISTRY_ADDRESS_NAME, name, Constant.DEFAULT_CONFIG_NAME);
-			}
-			
-			//dubbo服务端口
-			String dubboPort = System.getProperty(Constant.DUBBO_PROTOCOL_PORT_NAME);
-			if (StringUtil.isNotEmpty(dubboPort)) {
-				ConfigHandlerProvider.updateValue(Constant.DUBBO_PROTOCOL_PORT_NAME, dubboPort, Constant.DEFAULT_CONFIG_NAME);
-			}
-			//dubbo注册中心
-			String dubboName = System.getProperty(Constant.DUBBO_REGISTRY_ADDRESS_NAME);
-			if (StringUtil.isNotEmpty(dubboName)) {
-				ConfigHandlerProvider.updateValue(Constant.DUBBO_REGISTRY_ADDRESS_NAME, dubboName, Constant.DEFAULT_CONFIG_NAME);
+			//查询所有systemProperties
+			for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemProperties().entrySet()) {
+				if (StringUtil.isNotEmpty(entry.getValue())) {
+					ConfigHandlerProvider.updateValue(entry.getKey(), entry.getValue(), Constant.DEFAULT_CONFIG_NAME);
+				}
 			}
 			
 			//载入扩展文件

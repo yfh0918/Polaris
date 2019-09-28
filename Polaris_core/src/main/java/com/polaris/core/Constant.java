@@ -63,6 +63,7 @@ public class Constant {
 	public final static String METHOD = "method";
 	public final static String METHOD_GET = "GET";
 	public final static String METHOD_POST = "POST";
+	public final static String FILE_ENCODING = "file.encoding";
 	public final static String UTF_CODE = "UTF-8";
 	public final static int CONNECT_MAX_TIME = 3000000;//连接的最大长度（单位毫秒）
 	

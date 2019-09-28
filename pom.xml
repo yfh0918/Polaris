@@ -1129,7 +1129,7 @@
                         <archive>
                             <addMavenDescriptor>false</addMavenDescriptor>
                             <manifest>
-                                <mainClass>Application</mainClass>
+                                <mainClass>com.polaris.core.ApplicationLauncher</mainClass>
                                 <!-- 打包时 MANIFEST.MF文件不记录的时间戳版本 -->
                                 <useUniqueVersions>false</useUniqueVersions>
                                 <addClasspath>true</addClasspath>

@@ -1,4 +1,4 @@
-package com.mwclg.gateway;
+package com.polaris.gateway;
 
 import java.io.File;
 import java.io.IOException;
