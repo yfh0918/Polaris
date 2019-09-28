@@ -59,6 +59,15 @@ public class MainSupport {
     	});
     }
     
+    public static void startWebServer(String[] args, Class<?>[] rootConfig) {
+    	
+    	//载入RootConfig
+    	WebConfigInitializer.loadRootConfig(rootConfig);
+    	
+    	//启动
+    	startWebServer(args);
+    }
+    
     public static void startWebServer(String[] args, Class<?>[] rootConfig, Class<?>[] webConfig) {
     	
     	//载入RootConfig
@@ -70,7 +79,7 @@ public class MainSupport {
     	//启动
     	startWebServer(args);
     }
-    
+
     /**
      * stopWebServer(关闭web容器)
      * @param 
