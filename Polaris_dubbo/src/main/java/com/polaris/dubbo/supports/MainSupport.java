@@ -1,6 +1,7 @@
 package com.polaris.dubbo.supports;
 
 import com.polaris.core.config.ConfClient;
+import com.polaris.dubbo.DubboApplication;
 
 /**
 *
@@ -30,11 +31,12 @@ public class MainSupport {
     * @Exception 
     * @since 
     */
-    public static void startDubboServer(String[] args) {
+    public static void startDubboServer(String[] args, Class<?>... annotatedClasses) {
     	//载入参数
     	ConfClient.init();
-		//启动
-		org.apache.dubbo.container.Main.main(args);
+    	
+    	//载入context
+    	DubboApplication.loadContext(annotatedClasses); 
     }
     
 }

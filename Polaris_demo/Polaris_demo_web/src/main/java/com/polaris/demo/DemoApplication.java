@@ -21,6 +21,6 @@ public class DemoApplication implements Launcher
     {
 
 		//启动WEB
-    	MainSupport.startWebServer(args,null,null);
+    	MainSupport.startWebServer(args,new Class[]{DemoApplication.class});
     }
 }

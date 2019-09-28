@@ -1,6 +1,7 @@
 package com.polaris.demo.core.entry;
 
-import org.springframework.stereotype.Service;
+
+import org.apache.dubbo.config.annotation.Service;
 
 import com.polaris.core.adapter.ServiceAdapter;
 import com.polaris.core.util.EncryptUtil;
