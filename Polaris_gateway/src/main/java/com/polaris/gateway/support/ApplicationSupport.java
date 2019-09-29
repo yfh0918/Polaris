@@ -12,11 +12,11 @@ import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 import org.littleshoot.proxy.impl.ThreadPoolConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
+import com.polaris.core.util.SpringUtil;
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.HostResolverImpl;
 import com.polaris.gateway.HttpFilterAdapterImpl;
@@ -31,14 +31,13 @@ public class ApplicationSupport {
 	private static Logger logger = LoggerFactory.getLogger(ApplicationSupport.class);
 	
     //启动网关应用
-    @SuppressWarnings("resource")
-	public static void startGateway() {
+	public static void startGateway(Class<?>[] clazzs) {
     	
     	//载入参数
     	ConfClient.init();
     	
 		//载入spring
-    	new AnnotationConfigApplicationContext("com.polaris");
+    	SpringUtil.start(clazzs);
     	
     	//注册服务
 		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {
@@ -110,6 +109,5 @@ public class ApplicationSupport {
                         return new HttpFilterAdapterImpl(originalRequest, ctx);
                     }
                 }).start();
-    }
-    
+    }   
 }

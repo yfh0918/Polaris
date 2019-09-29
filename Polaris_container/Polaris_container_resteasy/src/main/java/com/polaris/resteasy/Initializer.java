@@ -2,19 +2,15 @@ package com.polaris.resteasy;
 
 import javax.servlet.ServletRegistration;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
+import com.polaris.core.util.SpringUtil;
 import com.polaris.http.initializer.AbsHttpInitializer;
 import com.polaris.http.initializer.WebConfigInitializer;
 
 public class Initializer extends  AbsHttpInitializer { 
-	private AnnotationConfigApplicationContext applicationContext = null;
 
 	@Override
 	public void loadContext() {
-		applicationContext = new AnnotationConfigApplicationContext();
-		applicationContext.register(WebConfigInitializer.getRootConfigs());
-		applicationContext.refresh();
+		SpringUtil.start(WebConfigInitializer.getRootConfigs());
 	} 
 	
 	@Override

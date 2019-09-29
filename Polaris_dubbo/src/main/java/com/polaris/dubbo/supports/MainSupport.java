@@ -1,7 +1,9 @@
 package com.polaris.dubbo.supports;
 
+import java.io.IOException;
+
 import com.polaris.core.config.ConfClient;
-import com.polaris.dubbo.DubboApplication;
+import com.polaris.core.util.SpringUtil;
 
 /**
 *
@@ -28,15 +30,16 @@ public class MainSupport {
     * startDubboServer(启动dubbo容器)
     * @param 
     * @return 
+     * @throws IOException 
     * @Exception 
     * @since 
     */
-    public static void startDubboServer(String[] args, Class<?>... annotatedClasses) {
+    public static void startDubboServer(String[] args, Class<?>... annotatedClasses) throws IOException  {
     	//载入参数
     	ConfClient.init();
     	
-    	//载入context
-    	DubboApplication.loadContext(annotatedClasses); 
+    	//载入spring
+    	SpringUtil.start(annotatedClasses);
     }
     
 }

@@ -8,6 +8,6 @@ public class StaticApplication implements Launcher{
     public static void main(String[] args) {
     	    	
     	//启动网关应用
-    	ApplicationSupport.startGateway();
+    	ApplicationSupport.startGateway(null);
     }
 }

@@ -7,8 +7,6 @@ import org.littleshoot.proxy.HttpFiltersSourceAdapter;
 import org.littleshoot.proxy.HttpProxyServerBootstrap;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 import org.littleshoot.proxy.impl.ThreadPoolConfiguration;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
@@ -25,14 +23,13 @@ import io.netty.handler.codec.http.HttpRequest;
 public class ApplicationSupport {
 	
     //启动网关应用
-    @SuppressWarnings("resource")
-	public static void startGateway() {
+	public static void startGateway(Class<?>[] clazzs) {
     	
     	//载入参数
     	ConfClient.init();
 
-		//载入spring
-    	new AnnotationConfigApplicationContext("com.polaris");
+    	//载入spring
+    	SpringUtil.start(clazzs);
     	
     	//注册服务
 		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {

@@ -64,6 +64,12 @@ public class MainSupport {
     	startWebServer(args, rootConfig, null);
     }
     
+    public static void startWebServer(String[] args) {
+    	
+    	//启动
+    	startWebServer(args, null, null);
+    }
+    
     
 
     /**

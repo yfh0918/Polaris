@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
 import com.polaris.core.util.EnvironmentUtil;
+import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
 /**
@@ -54,6 +55,12 @@ public class ConfClient {
 					ConfigHandlerProvider.updateValue(entry.getKey(), entry.getValue(), Constant.DEFAULT_CONFIG_NAME);
 				}
 			}
+			
+			//IP地址单独处理
+			String serverIp = ConfClient.get(Constant.IP_ADDRESS);
+			if (StringUtil.isEmpty(serverIp)) {
+				ConfigHandlerProvider.updateValue(Constant.IP_ADDRESS, NetUtils.getLocalHost(), Constant.DEFAULT_CONFIG_NAME);
+			} 
 			
 			//载入扩展文件
 			String[] extendProperties = ConfHandlerSupport.getExtensionProperties();
