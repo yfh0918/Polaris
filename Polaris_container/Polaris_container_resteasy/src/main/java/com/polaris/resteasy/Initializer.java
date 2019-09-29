@@ -10,7 +10,7 @@ public class Initializer extends  AbsHttpInitializer {
 
 	@Override
 	public void loadContext() {
-		SpringUtil.start(WebConfigInitializer.getRootConfigs());
+		SpringUtil.refresh(WebConfigInitializer.getRootConfigs());
 	} 
 	
 	@Override

@@ -39,7 +39,7 @@ public class MainSupport {
     	ConfClient.init();
     	
     	//载入spring
-    	SpringUtil.start(clazzs);
+    	SpringUtil.refresh(clazzs);
     	
     	//hold
     	System.in.read();

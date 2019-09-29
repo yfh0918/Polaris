@@ -37,7 +37,7 @@ public class ApplicationSupport {
     	ConfClient.init();
     	
 		//载入spring
-    	SpringUtil.start(clazzs);
+    	SpringUtil.refresh(clazzs);
     	
     	//注册服务
 		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {
