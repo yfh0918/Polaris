@@ -31,7 +31,7 @@ public class ApplicationSupport {
 	private static Logger logger = LoggerFactory.getLogger(ApplicationSupport.class);
 	
     //启动网关应用
-	public static void startGateway(Class<?>[] clazzs) {
+	public static void startGateway(Class<?>... clazzs) {
     	
     	//载入参数
     	ConfClient.init();

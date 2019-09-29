@@ -34,13 +34,14 @@ public class MainSupport {
     * @Exception 
     * @since 
     */
-    public static void startDubboServer(String[] args, Class<?>[] clazzs) throws IOException  {
+    public static void startDubboServer(String[] args, Class<?>... clazzs) throws IOException  {
     	//载入参数
     	ConfClient.init();
     	
     	//载入spring
     	SpringUtil.start(clazzs);
     	
+    	//hold
     	System.in.read();
     }
     

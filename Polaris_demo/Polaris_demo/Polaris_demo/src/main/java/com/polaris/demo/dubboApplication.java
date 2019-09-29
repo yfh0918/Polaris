@@ -9,7 +9,7 @@ public class dubboApplication implements Launcher{
 	public static void main(String[] args) throws Exception { 
 		
 		//启动dubbo服务
-		MainSupport.startDubboServer(args,null);
+		MainSupport.startDubboServer(args);
     } 
 	
 

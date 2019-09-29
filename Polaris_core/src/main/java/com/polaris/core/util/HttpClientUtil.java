@@ -154,7 +154,7 @@ public class HttpClientUtil {
         HttpRequestRetryHandler httpRequestRetryHandler = new HttpRequestRetryHandler() {
             public boolean retryRequest(IOException exception,
                     int executionCount, HttpContext context) {
-            	int retryCount = Integer.parseInt(ConfClient.get(RETRY_COUNT, "5"));
+            	int retryCount = Integer.parseInt(ConfClient.get(RETRY_COUNT, "2"));
                 if (executionCount >= retryCount) {// 如果已经重试了5次，就放弃
                     return false;
                 }

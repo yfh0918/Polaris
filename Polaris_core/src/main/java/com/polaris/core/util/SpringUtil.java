@@ -4,6 +4,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -66,7 +67,12 @@ public class SpringUtil implements ApplicationContextAware {
 		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
     	applicationContext.register(DefaultRootConfig.class);
     	if (clazzs != null && clazzs.length > 0) {
-    		applicationContext.register(clazzs);
+    		for (Class<?> clazz : clazzs) {
+    			if (clazz.getAnnotation(Configuration.class) != null) {
+    				applicationContext.register(clazzs);
+    			}
+    		}
+    		
     	}
 		applicationContext.refresh();
 		applicationContext.registerShutdownHook();
