@@ -8,7 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.dubbo.config.annotation.Reference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
@@ -24,7 +24,7 @@ import com.polaris.demo.api.service.DemoEntryIF;
 @Path("/rest/demo")
 public class DemoController {
 
-	@Reference(url="dubbo://192.168.1.13:20880")
+	@Autowired
     private DemoEntryIF demoEntryIF;
 
     /**
