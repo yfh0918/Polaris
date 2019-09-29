@@ -1,6 +1,5 @@
 package com.polaris.demo.core.entry;
 
-
 import org.apache.dubbo.config.annotation.Service;
 
 import com.polaris.core.adapter.ServiceAdapter;

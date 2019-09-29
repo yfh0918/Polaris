@@ -24,7 +24,7 @@ import com.polaris.demo.api.service.DemoEntryIF;
 @Path("/rest/demo")
 public class DemoController {
 
-	@Reference
+	@Reference(url="dubbo://192.168.1.13:20880")
     private DemoEntryIF demoEntryIF;
 
     /**
@@ -47,11 +47,4 @@ public class DemoController {
         return null;
     }
     
-//    public static void main( String[] args ) throws Exception {
-//		for (int i = 0; i < 10000; i++) {
-//			String result = RequestSupport.sendRequest(Constant.METHOD_POST, "http://127.0.0.1:9005/rest/demo/test", null);
-//			Thread.sleep(10);
-//			System.out.println(result);
-//		}
-//	}
 }
