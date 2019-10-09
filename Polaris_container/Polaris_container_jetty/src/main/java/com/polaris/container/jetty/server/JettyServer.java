@@ -4,13 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.jetty.listener.ServerHandlerLifeCycle;
 import com.polaris.container.jetty.listener.ServerHandlerListerner;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.PropertyUtils;
@@ -63,10 +64,13 @@ public class JettyServer {
             File resDir = new File(resourceBase);
             context.setResourceBase(resDir.getCanonicalPath());
             context.setMaxFormContentSize(Integer.parseInt(ConfClient.get("server.maxSavePostSize",String.valueOf(MAX_SAVE_POST_SIZE))));
+            context.setConfigurationDiscovered(true);  
+            context.setParentLoaderPriority(true);  
+            context.setConfigurations(new Configuration[] { 
+                    new AnnotationConfiguration() });
             
             //context加入server
             this.server.setHandler(context); // 将Application注册到服务器
-            context.addBean(new ServerHandlerLifeCycle(context.getServletContext()),false);
             this.server.addLifeCycleListener(ServerHandlerListerner.getInstance(listener));//监听handler
         } catch (IOException e) {
             logger.error(e.getMessage());

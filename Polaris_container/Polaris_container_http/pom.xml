@@ -17,8 +17,12 @@
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 		</dependency>
-			
+		<dependency>
+		    <groupId>javax.websocket</groupId>
+		    <artifactId>javax.websocket-api</artifactId>
+		</dependency>			
 	</dependencies>
+	
 	<build>
 	  <plugins>
 		<!-- Source attach plugin -->
