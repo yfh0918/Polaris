@@ -68,6 +68,17 @@ public class JettyServer {
             context.setParentLoaderPriority(true);  
             context.setConfigurations(new Configuration[] { 
                     new AnnotationConfiguration() });
+//            if (true) {
+//            	Resource resource = Resource.newResource(this.getClass().getClassLoader().getResource(""));
+//            	context.getMetaData().addContainerResource(resource);
+//            	try {
+//					ServerContainer container = WebSocketServerContainerInitializer.initialize(context);
+//					Class<?> endPoint = Class.forName("xx.xx.xx");
+//					container.addEndpoint(endPoint);
+//				} catch (Exception e) {
+//					//ignore
+//				}
+//            }
             
             //context加入server
             this.server.setHandler(context); // 将Application注册到服务器
