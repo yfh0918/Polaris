@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Properties;
 
@@ -89,11 +91,13 @@ public class PropertyUtils {
 				return null;
 			}
           Properties p = new Properties();
-          p.load(in);
-          for (Map.Entry entry : p.entrySet()) {
-              String key = (String) entry.getKey();
-              buffer.append(key + "=" + entry.getValue());
-              buffer.append(Constant.LINE_SEP);
+          try (InputStreamReader read = new InputStreamReader(in, Charset.defaultCharset())) {
+              p.load(read);
+              for (Map.Entry entry : p.entrySet()) {
+                  String key = (String) entry.getKey();
+                  buffer.append(key + "=" + entry.getValue());
+                  buffer.append(Constant.LINE_SEP);
+              }
           }
       } catch (IOException e) {
       	e.printStackTrace();
