@@ -10,6 +10,8 @@ import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Properties;
 
+import org.springframework.util.ClassUtils;
+
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerSupport;
 
@@ -26,48 +28,12 @@ public class PropertyUtils {
     public static String getFullPath(String fileDir) throws IOException {  
     	ClassLoader classLoader = PropertyUtils.class.getClassLoader();
         URL url = classLoader.getResource("");
+        if (StringUtil.isEmpty(fileDir)) {
+        	return java.net.URLDecoder.decode(url.getPath(),"utf-8");
+        }
         return java.net.URLDecoder.decode(url.getPath(),"utf-8") + File.separator + fileDir;
     }
     
-//	/**  
-//	  * 根据Key 读取Value  
-//	  *   
-//	  * @param key  
-//	  * @return  
-//	  */ 
-//	@SuppressWarnings("unchecked")
-//	public static String readData(String propertyName, String key) throws IOException{
-//		
-//		   //创建文件夹
-//		   try (InputStream in = getStream(propertyName)) {
-//				if (in == null) {
-//					return null;
-//				}
-//	            Properties config = new Properties();
-//	            config.load(in);
-//	            Object result = config.getProperty(key);
-//	 		   if(result == null) {
-//	 			   return null;
-//	 		   } else {
-//	 			   if (result instanceof ArrayList) {
-//	 				   StringBuilder strB = new StringBuilder();
-//	 				   for (String temp : ((List<String>)result)) {
-//	 					   if (StringUtil.isEmpty(strB.toString())) {
-//	 						   strB.append(temp);
-//	 					   } else {
-//	 						   strB.append(",");
-//	 						   strB.append(temp);
-//	 					   }
-//	 				   }
-//	 				   return strB.toString();
-//	 			   }
-//	 			   return result.toString();
-//	 		   }
-//	      } catch (IOException e) {
-//	      	e.printStackTrace();
-//	      }
-//		  return "";
-//   }
 	
 	public static String readData(String content, String key, String defaultValue) throws IOException{
 		
@@ -108,13 +74,22 @@ public class PropertyUtils {
 	public static InputStream getStream(String fileName) throws IOException {
 		
 		//先判断目录下的文件夹
-		File file = new File(Constant.CONFIG + File.separator + fileName);
+		//file:/C:/projects/bin/xxxxx/yyyy.jar!/BOOT-INF/classes!/
+		String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
+		if (path.startsWith("file:")) {
+			path = path.substring(5);
+			path = path.split("!")[0];
+			if (path.endsWith(".jar")) {
+				path = new File(path).getParent();
+			}
+		}
+		File file = new File(path + File.separator + Constant.CONFIG + File.separator + fileName);
 		if (file.exists()) {
 			return new FileInputStream(file);
 		}
 		
 		//根目录下
-		file = new File(fileName);
+		file = new File(path + File.separator + fileName);
 		if (file.exists()) {
 			return new FileInputStream(file);
 		}

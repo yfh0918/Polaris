@@ -24,11 +24,20 @@ import com.polaris.core.util.StringUtil;
 *
 */
 public class ConfClient {
+	
 	final static Logger logger = LoggerFactory.getLogger(ConfClient.class);
+	
+	static volatile boolean initial = false;
 	
 	//初始化操作
 	public static void init() {
 		try {
+			
+			//已经初期化直接退出
+			if (initial) {
+				return;
+			}
+			initial = true;
 			
 	    	// 启动字符集
 	    	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
@@ -71,7 +80,7 @@ public class ConfClient {
 			}
 			
 			//载入全局文件
-			if (StringUtil.isNotEmpty(ConfClient.getGlobalConfigName())) {
+			if (StringUtil.isNotEmpty(ConfigHandlerProvider.getValue(Constant.PROJECR_GLOBAL_CONFIG_NAME, Constant.DEFAULT_CONFIG_NAME, false))) {
 				String[] globalProperties = ConfHandlerSupport.getGlobalProperties();
 				if (globalProperties != null) {
 					for (String file : globalProperties) {
@@ -82,9 +91,7 @@ public class ConfClient {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-		} finally {
-			ConfigHandlerProvider.APPLICATION_PROPERTIES_CONTENT = null;
-		}
+		} 
 	}
 	
 	/**
@@ -117,7 +124,7 @@ public class ConfClient {
 		}
 		
 		//全局
-		if (StringUtil.isNotEmpty(ConfClient.getGlobalConfigName())) {
+		if (StringUtil.isNotEmpty(ConfigHandlerProvider.getValue(Constant.PROJECR_GLOBAL_CONFIG_NAME, Constant.DEFAULT_CONFIG_NAME, false))) {
 			String[] globalProperties = ConfHandlerSupport.getGlobalProperties();
 			if (globalProperties != null) {
 				for (String file : globalProperties) {
@@ -140,6 +147,7 @@ public class ConfClient {
 	
 	//在设置应用名称的时候启动各项参数载入
 	public static String getAppName() {
+		
 		String appName = ConfigHandlerProvider.getValue(Constant.PROJECT_NAME, Constant.DEFAULT_CONFIG_NAME, false);
 		if (StringUtil.isEmpty(appName)) {
 			appName = ConfigHandlerProvider.getValue(Constant.SPRING_BOOT_NAME, Constant.DEFAULT_CONFIG_NAME, false);
@@ -193,19 +201,6 @@ public class ConfClient {
 			return 0l;
 		}
 		return Long.parseLong(datacenterId.trim());
-	}	
-	
-	
-	//获取分组名称
-	public static String getConfig(boolean isGlobal) {
-		if (isGlobal) {
-			return ConfClient.getGlobalConfigName();
-		}
-		return ConfClient.getAppName();
-	}
-	private static String getGlobalConfigName() {
-		String globalGroupName = ConfigHandlerProvider.getValue(Constant.PROJECR_GLOBAL_CONFIG_NAME, Constant.DEFAULT_CONFIG_NAME, false);
-		return globalGroupName == null ? "" :globalGroupName;
 	}
 
 }

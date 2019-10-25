@@ -16,7 +16,6 @@ import org.slf4j.impl.StaticMarkerBinder;
 import com.polaris.core.Constant;
 import com.polaris.core.GlobalContext;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.ConfigHandlerProvider;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 
@@ -27,8 +26,12 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 		try {
 			String logFile = System.getProperty(Constant.LOG_CONFIG);
 			if (StringUtil.isEmpty(logFile)) {
+				String projectConfigLocation = System.getProperty(Constant.PROJECT_CONFIG_NAME);
+		    	if (StringUtil.isNotEmpty(projectConfigLocation)) {
+		    		Constant.DEFAULT_CONFIG_NAME = projectConfigLocation;
+		    	}
 				logFile = PropertyUtils.readData(
-						ConfigHandlerProvider.APPLICATION_PROPERTIES_CONTENT, 
+						PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME), 
 						Constant.LOG_CONFIG, Constant.DEFAULT_LOG_FILE);
 			}
 			System.setProperty("log4j.configurationFile", logFile);
@@ -36,7 +39,6 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 	
     /**

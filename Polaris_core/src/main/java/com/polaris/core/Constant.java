@@ -79,7 +79,7 @@ public class Constant {
      */
 	public static String CONFIG = "config";
 	public static String PROJECT_CONFIG_NAME = "project.config.name";
-	public static String DEFAULT_CONFIG_NAME = "application.properties";
+	public static volatile String DEFAULT_CONFIG_NAME = "application.properties";
 	
 	public static String PROJECT_EXTENSION_PROPERTIES = "project.extension.properties";
 	public static String PROJECT_GLOBAL_PROPERTIES = "project.global.properties";

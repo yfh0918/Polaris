@@ -14,7 +14,7 @@ import com.polaris.core.config.value.AutoUpdateConfigChangeListener;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.SpringUtil;
 
-public  class ConfigHandlerProvider {
+public abstract class ConfigHandlerProvider {
 
 	private static final Logger logger = LoggerFactory.getLogger(ConfigHandlerProvider.class);
 	
@@ -23,12 +23,6 @@ public  class ConfigHandlerProvider {
 	private static volatile Map<String, Map<String, String>> cacheFileMap = new ConcurrentHashMap<>();
 
 	private static volatile Map<String, Map<String, String>> gobalCacheFileMap = new ConcurrentHashMap<>();
-	
-	public static volatile String APPLICATION_PROPERTIES_CONTENT = PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME);
-
-	// 监听所有扩展的文件
-    private ConfigHandlerProvider() {
-    }
     
     // 载入文件到缓存
     public static void loadConfig(String fileName, boolean isGlobal) {
@@ -103,13 +97,13 @@ public  class ConfigHandlerProvider {
 		//扩展点
     	if (!Constant.DEFAULT_CONFIG_NAME.equals(fileName)) {
     		for (ConfigHandler handler : serviceLoader) {
-    			String config = handler.getConfig(fileName,ConfClient.getConfig(isGlobal));
+    			String config = handler.getConfig(fileName,getGroup(isGlobal));
     			if (StringUtil.isNotEmpty(config)) {
     				return config;
     			}
     		}
     	} else {
-    		return APPLICATION_PROPERTIES_CONTENT;
+    		return PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME);
     	}
     	return null;
 	}
@@ -118,7 +112,7 @@ public  class ConfigHandlerProvider {
 	public static void addListener(String fileName, boolean isGlobal, ConfListener listener) {
 		if (!Constant.DEFAULT_CONFIG_NAME.equals(fileName)) {
 			for (ConfigHandler handler : serviceLoader) {
-				handler.addListener(fileName, ConfClient.getConfig(isGlobal), listener);
+				handler.addListener(fileName, getGroup(isGlobal), listener);
 			}
 		}
 		
@@ -183,5 +177,13 @@ public  class ConfigHandlerProvider {
 			logger.info(">>>>>>>>>> conf: 更新配置：file:{}, key:{} , value:{}", fileName, key, value);
 		}
 		cache.put(key, value);
+	}
+	
+	//获取分组名称
+	public static String getGroup(boolean isGlobal) {
+		if (isGlobal) {
+			return getValue(Constant.PROJECR_GLOBAL_CONFIG_NAME, Constant.DEFAULT_CONFIG_NAME, false);
+		}
+		return ConfClient.getAppName();
 	}
 }
