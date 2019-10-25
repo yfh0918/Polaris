@@ -205,7 +205,7 @@ public class HttpClientUtil {
         try {
             httpost.setEntity(new UrlEncodedFormEntity(nvps, UTF8));
         } catch (UnsupportedEncodingException e) {
-        	LOGGER.debug(e.getMessage());
+        	LOGGER.error(e.getMessage());
         }
     }
  
@@ -234,7 +234,7 @@ public class HttpClientUtil {
             return result;
         } catch (Exception e) {
         	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
-        	LOGGER.debug(e.getMessage());
+        	LOGGER.error(e.getMessage());
         } finally {
             try {
                 if (response != null)
@@ -278,7 +278,7 @@ public class HttpClientUtil {
             return result;
         } catch (Exception e) {
         	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
-        	LOGGER.debug(e.getMessage());
+        	LOGGER.error(e.getMessage());
         } finally {
             try {
                 if (response != null)
@@ -327,7 +327,7 @@ public class HttpClientUtil {
             return result;
         } catch (Exception e) {
         	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
-        	LOGGER.debug(e.getMessage());
+        	LOGGER.error(e.getMessage());
         } finally {
             try {
                 if (response != null)
