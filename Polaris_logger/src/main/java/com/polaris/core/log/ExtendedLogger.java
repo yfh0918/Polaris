@@ -24,16 +24,24 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	static {
 		//载入日志文件
 		try {
+			
+			//从系统目录获取logging.config 
 			String logFile = System.getProperty(Constant.LOG_CONFIG);
+			
+	    	//获取日志文件logging.config=classpath:config/log4j2.xml
 			if (StringUtil.isEmpty(logFile)) {
+				//外部是否设置了project.config.name
 				String projectConfigLocation = System.getProperty(Constant.PROJECT_CONFIG_NAME);
 		    	if (StringUtil.isNotEmpty(projectConfigLocation)) {
 		    		Constant.DEFAULT_CONFIG_NAME = projectConfigLocation;
 		    	}
-				logFile = PropertyUtils.readData(
-						PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME), 
-						Constant.LOG_CONFIG, Constant.DEFAULT_LOG_FILE);
+		    	
+		    	//获取配置内容
+		    	String content = PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME);
+				logFile = PropertyUtils.readData(content,Constant.LOG_CONFIG, Constant.DEFAULT_LOG_FILE);
 			}
+			
+			//设置具体的日志
 			System.setProperty("log4j.configurationFile", logFile);
 
 		} catch (Exception e) {
@@ -53,7 +61,8 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	public static final String PARENT_ID = "parentId";// 调用关系ID
 	public static final String MODULE_ID = "moduleId";// 本模块ID
 	public static final String LOG_SEPARATOR = "->";// 分割符号
-	private static final String FQCN = SubstituteLogger.class.getName();
+	//private static final String FQCN = SubstituteLogger.class.getName();
+	private static final String FQCN = ExtendedLogger.class.getName();
 	
 	// The effective levelInt is the assigned levelInt and if null, a levelInt is
     // inherited form a parent.

@@ -15,10 +15,7 @@ import org.springframework.util.ClassUtils;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerSupport;
 
-public class PropertyUtils {
-
-	private PropertyUtils() {
-	}
+public abstract class PropertyUtils {
 	
     /** 
      * classpath下的路径 
@@ -26,12 +23,21 @@ public class PropertyUtils {
      * @return 
      */  
     public static String getFullPath(String fileDir) throws IOException {  
-    	ClassLoader classLoader = PropertyUtils.class.getClassLoader();
-        URL url = classLoader.getResource("");
+    	URL url = ClassUtils.getDefaultClassLoader().getResource("");
+    	String path = java.net.URLDecoder.decode(url.getPath(),Charset.defaultCharset().name());
+    	
+		//file:/C:/projects/bin/xxxxx/yyyy.jar!/BOOT-INF/classes!/
+		if (path.startsWith("file:")) {
+			path = path.substring(5);
+		}
+		path = path.split("!")[0];
+		if (path.endsWith(".jar")) {
+			path = new File(path).getParent();
+		}
         if (StringUtil.isEmpty(fileDir)) {
-        	return java.net.URLDecoder.decode(url.getPath(),"utf-8");
+        	return path;
         }
-        return java.net.URLDecoder.decode(url.getPath(),"utf-8") + File.separator + fileDir;
+        return path + File.separator + fileDir;
     }
     
 	
@@ -41,7 +47,7 @@ public class PropertyUtils {
 		for (String line : contents) {
 			String[] keyvalue = ConfHandlerSupport.getKeyValue(line);
 			if (keyvalue != null) {
-				if (keyvalue[0].equals(Constant.LOG_CONFIG)) {
+				if (keyvalue[0].equals(key)) {
 					return keyvalue[1];
 				}
 			}
@@ -74,15 +80,7 @@ public class PropertyUtils {
 	public static InputStream getStream(String fileName) throws IOException {
 		
 		//先判断目录下的文件夹
-		//file:/C:/projects/bin/xxxxx/yyyy.jar!/BOOT-INF/classes!/
-		String path = ClassUtils.getDefaultClassLoader().getResource("").getPath();
-		if (path.startsWith("file:")) {
-			path = path.substring(5);
-			path = path.split("!")[0];
-			if (path.endsWith(".jar")) {
-				path = new File(path).getParent();
-			}
-		}
+		String path = getFullPath("");
 		File file = new File(path + File.separator + Constant.CONFIG + File.separator + fileName);
 		if (file.exists()) {
 			return new FileInputStream(file);
@@ -103,6 +101,8 @@ public class PropertyUtils {
 		//classpath:filename
 		return PropertyUtils.class.getClassLoader().getResourceAsStream(fileName);
 	}
+	
+	
 	
 	public static File getFileNotInJar(String fileName)  {
 		File file = new File(Constant.CONFIG + File.separator + fileName);
