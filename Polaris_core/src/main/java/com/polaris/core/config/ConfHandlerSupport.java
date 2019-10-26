@@ -25,7 +25,7 @@ public class ConfHandlerSupport {
 	public static String[] getExtensionProperties() {
 		try {
 			//从本地获取
-			String files = ConfigHandlerProvider.getValue(Constant.PROJECT_EXTENSION_PROPERTIES,Constant.DEFAULT_CONFIG_NAME);
+			String files = ConfigEnum.DEFAULT.get(Constant.PROJECT_EXTENSION_PROPERTIES);
 			if (StringUtil.isEmpty(files)) {
 				return null;
 			}
@@ -46,7 +46,7 @@ public class ConfHandlerSupport {
 	public static String[] getGlobalProperties() {
 		try {
 			//从本地获取
-			String files = ConfigHandlerProvider.getValue(Constant.PROJECT_GLOBAL_PROPERTIES,Constant.DEFAULT_CONFIG_NAME);
+			String files = ConfigEnum.DEFAULT.get(Constant.PROJECT_GLOBAL_PROPERTIES);
 			if (StringUtil.isEmpty(files)) {
 				return null;
 			}

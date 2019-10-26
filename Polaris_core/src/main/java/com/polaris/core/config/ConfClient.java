@@ -38,7 +38,7 @@ public abstract class ConfClient {
 		if (extendProperties != null) {
 			for (String file : extendProperties) {
 				logger.info("{} loading start",file);
-				ConfigHandlerProvider.loadConfig(file);//载入缓存
+				ConfigHandlerProvider.loadConfig(ConfigEnum.EXTEND, file);//载入缓存
 				logger.info("{} loading end",file);
 			}
 		}
@@ -48,7 +48,7 @@ public abstract class ConfClient {
 		if (globalProperties != null) {
 			for (String file : globalProperties) {
 				logger.info("{} loading start",file);
-				ConfigHandlerProvider.loadConfig(file);
+				ConfigHandlerProvider.loadConfig(ConfigEnum.GLOBAL, file);
 				logger.info("{} loading start",file);
 			}
 		}
@@ -67,11 +67,11 @@ public abstract class ConfClient {
     	logger.info("{} loading start",Constant.DEFAULT_CONFIG_NAME);
     	//获取DEFAULT_CONFIG_NAME
 		String content = PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME);
-		ConfigHandlerProvider.cacheConfig(Constant.DEFAULT_CONFIG_NAME, content, false);
+		ConfigHandlerProvider.cacheConfig(ConfigEnum.DEFAULT, content, false);
 		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
-	    	ConfigHandlerProvider.updateValue(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS), Constant.DEFAULT_CONFIG_NAME);
+			ConfigEnum.DEFAULT.put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
 		} else {
-	    	ConfigHandlerProvider.updateValue(Constant.IP_ADDRESS, NetUtils.getLocalHost(), Constant.DEFAULT_CONFIG_NAME);
+			ConfigEnum.DEFAULT.put(Constant.IP_ADDRESS, NetUtils.getLocalHost());
 		}
 		logger.info("{} loading end",Constant.DEFAULT_CONFIG_NAME);
 		
@@ -79,7 +79,7 @@ public abstract class ConfClient {
     	logger.info("systemEnv loading start");
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemEnvironment().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
-				ConfigHandlerProvider.updateValue(entry.getKey(), entry.getValue(), Constant.DEFAULT_CONFIG_NAME);
+				ConfigEnum.DEFAULT.put(entry.getKey(), entry.getValue());
 			}
 		}
     	logger.info("systemEnv loading end");
@@ -88,7 +88,7 @@ public abstract class ConfClient {
     	logger.info("systemProperties loading start");
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemProperties().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
-				ConfigHandlerProvider.updateValue(entry.getKey(), entry.getValue(), Constant.DEFAULT_CONFIG_NAME);
+				ConfigEnum.DEFAULT.put(entry.getKey(), entry.getValue());
 			}
 		}
 		logger.info("systemProperties loading end");
@@ -107,36 +107,27 @@ public abstract class ConfClient {
 	public static String get(String key, String defaultVal) {
 		
 		//application.properties
-		String value = ConfigHandlerProvider.getValue(key,Constant.DEFAULT_CONFIG_NAME);
+		String value = ConfigEnum.DEFAULT.get(key);
 		if (value != null) {
 			return value;
 		}
 		
 		//扩展文件
-		String[] allProperties = ConfHandlerSupport.getExtensionProperties();
-		if (allProperties != null) {
-			for (String file : allProperties) {
-				value = ConfigHandlerProvider.getValue(key, file);
-				if (value != null) {
-					return value;
-				}
-			}
+		value = ConfigEnum.EXTEND.get(key);
+		if (value != null) {
+			return value;
 		}
 		
 		//全局
-		String[] globalProperties = ConfHandlerSupport.getGlobalProperties();
-		if (globalProperties != null) {
-			for (String file : globalProperties) {
-				value = ConfigHandlerProvider.getValue(key, file);
-				if (value != null) {
-					return value;
-				}
-			}
+		value = ConfigEnum.GLOBAL.get(key);
+		if (value != null) {
+			return value;
 		}
+		
 		
 		//默认值
 		if (StringUtil.isNotEmpty(defaultVal)) {
-			ConfigHandlerProvider.updateValue(key, defaultVal, Constant.DEFAULT_CONFIG_NAME);
+			ConfigEnum.DEFAULT.put(key, defaultVal);
 		}
 		
 		//返回默认值
@@ -146,9 +137,9 @@ public abstract class ConfClient {
 	//在设置应用名称的时候启动各项参数载入
 	public static String getAppName() {
 		
-		String appName = ConfigHandlerProvider.getValue(Constant.PROJECT_NAME, Constant.DEFAULT_CONFIG_NAME);
+		String appName = ConfigEnum.DEFAULT.get(Constant.PROJECT_NAME);
 		if (StringUtil.isEmpty(appName)) {
-			appName = ConfigHandlerProvider.getValue(Constant.SPRING_BOOT_NAME, Constant.DEFAULT_CONFIG_NAME);
+			appName = ConfigEnum.DEFAULT.get(Constant.SPRING_BOOT_NAME);
 		}
 		return appName == null ? "" :appName;
 	}
@@ -164,20 +155,20 @@ public abstract class ConfClient {
 	}
 
 	public static String getConfigRegistryAddress() {
-		String config = ConfigHandlerProvider.getValue(Constant.CONFIG_REGISTRY_ADDRESS_NAME, Constant.DEFAULT_CONFIG_NAME);
+		String config = ConfigEnum.DEFAULT.get(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
 		return config == null ? "" :config;
 	}
 	public static String getNameSpace() {
-		String namespace = ConfigHandlerProvider.getValue(Constant.PROJECR_NAMESPACE_NAME, Constant.DEFAULT_CONFIG_NAME);
+		String namespace = ConfigEnum.DEFAULT.get(Constant.PROJECR_NAMESPACE_NAME);
 		return namespace == null ? "" :namespace;
 	}
 
 	public static String getGroup() {
-		String group = ConfigHandlerProvider.getValue(Constant.PROJECR_GROUP_NAME, Constant.DEFAULT_CONFIG_NAME);
+		String group = ConfigEnum.DEFAULT.get(Constant.PROJECR_GROUP_NAME);
 		return group == null ? "" :group;
 	}
 	public static String getNamingRegistryAddress() {
-		String naming = ConfigHandlerProvider.getValue(Constant.NAMING_REGISTRY_ADDRESS_NAME, Constant.DEFAULT_CONFIG_NAME);
+		String naming = ConfigEnum.DEFAULT.get(Constant.NAMING_REGISTRY_ADDRESS_NAME);
 		return naming == null ? "" :naming;
 	}
 
