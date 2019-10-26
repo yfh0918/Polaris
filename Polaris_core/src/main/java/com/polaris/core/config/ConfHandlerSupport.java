@@ -1,5 +1,8 @@
 package com.polaris.core.config;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,6 +12,7 @@ import com.polaris.core.Constant;
 public class ConfHandlerSupport {
 
 	private static final Logger logger = LoggerFactory.getLogger(ConfHandlerSupport.class);
+	private static Set<String> globalSet = new HashSet<>();
 
 
 	/**
@@ -21,7 +25,7 @@ public class ConfHandlerSupport {
 	public static String[] getExtensionProperties() {
 		try {
 			//从本地获取
-			String files = ConfigHandlerProvider.getValue(Constant.PROJECT_EXTENSION_PROPERTIES,Constant.DEFAULT_CONFIG_NAME,false);
+			String files = ConfigHandlerProvider.getValue(Constant.PROJECT_EXTENSION_PROPERTIES,Constant.DEFAULT_CONFIG_NAME);
 			if (StringUtil.isEmpty(files)) {
 				return null;
 			}
@@ -42,15 +46,22 @@ public class ConfHandlerSupport {
 	public static String[] getGlobalProperties() {
 		try {
 			//从本地获取
-			String files = ConfigHandlerProvider.getValue(Constant.PROJECT_GLOBAL_PROPERTIES,Constant.DEFAULT_CONFIG_NAME,false);
+			String files = ConfigHandlerProvider.getValue(Constant.PROJECT_GLOBAL_PROPERTIES,Constant.DEFAULT_CONFIG_NAME);
 			if (StringUtil.isEmpty(files)) {
 				return null;
 			}
-			return files.split(",");
+			String[] fileList = files.split(",");
+			for (String file : fileList) {
+				globalSet.add(file);
+			}
+			return fileList;
 		} catch (Exception ex) {
 			logger.error("getGlobalProperties is error");
 		}
 		return null;
+	}
+	public static boolean isGlobal(String fileName) {
+		return globalSet.contains(fileName);
 	}
 	
 	/**
@@ -83,8 +94,5 @@ public class ConfHandlerSupport {
 		}
 		return null;
 	}
-	
-
-	
 
 }

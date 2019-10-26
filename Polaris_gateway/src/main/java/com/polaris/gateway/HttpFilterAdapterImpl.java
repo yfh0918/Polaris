@@ -14,8 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
+import com.polaris.core.GlobalContext;
 import com.polaris.core.dto.ResultDto;
-import com.polaris.core.log.ExtendedLogger;
 import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
 import com.polaris.core.util.UuidUtil;
 import com.polaris.gateway.request.HttpRequestFilter;
@@ -92,7 +92,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     	//清除线程池残余值
 		RequestUtil.remove();
 		HostResolverImpl.getSingleton().replaceHost(httpRequest);
-		httpRequest.headers().set(ExtendedLogger.TRACE_ID, UuidUtil.generateUuid());
+		httpRequest.headers().set(GlobalContext.TRACE_ID, UuidUtil.generateUuid());
     }
     
     @Override

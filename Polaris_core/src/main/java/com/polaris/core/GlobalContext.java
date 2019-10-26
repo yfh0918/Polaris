@@ -3,9 +3,36 @@ package com.polaris.core;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.ConfigHandlerProvider;
 import com.polaris.core.thread.InheritablePolarisThreadLocal;
 
 public class GlobalContext {
+	
+	public static final String TRACE_ID = "traceId";
+	public static final String PARENT_ID = "parentId";
+	public static final String MODULE_ID = "moduleId";// 本模块ID
+	public static String getTraceId() {
+		return GlobalContext.getContext(GlobalContext.TRACE_ID);
+	}
+
+	public static void setTraceId(String traceId) {
+		GlobalContext.setContext(GlobalContext.TRACE_ID, traceId);
+	}
+	
+	public static String getParentId() {
+		return GlobalContext.getContext(GlobalContext.PARENT_ID);
+	}
+
+	public static void setParentId(String parentId) {
+		GlobalContext.setContext(GlobalContext.PARENT_ID, parentId);
+	}
+
+	public static String getModuleId() {
+		return  ConfClient.getAppName() + "|" +	
+				ConfigHandlerProvider.getValue(Constant.IP_ADDRESS, Constant.DEFAULT_CONFIG_NAME) + "|" +
+				ConfigHandlerProvider.getValue(Constant.SERVER_PORT_NAME, Constant.DEFAULT_CONFIG_NAME);
+	}
 	//构造函数
 	private static final InheritablePolarisThreadLocal<Map<String, String>> holder=new InheritablePolarisThreadLocal<Map<String,String>>(){
 		@Override protected Map<String,String>initialValue(){

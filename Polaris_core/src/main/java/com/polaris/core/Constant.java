@@ -102,9 +102,9 @@ public class Constant {
 	
 	// 集群名称(注册中心，配置中心公用)
 	public static final String PROJECR_GROUP_NAME = "project.group";
-	
-	//全局global的名称(配置中心用)
-	public static final String PROJECR_GLOBAL_CONFIG_NAME = "project.global.config.name";
+//	
+//	//全局global的名称(配置中心用)
+//	public static final String PROJECR_GLOBAL_CONFIG_NAME = "project.global.config.name";
 
 	// 配置中心
 	public static final String CONFIG_REGISTRY_ADDRESS_NAME = "config.registry.address";

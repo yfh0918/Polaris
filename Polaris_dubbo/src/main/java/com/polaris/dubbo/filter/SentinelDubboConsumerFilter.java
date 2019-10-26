@@ -30,7 +30,6 @@ import com.alibaba.csp.sentinel.Tracer;
 import com.alibaba.csp.sentinel.log.RecordLog;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.polaris.core.GlobalContext;
-import com.polaris.core.log.ExtendedLogger;
 import com.polaris.dubbo.config.DubboConfig;
 import com.polaris.dubbo.fallback.DubboFallbackRegistry;
 
@@ -56,7 +55,8 @@ public class SentinelDubboConsumerFilter extends AbstractDubboFilter implements 
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
     	//传递参数
     	RpcContext.getContext().setAttachments(GlobalContext.getContext());
-    	RpcContext.getContext().setAttachment(ExtendedLogger.PARENT_ID, ExtendedLogger.getModuleId());
+    	RpcContext.getContext().setAttachment(GlobalContext.PARENT_ID, GlobalContext.getModuleId());
+    	RpcContext.getContext().setAttachment(GlobalContext.TRACE_ID, GlobalContext.getTraceId());
 
         Entry interfaceEntry = null;
         Entry methodEntry = null;

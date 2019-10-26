@@ -21,10 +21,7 @@
 			<groupId>com.polaris</groupId>
 			<artifactId>Polaris_core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.polaris</groupId>
-			<artifactId>Polaris_logger</artifactId>
-		</dependency>
+
 	  
 	    <!-- https://mvnrepository.com/artifact/org.apache.dubbo/dubbo -->
 		<dependency>

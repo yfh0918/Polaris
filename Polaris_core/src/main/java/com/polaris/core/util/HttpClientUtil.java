@@ -63,7 +63,6 @@ import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
  */
 public class HttpClientUtil {
  
-	private static final String TRACE_ID = "traceId";
 	private static final String RETRY_COUNT = "http.connect.retry.count";
 	private static final String POOL_CONN_MAX_COUNT="http.connect.max.conn.count";
 	private static final String POOL_CONN_MAX_PERROUTE = "http.connect.max.per.route.count";
@@ -422,8 +421,9 @@ public class HttpClientUtil {
     }
     
     private static void trace(HttpRequestBase request) {
-    	if (StringUtil.isNotEmpty(GlobalContext.getContext(TRACE_ID))) {
-        	request.addHeader(TRACE_ID, GlobalContext.getContext(TRACE_ID));
+    	if (StringUtil.isNotEmpty(GlobalContext.getTraceId())) {
+        	request.addHeader(GlobalContext.TRACE_ID, GlobalContext.getTraceId());
     	}
+    	request.addHeader(GlobalContext.PARENT_ID, GlobalContext.getModuleId());//传递下去
     }
 }

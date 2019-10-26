@@ -14,7 +14,6 @@ import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.GlobalContext;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.log.ExtendedLogger;
 import com.polaris.core.util.UuidUtil;
 
 /**
@@ -32,10 +31,14 @@ public class RequestFirstFilter implements Filter {
 	@Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
-		if (StringUtil.isNotEmpty(((HttpServletRequest)request).getHeader(ExtendedLogger.TRACE_ID))) {
-			GlobalContext.setContext(ExtendedLogger.TRACE_ID, ((HttpServletRequest)request).getHeader(ExtendedLogger.TRACE_ID));
+		if (StringUtil.isNotEmpty(((HttpServletRequest)request).getHeader(GlobalContext.TRACE_ID))) {
+			GlobalContext.setContext(GlobalContext.TRACE_ID, ((HttpServletRequest)request).getHeader(GlobalContext.TRACE_ID));
 		} else {
-			GlobalContext.setContext(ExtendedLogger.TRACE_ID, UuidUtil.generateUuid());
+			GlobalContext.setContext(GlobalContext.TRACE_ID, UuidUtil.generateUuid());
+		}
+		GlobalContext.setContext(GlobalContext.MODULE_ID, GlobalContext.getModuleId());
+		if (StringUtil.isNotEmpty(((HttpServletRequest)request).getHeader(GlobalContext.PARENT_ID))) {
+			GlobalContext.setContext(GlobalContext.PARENT_ID, ((HttpServletRequest)request).getHeader(GlobalContext.PARENT_ID));
 		}
 		try {
 			request.setCharacterEncoding(ConfClient.get("encoding",Constant.UTF_CODE));

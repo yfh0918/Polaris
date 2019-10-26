@@ -10,29 +10,28 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.spi.AbstractLogger;
 import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 import org.slf4j.Marker;
-import org.slf4j.helpers.SubstituteLogger;
 import org.slf4j.impl.StaticMarkerBinder;
+import org.slf4j.spi.LocationAwareLogger;
 
 import com.polaris.core.Constant;
 import com.polaris.core.GlobalContext;
-import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 
-public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
+public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 	
 	static {
 		//载入日志文件
 		try {
-			
+
 			//从系统目录获取logging.config 
 			String logFile = System.getProperty(Constant.LOG_CONFIG);
 			
 	    	//获取日志文件logging.config=classpath:config/log4j2.xml
-			if (StringUtil.isEmpty(logFile)) {
+			if (logFile == null || logFile.isEmpty()) {
 				//外部是否设置了project.config.name
 				String projectConfigLocation = System.getProperty(Constant.PROJECT_CONFIG_NAME);
-		    	if (StringUtil.isNotEmpty(projectConfigLocation)) {
+		    	if (projectConfigLocation != null && !projectConfigLocation.isEmpty()) {
 		    		Constant.DEFAULT_CONFIG_NAME = projectConfigLocation;
 		    	}
 		    	
@@ -57,11 +56,7 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 	private ExtendedLoggerWrapper logger;
 	public static final String YEAR_MONTH_DAY_TIME = "yyyy-MM-dd HH:mm:ss";
 	
-	public static final String TRACE_ID = "traceId";// 调用链唯一的ID
-	public static final String PARENT_ID = "parentId";// 调用关系ID
-	public static final String MODULE_ID = "moduleId";// 本模块ID
 	public static final String LOG_SEPARATOR = "->";// 分割符号
-	//private static final String FQCN = SubstituteLogger.class.getName();
 	private static final String FQCN = ExtendedLogger.class.getName();
 	
 	// The effective levelInt is the assigned levelInt and if null, a levelInt is
@@ -93,25 +88,7 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
         logger = new ExtendedLoggerWrapper((AbstractLogger)templogger,templogger.getName(),templogger.getMessageFactory());
 	}
 
-	public String getTraceId() {
-		return GlobalContext.getContext(TRACE_ID);
-	}
 
-	public void setTraceId(String traceId) {
-		GlobalContext.setContext(TRACE_ID, traceId);
-	}
-	
-	public String getParentId() {
-		return GlobalContext.getContext(PARENT_ID);
-	}
-
-	public void setParentId(String parentId) {
-		GlobalContext.setContext(PARENT_ID, parentId);
-	}
-
-	public static String getModuleId() {
-		return ConfClient.getAppName();
-	}
 	
 	public String getName() {
 		return "Polaris.log";
@@ -412,22 +389,22 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
 
 		//日志本地输出格式设定
 		StringBuilder strB = new StringBuilder();
-		if (StringUtil.isNotEmpty(getTraceId())) {
-			strB.append(TRACE_ID);
+		if (StringUtil.isNotEmpty(GlobalContext.getTraceId())) {
+			strB.append(GlobalContext.TRACE_ID);
 			strB.append(":");
-			strB.append(getTraceId());
+			strB.append(GlobalContext.getTraceId());
 			strB.append(' ');
 		}
-		if (StringUtil.isNotEmpty(getParentId())) {
-			strB.append(PARENT_ID);
+		if (StringUtil.isNotEmpty(GlobalContext.getParentId())) {
+			strB.append(GlobalContext.PARENT_ID);
 			strB.append(":");
-			strB.append(getParentId());
+			strB.append(GlobalContext.getParentId());
 			strB.append(' ');
 		}
-		if (StringUtil.isNotEmpty(getModuleId())) {
-			strB.append(MODULE_ID);
+		if (StringUtil.isNotEmpty(GlobalContext.getModuleId())) {
+			strB.append(GlobalContext.MODULE_ID);
 			strB.append(":");
-			strB.append(getModuleId());
+			strB.append(GlobalContext.getModuleId());
 			strB.append(' ');
 		}
 
@@ -445,4 +422,38 @@ public final class ExtendedLogger  implements org.slf4j.Logger,Serializable {
             return ((Log4jMarker) factory.getMarker(marker)).getLog4jMarker();
         }
     }
+
+	@Override
+	public void log(Marker marker, String fqcn, int level, String message, Object[] argArray, Throwable t) {
+		logger.logIfEnabled(fqcn, getLevel(level), getMarker(marker), getMessage(message), argArray, t);
+	}
+	
+	private Level getLevel(int level) {
+		if (Level.OFF.intLevel() == level) {
+			return Level.OFF;
+		}
+		if (Level.FATAL.intLevel() == level) {
+			return Level.FATAL;
+		}
+		if (Level.ERROR.intLevel() == level) {
+			return Level.ERROR;
+		}
+		if (Level.WARN.intLevel() == level) {
+			return Level.WARN;
+		}
+		if (Level.INFO.intLevel() == level) {
+			return Level.INFO;
+		}
+		if (Level.DEBUG.intLevel() == level) {
+			return Level.DEBUG;
+		}
+		if (Level.TRACE.intLevel() == level) {
+			return Level.TRACE;
+		}
+		if (Level.ALL.intLevel() == level) {
+			return Level.ALL;
+		}		
+        
+		return Level.OFF;
+	}
 }
