@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.spi.AbstractLogger;
 import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 import org.slf4j.Marker;
+import org.slf4j.helpers.BasicMarker;
 import org.slf4j.impl.StaticMarkerBinder;
 import org.slf4j.spi.LocationAwareLogger;
 
@@ -19,6 +20,8 @@ import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 
 public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
+	
+	Log4jMarkerFactory log4jMarkerFactory = new Log4jMarkerFactory();
 	
 	static {
 		//载入日志文件
@@ -417,6 +420,8 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
             return null;
         } else if (marker instanceof Log4jMarker) {
             return ((Log4jMarker) marker).getLog4jMarker();
+        } else if (marker instanceof BasicMarker) {
+        	return ((Log4jMarker) log4jMarkerFactory.getMarker(marker)).getLog4jMarker();
         } else {
             final Log4jMarkerFactory factory = (Log4jMarkerFactory) StaticMarkerBinder.SINGLETON.getMarkerFactory();
             return ((Log4jMarker) factory.getMarker(marker)).getLog4jMarker();

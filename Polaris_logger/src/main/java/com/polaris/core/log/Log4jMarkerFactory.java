@@ -9,13 +9,13 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.status.StatusLogger;
-import org.slf4j.IMarkerFactory;
 import org.slf4j.Marker;
+import org.slf4j.helpers.BasicMarkerFactory;
 
 /**
  * Log4j/SLF4J bridge to create SLF4J Markers based on name or based on existing SLF4J Markers.
  */
-public class Log4jMarkerFactory implements IMarkerFactory {
+public class Log4jMarkerFactory extends BasicMarkerFactory {
 
     private static final Logger LOGGER = StatusLogger.getLogger();
 
