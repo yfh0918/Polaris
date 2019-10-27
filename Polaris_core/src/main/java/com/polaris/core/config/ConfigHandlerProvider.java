@@ -47,7 +47,7 @@ public abstract class ConfigHandlerProvider {
 		//扩展点
 		for (ConfigHandler handler : serviceLoader) {
 			if (ConfHandlerSupport.isGlobal(fileName)) {
-				return handler.getConfig(fileName,"global");
+				return handler.getConfig(fileName,ConfigEnum.GLOBAL.getType());
 			} else {
 				return handler.getConfig(fileName,ConfClient.getAppName());
 			}
@@ -59,7 +59,7 @@ public abstract class ConfigHandlerProvider {
 	public static void addListener(String fileName, ConfListener listener) {
 		for (ConfigHandler handler : serviceLoader) {
 			if (ConfHandlerSupport.isGlobal(fileName)) {
-				handler.addListener(fileName, "global", listener);				
+				handler.addListener(fileName, ConfigEnum.GLOBAL.getType(), listener);				
 			} else {
 				handler.addListener(fileName, ConfClient.getAppName(), listener);
 			}

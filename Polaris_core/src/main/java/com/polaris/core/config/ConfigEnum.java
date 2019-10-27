@@ -10,7 +10,7 @@ public enum ConfigEnum {
 	
 	DEFAULT("default"),
     EXTEND("extend"),
-    GLOBAL("extend");
+    GLOBAL("global");
     private String type;
     private Map<String, String> cache = new ConcurrentHashMap<>();
 	private static final Logger logger = LoggerFactory.getLogger(ConfigEnum.class);
