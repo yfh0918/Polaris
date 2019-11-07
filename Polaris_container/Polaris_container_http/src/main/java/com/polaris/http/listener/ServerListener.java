@@ -1,20 +1,22 @@
 package com.polaris.http.listener;
 
+import javax.servlet.ServletContext;
+
 public interface ServerListener {
 
-	default void starting() {
+	default void starting(ServletContext servletContext) {
 		return;
 	}
-	default void started(){
+	default void started(ServletContext servletContext){
 		return;
 	}
-	default void failure(){
+	default void failure(ServletContext servletContext){
 		return;
 	}
-	default void stopping() {
+	default void stopping(ServletContext servletContext) {
 		return;
 	}
-	default void stopped() {
+	default void stopped(ServletContext servletContext) {
 		return;
 	}
 	

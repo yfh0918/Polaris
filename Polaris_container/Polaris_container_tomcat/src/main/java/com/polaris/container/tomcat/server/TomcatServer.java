@@ -93,13 +93,11 @@ public class TomcatServer {
             standardContext.setDocBase(docBase);//文件目录位置
             standardContext.addLifecycleListener(new Tomcat.DefaultWebXmlListener());
             standardContext.addLifecycleListener(new ContextConfig());
-            standardContext.addLifecycleListener(new ServerHandlerListerner(serverlistener));
-            
-
+            standardContext.addLifecycleListener(new ServerHandlerListerner(serverlistener, standardContext));
+         
             //关闭jarScan
             StandardJarScanner jarScanner = new StandardJarScanner();
-            boolean scanClassPath = Boolean.parseBoolean(ConfClient.get("server.websocket.enabled", "false"));
-            jarScanner.setScanClassPath(scanClassPath);
+            jarScanner.setScanClassPath(false);
             jarScanner.setScanManifest(false);
             standardContext.setJarScanner(jarScanner);
 

@@ -1,5 +1,7 @@
 package com.polaris.http.supports;
 
+import javax.servlet.ServletContext;
+
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.NameingClient;
 import com.polaris.http.factory.ContainerServerFactory;
@@ -43,14 +45,14 @@ public class MainSupport {
     	ContainerServerFactory.startServer(rootConfig, webConfig, new ServerListener() {
 
 			@Override
-			public void started() {
+			public void started(ServletContext servletContext) {
 				//注册服务
 		    	NameingClient.register();
 				
 			}
 			
 			@Override
-			public void stopped() {
+			public void stopped(ServletContext servletContext) {
 				//注销服务
 		    	NameingClient.unRegister();
 			}

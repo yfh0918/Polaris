@@ -67,7 +67,7 @@ public class JettyServer {
             
             //context加入server
             this.server.setHandler(context); // 将Application注册到服务器
-            this.server.addLifeCycleListener(ServerHandlerListerner.getInstance(listener));//监听handler
+            this.server.addLifeCycleListener(ServerHandlerListerner.getInstance(listener,context.getServletContext()));//监听handler
         } catch (IOException e) {
             logger.error(e.getMessage());
         } 
