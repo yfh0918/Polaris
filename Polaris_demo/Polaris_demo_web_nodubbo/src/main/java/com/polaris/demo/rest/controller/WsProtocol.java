@@ -10,13 +10,15 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory; 
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component; 
 
 /**
  * websocket协议接入
  *
  * @return
  */
+@Component
 @ServerEndpoint("/websocket")
 public class WsProtocol  {
 	final static Logger logger = LoggerFactory.getLogger(WsProtocol.class);

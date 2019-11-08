@@ -7,7 +7,6 @@ import org.apache.catalina.core.StandardContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.http.initializer.WSEndpointExporter;
 import com.polaris.http.listener.ServerListener;
 
 /**
@@ -21,11 +20,11 @@ import com.polaris.http.listener.ServerListener;
 public class ServerHandlerListerner implements LifecycleListener{
 	
 	private static final Logger logger = LoggerFactory.getLogger(ServerHandlerListerner.class);
-	private ServerListener serverlistener;
+	private ServerListener[] serverlisteners;
 	private StandardContext standardContext;
 	
-	public ServerHandlerListerner (ServerListener serverlistener, StandardContext standardContext) {
-		this.serverlistener = serverlistener;
+	public ServerHandlerListerner (StandardContext standardContext, ServerListener... serverlisteners) {
+		this.serverlisteners = serverlisteners;
 		this.standardContext = standardContext; 
 	}
 
@@ -34,24 +33,34 @@ public class ServerHandlerListerner implements LifecycleListener{
 		// Process the event that has occurred
         if (event.getType().equals(Lifecycle.CONFIGURE_START_EVENT)) {
         } else if (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) {
-        	serverlistener.starting(standardContext.getServletContext());
+        	if (serverlisteners != null) {
+        		for (ServerListener serverListener:serverlisteners) {
+        			serverListener.starting(standardContext.getServletContext());
+        		}
+        	}
+        	
         	logger.info("TomcatServer启动中！");
         } else if (event.getType().equals(Lifecycle.AFTER_START_EVENT)) {
         	
-        	//启动外部
-        	serverlistener.started(standardContext.getServletContext());
-        	
-        	//加载websocket
-        	WSEndpointExporter wsEndpointExporter = new WSEndpointExporter();
-        	wsEndpointExporter.initServerContainer(standardContext.getServletContext());
-        	
-        	//日志
+        	if (serverlisteners != null) {
+        		for (ServerListener serverListener:serverlisteners) {
+        			serverListener.started(standardContext.getServletContext());
+        		}
+        	}
         	logger.info("TomcatServer启动成功！");
         } else if (event.getType().equals(Lifecycle.BEFORE_STOP_EVENT)) {
-        	serverlistener.stopping(standardContext.getServletContext());
+        	if (serverlisteners != null) {
+        		for (ServerListener serverListener:serverlisteners) {
+        			serverListener.stopping(standardContext.getServletContext());
+        		}
+        	}
         	logger.info("TomcatServer停止中！");
         } else if (event.getType().equals(Lifecycle.AFTER_STOP_EVENT)) {
-        	serverlistener.stopped(standardContext.getServletContext());
+        	if (serverlisteners != null) {
+        		for (ServerListener serverListener:serverlisteners) {
+        			serverListener.stopped(standardContext.getServletContext());
+        		}
+        	}
         	logger.info("TomcatServer已经停止！");
         } else if (event.getType().equals(Lifecycle.AFTER_DESTROY_EVENT)) {
         }

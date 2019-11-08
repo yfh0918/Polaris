@@ -17,6 +17,7 @@ import com.polaris.container.tomcat.listener.ServerHandlerListerner;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.http.listener.ServerListener;
+import com.polaris.http.listener.WSServerListerner;
 
 /**
  * Class Name : TomcatServer
@@ -30,6 +31,7 @@ public class TomcatServer {
     private static final String MAX_THREADS = "300";//和jetty保持一致
     private static final  int MAX_SAVE_POST_SIZE = 4 * 1024;
     private static final  int MAX_HTTP_HEADER_SIZE = 8 * 1024;
+    private ServerListener startlistener;
     
 
     /**
@@ -46,7 +48,7 @@ public class TomcatServer {
     /**
      * 服务器初始化
      */
-    private void init(ServerListener serverlistener) {
+    private void init() {
 
         // 构造服务器
         try {
@@ -96,7 +98,10 @@ public class TomcatServer {
             standardContext.setDocBase(docBase);//文件目录位置
             standardContext.addLifecycleListener(new Tomcat.DefaultWebXmlListener());
             standardContext.addLifecycleListener(new ContextConfig());
-            standardContext.addLifecycleListener(new ServerHandlerListerner(serverlistener, standardContext));
+            standardContext.addLifecycleListener(
+            		new ServerHandlerListerner(
+            		standardContext,
+            		startlistener, new WSServerListerner()));
          
             //关闭jarScan
             StandardJarScanner jarScanner = new StandardJarScanner();
@@ -151,7 +156,8 @@ public class TomcatServer {
 
             //没有初始化过，需要重新初始化
             if (this.tomcat == null) {
-                init(listener);
+            	startlistener = listener;
+                init();
             }
 
             //启动服务

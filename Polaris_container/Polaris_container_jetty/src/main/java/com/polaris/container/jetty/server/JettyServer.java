@@ -15,6 +15,7 @@ import com.polaris.container.jetty.listener.ServerHandlerListerner;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.http.listener.ServerListener;
+import com.polaris.http.listener.WSServerListerner;
 
 /**
  * Class Name : JettyServer
@@ -31,6 +32,8 @@ public class JettyServer {
      * 服务器
      */
     private Server server = null;
+    
+    private ServerListener startlistener;
 
     /**
      * 私有构造方法
@@ -41,7 +44,7 @@ public class JettyServer {
     /**
      * 服务器初始化
      */
-    private void init(ServerListener listener) {
+    private void init() {
         // 构造服务器
         try {
 
@@ -71,7 +74,10 @@ public class JettyServer {
             
             //context加入server
             this.server.setHandler(context); // 将Application注册到服务器
-            this.server.addLifeCycleListener(ServerHandlerListerner.getInstance(listener,context.getServletContext()));//监听handler
+            this.server.addLifeCycleListener(
+            		new ServerHandlerListerner(
+            				context.getServletContext(), 
+            				startlistener, new WSServerListerner()));//监听handler
         } catch (IOException e) {
             logger.error(e.getMessage());
         } 
@@ -114,7 +120,8 @@ public class JettyServer {
 
             //没有初始化过，需要重新初始化
             if (this.server == null) {
-                init(listener);
+            	startlistener = listener;
+                init();
             }
 
             //启动服务
