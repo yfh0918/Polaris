@@ -58,7 +58,11 @@ public class JettyServer {
             //定义context
             WebAppContext context = new WebAppContext();
             context.setDefaultsDescriptor("webdefault.xml");
-            context.setContextPath(ConfClient.get("server.contextPath","")); // Application访问路径
+            String contextPath =ConfClient.get("server.contextPath","/"); 
+            if (!contextPath.startsWith("/")) {
+            	contextPath = "/" + contextPath;
+            }
+            context.setContextPath(contextPath); // Application访问路径
             String resourceBase = PropertyUtils.getFullPath("WebContent");
             File resDir = new File(resourceBase);
             context.setResourceBase(resDir.getCanonicalPath());
