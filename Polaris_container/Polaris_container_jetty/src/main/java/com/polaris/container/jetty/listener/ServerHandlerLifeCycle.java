@@ -1,5 +1,6 @@
 package com.polaris.container.jetty.listener;
 
+import java.util.HashSet;
 import java.util.ServiceLoader;
 
 import javax.servlet.ServletContainerInitializer;
@@ -20,7 +21,7 @@ public class ServerHandlerLifeCycle implements ServletContainerInitializerCaller
 		for (ServletContainerInitializer servletContainerInitializer : serviceLoader) {
 			try {
 				ContextHandler.getCurrentContext().setExtendedListenerTypes(true);
-				servletContainerInitializer.onStartup(null, sc);
+				servletContainerInitializer.onStartup(new HashSet<>(), sc);
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {

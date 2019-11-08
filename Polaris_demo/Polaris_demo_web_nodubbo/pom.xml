@@ -18,7 +18,7 @@
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_container_springmvc</artifactId>
+            <artifactId>Polaris_container_resteasy</artifactId>
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
@@ -38,7 +38,7 @@
 		    <groupId>io.swagger</groupId>
 		    <artifactId>swagger-jaxrs</artifactId>
 		</dependency>
-			
+						
     </dependencies>
 
     <build>
