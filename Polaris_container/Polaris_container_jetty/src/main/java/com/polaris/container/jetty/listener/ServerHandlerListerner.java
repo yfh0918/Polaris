@@ -7,6 +7,7 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.http.initializer.WSEndpointExporter;
 import com.polaris.http.listener.ServerListener;
 
 /**
@@ -61,7 +62,15 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 启动结束
 	 */
     public void lifeCycleStarted(LifeCycle event) {
+    	
+    	//外部监听
     	listener.started(servletContext);
+    	
+    	//加载websocket
+    	WSEndpointExporter wsEndpointExporter = new WSEndpointExporter();
+    	wsEndpointExporter.initServerContainer(servletContext);
+    	
+    	//日志
     	logger.info("JettyServer启动成功！");
     }
     

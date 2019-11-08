@@ -7,6 +7,7 @@ import org.apache.catalina.core.StandardContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.http.initializer.WSEndpointExporter;
 import com.polaris.http.listener.ServerListener;
 
 /**
@@ -36,7 +37,15 @@ public class ServerHandlerListerner implements LifecycleListener{
         	serverlistener.starting(standardContext.getServletContext());
         	logger.info("TomcatServer启动中！");
         } else if (event.getType().equals(Lifecycle.AFTER_START_EVENT)) {
+        	
+        	//启动外部
         	serverlistener.started(standardContext.getServletContext());
+        	
+        	//加载websocket
+        	WSEndpointExporter wsEndpointExporter = new WSEndpointExporter();
+        	wsEndpointExporter.initServerContainer(standardContext.getServletContext());
+        	
+        	//日志
         	logger.info("TomcatServer启动成功！");
         } else if (event.getType().equals(Lifecycle.BEFORE_STOP_EVENT)) {
         	serverlistener.stopping(standardContext.getServletContext());
