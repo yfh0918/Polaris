@@ -63,6 +63,16 @@
 	<dependency>
 	    <groupId>org.eclipse.jetty.websocket</groupId>
 	    <artifactId>javax-websocket-server-impl</artifactId>
+	    <exclusions>
+	    	<exclusion>
+	    		<artifactId>asm</artifactId>
+	    		<groupId>org.ow2.asm</groupId>
+	    	</exclusion>
+	    	<exclusion>
+	    		<artifactId>asm-commons</artifactId>
+	    		<groupId>org.ow2.asm</groupId>
+	    	</exclusion>
+	    </exclusions>
 	</dependency>	
 			
   </dependencies>
