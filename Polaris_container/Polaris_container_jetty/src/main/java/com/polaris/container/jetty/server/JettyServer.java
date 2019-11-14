@@ -77,7 +77,8 @@ public class JettyServer {
             this.server.addLifeCycleListener(
             		new ServerHandlerListerner(
             				context.getServletContext(), 
-            				startlistener, new WSServerListerner()));//监听handler
+            				new WSServerListerner(),
+            				startlistener));//监听handler
         } catch (IOException e) {
             logger.error(e.getMessage());
         } 

@@ -101,7 +101,8 @@ public class TomcatServer {
             standardContext.addLifecycleListener(
             		new ServerHandlerListerner(
             		standardContext,
-            		startlistener, new WSServerListerner()));
+            		new WSServerListerner(),
+            		startlistener));
          
             //关闭jarScan
             StandardJarScanner jarScanner = new StandardJarScanner();

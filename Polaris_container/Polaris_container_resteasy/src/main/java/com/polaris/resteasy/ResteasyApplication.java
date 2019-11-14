@@ -10,8 +10,8 @@ import javax.ws.rs.core.Application;
 import com.polaris.core.util.SpringUtil;
 
 public class ResteasyApplication extends Application {
-	private Set<Object> singletons = new HashSet<Object>();
-    private Set<Class<?>> classes = new HashSet<Class<?>>();
+	private static Set<Object> singletons = new HashSet<Object>();
+    private static Set<Class<?>> classes = new HashSet<Class<?>>();
  
     public ResteasyApplication() {
     	
@@ -32,5 +32,13 @@ public class ResteasyApplication extends Application {
     @Override
     public Set<Object> getSingletons() {
         return singletons;
+    }
+    
+    public static void registSingleton(Object obj) {
+    	Path path = obj.getClass().getAnnotation(Path.class);
+    	if (path != null) {
+        	singletons.add(obj);
+        	classes.add(obj.getClass());
+    	}
     }
 }

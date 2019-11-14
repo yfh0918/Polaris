@@ -25,10 +25,10 @@ public class WSServerListerner implements  ServerListener{
     	wsEndpointExporter.initServerContainer(servletContext);
 	}
 	
-	private class WSEndpointExporter {
+	public static class WSEndpointExporter {
 		
 		@javax.annotation.Nullable
-		private ServerContainer serverContainer;
+		private static ServerContainer serverContainer;
 		
 		/**
 		 * Actually register the endpoints. Called by {@link #afterSingletonsInstantiated()}.
@@ -57,7 +57,7 @@ public class WSServerListerner implements  ServerListener{
 			}
 		}
 
-		private void registerEndpoint(Class<?> endpointClass) {
+		public static void registerEndpoint(Class<?> endpointClass) {
 			Assert.state(serverContainer != null,
 					"No ServerContainer set. Most likely the server's own WebSocket ServletContainerInitializer " +
 					"has not run yet. Was the Spring ApplicationContext refreshed through a " +
@@ -74,7 +74,7 @@ public class WSServerListerner implements  ServerListener{
 			}
 		}
 
-		private void registerEndpoint(ServerEndpointConfig endpointConfig) {
+		public static void registerEndpoint(ServerEndpointConfig endpointConfig) {
 			Assert.state(serverContainer != null, "No ServerContainer set");
 			try {
 				if (logger.isDebugEnabled()) {
