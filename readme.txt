@@ -59,7 +59,7 @@
         </dependency>
   assembly目录下的配置文件不用修改，
   采用注解配置，详细参考Polaris_demo_web_nodubbo，请参考注掉的代码
-  application.properties 定义服务的project.name,context,port,是否开启websocket(目前只支持Polaris_container_tomcat)，是否开启servlet限流，等等
+  application.properties 定义服务的project.name,context,port,，是否开启servlet限流，等等
 
 9,新增了基于netty的静态文件服务器（不支持jsp和servlet）
    具体context配置参照config\static.txt
