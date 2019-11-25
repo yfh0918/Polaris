@@ -62,7 +62,8 @@ public class WorkflowTraceService {
      * @param processInstanceId 流程实例ID
      * @return 封装了各种节点信息
      */
-    @Transactional
+    @SuppressWarnings("unchecked")
+	@Transactional
     public WorkflowDto traceProcess(WorkflowDto dto) {
 
         //参数检查
@@ -107,7 +108,7 @@ public class WorkflowTraceService {
                 Map<String, Object> activityImageInfo = packageSingleActivitiInfo(activity, processInstance, currentActiviti);
                 activityInfos.add(activityImageInfo);
             }
-            dto.setDatas(activityInfos);
+            dto.setData(activityInfos);
             dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("error", ex);

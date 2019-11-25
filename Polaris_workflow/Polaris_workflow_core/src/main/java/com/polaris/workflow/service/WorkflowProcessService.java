@@ -253,7 +253,8 @@ public class WorkflowProcessService {
      * @param userId 用户ID
      * @return
      */
-    @Transactional(readOnly = true)
+    @SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
     public WorkflowDto findTodoTasks(WorkflowDto dto) {
 
         //参数检查
@@ -302,7 +303,7 @@ public class WorkflowProcessService {
                 datas.add(map);
             }
             dto.setTotal((int) taskQuery.count());
-            dto.setDatas(datas);
+            dto.setData(datas);
             dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
@@ -408,7 +409,8 @@ public class WorkflowProcessService {
      *
      * @return
      */
-    @Transactional(readOnly = true)
+    @SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
     public WorkflowDto findRunningProcessInstaces(WorkflowDto dto) {
 
         //参数检查
@@ -504,7 +506,7 @@ public class WorkflowProcessService {
                 datas.add(processMap);
             }
             dto.setTotal((int) query.count());
-            dto.setDatas(datas);
+            dto.setData(datas);
             dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
@@ -519,7 +521,8 @@ public class WorkflowProcessService {
      *
      * @return
      */
-    @Transactional(readOnly = true)
+    @SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
     public WorkflowDto findFinishedProcessInstaces(WorkflowDto dto) {
 
         //参数检查
@@ -591,7 +594,7 @@ public class WorkflowProcessService {
                 datas.add(processMap);
             }
             dto.setTotal((int) query.count());
-            dto.setDatas(datas);
+            dto.setData(datas);
             dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
@@ -848,10 +851,11 @@ public class WorkflowProcessService {
      * @return 下一个用户任务用户组信息
      * @throws Exception
      */
-    public WorkflowDto getNextTaskGroup(WorkflowDto dto) {
+    @SuppressWarnings("unchecked")
+	public WorkflowDto getNextTaskGroup(WorkflowDto dto) {
         //获取任务号 和网关判断条件
         String taskId = dto.getTaskId();
-        List<Map<String, Object>> gateWayCond = dto.getDatas();
+        List<Map<String, Object>> gateWayCond = (List<Map<String, Object>>)dto.getData();
         if (StrUtil.isEmpty(taskId)) {
             dto.setMessage(WorkflowDto.MESSAGE_INFO[4]);
             dto.setCode(String.valueOf(Constant.RESULT_FAIL));
@@ -992,7 +996,8 @@ public class WorkflowProcessService {
      * @return 所有用户任务用户名称
      * @throws Exception
      */
-    public WorkflowDto getAllUserTask(WorkflowDto dto) {
+    @SuppressWarnings("unchecked")
+	public WorkflowDto getAllUserTask(WorkflowDto dto) {
         Deployment deployment = repositoryService.createDeploymentQuery().deploymentName(dto.getProcessDefinitionKey()).singleResult();
         String deploymentId = deployment.getId();
         String resourceName = dto.getProcessDefinitionKey() + ".bpmn20.xml";
@@ -1026,7 +1031,8 @@ public class WorkflowProcessService {
      * @return 流程的名称和key的集合
      * @throws Exception
      */
-    public WorkflowDto getAllDeployWorkFlow(WorkflowDto dto) {
+    @SuppressWarnings("unchecked")
+	public WorkflowDto getAllDeployWorkFlow(WorkflowDto dto) {
         List<Deployment> deploymentList = repositoryService.createDeploymentQuery().list();
         //查询ACT_RE_PROCDEF，获取中文名称  只有开启流程才会有中文名称
         List<Map<String, Object>> resultList = new ArrayList<>();
@@ -1061,7 +1067,7 @@ public class WorkflowProcessService {
             tmpMap.put("definitionKey", processes.get(0).getId());
             resultList.add(tmpMap);
         }
-        dto.setDatas(resultList);
+        dto.setData(resultList);
         return dto;
     }
 

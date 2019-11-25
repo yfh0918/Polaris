@@ -157,12 +157,13 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     }
 
     //创建resoponse(中途退出错误的场合)
-    private HttpResponse createResponse(HttpResponseStatus httpResponseStatus, HttpRequest originalRequest, ResultDto responseDto) {
+    @SuppressWarnings("rawtypes")
+	private HttpResponse createResponse(HttpResponseStatus httpResponseStatus, HttpRequest originalRequest, ResultDto responseDto) {
         HttpHeaders httpHeaders=new DefaultHttpHeaders();
         httpHeaders.add("Transfer-Encoding","chunked");
         HttpResponse httpResponse;
         if (responseDto != null) {
-        	ByteBuf buf = io.netty.buffer.Unpooled.copiedBuffer(responseDto.toJSON().toJSONString(), CharsetUtil.UTF_8); 
+        	ByteBuf buf = io.netty.buffer.Unpooled.copiedBuffer(responseDto.toJSONString(), CharsetUtil.UTF_8); 
         	httpResponse  = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, httpResponseStatus, buf);
         	httpHeaders.set("Content-Type", MediaType.APPLICATION_JSON);
         } else {

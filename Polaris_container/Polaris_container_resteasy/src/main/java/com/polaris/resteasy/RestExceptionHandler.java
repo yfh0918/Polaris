@@ -18,7 +18,8 @@ public class RestExceptionHandler implements ExceptionMapper<Exception>{
     
 	private static final Logger logger = LoggerFactory.getLogger(RestExceptionHandler.class);
 	
-    @Override  
+    @SuppressWarnings({ "rawtypes" })
+	@Override  
     public Response toResponse(Exception ex) {
     	ResultDto responseDto = new ResultDto();
     	responseDto.setCode(Constant.RESULT_FAIL);
@@ -41,7 +42,7 @@ public class RestExceptionHandler implements ExceptionMapper<Exception>{
             	responseDto.setMessage(ConfClient.get(errorCode,errorCode));
         	}
     	}
-    	Response response = Response.status(200).entity(responseDto.toJSON()).build();
+    	Response response = Response.status(200).entity(responseDto.toString()).build();
     	response.getHeaders().remove("Content-Type");
     	response.getHeaders().add("Content-Type", MediaType.APPLICATION_JSON);
     	logger.error(ex.toString());

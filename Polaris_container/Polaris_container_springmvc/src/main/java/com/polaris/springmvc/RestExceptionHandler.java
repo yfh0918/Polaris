@@ -9,6 +9,7 @@ import com.polaris.core.dto.ResultDto;
 
 abstract class RestExceptionHandler {  
     
+	@SuppressWarnings("rawtypes")
 	@ExceptionHandler(Exception.class)
     public String exceptionHandler(Exception ex){
     	ResultDto responseDto = new ResultDto();
@@ -32,7 +33,7 @@ abstract class RestExceptionHandler {
             	responseDto.setMessage(ConfClient.get(errorCode,errorCode));
         	}
     	}
-        return responseDto.toJSON().toString();  
+        return responseDto.toString();  
     }
 
 }  

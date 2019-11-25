@@ -1,59 +1,81 @@
 package com.polaris.core.dto;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.polaris.core.Constant;
 
-public class ResultDto extends MessageDto implements Serializable {
+public class ResultDto<T> extends MessageDto implements Serializable {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
-    public  ResultDto(){
-    	super();
+    private T data;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    private String detailMessage;
+
+    public String getDetailMessage() {
+        return detailMessage;
     }
-    
-    public  ResultDto(String code,String message){
-    	super(code, message);
+
+    public void setDetailMessage(String detailMessage) {
+        this.detailMessage = detailMessage;
     }
-    
-	public JSONObject toJSON() {
-		return (JSONObject) JSONObject.toJSON(this);
-	}
-	
-	public JSONObject toJSON(ResultDto dto) {
-		return (JSONObject) JSONObject.toJSON(dto);
-	}
-	
-	/**
-	 * 属于组件:  作用：自定义单个data 标准值： 前台是否传输：否 后台是否传输：是
-	 */
-	private Map<String, Object> data;
-	
-	/**
-	 * 属于组件: table,tree 作用：tree与table的显示行数据,内在数据字段根据显示自定义 标准值： 前台是否传输：否 后台是否传输：是
-	 */
-	private List<Map<String, Object>> datas;
-	
-	public Map<String, Object> getData() {
-		return data;
-	}
-	
-	public void setData(Map<String, Object> data) {
-		this.data = data;
-	}
-	
-	public List<Map<String, Object>> getDatas() {
-		return datas;
-	}
-	
-	public void setDatas(List<Map<String, Object>> datas) {
-		this.datas = datas;
-	}
+
+    public ResultDto() {
+        super(Constant.RESULT_SUCCESS,"");
+    }
+
+    public ResultDto(T value) {
+    	super(Constant.RESULT_SUCCESS,"");
+        this.data = value;
+    }
+
+    public ResultDto(String code, String message) {
+        super(code,message);
+        this.data = null;
+    }
+
+    public ResultDto(String code, String message, String detailMessage, T val) {
+    	super(code,message);
+        this.detailMessage = detailMessage;
+        this.data = val;
+    }
+
+    public ResultDto(String code, String message, T value) {
+    	super(code,message);
+        this.data = value;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
+    public void setData(T value) {
+        this.data = value;
+    }
+
+    @Override
+    public String toString() {
+        return JSONObject.toJSONString(this
+                , SerializerFeature.DisableCircularReferenceDetect
+                , SerializerFeature.WriteMapNullValue);
+    }
+
+    public Boolean isSuccess() {
+        return Objects.equals(Constant.RESULT_SUCCESS, this.getCode());
+    }
+
+    /**
+     * @return
+     */
+    public String toJSONString() {
+        return JSONObject.toJSONString(this
+                , SerializerFeature.DisableCircularReferenceDetect
+                , SerializerFeature.WriteMapNullValue);
+    }
 
 }
 
