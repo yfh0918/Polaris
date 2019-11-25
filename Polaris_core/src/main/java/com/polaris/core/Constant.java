@@ -2,61 +2,38 @@ package com.polaris.core;
 
 public class Constant {
 	
-	/**
-	 * 返回给前端业务处理状态 0：成功
-	 */
-	public static final int  STATUS_SUCCESS=0;
-	
-	/**
-	 * 返回给前端业务处理状态 1：失败
-	 */
-	public static final int STATUS_FAILED=1;
-	
-	/**
-	 * 返回给前端业务处理状态 2：系统错误
-	 */
-	public static final int STATUS_SYSTEM_FAILED=2;
+    /**
+     * 成功
+     **/
+    public static final String RESULT_SUCCESS = "GL_S000";
 
+    /**
+     * 失败
+     **/
+    public static final String RESULT_FAIL = "GL_F000";
+    
+    /**
+     * token_ID
+     **/
+    public static final String TOKEN_ID = "X-TokenID";
+    
+    /**
+     * token_error
+     **/
+    public static final String TOKEN_FAIL_CODE = "GL_F999";
+    
 	/**
-	 * 返回给前端业务处理状态 3：没有权限
+	 * 全局异常信息
 	 */
-	public static final int STATUS_PERMISSION_DENIED=3;
+	public static final String MESSAGE_GLOBAL_ERROR = "系统繁忙，请稍后再试！";
 
-	
-	/**
-	 * 返回给前端业务处理状态 4：认证失败
-	 */
-	public static final int STATUS_AUTHENTICATION_FAILED=4;
-	
-	
-	/**
-	 * 返回给前端业务处理状态 5：浏览器不支持
-	 */
-	public static final int STATUS_BROWSER_DENIED=5;
-
-	/**
-	 * 返回给前端业务处理状态 7：请求被限制
-	 */
-    public static final int STATUS_REQUEST_BLOCKED=7;
 
 	/**
 	 * 分割符号
 	 */
 	public static final String SESSION_YH_ID_MC_SPLIT = "-polaris-";
 
-	/**
-	 * session保存的token
-	 */
-	public static final String USER_TOKEN = "token";
-	public static final String REFRESH_USER_TOKEN = "refreshToken";
-	public static final int DEFAULT_TOKEN_TIMEOUT = 30 * 60;
-	public static final int DEFAULT_REFRESH_TOKEN_TIMEOUT = 30 * 24 * 60 * 60;
 	
-	/**
-	 * 全局异常信息
-	 */
-	public static final String MESSAGE_GLOBAL_ERROR = "系统繁忙，请稍后再试！";
-
 	/**
 	 * http连接参数
 	 */
@@ -102,9 +79,6 @@ public class Constant {
 	
 	// 集群名称(注册中心，配置中心公用)
 	public static final String PROJECR_GROUP_NAME = "project.group";
-//	
-//	//全局global的名称(配置中心用)
-//	public static final String PROJECR_GLOBAL_CONFIG_NAME = "project.global.config.name";
 
 	// 配置中心
 	public static final String CONFIG_REGISTRY_ADDRESS_NAME = "config.registry.address";

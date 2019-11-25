@@ -144,8 +144,8 @@ public class FlowControlFilter implements Filter {
 	private void setRtnResponse(HttpServletResponse httpServletResponse) throws IOException  {
 		httpServletResponse.setStatus(200);
 		ResultDto responseDto = new ResultDto();
-		responseDto.setMsgContent(FLOW_CONTROL_MESSAGE);
-		responseDto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+		responseDto.setMessage(FLOW_CONTROL_MESSAGE);
+		responseDto.setCode(Constant.RESULT_FAIL);
 		httpServletResponse.getWriter().write(JSON.toJSONString(responseDto));
 		httpServletResponse.getWriter().flush();
 	}

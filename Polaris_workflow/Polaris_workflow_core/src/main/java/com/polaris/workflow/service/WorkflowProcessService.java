@@ -113,8 +113,8 @@ public class WorkflowProcessService {
             dto = new WorkflowDto();
         }
         if (StringUtil.isEmpty(dto.getProcessDefinitionKey())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[1]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[1]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
 
@@ -149,11 +149,11 @@ public class WorkflowProcessService {
                     }
                 }
             }
-            dto.setStatus(String.valueOf(Constant.STATUS_SUCCESS));
+            dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
-            dto.setMsgContent(ex.getMessage());
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
+            dto.setMessage(ex.getMessage());
         }
         return dto;
     }
@@ -171,19 +171,19 @@ public class WorkflowProcessService {
             dto = new WorkflowDto();
         }
         if (StringUtil.isEmpty(dto.getDeploymentId())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[5]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[5]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
 
         //删除发布图
         try {
             repositoryService.deleteDeployment(dto.getDeploymentId(), true);
-            dto.setStatus(String.valueOf(Constant.STATUS_SUCCESS));
+            dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
-            dto.setMsgContent(ex.getMessage());
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
+            dto.setMessage(ex.getMessage());
         }
         return dto;
     }
@@ -201,23 +201,23 @@ public class WorkflowProcessService {
             dto = new WorkflowDto();
         }
         if (StringUtil.isEmpty(dto.getUserId())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[0]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[0]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
         if (StringUtil.isEmpty(dto.getProcessDefinitionKey())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[1]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[1]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
         if (StringUtil.isEmpty(dto.getBusinessKey())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[2]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[2]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
         if (dto.getVariables() == null) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[3]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[3]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
 
@@ -236,11 +236,11 @@ public class WorkflowProcessService {
             dto.setProcessInstanceId(processInstanceId);
             logger.debug("start process of {key={}, bkey={}, pid={}, variables={}}",
                     new Object[]{dto.getProcessDefinitionKey(), dto.getBusinessKey(), processInstanceId, dto.getVariables()});
-            dto.setStatus(String.valueOf(Constant.STATUS_SUCCESS));
+            dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
-            dto.setMsgContent(ex.getMessage());
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
+            dto.setMessage(ex.getMessage());
         } finally {
             identityService.setAuthenticatedUserId(null);
         }
@@ -261,13 +261,13 @@ public class WorkflowProcessService {
             dto = new WorkflowDto();
         }
         if (StringUtil.isEmpty(dto.getUserId())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[0]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[0]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
         if (StringUtil.isEmpty(dto.getProcessDefinitionKey())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[1]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[1]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
 
@@ -303,11 +303,11 @@ public class WorkflowProcessService {
             }
             dto.setTotal((int) taskQuery.count());
             dto.setDatas(datas);
-            dto.setStatus(String.valueOf(Constant.STATUS_SUCCESS));
+            dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
-            dto.setMsgContent(ex.getMessage());
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
+            dto.setMessage(ex.getMessage());
         }
         return dto;
     }
@@ -326,24 +326,24 @@ public class WorkflowProcessService {
             dto = new WorkflowDto();
         }
         if (StringUtil.isEmpty(dto.getUserId())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[0]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[0]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
         if (StringUtil.isEmpty(dto.getTaskId())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[4]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[4]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
 
         //领取任务
         try {
             taskService.claim(dto.getTaskId(), dto.getUserId());
-            dto.setStatus(String.valueOf(Constant.STATUS_SUCCESS));
+            dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
-            dto.setMsgContent(ex.getMessage());
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
+            dto.setMessage(ex.getMessage());
         }
         return dto;
     }
@@ -362,8 +362,8 @@ public class WorkflowProcessService {
             dto = new WorkflowDto();
         }
         if (StringUtil.isEmpty(dto.getTaskId())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[4]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[4]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
 
@@ -393,11 +393,11 @@ public class WorkflowProcessService {
             }
 
             //返回成功变量
-            dto.setStatus(String.valueOf(Constant.STATUS_SUCCESS));
+            dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
-            dto.setMsgContent(ex.getMessage());
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
+            dto.setMessage(ex.getMessage());
         }
 
         return dto;
@@ -416,8 +416,8 @@ public class WorkflowProcessService {
             dto = new WorkflowDto();
         }
         if (StringUtil.isEmpty(dto.getProcessDefinitionKey())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[1]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[1]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
 
@@ -505,11 +505,11 @@ public class WorkflowProcessService {
             }
             dto.setTotal((int) query.count());
             dto.setDatas(datas);
-            dto.setStatus(String.valueOf(Constant.STATUS_SUCCESS));
+            dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
-            dto.setMsgContent(ex.getMessage());
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
+            dto.setMessage(ex.getMessage());
         }
         return dto;
     }
@@ -527,8 +527,8 @@ public class WorkflowProcessService {
             dto = new WorkflowDto();
         }
         if (StringUtil.isEmpty(dto.getProcessDefinitionKey())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[1]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[1]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
 
@@ -592,11 +592,11 @@ public class WorkflowProcessService {
             }
             dto.setTotal((int) query.count());
             dto.setDatas(datas);
-            dto.setStatus(String.valueOf(Constant.STATUS_SUCCESS));
+            dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
-            dto.setMsgContent(ex.getMessage());
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
+            dto.setMessage(ex.getMessage());
         }
         return dto;
     }
@@ -613,18 +613,18 @@ public class WorkflowProcessService {
             dto = new WorkflowDto();
         }
         if (StringUtil.isEmpty(dto.getProcessInstanceId())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[6]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[6]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
         // 删除流程
         try {
             runtimeService.deleteProcessInstance(dto.getProcessInstanceId(), dto.getDeleteReason());
-            dto.setStatus(String.valueOf(Constant.STATUS_SUCCESS));
+            dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
-            dto.setMsgContent(ex.getMessage());
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
+            dto.setMessage(ex.getMessage());
         }
         return dto;
     }
@@ -642,19 +642,19 @@ public class WorkflowProcessService {
             dto = new WorkflowDto();
         }
         if (StringUtil.isEmpty(dto.getProcessInstanceId())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[6]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[6]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
 
         //删除流程
         try {
             historyService.deleteHistoricProcessInstance(dto.getProcessInstanceId());
-            dto.setStatus(String.valueOf(Constant.STATUS_SUCCESS));
+            dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
-            dto.setMsgContent(ex.getMessage());
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
+            dto.setMessage(ex.getMessage());
         }
         return dto;
     }
@@ -672,8 +672,8 @@ public class WorkflowProcessService {
             dto = new WorkflowDto();
         }
         if (StringUtil.isEmpty(dto.getProcessDefinitionKey())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[1]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[1]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
 
@@ -692,7 +692,7 @@ public class WorkflowProcessService {
                 dto.setUsingBusinessKeyList(businessKeySet);
                 if (businessKeySet.size() == maxResults) {
                     businessKeySet.remove(dto.getMaxSizeBusinessKey());
-                    dto.setMsgContent(WorkflowDto.MESSAGE_INFO[9] + dto.getMaxSizeBusinessKey());
+                    dto.setMessage(WorkflowDto.MESSAGE_INFO[9] + dto.getMaxSizeBusinessKey());
                 }
             }
 
@@ -709,18 +709,18 @@ public class WorkflowProcessService {
                 dto.setUsedBusinessKeyList(businessKeySet);
                 if (businessKeySet.size() == maxResults) {
                     businessKeySet.remove(dto.getMaxSizeBusinessKey());
-                    if (StringUtil.isNotEmpty(dto.getMsgContent())) {
-                        dto.setMsgContent(dto.getMsgContent() + ";" + WorkflowDto.MESSAGE_INFO[10] + dto.getMaxSizeBusinessKey());
+                    if (StringUtil.isNotEmpty(dto.getMessage())) {
+                        dto.setMessage(dto.getMessage() + ";" + WorkflowDto.MESSAGE_INFO[10] + dto.getMaxSizeBusinessKey());
                     } else {
-                        dto.setMsgContent(WorkflowDto.MESSAGE_INFO[10] + dto.getMaxSizeBusinessKey());
+                        dto.setMessage(WorkflowDto.MESSAGE_INFO[10] + dto.getMaxSizeBusinessKey());
                     }
                 }
             }
-            dto.setStatus(String.valueOf(Constant.STATUS_SUCCESS));
+            dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
-            dto.setMsgContent(ex.getMessage());
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
+            dto.setMessage(ex.getMessage());
         }
         return dto;
     }
@@ -823,8 +823,8 @@ public class WorkflowProcessService {
                 processDefinitionKey(dto.getProcessDefinitionKey()).
                 processInstanceBusinessKey(dto.getBusinessKey()).active().singleResult();
         if (processInstance != null && StringUtil.isNotEmpty(processInstance.getBusinessKey())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[7] + "{" + processInstance.getBusinessKey() + "}");
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[7] + "{" + processInstance.getBusinessKey() + "}");
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return false;
         }
 
@@ -833,8 +833,8 @@ public class WorkflowProcessService {
                 processDefinitionKey(dto.getProcessDefinitionKey()).
                 processInstanceBusinessKey(dto.getProcessDefinitionKey()).finished().singleResult();
         if (historicProcessInstance != null && StringUtil.isNotEmpty(historicProcessInstance.getBusinessKey())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[8] + "{" + historicProcessInstance.getBusinessKey() + "}");
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[8] + "{" + historicProcessInstance.getBusinessKey() + "}");
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return false;
         }
         return true;
@@ -853,8 +853,8 @@ public class WorkflowProcessService {
         String taskId = dto.getTaskId();
         List<Map<String, Object>> gateWayCond = dto.getDatas();
         if (StrUtil.isEmpty(taskId)) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[4]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[4]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
         ProcessDefinitionEntity processDefinitionEntity;
@@ -886,22 +886,22 @@ public class WorkflowProcessService {
             return false;
         }).collect(Collectors.toList());
         if (CollectionUtil.isEmpty(collect)) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[4]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[4]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
         //查找下个节点
         task = nextTaskDefinition(collect.get(0), collect.get(0).getId(), gateWayCond, processInstanceId);
         if (task == null) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[11]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[11]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
         //key为节点id，value为节点中文描述
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put(task.getKey(), task.getNameExpression().getExpressionText());
         dto.setData(resultMap);
-        dto.setStatus(String.valueOf(Constant.STATUS_SUCCESS));
+        dto.setCode(Constant.RESULT_SUCCESS);
         return dto;
     }
 

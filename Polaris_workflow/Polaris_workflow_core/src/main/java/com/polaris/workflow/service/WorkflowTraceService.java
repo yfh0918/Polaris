@@ -70,8 +70,8 @@ public class WorkflowTraceService {
             dto = new WorkflowDto();
         }
         if (StringUtil.isEmpty(dto.getProcessInstanceId())) {
-            dto.setMsgContent(WorkflowDto.MESSAGE_INFO[6]);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[6]);
+            dto.setCode(Constant.RESULT_FAIL);
             return dto;
         }
 
@@ -108,11 +108,11 @@ public class WorkflowTraceService {
                 activityInfos.add(activityImageInfo);
             }
             dto.setDatas(activityInfos);
-            dto.setStatus(String.valueOf(Constant.STATUS_SUCCESS));
+            dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("error", ex);
-            dto.setStatus(String.valueOf(Constant.STATUS_FAILED));
-            dto.setMsgContent(ex.getMessage());
+            dto.setCode(Constant.RESULT_FAIL);
+            dto.setMessage(ex.getMessage());
         }
         return dto;
     }

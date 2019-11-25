@@ -12,9 +12,9 @@ abstract class RestExceptionHandler {
 	@ExceptionHandler(Exception.class)
     public String exceptionHandler(Exception ex){
     	ResultDto responseDto = new ResultDto();
-    	responseDto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+    	responseDto.setCode(Constant.RESULT_FAIL);
     	if (ex instanceof RuntimeException) {
-        	responseDto.setMsgContent(Constant.MESSAGE_GLOBAL_ERROR);
+        	responseDto.setMessage(Constant.MESSAGE_GLOBAL_ERROR);
     	} else {
     		
         	String errorCode = ex.getMessage();
@@ -29,7 +29,7 @@ abstract class RestExceptionHandler {
         			errorCode = errorCode.substring(0,errorCode.indexOf("\n"));
         		}
         		errorCode = errorCode.trim();
-            	responseDto.setMsgContent(ConfClient.get(errorCode,errorCode));
+            	responseDto.setMessage(ConfClient.get(errorCode,errorCode));
         	}
     	}
         return responseDto.toJSON().toString();  

@@ -21,9 +21,9 @@ public class RestExceptionHandler implements ExceptionMapper<Exception>{
     @Override  
     public Response toResponse(Exception ex) {
     	ResultDto responseDto = new ResultDto();
-    	responseDto.setStatus(String.valueOf(Constant.STATUS_FAILED));
+    	responseDto.setCode(Constant.RESULT_FAIL);
     	if (ex instanceof RuntimeException) {
-        	responseDto.setMsgContent(Constant.MESSAGE_GLOBAL_ERROR);
+        	responseDto.setMessage(Constant.MESSAGE_GLOBAL_ERROR);
     	} else {
     		
         	String errorCode = ex.getMessage();
@@ -38,7 +38,7 @@ public class RestExceptionHandler implements ExceptionMapper<Exception>{
         			errorCode = errorCode.substring(0,errorCode.indexOf("\n"));
         		}
         		errorCode = errorCode.trim();
-            	responseDto.setMsgContent(ConfClient.get(errorCode,errorCode));
+            	responseDto.setMessage(ConfClient.get(errorCode,errorCode));
         	}
     	}
     	Response response = Response.status(200).entity(responseDto.toJSON()).build();

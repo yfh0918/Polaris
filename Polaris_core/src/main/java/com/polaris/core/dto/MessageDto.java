@@ -12,38 +12,39 @@ public class MessageDto implements Serializable {
 	/**
 	 * 属于组件，状态值
 	 */
-	private String status;
+	private String code;
 
 
 	/**
 	 * 消息内容
 	 */
-	private String msgContent;
+	private String message;
 
 	 public  MessageDto(){
 		 
 	 }
 	 
-	 public  MessageDto(String status,String msgContent){
-	    	this.status = status;
-	    	this.msgContent=msgContent;
+	 public  MessageDto(String code,String message){
+	    	this.code = code;
+	    	this.message=message;
 	  }
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
 	
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public String getMsgContent() {
-		return msgContent;
-	}
-
-	public void setMsgContent(String msgContent) {
-		this.msgContent = msgContent;
-	}
 	
 }

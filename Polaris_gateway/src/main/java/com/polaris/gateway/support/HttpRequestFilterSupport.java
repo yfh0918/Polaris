@@ -7,15 +7,15 @@ public class HttpRequestFilterSupport {
 
     //创建ResponseDto
     public static ResultDto createResultDto(String message) {
-    	return createResultDto(Constant.STATUS_FAILED, message);
+    	return createResultDto(Constant.RESULT_FAIL, message);
     }
     public static ResultDto createResultDto(Exception ex) {
-    	return createResultDto(Constant.STATUS_FAILED, ex.getMessage());
+    	return createResultDto(Constant.RESULT_FAIL, ex.getMessage());
     }
-    public static ResultDto createResultDto(int status,  String message) {
+    public static ResultDto createResultDto(String code,  String message) {
     	ResultDto resultDto = new ResultDto();
-    	resultDto.setStatus(String.valueOf(status));
-    	resultDto.setMsgContent(message);
+    	resultDto.setCode(code);
+    	resultDto.setMessage(message);
     	return resultDto;
     }
 }

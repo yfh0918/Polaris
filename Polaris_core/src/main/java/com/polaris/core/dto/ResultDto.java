@@ -17,8 +17,8 @@ public class ResultDto extends MessageDto implements Serializable {
     	super();
     }
     
-    public  ResultDto(String status,String msgContent){
-    	super(status, msgContent);
+    public  ResultDto(String code,String message){
+    	super(code, message);
     }
     
 	public JSONObject toJSON() {
