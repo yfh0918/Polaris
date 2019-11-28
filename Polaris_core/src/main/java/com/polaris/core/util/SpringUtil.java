@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import com.polaris.core.config.DefaultRootConfig;
 
 public class SpringUtil {
-	private static AnnotationConfigApplicationContext context = null;
+	private static ApplicationContext context = null;
 	
     public static ApplicationContext getApplicationContext() {
            return context;
@@ -28,23 +28,29 @@ public class SpringUtil {
     		return null;
     	}
     }
+    
+    public static void setApplicationContext(ApplicationContext inputContext){
+    	context = inputContext;
+    }
+    
 
     
     public synchronized static void refresh(Class<?>... clazzs) {
     	if (context == null) {
-        	context = new AnnotationConfigApplicationContext();
+    		AnnotationConfigApplicationContext annotationContext = new AnnotationConfigApplicationContext();
+	    	annotationContext.register(DefaultRootConfig.class);
+	    	if (clazzs != null && clazzs.length > 0) {
+	    		for (Class<?> clazz : clazzs) {
+	    			if (clazz.getAnnotation(Configuration.class) != null) {
+	    				annotationContext.register(clazzs);
+	    			}
+	    		}
+	    		
+	    	}
+	    	annotationContext.refresh();
+	    	annotationContext.registerShutdownHook();
+	    	context = annotationContext;
     	}
-    	context.register(DefaultRootConfig.class);
-    	if (clazzs != null && clazzs.length > 0) {
-    		for (Class<?> clazz : clazzs) {
-    			if (clazz.getAnnotation(Configuration.class) != null) {
-    				context.register(clazzs);
-    			}
-    		}
-    		
-    	}
-    	context.refresh();
-		context.registerShutdownHook();
     }
 
 
