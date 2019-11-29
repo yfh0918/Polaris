@@ -44,20 +44,20 @@ public class FileDataSourceInit {
         File flow = new File(rulePath + File.separator + "FlowRule.json");
         if (!flow.exists()) {
         	flow.createNewFile();
+            FileUtil.appendString("[]", flow,Charset.forName("utf-8"));
         }
-        FileUtil.appendString("[]", flow,Charset.forName("utf-8"));
 
         File degrade = new File(rulePath + File.separator + "DegradeRule.json");
         if (!degrade.exists()) {
         	degrade.createNewFile();
+            FileUtil.appendString("[]", degrade,Charset.forName("utf-8"));
         }
-        FileUtil.appendString("[]", degrade,Charset.forName("utf-8"));
 
         File system = new File(rulePath + File.separator + "SystemRule.json");
         if (!system.exists()) {
         	system.createNewFile();
+            FileUtil.appendString("[]", system,Charset.forName("utf-8"));
         }
-        FileUtil.appendString("[]", system,Charset.forName("utf-8"));
 
         // data source for FlowRule
         ReadableDataSource<String, List<FlowRule>> flowRuleDataSource = new FileRefreshableDataSource<>(
