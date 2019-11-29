@@ -22,25 +22,6 @@ public class DataSourceInit implements InitFunc {
 	 @Override
 	 public void init() throws Exception {
 
-		//获取参数 
-		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.dashboard.server"))) {
-			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.dashboard.server"))) {
-				System.setProperty("csp.sentinel.dashboard.server", ConfClient.get("csp.sentinel.dashboard.server"));
-			}
-		}
-		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.api.port"))) {
-			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.api.port"))) {
-				System.setProperty("csp.sentinel.api.port", ConfClient.get("csp.sentinel.api.port"));
-			}
-		}
-		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.heartbeat.interval.ms"))) {
-			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.heartbeat.interval.ms"))) {
-				System.setProperty("csp.sentinel.heartbeat.interval.ms", ConfClient.get("csp.sentinel.heartbeat.interval.ms"));
-			}
-		}
-		System.setProperty("project.name", ConfClient.getAppName());
-		
-
 		//web过滤
 		WebFilterInit webFilterInit = new WebFilterInit();
 		webFilterInit.init();
