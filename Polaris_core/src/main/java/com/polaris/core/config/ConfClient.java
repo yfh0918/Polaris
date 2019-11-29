@@ -52,6 +52,10 @@ public abstract class ConfClient {
 				logger.info("{} loading start",file);
 			}
 		}
+		
+		//载入Sentinel
+		loadSentinelConfig();
+		
 	}
 	public static void loadDefaultConfig() {
 		
@@ -132,6 +136,27 @@ public abstract class ConfClient {
 		
 		//返回默认值
 		return defaultVal;
+	}
+	
+	//载入Sentinel
+	private static void loadSentinelConfig() {
+		//sentinel设置
+		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.dashboard.server"))) {
+			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.dashboard.server"))) {
+				System.setProperty("csp.sentinel.dashboard.server", ConfClient.get("csp.sentinel.dashboard.server"));
+			}
+		}
+		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.api.port"))) {
+			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.api.port"))) {
+				System.setProperty("csp.sentinel.api.port", ConfClient.get("csp.sentinel.api.port"));
+			}
+		}
+		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.heartbeat.interval.ms"))) {
+			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.heartbeat.interval.ms"))) {
+				System.setProperty("csp.sentinel.heartbeat.interval.ms", ConfClient.get("csp.sentinel.heartbeat.interval.ms"));
+			}
+		}
+		System.setProperty("project.name", ConfClient.getAppName());
 	}
 	
 	//在设置应用名称的时候启动各项参数载入
