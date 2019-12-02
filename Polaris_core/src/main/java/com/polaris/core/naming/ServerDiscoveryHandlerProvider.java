@@ -4,11 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import com.polaris.core.OrderWrapper;
 import com.polaris.core.util.StringUtil;
 
+@SuppressWarnings("rawtypes")
 public class ServerDiscoveryHandlerProvider {
-	private final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoader.load(ServerDiscoveryHandler.class);
-
+	private static final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoader.load(ServerDiscoveryHandler.class);
+	private static List<OrderWrapper> discoveryHandlerList = new ArrayList<OrderWrapper>();
+	private static ServerDiscoveryHandler handler;
+	static {
+    	for (ServerDiscoveryHandler discoveryHandler : serviceLoader) {
+    		OrderWrapper.insertSorted(discoveryHandlerList, discoveryHandler);
+        }
+    	if (discoveryHandlerList.size() > 0) {
+    		handler = (ServerDiscoveryHandler)discoveryHandlerList.get(0).getHandler();
+    	}
+    }
     private static final ServerDiscoveryHandlerProvider INSTANCE = new ServerDiscoveryHandlerProvider();
 
     public static ServerDiscoveryHandlerProvider getInstance() {
@@ -17,14 +28,14 @@ public class ServerDiscoveryHandlerProvider {
     
     //注册
     public void register(String ip, int port) {
-    	for (ServerDiscoveryHandler handler : serviceLoader) {
-			handler.register(ip, port);
-		}
+    	if (handler != null) {
+    		handler.register(ip, port);
+    	}
     }
     
     //反注册
     public void deregister(String ip, int port) {
-    	for (ServerDiscoveryHandler handler : serviceLoader) {
+    	if (handler != null) {
 			handler.deregister(ip, port);
 		}
     }
@@ -36,7 +47,7 @@ public class ServerDiscoveryHandlerProvider {
 		if (!ServerDiscoveryHandlerSupport.isSkip(temp.get(1))) {
 			
 			//走注册中心
-			for (ServerDiscoveryHandler handler : serviceLoader) {
+			if (handler != null) {
 				
 				
 				// 走注册中心
@@ -44,9 +55,6 @@ public class ServerDiscoveryHandlerProvider {
 				if (StringUtil.isNotEmpty(url)) {
 					return temp.get(0) + url + temp.get(2);
 				}
-				
-				//只走第一个注册中心
-				break;
 			}
 		}
 		return temp.get(0) + ServerDiscoveryHandlerSupport.getUrl(temp.get(1)) + temp.get(2);
@@ -67,7 +75,7 @@ public class ServerDiscoveryHandlerProvider {
 		}
 
 		// 走注册中心
-		for (ServerDiscoveryHandler handler : serviceLoader) {
+		if (handler != null) {
 			List<String> urls = handler.getAllUrls(temp.get(1));
 			for (int i0 = 0; i0 < urls.size(); i0++) {
 				String value = temp.get(0) + urls.get(i0) + temp.get(2);
@@ -84,7 +92,7 @@ public class ServerDiscoveryHandlerProvider {
 		List<String> temp2 = ServerDiscoveryHandlerSupport.getRemoteAddress(url);
 		// 单个IP或者多IP不走注册中心
 		if (!ServerDiscoveryHandlerSupport.isSkip(temp.get(1))) {
-			for (ServerDiscoveryHandler handler : serviceLoader) {
+			if (handler != null) {
 				handler.connectionFail(temp.get(1), temp2.get(1));
 				return;
 			}
@@ -96,4 +104,5 @@ public class ServerDiscoveryHandlerProvider {
 		String key = "FMS.APIRes.test.mcpsystem.com/api/partner/add";
 		System.out.println(ServerDiscoveryHandlerProvider.INSTANCE.getUrl(key));
     }
+	
 }

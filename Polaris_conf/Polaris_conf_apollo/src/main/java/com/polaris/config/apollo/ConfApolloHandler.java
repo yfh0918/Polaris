@@ -1,8 +1,11 @@
 package com.polaris.config.apollo;
 
+import org.springframework.core.annotation.Order;
+
 import com.polaris.core.config.ConfListener;
 import com.polaris.core.config.ConfigHandler;
 
+@Order(1)
 public class ConfApolloHandler implements ConfigHandler {
 
 	@Override

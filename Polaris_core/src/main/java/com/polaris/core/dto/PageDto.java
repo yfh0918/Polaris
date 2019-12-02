@@ -2,6 +2,7 @@ package com.polaris.core.dto;
 
 import java.io.Serializable;
 
+@SuppressWarnings("rawtypes")
 public class PageDto extends ResultDto implements Serializable {
 
 	/**o

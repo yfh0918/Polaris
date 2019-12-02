@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 
 import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.naming.NamingFactory;
@@ -15,7 +16,7 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.ServerDiscoveryHandler;
 import com.polaris.core.util.StringUtil;
 
-
+@Order(0)
 public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	private static final Logger logger = LoggerFactory.getLogger(NacosServerDiscovery.class);
 	private volatile NamingService naming;

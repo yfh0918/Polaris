@@ -8,6 +8,7 @@ import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 
 import com.netflix.appinfo.ApplicationInfoManager;
 import com.netflix.appinfo.InstanceInfo;
@@ -35,7 +36,7 @@ import com.polaris.core.naming.ServerDiscoveryHandler;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
-
+@Order(1)
 public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 	private static final Logger logger = LoggerFactory.getLogger(EurekaServerDiscovery.class);
 	private ApplicationInfoManager applicationInfoManager;
