@@ -8,12 +8,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.csp.sentinel.Entry;
+import com.alibaba.csp.sentinel.EntryType;
+import com.alibaba.csp.sentinel.SphU;
+import com.alibaba.csp.sentinel.adapter.servlet.callback.UrlCleaner;
+import com.alibaba.csp.sentinel.adapter.servlet.callback.WebCallbackManager;
+import com.alibaba.csp.sentinel.context.ContextUtil;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.RateLimiter;
+import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.gateway.GatewayConstant;
+import com.polaris.gateway.support.HttpRequestFilterSupport;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultHttpRequest;
@@ -83,9 +92,20 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             }
             
             //控制总流量，超标直接返回
+            HttpRequest httpRequest = (HttpRequest)httpObject;
             if (!totalRateLimiter.tryAcquire()) {
-                hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", ConfClient.get("gateway.flowcontrol.rate"));
+            	String message = "flows access per second has exceeded " + ConfClient.get("gateway.flowcontrol.rate");
+            	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.RESULT_FAIL,message));
+                hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", message);
                 return true;
+            }
+            
+            //对各个URL资源进行熔断拦截
+            if (doSentinel(httpRequest)) {
+            	String message = httpRequest.uri() + " access  per second has exceeded ";
+            	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.RESULT_FAIL,message));
+                hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", message);
+            	return true;
             }
             
             //单个IP最大访问速率gateway.cc.rate
@@ -111,7 +131,9 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
                 rateLimiter = (AtomicInteger) loadingCache.get(realIp);
                 int count = rateLimiter.incrementAndGet();
                 if (count > int_ip_rate) {
-                	hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", "Access " +count+ " per second has exceeded " + ConfClient.get("gateway.cc.rate"));
+                	String message = realIp + " access " +count+ " per second has exceeded " + ConfClient.get("gateway.cc.rate");
+                	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.RESULT_FAIL,message));
+                	hackLog(logger, GatewayConstant.getRealIp((DefaultHttpRequest) httpObject), "cc", message);
                 	return true;
                 }
             } catch (ExecutionException e) {
@@ -120,6 +142,37 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             }
         }
         return false;
+    }
+	
+	//目标拦截
+    private boolean doSentinel(HttpRequest httpRequest) {
+    	Entry entry = null;
+    	try {
+            UrlCleaner urlCleaner = WebCallbackManager.getUrlCleaner();
+            //获取url
+            String uri = httpRequest.uri();
+            String url;
+            int index = uri.indexOf("?");
+            if (index > 0) {
+                url = uri.substring(0, index);
+            } else {
+                url = uri;
+            }
+            
+            if (urlCleaner != null) {
+            	url = urlCleaner.clean(url);
+            }
+            ContextUtil.enter(url);
+            SphU.entry(url, EntryType.IN);
+            return false;
+        } catch (BlockException e) {
+        	return true;
+        } finally {
+        	if (entry != null) {
+                entry.exit();
+            }
+            ContextUtil.exit();
+        }
     }
 }
 
