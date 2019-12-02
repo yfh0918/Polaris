@@ -1,4 +1,4 @@
-package com.polaris.distributed.lock;
+package com.polaris.config.zk.lock;
 
 import java.util.concurrent.TimeUnit;
 

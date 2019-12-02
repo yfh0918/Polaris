@@ -1,11 +1,9 @@
-package com.polaris.distributed.lock;
+package com.polaris.config.zk.lock;
 
 import java.util.concurrent.TimeUnit;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.locks.InterProcessMutex;
-
-import com.polaris.distributed.CouratorFrameworkCreate;
 
 public class CouratorDistributedMutexLock implements DistributedLock {
 	private InterProcessMutex lock;

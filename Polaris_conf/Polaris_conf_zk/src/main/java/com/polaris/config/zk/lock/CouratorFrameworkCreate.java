@@ -1,4 +1,4 @@
-package com.polaris.distributed;
+package com.polaris.config.zk.lock;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;

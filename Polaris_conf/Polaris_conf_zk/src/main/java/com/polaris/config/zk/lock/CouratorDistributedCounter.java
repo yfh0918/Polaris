@@ -1,11 +1,9 @@
-package com.polaris.distributed.counter;
+package com.polaris.config.zk.lock;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.atomic.AtomicValue;
 import org.apache.curator.framework.recipes.atomic.DistributedAtomicLong;
 import org.apache.curator.retry.RetryNTimes;
-
-import com.polaris.distributed.CouratorFrameworkCreate;
 
 public class CouratorDistributedCounter {
 	private DistributedAtomicLong counter;
