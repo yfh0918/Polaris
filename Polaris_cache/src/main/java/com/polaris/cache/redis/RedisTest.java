@@ -80,7 +80,7 @@ public class RedisTest {
     private static void insertClusterTest() {
         String key = "testCluster";
         for (int i = 1; i <= 1000; i++) {
-            LOGGER.info(RedisUtil.set(key + i, "testClusterValue" + i));
+            LOGGER.info(RedisClusterUtil.set(key + i, "testClusterValue" + i));
         }
     }
 
@@ -99,7 +99,7 @@ public class RedisTest {
                         // 存数据
                         // jedisCluster.set(key+i, "WuShuicheng"+i);
                         // 取数据
-                        value = RedisUtil.get(key + i);
+                        value = RedisClusterUtil.get(key + i);
                         LOGGER.info(key + i + "=" + value);
                         if (value == null || "".equals(value)) {
                             LOGGER.info("===>break" + key + i + " value is null");

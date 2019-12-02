@@ -30,7 +30,7 @@ import redis.clients.util.JedisClusterCRC16;
  * @Description: Redis 集群工具类
  * @date 2017年11月16日 上午11:54:39
  */
-public class RedisUtil {
+public class RedisClusterUtil {
 
 	
 //	redis.address1=ip1:port1
@@ -43,7 +43,7 @@ public class RedisUtil {
 //	REDIS_USER_SESSION_KEY=REDIS_USER_SESSION
 //	SSO_SESSION_EXPIRE=86400
 	
-    private static Logger LOGGER = LoggerFactory.getLogger(RedisUtil.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(RedisClusterUtil.class);
 
     private static int TIMEOUT = 2000;
 

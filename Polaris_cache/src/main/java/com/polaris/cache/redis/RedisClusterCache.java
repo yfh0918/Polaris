@@ -30,16 +30,16 @@ public class RedisClusterCache implements Cache {
 				return;
 			}
 			if (timeout > 0) {
-				RedisUtil.set((byte[])key, (byte[])value, timeout);
+				RedisClusterUtil.set((byte[])key, (byte[])value, timeout);
 			} else {
-				RedisUtil.set((byte[])key, (byte[])value);
+				RedisClusterUtil.set((byte[])key, (byte[])value);
 			}
 		} else {
 			key = cacheName + key.toString();
 			if (timeout > 0) {
-				RedisUtil.set(key.toString(), value.toString(), timeout);
+				RedisClusterUtil.set(key.toString(), value.toString(), timeout);
 			} else {
-				RedisUtil.set(key.toString(), value.toString());
+				RedisClusterUtil.set(key.toString(), value.toString());
 			}
 		}
 	}
@@ -57,10 +57,10 @@ public class RedisClusterCache implements Cache {
 				e.fillInStackTrace();
 				return;
 			}
-			RedisUtil.deleteKey((byte[])key);
+			RedisClusterUtil.deleteKey((byte[])key);
 		} else {
 			key = cacheName + key.toString();
-			RedisUtil.deleteKey(key.toString());
+			RedisClusterUtil.deleteKey(key.toString());
 		}
 		
 		return;
@@ -68,7 +68,7 @@ public class RedisClusterCache implements Cache {
 	
 	@Override
 	public void removeAll() {
-		RedisUtil.deleteKeyByPrefix(cacheName);
+		RedisClusterUtil.deleteKeyByPrefix(cacheName);
 		return;
 	}
 	
@@ -86,10 +86,10 @@ public class RedisClusterCache implements Cache {
 				
 				return null;
 			}
-			result = RedisUtil.get((byte[])key);
+			result = RedisClusterUtil.get((byte[])key);
 		} else {
 			key = cacheName + key.toString();
-			result = RedisUtil.get(key.toString());
+			result = RedisClusterUtil.get(key.toString());
 		}
 		
 		return result;
