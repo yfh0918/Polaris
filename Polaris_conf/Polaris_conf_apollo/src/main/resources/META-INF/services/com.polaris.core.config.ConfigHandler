@@ -1,1 +1,1 @@
-com.polaris.config.nacos.ConfNacosHandler
+com.polaris.config.apollo.ConfApolloHandler
