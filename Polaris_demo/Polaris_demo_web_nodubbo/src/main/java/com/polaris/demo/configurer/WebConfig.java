@@ -1,5 +1,8 @@
+
 //package com.polaris.demo.configurer;
 //
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;//import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.context.annotation.Bean;
@@ -35,6 +38,13 @@
 //       * Description：FreeMarker视图配置
 //       * @return 
 //       */
+//	@Bean
+//    public FreeMarkerConfigurer freeMarkerConfigurer() {
+//		FreeMarkerConfigurer freeMarkerConfigurer = new FreeMarkerConfigurer();
+//		freeMarkerConfigurer.setTemplateLoaderPath("/template/");
+//		freeMarkerConfigurer.setDefaultEncoding("UTF-8");
+//	    return freeMarkerConfigurer;
+//   }
 //    @Bean
 //    public FreeMarkerViewResolver freeMarkerViewResolver() {
 //	    FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
