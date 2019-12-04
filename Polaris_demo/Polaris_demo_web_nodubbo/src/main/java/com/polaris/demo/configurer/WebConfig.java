@@ -1,6 +1,7 @@
 //package com.polaris.demo.configurer;
 //
-//import org.springframework.beans.factory.annotation.Value;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;//import org.springframework.beans.factory.annotation.Value;
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
 //import org.springframework.web.multipart.MultipartResolver;
@@ -28,6 +29,23 @@
 //        multipartResolver.setMaxInMemorySize(40960);
 //        return multipartResolver;
 //    }
+//
+//	/**
+//       * 
+//       * Description：FreeMarker视图配置
+//       * @return 
+//       */
+//    @Bean
+//    public FreeMarkerViewResolver freeMarkerViewResolver() {
+//	    FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
+//	    viewResolver.setPrefix("/template/");
+//	    viewResolver.setSuffix(".ftl");
+//	    viewResolver.setCache(true);
+//	    viewResolver.setContentType("text/html;charset=UTF-8");
+//	    viewResolver.setRequestContextAttribute("requestContext");
+//	    viewResolver.setOrder(0);
+//	    return viewResolver;
+//   }
 //	
 //	@Override
 //    public void addResourceHandlers(ResourceHandlerRegistry registry) {
