@@ -41,7 +41,7 @@
 //	@Bean
 //    public FreeMarkerConfigurer freeMarkerConfigurer() {
 //		FreeMarkerConfigurer freeMarkerConfigurer = new FreeMarkerConfigurer();
-//		freeMarkerConfigurer.setTemplateLoaderPath("/template/");
+//		freeMarkerConfigurer.setTemplateLoaderPath("classpath:template/");
 //		freeMarkerConfigurer.setDefaultEncoding("UTF-8");
 //	    return freeMarkerConfigurer;
 //   }
