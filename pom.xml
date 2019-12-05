@@ -24,7 +24,7 @@
         <resteasy-version>3.0.13.Final</resteasy-version>
         <spring_version>4.3.20.RELEASE</spring_version>
         <tomcat-version>9.0.22</tomcat-version>
-        <jetty-version>9.4.21.v20190926</jetty-version>
+        <jetty-version>9.4.24.v20191120</jetty-version>
         <activiti-version>5.17.0</activiti-version>
         <hibernate-version>4.2.5.Final</hibernate-version>
         <lucene-version>7.2.0</lucene-version>
