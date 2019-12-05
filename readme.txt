@@ -106,10 +106,10 @@
         SpringApplication springApplication = new SpringApplication(Application.class);
         
         //注册服务
-        springApplication.addListeners(new ApplicationListener<ContextStartedEvent>() {
+        springApplication.addListeners(new ApplicationListener<ContextRefreshedEvent>() {
 
 			@Override
-			public void onApplicationEvent(ContextStartedEvent event) {
+			public void onApplicationEvent(ContextRefreshedEvent event) {
 				
 				//注册中心
 		    	NameingClient.register();
