@@ -27,17 +27,21 @@ public class ServerDiscoveryHandlerProvider {
     }
     
     //注册
-    public void register(String ip, int port) {
+    public boolean register(String ip, int port) {
     	if (handler != null) {
     		handler.register(ip, port);
+    		return true;
     	}
+    	return false;
     }
     
     //反注册
-    public void deregister(String ip, int port) {
+    public boolean deregister(String ip, int port) {
     	if (handler != null) {
 			handler.deregister(ip, port);
+			return true;
 		}
+    	return false;
     }
     
     //获取url

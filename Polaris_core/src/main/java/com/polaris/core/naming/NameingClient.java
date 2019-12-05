@@ -6,20 +6,21 @@ import com.polaris.core.util.NetUtils;
 
 public abstract class NameingClient {
 
-	public static void register() {
+	public static boolean register() {
 		//注册中心
 		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {
 			String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
-			ServerDiscoveryHandlerProvider.getInstance().register(registerIp, Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME)));
-					
+			return ServerDiscoveryHandlerProvider.getInstance().register(registerIp, Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME)));
 		}
+		return false;
 	}
 	
-	public static void unRegister() {
+	public static boolean unRegister() {
 		//注册中心
 		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {
 			String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
-        	ServerDiscoveryHandlerProvider.getInstance().deregister(registerIp, Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME)));
+        	return ServerDiscoveryHandlerProvider.getInstance().deregister(registerIp, Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME)));
 		}
+		return false;
 	}
 }
