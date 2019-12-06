@@ -68,9 +68,9 @@
 //		
 //		//静态文件映射
 //        registry.addResourceHandler("/resource/img/**")
-//        	.addResourceLocations("file:"+uploadImgPath);
+//        	.addResourceLocations("file:"+uploadImgPath+File.separator);
 //        registry.addResourceHandler("/resource/file/**")
-//        	.addResourceLocations("file:"+uploadFilePath);
+//        	.addResourceLocations("file:"+uploadFilePath+File.separator);
 //        super.addResourceHandlers(registry);
 //    }
 //
