@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -41,6 +42,8 @@ import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -288,6 +291,46 @@ public class HttpClientUtil {
         }
         return null;
     }
+    
+    public static String postFileMultiPart(String orgurl,Map<String,ContentBody> reqParam) {
+    	
+    	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
+    	LOGGER.debug(url);
+    	CloseableHttpResponse response = null;
+        try {
+            HttpPost httppost = new HttpPost(url);
+            config(httppost);
+            trace(httppost);//增加trace编号
+            
+            
+            MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+            for(Entry<String,ContentBody> param : reqParam.entrySet()){
+            	multipartEntityBuilder.addPart(param.getKey(), param.getValue());
+            }
+            HttpEntity reqEntity = multipartEntityBuilder.build();
+            httppost.setEntity(reqEntity);
+            
+			//返回内容
+            response = getHttpClient(url).execute(httppost,
+                    HttpClientContext.create());
+            HttpEntity entity = response.getEntity();
+            String result = EntityUtils.toString(entity, UTF8);
+            EntityUtils.consume(entity);
+            return result;
+        } catch (Exception e) {
+        	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
+        	LOGGER.error(e.getMessage());
+        } finally {  
+        	try {
+                if (response != null)
+                    response.close();
+            } catch (IOException e) {
+            	LOGGER.debug(e.getMessage());
+            }
+        }
+        return null;  
+    }
+
  
     /**
      * GET请求URL获取内容
