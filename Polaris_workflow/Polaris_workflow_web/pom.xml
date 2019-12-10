@@ -28,8 +28,8 @@
             <artifactId>Polaris_workflow_core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.polaris</groupId>
-            <artifactId>Polaris_conf_file</artifactId>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
         </dependency>
     </dependencies>
 

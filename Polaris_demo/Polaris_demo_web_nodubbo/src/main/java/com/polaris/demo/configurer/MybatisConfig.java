@@ -82,8 +82,7 @@
 //        pageHelper.setProperties(properties);
 //
 //        //添加插件
-//        factory.setPlugins(new Interceptor[]{pageHelper});
-//        factory.setPlugins(new Interceptor[]{new com.polaris.core.interceptor.MybatisInterceptor()});
+//        factory.setPlugins(new Interceptor[]{pageHelper,new com.polaris.core.interceptor.MybatisInterceptor()});
 //        
 // 
 //        //添加XML目录
