@@ -1,4 +1,4 @@
-
+package com.polaris.workflow;
 
 import org.apache.dubbo.config.annotation.Service;
 

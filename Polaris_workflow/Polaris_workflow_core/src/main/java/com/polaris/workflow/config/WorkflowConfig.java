@@ -57,7 +57,7 @@ public class WorkflowConfig {
 		LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
 		entityManagerFactory.setDataSource(dataSource);
 		entityManagerFactory.setJpaVendorAdapter(hibernateJpaVendorAdapter());
-		entityManagerFactory.setPackagesToScan("com.polaris");
+		entityManagerFactory.setPackagesToScan();
 		Properties jpaProperties = new Properties();
 		jpaProperties.setProperty("hibernate.dialect", dialect);
 		jpaProperties.setProperty("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
