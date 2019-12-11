@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 
 import com.polaris.core.config.ConfClient;
 import com.polaris.demo.api.service.DemoEntryIF;
+import com.polaris.demo.core.entry.DemoEntry;
 
 @Configuration
 @EnableDubbo(scanBasePackages = "com.polaris")
@@ -51,7 +52,7 @@ public class ProviderConfiguration {
     </dubbo:service>
      */
     @Bean
-    public ServiceConfig<DemoEntryIF> serviceConfig(DemoEntryIF demoEntry){
+    public ServiceConfig<DemoEntryIF> serviceConfig(DemoEntry demoEntry){
         ServiceConfig<DemoEntryIF> serviceConfig = new ServiceConfig<>();
         serviceConfig.setInterface(DemoEntryIF.class);
         serviceConfig.setRef(demoEntry);

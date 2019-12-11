@@ -27,7 +27,7 @@
 	  </dependency>
 	  <dependency>
 		<groupId>com.polaris</groupId>
-		<artifactId>Polaris_conf_file</artifactId>
+		<artifactId>Polaris_logger</artifactId>
 	  </dependency>
    </dependencies>
   

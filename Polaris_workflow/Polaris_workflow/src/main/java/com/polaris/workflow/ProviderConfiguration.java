@@ -1,15 +1,22 @@
 package com.polaris.workflow;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.dubbo.config.ApplicationConfig;
+import org.apache.dubbo.config.MethodConfig;
 import org.apache.dubbo.config.ProtocolConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.ServiceConfig;
+import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.polaris.core.config.ConfClient;
+import com.polaris.workflow.api.service.WorkflowService;
 
 @Configuration
+@EnableDubbo(scanBasePackages = "com.polaris")
 public class ProviderConfiguration {
 	
     @Bean
@@ -44,26 +51,26 @@ public class ProviderConfiguration {
     </dubbo:service>
      */
     @Bean
-    public ServiceConfig<ApplicationDubbo> serviceConfig(ApplicationDubbo demoEntry){
-        ServiceConfig<ApplicationDubbo> serviceConfig = new ServiceConfig<>();
-        serviceConfig.setInterface(ApplicationDubbo.class);
-        serviceConfig.setRef(demoEntry);
+    public ServiceConfig<WorkflowService> serviceConfig(ApplicationDubbo workflowService){
+        ServiceConfig<WorkflowService> serviceConfig = new ServiceConfig<>();
+        serviceConfig.setInterface(WorkflowService.class);
+        serviceConfig.setRef(workflowService);
         serviceConfig.setVersion("1.0.0");
         
-//        //配置每一个method的信息
-//        MethodConfig methodConfig1 = new MethodConfig();
-//        methodConfig1.setName("test");
-//        methodConfig1.setTimeout(1000);
-//
-//        MethodConfig methodConfig2 = new MethodConfig();
-//        methodConfig2.setName("test2");
-//        methodConfig2.setTimeout(1000);
-//        
-//        //将method的设置关联到service配置中
-//        List<MethodConfig> methods = new ArrayList<>();
-//        methods.add(methodConfig1);
-//        methods.add(methodConfig2);
-//        serviceConfig.setMethods(methods);
+        //配置每一个method的信息
+        MethodConfig methodConfig1 = new MethodConfig();
+        methodConfig1.setName("deployDiagram");
+        methodConfig1.setTimeout(1000);
+
+        MethodConfig methodConfig2 = new MethodConfig();
+        methodConfig2.setName("startWorkflow");
+        methodConfig2.setTimeout(1000);
+        
+        //将method的设置关联到service配置中
+        List<MethodConfig> methods = new ArrayList<>();
+        methods.add(methodConfig1);
+        methods.add(methodConfig2);
+        serviceConfig.setMethods(methods);
         
         //ProviderConfig
         //MonitorConfig

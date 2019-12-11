@@ -2,8 +2,8 @@
 <!--设置log4j2的自身log级别为warn -->
 <configuration status="warn">
     <properties>
-        <Property name="app_name">BanyanProcessor</Property>
-        <Property name="log_path">c:/logs/${app_name}</Property>
+        <Property name="app_name">Polaris_workflow</Property>
+        <Property name="log_path">logs/${app_name}</Property>
     </properties>
     <appenders>
         <console name="Console" target="SYSTEM_OUT">

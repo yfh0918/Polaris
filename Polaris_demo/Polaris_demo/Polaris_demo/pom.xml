@@ -19,7 +19,11 @@
             <groupId>com.polaris_demo</groupId>
             <artifactId>Polaris_demo_api</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-        </dependency>     
+        </dependency>   
+       <dependency>
+		<groupId>com.polaris</groupId>
+		<artifactId>Polaris_logger</artifactId>
+	  </dependency>  
     </dependencies>
 
     <build>
