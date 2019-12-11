@@ -84,12 +84,13 @@ public class TomcatServer {
             protocol.setMaxThreads(Integer.parseInt(ConfClient.get("server.maxThreads",MAX_THREADS)));//设置最大线程数
             protocol.setMaxSavePostSize(Integer.parseInt(ConfClient.get("server.maxSavePostSize",String.valueOf(MAX_SAVE_POST_SIZE))));
             protocol.setMaxHttpHeaderSize(Integer.parseInt(ConfClient.get("server.maxHttpHeaderSize",String.valueOf(MAX_HTTP_HEADER_SIZE))));
+            protocol.setConnectionTimeout(Integer.parseInt(ConfClient.get("server.connectionTimeout",String.valueOf(60000))));
 
             // Add AprLifecycleListener
             StandardServer server = (StandardServer) tomcat.getServer();
             AprLifecycleListener listener = new AprLifecycleListener();
             server.addLifecycleListener(listener);
-
+            
             //加载上下文
             StandardContext standardContext = new StandardContext();
             
