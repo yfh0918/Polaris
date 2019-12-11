@@ -1,4 +1,3 @@
-
 //package com.polaris.demo.configurer;
 //
 //import org.springframework.context.annotation.Bean;
@@ -78,5 +77,9 @@
 //	 public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
 //		 configurer.enable();
 //	 }
+//    @Override
+//    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+//        converters.add(new StringHttpMessageConverter(Charset.defaultCharset()));
+//    }
 //
 //}
