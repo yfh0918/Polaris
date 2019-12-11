@@ -72,6 +72,9 @@ public class ApplicationSupport {
                     .withAuthenticateSslClients(false)
                     .withSslEngineSource(new GatewaySelfSignedSslEngineSource());
         } 
+        //milliseconds - 40seconds
+        int timeout = Integer.parseInt(ConfClient.get("connect.timeout","40000"));
+        httpProxyServerBootstrap.withConnectTimeout(timeout);        
         httpProxyServerBootstrap.withAllowRequestToOriginServer(true)
                 .withProxyAlias(ConfClient.get("server.tls.alias"))
                 .withThreadPoolConfiguration(threadPoolConfiguration)
