@@ -341,3 +341,8 @@
 /Polaris_conf/Polaris_conf_file/.settings
 /Polaris_conf/Polaris_conf_file/target
 /Polaris_conf/Polaris_conf_file/.classpath
+/Polaris_workflow/Polaris_workflow_test/.classpath
+/Polaris_workflow/Polaris_workflow_test/.project
+/Polaris_workflow/Polaris_workflow_test/.settings
+/Polaris_workflow/Polaris_workflow_test/log
+/Polaris_workflow/Polaris_workflow_test/target
