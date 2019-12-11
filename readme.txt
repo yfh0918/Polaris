@@ -1,139 +1,139 @@
-1:install È«Ìå
+1:install å…¨ä½“
 
-2:Ìá¹©Á½ÖÖÀàĞÍµÄ demo£¨µ÷ÓÃdubboÓ¦ÓÃ ºÍ ÎŞdubboÓ¦ÓÃ£©
-  Ö÷Òª²ÎÊı¿ÉÒÔ²Î¿¼Polaris_demo_web_nodubboµÄapplication.properties
+2:æä¾›ä¸¤ç§ç±»å‹çš„ demoï¼ˆè°ƒç”¨dubboåº”ç”¨ å’Œ æ— dubboåº”ç”¨ï¼‰
+  ä¸»è¦å‚æ•°å¯ä»¥å‚è€ƒPolaris_demo_web_nodubboçš„application.properties
 
-3:¼¯Èº²¿Êğ·şÎñµÄÊ±ºòĞèÒª×¢²áÖĞĞÄ£¬
-  Ö§³Önacos£¨ĞèÒª×ÔĞĞÏÂÔØnacosµÄserver£©,
-  Ö§³Öeureka(ÄÚÖÃrobbin¸ºÔØ¾ùºâ)£¬¸ºÔØ¾ùºâ²ßÂÔ ¸ù¾İ²ÎÊırobbin.loadbalancer=com.netflix.loadbalancer.AvailabilityFilteringRule(¿ÉÒÔÑ¡ÔñÆäËûµÄrule)
-  ºóĞø°æ±¾Ö§³Özookeeper×¢²áÖĞĞÄ(webÕâÒ»¿é)
-  Ã¿Ò»¸ö·şÎñ ĞèÒªÔÚ×Ô¼ºµÄÅäÖÃÎÄ¼şÖĞÉèÖÃ×¢²áÖĞĞÄ
+3:é›†ç¾¤éƒ¨ç½²æœåŠ¡çš„æ—¶å€™éœ€è¦æ³¨å†Œä¸­å¿ƒï¼Œ
+  æ”¯æŒnacosï¼ˆéœ€è¦è‡ªè¡Œä¸‹è½½nacosçš„serverï¼‰,
+  æ”¯æŒeureka(å†…ç½®robbinè´Ÿè½½å‡è¡¡)ï¼Œè´Ÿè½½å‡è¡¡ç­–ç•¥ æ ¹æ®å‚æ•°robbin.loadbalancer=com.netflix.loadbalancer.AvailabilityFilteringRule(å¯ä»¥é€‰æ‹©å…¶ä»–çš„rule)
+  åç»­ç‰ˆæœ¬æ”¯æŒzookeeperæ³¨å†Œä¸­å¿ƒ(webè¿™ä¸€å—)
+  æ¯ä¸€ä¸ªæœåŠ¡ éœ€è¦åœ¨è‡ªå·±çš„é…ç½®æ–‡ä»¶ä¸­è®¾ç½®æ³¨å†Œä¸­å¿ƒ
   #name.registry.address=127.0.0.1:8848
-  ĞèÒªÔÚ×Ô¼ºµÄ·şÎñpom.xmlÖĞÒıÈë Polaris_naming_nacos
+  éœ€è¦åœ¨è‡ªå·±çš„æœåŠ¡pom.xmlä¸­å¼•å…¥ Polaris_naming_nacos
   
 
-4:ÅäÖÃÖĞĞÄÖ§³Ö¶àÖÖÄ£Ê½£¨zookeeper,nacos,apolloµÄConfigFileÒÔ¼°±¾µØÎÄ¼şfile£©£¬ĞèÒªÔÚ×Ô¼ºµÄÅäÖÃÎÄ¼şÖĞÉèÖÃÅäÖÃÖĞĞÄ
-  ËùÓĞµÄÅäÖÃÖÖÀà£¬Ğè×Ô¼ºÏÂÔØÈí¼ş£¬±ÈÈçnacos,apollo,zookeeperµÄ½¨ÒéÊ¹ÓÃZooViewer£¨https://github.com/HelloKittyNII/ZooViewer£©
-  #zookeeperĞèÒªÉèÖÃconfig.zk.root.pathÄ¬ÈÏÖµ¡¾/polaris_conf¡¿
+4:é…ç½®ä¸­å¿ƒæ”¯æŒå¤šç§æ¨¡å¼ï¼ˆzookeeper,nacos,apolloçš„ConfigFileä»¥åŠæœ¬åœ°æ–‡ä»¶fileï¼‰ï¼Œéœ€è¦åœ¨è‡ªå·±çš„é…ç½®æ–‡ä»¶ä¸­è®¾ç½®é…ç½®ä¸­å¿ƒ
+  æ‰€æœ‰çš„é…ç½®ç§ç±»ï¼Œéœ€è‡ªå·±ä¸‹è½½è½¯ä»¶ï¼Œæ¯”å¦‚nacos,apollo,zookeeperçš„å»ºè®®ä½¿ç”¨ZooViewerï¼ˆhttps://github.com/HelloKittyNII/ZooViewerï¼‰
+  #zookeeperéœ€è¦è®¾ç½®config.zk.root.pathé»˜è®¤å€¼ã€/polaris_confã€‘
   #config.registry.address=127.0.0.1:8848
   
-  ĞèÒªÔÚ×Ô¼ºµÄ·şÎñpom.xmlÖĞÒıÈë Polaris_conf_nacos
-  ÒıÈëÅäÖÃÖĞĞÄºó£¬ËùÓĞµÄpropertiesÎÄ¼ş¶¼¿ÉÒÔ·ÅÈënacos£¨³ıÁËapplication.properties ºÍ log4j.properties£©
-  ²¢ÇÒÔÚapplication.propertiesÖĞÒıÈëĞèÒª·ÅÈëÅäÖÃÖĞĞÄµÄÅäÖÃÎÄ¼ş
+  éœ€è¦åœ¨è‡ªå·±çš„æœåŠ¡pom.xmlä¸­å¼•å…¥ Polaris_conf_nacos
+  å¼•å…¥é…ç½®ä¸­å¿ƒåï¼Œæ‰€æœ‰çš„propertiesæ–‡ä»¶éƒ½å¯ä»¥æ”¾å…¥nacosï¼ˆé™¤äº†application.properties å’Œ log4j.propertiesï¼‰
+  å¹¶ä¸”åœ¨application.propertiesä¸­å¼•å…¥éœ€è¦æ”¾å…¥é…ç½®ä¸­å¿ƒçš„é…ç½®æ–‡ä»¶
   #extension files
   #project.extension.properties=main.properties,redis.properties
-  ¿ÉÒÔÒıÈëÈ«¾ÖÅäÖÃ,±ÈÈç¹ØÓÚredis¼¯ÈºÅäÖÃ£¬Êı¾İ¿âµÄÕûÌåÅäÖÃµÈµÈ
+  å¯ä»¥å¼•å…¥å…¨å±€é…ç½®,æ¯”å¦‚å…³äºredisé›†ç¾¤é…ç½®ï¼Œæ•°æ®åº“çš„æ•´ä½“é…ç½®ç­‰ç­‰
   #global files
   #project.global.config.name=global
   #project.global.properties=redis.properties,database.properties
   
-  Ä¬ÈÏÖ§³ÖSpring×¢½â@ValueµÄ×Ô¶¯¸üĞÂ-£¨nacos,zookeeperµÄÍÆËÍ¸üĞÂ»áÍ¬²½µ½@Value×¢½â£©
-  ¿ÉÒÔÓÃvalue.auto.update=falseÀ´¹Ø±Õ£¬Æµ·±¸üĞÂÅäÖÃ»áÓ°ÏìĞÔÄÜ£¨ÅäÖÃ¸üĞÂ²ÉÓÃÎÄ¼şĞÎÊ½£©
+  é»˜è®¤æ”¯æŒSpringæ³¨è§£@Valueçš„è‡ªåŠ¨æ›´æ–°-ï¼ˆnacos,zookeeperçš„æ¨é€æ›´æ–°ä¼šåŒæ­¥åˆ°@Valueæ³¨è§£ï¼‰
+  å¯ä»¥ç”¨value.auto.update=falseæ¥å…³é—­ï¼Œé¢‘ç¹æ›´æ–°é…ç½®ä¼šå½±å“æ€§èƒ½ï¼ˆé…ç½®æ›´æ–°é‡‡ç”¨æ–‡ä»¶å½¢å¼ï¼‰
 
-5:Polaris_workflowÊÇÏÖÓĞµÄ·şÎñ£¨¹¤×÷Á÷activityÄÚºË£©
-  Ìá¹©dubbo½Ó¿ÚºÍhttp½Ó¿ÚÁ½ÖÖ·½Ê½£¬Ã»ÓĞ»­Ãæ£¬¾ßÌåÇë²Î¿¼Ä£¿éµÄÅäÖÃ
+5:Polaris_workflowæ˜¯ç°æœ‰çš„æœåŠ¡ï¼ˆå·¥ä½œæµactivityå†…æ ¸ï¼‰
+  æä¾›dubboæ¥å£å’Œhttpæ¥å£ä¸¤ç§æ–¹å¼ï¼Œæ²¡æœ‰ç”»é¢ï¼Œå…·ä½“è¯·å‚è€ƒæ¨¡å—çš„é…ç½®
 
-6:Polaris_gatewayÊÇÏÖÓĞµÄapiÍø¹Ü£¬Ìá¹©apiµÄÍ³Ò»Èë¿Ú·şÎñ(»ùÓÚnetty httpÊµÏÖ)
-  ¾ßÌåµÄapi´úÀíÇë²Î¿¼config\upstream.txt,ÆäÖĞstatic:¿ªÍ·µÄ´úÀíµÄ´æ¾²Ì¬ÎÄ¼ş»áÌø¹ıËùÓĞµÄfilter
-  ÁíÍâÖ§³Ö¾²Ì¬ÎÄ¼şÅäÖÃ£¬¿ÉÒÔÔÚconfig\static.txtÔöÔö¼Ó¾²Ì¬ÎÄ¼şÂ·¾¶
+6:Polaris_gatewayæ˜¯ç°æœ‰çš„apiç½‘ç®¡ï¼Œæä¾›apiçš„ç»Ÿä¸€å…¥å£æœåŠ¡(åŸºäºnetty httpå®ç°)
+  å…·ä½“çš„apiä»£ç†è¯·å‚è€ƒconfig\upstream.txt,å…¶ä¸­static:å¼€å¤´çš„ä»£ç†çš„å­˜é™æ€æ–‡ä»¶ä¼šè·³è¿‡æ‰€æœ‰çš„filter
+  å¦å¤–æ”¯æŒé™æ€æ–‡ä»¶é…ç½®ï¼Œå¯ä»¥åœ¨config\static.txtå¢å¢åŠ é™æ€æ–‡ä»¶è·¯å¾„
 
-7:Ö§³ÖSentinel£¨Á÷Á¿¼à¿ØÀà£©£¬ĞèÒªÔÚ×Ô¼ºµÄÅäÖÃÎÄ¼şÖĞÉèÖÃÈçÏÂ
+7:æ”¯æŒSentinelï¼ˆæµé‡ç›‘æ§ç±»ï¼‰ï¼Œéœ€è¦åœ¨è‡ªå·±çš„é…ç½®æ–‡ä»¶ä¸­è®¾ç½®å¦‚ä¸‹
   #sentinel
   #csp.sentinel.dashboard.server=127.0.0.1:8858
   #csp.sentinel.heartbeat.interval.ms=5000
   #csp.sentinel.api.port=9008
-  ĞèÒªÔÚ×Ô¼ºµÄ·şÎñpom.xmlÖĞÒıÈë Polaris_sentinel
-  ¸Ã½Ó¿ÚÖ÷ÒªÓÃÓÚÌá¹©apiµÄservlet
+  éœ€è¦åœ¨è‡ªå·±çš„æœåŠ¡pom.xmlä¸­å¼•å…¥ Polaris_sentinel
+  è¯¥æ¥å£ä¸»è¦ç”¨äºæä¾›apiçš„servlet
 
-8,ÈçºÎÆô¶¯£¬´ò¿ªeclipseºóÆô¶¯xxxApplication.javaÎÄ¼ş£¨¸ÃÀàĞèÒªÊµÏÖLauncher½Ó¿Ú£¬²¢ÇÒresources\META-INF\services\com.polaris.core.LauncherÎÄ¼şÖĞ¼ÇÂ¼¸ÃÀà£©
+8,å¦‚ä½•å¯åŠ¨ï¼Œæ‰“å¼€eclipseåå¯åŠ¨xxxApplication.javaæ–‡ä»¶ï¼ˆè¯¥ç±»éœ€è¦å®ç°Launcheræ¥å£ï¼Œå¹¶ä¸”resources\META-INF\services\com.polaris.core.Launcheræ–‡ä»¶ä¸­è®°å½•è¯¥ç±»ï¼‰
 
-  8.1 pom.xmlÖĞÌá¹© tomcatºÍjettyÁ½ÖÖÆô¶¯Ä£Ê½,²¢ÇÒÌá¹©resteasyºÍspringmvc×éºÏµÄ·½Ê½
-      ¾ßÌå²Î¿¼pom.xml
+  8.1 pom.xmlä¸­æä¾› tomcatå’Œjettyä¸¤ç§å¯åŠ¨æ¨¡å¼,å¹¶ä¸”æä¾›resteasyå’Œspringmvcç»„åˆçš„æ–¹å¼
+      å…·ä½“å‚è€ƒpom.xml
 	  <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_container_jetty</artifactId>  ->¿ÉĞŞ¸Ä³ÉPolaris_container_tomcat
+            <artifactId>Polaris_container_jetty</artifactId>  ->å¯ä¿®æ”¹æˆPolaris_container_tomcat
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_container_springmvc</artifactId> ->¿ÉĞŞ¸Ä³ÉPolaris_container_resteasy
+            <artifactId>Polaris_container_springmvc</artifactId> ->å¯ä¿®æ”¹æˆPolaris_container_resteasy
         </dependency>
-  assemblyÄ¿Â¼ÏÂµÄÅäÖÃÎÄ¼ş²»ÓÃĞŞ¸Ä£¬
-  ²ÉÓÃ×¢½âÅäÖÃ£¬ÏêÏ¸²Î¿¼Polaris_demo_web_nodubbo£¬Çë²Î¿¼×¢µôµÄ´úÂë
-  application.properties ¶¨Òå·şÎñµÄproject.name,context,port,£¬ÊÇ·ñ¿ªÆôservletÏŞÁ÷£¬µÈµÈ
+  assemblyç›®å½•ä¸‹çš„é…ç½®æ–‡ä»¶ä¸ç”¨ä¿®æ”¹ï¼Œ
+  application.properties å®šä¹‰æœåŠ¡çš„project.name,context,port,ï¼Œæ˜¯å¦å¼€å¯servleté™æµï¼Œç­‰ç­‰
 
-9,ĞÂÔöÁË»ùÓÚnettyµÄ¾²Ì¬ÎÄ¼ş·şÎñÆ÷£¨²»Ö§³ÖjspºÍservlet£©
-   ¾ßÌåcontextÅäÖÃ²ÎÕÕconfig\static.txt
+9,æ–°å¢äº†åŸºäºnettyçš„é™æ€æ–‡ä»¶æœåŠ¡å™¨ï¼ˆä¸æ”¯æŒjspå’Œservletï¼‰
+   å…·ä½“contexté…ç½®å‚ç…§config\static.txt
    
-10£¬Ö§³ÖÕûÌåµ÷ÓÃÁ´Â·µÄ¸ú×Ù£¬±ÈÈçtraceId, moduleId, parentId, 
-    ÈÕÖ¾²ÉÓÃslf4jµÄ Logger xLogger = LoggerFactory.getLogger(xxx.class);Ö»ĞèÒıÈëPolaris_core°ü
-	ÁíÍâÈç¹û²ÉÓÃÏß³Ì³ØµÄ·½Ê½£¬ĞèÒªInheritableThreadLocalExecutorºÍInheritablePolarisThreadLocal´îÅä·½Ê½Ê¹ÓÃ£¬Ïß³Ì³ØÖĞµÄtraceIdĞÅÏ¢Ò²»á½øĞĞ´«µİ
-	²ÉÓÃdubbo·½Ê½ ĞèÒªÓ³Èëpolaris_dubboÄ£¿é£¬°ïÄã×öÁËtraceIDµÄ´«µİ£¬
-	http·½Ê½ ²ÉÓÃHttpClientUtil·½Ê½£¬°ïÄã×öÁËtraceIDµÄ´«µİ
+10ï¼Œæ”¯æŒæ•´ä½“è°ƒç”¨é“¾è·¯çš„è·Ÿè¸ªï¼Œæ¯”å¦‚traceId, moduleId, parentId, 
+    æ—¥å¿—é‡‡ç”¨slf4jçš„ Logger xLogger = LoggerFactory.getLogger(xxx.class);åªéœ€å¼•å…¥Polaris_coreåŒ…
+	å¦å¤–å¦‚æœé‡‡ç”¨çº¿ç¨‹æ± çš„æ–¹å¼ï¼Œéœ€è¦InheritableThreadLocalExecutorå’ŒInheritablePolarisThreadLocalæ­é…æ–¹å¼ä½¿ç”¨ï¼Œçº¿ç¨‹æ± ä¸­çš„traceIdä¿¡æ¯ä¹Ÿä¼šè¿›è¡Œä¼ é€’
+	é‡‡ç”¨dubboæ–¹å¼ éœ€è¦æ˜ å…¥polaris_dubboæ¨¡å—ï¼Œå¸®ä½ åšäº†traceIDçš„ä¼ é€’ï¼Œ
+	httpæ–¹å¼ é‡‡ç”¨HttpClientUtilæ–¹å¼ï¼Œå¸®ä½ åšäº†traceIDçš„ä¼ é€’
 	
-11,»º´æÄ£¿éPolaris_cache,
-   CacheFactory.getCache(cachename);»ñÈ¡»º´æ£¬Ä¬ÈÏ²ÉÓÃEHCache, 
-   ¸ù¾İ»º´æÅäÖÃ²ÎÊı¿ÉÒÔ¶¯Ì¬ÇĞ»» RedisSingleºÍRedisCluster
-   ²ÎÊıÅäÖÃÈçÏÂ
+11,ç¼“å­˜æ¨¡å—Polaris_cache,
+   CacheFactory.getCache(cachename);è·å–ç¼“å­˜ï¼Œé»˜è®¤é‡‡ç”¨EHCache, 
+   æ ¹æ®ç¼“å­˜é…ç½®å‚æ•°å¯ä»¥åŠ¨æ€åˆ‡æ¢ RedisSingleå’ŒRedisCluster
+   å‚æ•°é…ç½®å¦‚ä¸‹(xxxä¸ºç¼“å­˜çš„åç§°cachename)
    cache.xxx.type=ehcache
    cache.xxx.type=redis
    cache.xxx.type=rediscluster
-   ÆäËû²ÎÊı
-   ¿ÉÒÔ²ÉÓÃ×¢½âcom.polaris.cache.Cacheable
-   Ä¿Ç°Ö§³ÖµÄ·½·¨²Î¿¼com.polaris.cache.Cache½Ó¿Ú
-   »º´æ ĞòÁĞ»¯¿ÉÒÔ×Ô¼ºÅäÖÃ£¬Ä¬ÈÏKryoSerializer
+   å…¶ä»–å‚æ•°
+   å¯ä»¥é‡‡ç”¨æ³¨è§£com.polaris.cache.Cacheable
+   ç›®å‰æ”¯æŒçš„æ–¹æ³•å‚è€ƒcom.polaris.cache.Cacheæ¥å£
+   ç¼“å­˜ åºåˆ—åŒ–å¯ä»¥è‡ªå·±é…ç½®ï¼Œé»˜è®¤KryoSerializer
    
-12£¬ºÍSpringbootµÄÈÚºÏ£¬µ¥¶ÀÒıÈë×¢²áÖĞĞÄ
+12ï¼Œå’ŒSpringbootçš„èåˆ
+        å¼•å…¥æ³¨å†Œä¸­å¿ƒ
 	<dependency>
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_naming_nacos</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 		
-	µ¥¶ÀÓ³ÈëÅäÖÃÖĞĞÄ
+	å¼•å…¥é…ç½®ä¸­å¿ƒ
         <dependency>
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_conf_nacos</artifactId>
             <version>1.0.0-SNAPSHOT</version>
          </dependency>
 		
-	ÔÚ´úÂëÆô¶¯Ç°¼ÓÈëÈçÏÂ
+	åœ¨ä»£ç å¯åŠ¨å‰åŠ å…¥å¦‚ä¸‹
 	@SpringBootApplication
-	@ComponentScan(basePackages = {"com.polaris","×Ô¼ºµÄpackage",})
-    	//ÅäÖÃ
+	@ComponentScan(basePackages = {"com.polaris","è‡ªå·±çš„package",})
+    	//é…ç½®
     	ConfClient.init();
     	
-	//·şÎñÆô¶¯
+	//æœåŠ¡å¯åŠ¨
         SpringApplication springApplication = new SpringApplication(Application.class);
         
-        //×¢²á·şÎñ
+        //æ³¨å†ŒæœåŠ¡
         springApplication.addListeners(new ApplicationListener<ContextRefreshedEvent>() {
 
 			@Override
 			public void onApplicationEvent(ContextRefreshedEvent event) {
 				
-				//×¢²áÖĞĞÄ
+				//æ³¨å†Œä¸­å¿ƒ
 		    	NameingClient.register();
 			}
         	
         });
         
-        //×¢Ïú·şÎñ
+        //æ³¨é”€æœåŠ¡
         springApplication.addListeners(new ApplicationListener<ContextStoppedEvent>() {
 
 			@Override
 			public void onApplicationEvent(ContextStoppedEvent event) {
 				
-				//×¢²áÖĞĞÄ
+				//æ³¨å†Œä¸­å¿ƒ
 		    	NameingClient.unRegister();
 			}
         	
         });
         springApplication.run(args);
         
-        Èç¹ûĞèÒªÅäÖÃÈÕÖ¾£¬ÔòĞèÒıÈëÈçÏÂÅäÖÃ£¬²¢ÇÒĞèÒªÅÅ³ıÄ¬ÈÏµÄlogback
+        å¦‚æœéœ€è¦é…ç½®æ—¥å¿—ï¼Œåˆ™éœ€å¼•å…¥å¦‚ä¸‹é…ç½®ï¼Œå¹¶ä¸”éœ€è¦æ’é™¤é»˜è®¤çš„logback
         <dependency>
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_logger</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency> 
-   ÅäÖÃÖĞĞÄ½¨Òé ÔÚresourceÄ¿Â¼ÏÂ½¨Á¢configÎÄ¼ş¼Ğ
+   
