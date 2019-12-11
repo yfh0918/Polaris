@@ -27,7 +27,7 @@
   #project.global.config.name=global
   #project.global.properties=redis.properties,database.properties
   
-  默认支持Spring注解@Value的自动更新
+  默认支持Spring注解@Value的自动更新-（nacos,zookeeper的推送更新会同步到@Value注解）
   可以用value.auto.update=false来关闭，频繁更新配置会影响性能（配置更新采用文件形式）
 
 5:Polaris_workflow是现有的服务（工作流activity内核）
