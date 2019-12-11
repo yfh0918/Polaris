@@ -11,19 +11,21 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
 import com.polaris.workflow.api.dto.WorkflowDto;
 import com.polaris.workflow.api.service.WorkflowService;
 
 @Component
 public class ClaimApp {
-    @Reference(version = "1.0.0")
+    @Reference
     private WorkflowService workflowService;
 
     private final String processDefinitionKey = "claim";
     private final String businessKey = "test002";
 
     public static void main(String[] args) {
+    	ConfClient.init();
         SpringUtil.refresh();
         ClaimApp app = SpringUtil.getBean(ClaimApp.class);
         app.deployDiagram();//载入流程（即使重复调用，也不会重复载入）

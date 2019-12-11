@@ -55,7 +55,6 @@ public class ProviderConfiguration {
         ServiceConfig<WorkflowService> serviceConfig = new ServiceConfig<>();
         serviceConfig.setInterface(WorkflowService.class);
         serviceConfig.setRef(workflowService);
-        serviceConfig.setVersion("1.0.0");
         
         //配置每一个method的信息
         MethodConfig methodConfig1 = new MethodConfig();
