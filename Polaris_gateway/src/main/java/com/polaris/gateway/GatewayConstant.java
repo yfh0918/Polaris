@@ -35,15 +35,17 @@ public class GatewayConstant {
     public static final String DEFAULT="default";
 
     public static String getRealIp(HttpRequest httpRequest) {
+	    List<String> headerValues = getHeaderValues(httpRequest, X_Real_IP);
+	    if (headerValues != null && headerValues.size() > 0) {
+		    return headerValues.get(0);
+	    }
     	try {
 			return getIpAddress(httpRequest);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    List<String> headerValues = getHeaderValues(httpRequest, X_Real_IP);
-	    String ip = headerValues.get(0);
-        return ip;
+        return null;
     }
 
     /**
