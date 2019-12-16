@@ -18,8 +18,8 @@ import com.alibaba.csp.sentinel.EntryType;
 import com.alibaba.csp.sentinel.SphU;
 import com.alibaba.csp.sentinel.adapter.servlet.callback.UrlCleaner;
 import com.alibaba.csp.sentinel.adapter.servlet.callback.WebCallbackManager;
-import com.alibaba.csp.sentinel.context.ContextUtil;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
+import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -277,7 +277,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             }
             
             //对各个URL资源进行熔断拦截
-            if (doSentinel(url)) {
+            if (doSentinel(url, realIp)) {
             	String message = httpRequest.uri() + " access  has exceeded ";
             	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.RESULT_FAIL,message));
                 hackLog(logger, realIp, "cc", message);
@@ -289,23 +289,26 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     }
 	
 	//目标拦截
-    private boolean doSentinel(String url) {
+    private boolean doSentinel(String url, String realIp) {
     	Entry entry = null;
     	try {
             UrlCleaner urlCleaner = WebCallbackManager.getUrlCleaner();
             if (urlCleaner != null) {
             	url = urlCleaner.clean(url);
             }
-            ContextUtil.enter(url);
-            SphU.entry(url, EntryType.IN);
+            SphU.entry(url, EntryType.IN, 1, realIp);
             return false;
         } catch (BlockException e) {
+        	
+        	//热点参数目前只有IP维度限流，限流的场合直接加入黑名单
+        	if (e instanceof ParamFlowException) {
+            	blackIpCache.put(realIp, new Object(),blockSeconds);//拒绝
+        	}
         	return true;
         } finally {
         	if (entry != null) {
-                entry.exit();
+                entry.exit(1,realIp);
             }
-            ContextUtil.exit();
         }
     }
     
