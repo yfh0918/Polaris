@@ -115,7 +115,10 @@
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_core</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_cache</artifactId>
+        </dependency>
       	<dependency>
 			<groupId>com.polaris</groupId>
 			<artifactId>Polaris_container_http</artifactId>
