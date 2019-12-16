@@ -36,7 +36,12 @@
 		    <groupId>com.alibaba.csp</groupId>
 		    <artifactId>sentinel-datasource-nacos</artifactId>
 		    <version>${sentinel-version}</version>
-		</dependency>					
+		</dependency>	
+		<dependency>
+		    <groupId>com.alibaba.csp</groupId>
+		    <artifactId>sentinel-parameter-flow-control</artifactId>
+		    <version>${sentinel-version}</version>
+		</dependency>				
 	</dependencies>
 	<build>
 	  <plugins>

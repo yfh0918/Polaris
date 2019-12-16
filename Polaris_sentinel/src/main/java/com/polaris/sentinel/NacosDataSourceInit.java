@@ -8,6 +8,8 @@ import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
+import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRule;
+import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRuleManager;
 import com.alibaba.csp.sentinel.slots.system.SystemRule;
 import com.alibaba.csp.sentinel.slots.system.SystemRuleManager;
 import com.alibaba.fastjson.JSON;
@@ -51,6 +53,11 @@ public class NacosDataSourceInit {
 		ReadableDataSource<String, List<SystemRule>> systemRuleDataSource = new NacosDataSource<>(remoteAddress, groupId, "SystemRule.json",
 			    source -> JSON.parseObject(source, new TypeReference<List<SystemRule>>() {}));
 		SystemRuleManager.register2Property(systemRuleDataSource.getProperty());
+		
+		// data source for ParamFlowRule
+		ReadableDataSource<String, List<ParamFlowRule>> paramFlowRuleDataSource = new NacosDataSource<>(remoteAddress, groupId, "ParamFlowRule.json",
+			    source -> JSON.parseObject(source, new TypeReference<List<ParamFlowRule>>() {}));
+		ParamFlowRuleManager.register2Property(paramFlowRuleDataSource.getProperty());
 
 	}
 	 

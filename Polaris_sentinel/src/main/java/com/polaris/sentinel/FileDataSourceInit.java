@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import com.alibaba.csp.sentinel.command.handler.ModifyParamFlowRulesCommandHandler;
 import com.alibaba.csp.sentinel.datasource.FileRefreshableDataSource;
 import com.alibaba.csp.sentinel.datasource.FileWritableDataSource;
 import com.alibaba.csp.sentinel.datasource.ReadableDataSource;
@@ -12,6 +13,8 @@ import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRule;
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
+import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRule;
+import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRuleManager;
 import com.alibaba.csp.sentinel.slots.system.SystemRule;
 import com.alibaba.csp.sentinel.slots.system.SystemRuleManager;
 import com.alibaba.csp.sentinel.transport.util.WritableDataSourceRegistry;
@@ -44,19 +47,25 @@ public class FileDataSourceInit {
         File flow = new File(rulePath + File.separator + "FlowRule.json");
         if (!flow.exists()) {
         	flow.createNewFile();
-            FileUtil.appendString("[]", flow,Charset.forName("utf-8"));
+            FileUtil.appendString("[]", flow,Charset.defaultCharset());
         }
 
         File degrade = new File(rulePath + File.separator + "DegradeRule.json");
         if (!degrade.exists()) {
         	degrade.createNewFile();
-            FileUtil.appendString("[]", degrade,Charset.forName("utf-8"));
+            FileUtil.appendString("[]", degrade,Charset.defaultCharset());
         }
 
         File system = new File(rulePath + File.separator + "SystemRule.json");
         if (!system.exists()) {
         	system.createNewFile();
-            FileUtil.appendString("[]", system,Charset.forName("utf-8"));
+            FileUtil.appendString("[]", system,Charset.defaultCharset());
+        }
+        
+        File param = new File(rulePath + File.separator + "ParamFlowRule.json");
+        if (!param.exists()) {
+        	param.createNewFile();
+            FileUtil.appendString("[]", param,Charset.defaultCharset());
         }
 
         // data source for FlowRule
@@ -83,5 +92,13 @@ public class FileDataSourceInit {
         SystemRuleManager.register2Property(systemRuleDataSource.getProperty());
         WritableDataSource<List<SystemRule>> systemRuleWriteDataSource = new FileWritableDataSource<>(system, source -> JSON.toJSONString(source));
         WritableDataSourceRegistry.registerSystemDataSource(systemRuleWriteDataSource);
+        
+        // data source for ParamFlowRule
+        ReadableDataSource<String, List<ParamFlowRule>> paramRuleDataSource = new FileRefreshableDataSource<>(
+        		param, source -> JSON.parseObject(source, new TypeReference<List<ParamFlowRule>>() {})
+        );
+        ParamFlowRuleManager.register2Property(paramRuleDataSource.getProperty());
+        WritableDataSource<List<ParamFlowRule>> paramRuleWriteDataSource = new FileWritableDataSource<>(param, source -> JSON.toJSONString(source));
+        ModifyParamFlowRulesCommandHandler.setWritableDataSource(paramRuleWriteDataSource);
 	}
 }
