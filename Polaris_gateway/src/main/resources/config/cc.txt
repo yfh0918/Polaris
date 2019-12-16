@@ -1,14 +1,15 @@
 #单个IP的每秒+每分钟访问次数
 cc.ip.rate=10,60
 
-#单个IP访问超标导致拉入黑名单的 时长-秒
-cc.ip.block.seconds=1800
+#单个IP访问超标是否拉入黑名单的 时长-秒
+cc.ip.block=true
+cc.ip.block.seconds=3600
 
-#黑名单是否持久化的路径
+#黑名单是否持久化
 cc.ip.persistent=false
 cc.ip.persistent.interval=900
-cc.ip.persistent.path=/var/www/resources/banyan2c/file/cc
+cc.ip.persistent.path=/var/www/resources/file/cc
 
-#所有流量的访问次数，最多等待的时间
+#所有流量的访问次数 以及最多等待的时间-秒
 cc.all.rate=300
-cc.all.timeout=10
+cc.all.timeout=3

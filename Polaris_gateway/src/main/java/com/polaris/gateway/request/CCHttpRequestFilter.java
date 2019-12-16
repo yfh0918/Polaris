@@ -70,6 +70,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 	private static volatile int[] int_ip_rate = {10,60};
 	
 	//被禁止的IP是否要持久化磁盘 
+	private static volatile boolean isBlackIp = false;
 	private static volatile Cache blackIpCache = CacheFactory.getCache("cc.black.ip");//被禁止的ip
 	private static volatile Integer blockSeconds = 60;
 	private static volatile boolean blockIpPersistent = false;
@@ -116,6 +117,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     private static void loadFile(String content) {
     	String[] contents = content.split(Constant.LINE_SEP);
     	int blockSecondsTemp = 60;
+    	boolean isBlackIpTemp = false;
     	int[] IP_RATE = {10,60};
     	int ALL_RATE = 300;
     	int int_all_timeout_temp = 30;
@@ -157,6 +159,12 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 
     			
     			// 被禁止IP的时间-seconds
+    			if (kv[0].equals("cc.ip.block")) {
+    				try {
+    					isBlackIpTemp = Boolean.parseBoolean(kv[1]);
+    				} catch (Exception ex) {
+    				}
+    			}
     			if (kv[0].equals("cc.ip.block.seconds")) {
     				try {
         				blockSecondsTemp = Integer.parseInt(kv[1]);
@@ -199,6 +207,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 		int_ip_rate = IP_RATE;//单个IP的访问访问量
 		
 		//被限制IP的访问时间
+		isBlackIp = isBlackIpTemp;
         blockSeconds = blockSecondsTemp;
         blockIpPersistent = blockIpPersistentTemp;
         blockIpSavePath = blockIpSavePathTemp;
@@ -247,7 +256,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             String realIp = GatewayConstant.getRealIp((DefaultHttpRequest) httpObject);
             
         	//是否黑名单
-        	if (blackIpCache.get(realIp) != null){
+        	if (isBlackIp && blackIpCache.get(realIp) != null){
         		String message = realIp + " access has exceeded ";
             	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.RESULT_FAIL,message));
                 hackLog(logger, realIp, "cc", message);
@@ -302,7 +311,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         	
         	//热点参数目前只有IP维度限流，限流的场合直接加入黑名单
         	if (e instanceof ParamFlowException) {
-            	blackIpCache.put(realIp, new Object(),blockSeconds);//拒绝
+        		saveBlackCache(realIp);//拒绝
         	}
         	return true;
         } finally {
@@ -332,7 +341,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 			AtomicInteger secRateLimiter = (AtomicInteger) secIploadingCache.get(realIp);
 	        int count = secRateLimiter.incrementAndGet();
 	        if (count > int_ip_rate[0]) {
-	    		blackIpCache.put(realIp, new Object(),blockSeconds);//拒绝
+	        	saveBlackCache(realIp);//拒绝
 	    		return true;//拒绝
 	        } 
 		} catch (ExecutionException e) {
@@ -345,7 +354,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 	        AtomicInteger minRateLimiter = (AtomicInteger) minIploadingCache.get(realIp);
 	        int count = minRateLimiter.incrementAndGet();
 	        if (count > int_ip_rate[1]) {
-	    		blackIpCache.put(realIp, new Object(),blockSeconds);//拒绝
+	        	saveBlackCache(realIp);//拒绝
 	    		return true;//拒绝
 	        } 
 		} catch (ExecutionException e) {
@@ -359,6 +368,12 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         }
 
         return false;
+    }
+    
+    private void saveBlackCache(String realIp) {
+    	if (isBlackIp) {
+    		blackIpCache.put(realIp, new Object(),blockSeconds);//拒绝
+    	}
     }
     
 }
