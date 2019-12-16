@@ -351,7 +351,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 		}
 		
         //总量控制
-        if (totalRateLimiter.tryAcquire(1, int_all_timeout, TimeUnit.SECONDS)) {
+        if (!totalRateLimiter.tryAcquire(1, int_all_timeout, TimeUnit.SECONDS)) {
             return true;
         }
 
