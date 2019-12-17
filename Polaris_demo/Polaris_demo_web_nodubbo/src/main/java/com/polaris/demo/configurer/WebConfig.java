@@ -79,7 +79,16 @@
 //	 }
 //    @Override
 //    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+//    	
+//    	//string utf-8
 //        converters.add(new StringHttpMessageConverter(Charset.defaultCharset()));
+//        
+//        //pojo utf-8
+//    	List<MediaType> list = new ArrayList<MediaType>();
+//    	list.add(MediaType.APPLICATION_JSON_UTF8);
+//    	MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
+//    	mappingJackson2HttpMessageConverter.setSupportedMediaTypes(list);
+//        converters.add(mappingJackson2HttpMessageConverter);
 //    }
-//
+////
 //}
