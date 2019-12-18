@@ -54,8 +54,7 @@ public class PostHttpRequestFilter extends HttpRequestFilter {
                         if (kv.length == 2) {
                         	RequestUtil.setPostParameter(kv[0].trim(), kv[1].trim());
                         }
-                        List<Pattern> postPatternList = ConfUtil.getPattern(FilterType.POST.name());
-                        for (Pattern pattern : postPatternList) {
+                        for (Pattern pattern : ConfUtil.getPattern(FilterType.POST.name())) {
                             Matcher matcher = pattern.matcher(contentBody.toLowerCase());
                             if (matcher.find()) {
                                 hackLog(logger, GatewayConstant.getRealIp(originalRequest), FilterType.POST.name(), pattern.toString());

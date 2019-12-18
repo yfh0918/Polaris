@@ -1,6 +1,5 @@
 package com.polaris.gateway.request;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -35,12 +34,11 @@ public class WIpHttpRequestFilter extends HttpRequestFilter {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
-            for (Pattern pat : ConfUtil.getPattern(FilterType.WIP.name())) {
-                Matcher matcher = pat.matcher(GatewayConstant.getRealIp(httpRequest));
-                if (matcher.find()) {
-                    hackLog(logger, GatewayConstant.getRealIp(httpRequest), FilterType.WIP.name(), pat.toString());
-                    return true;
-                }
+            String ip = GatewayConstant.getRealIp(httpRequest);
+            Pattern pat = ConfUtil.getPattern(FilterType.WIP.name(),ip);
+            if (pat != null) {
+                hackLog(logger, GatewayConstant.getRealIp(httpRequest), FilterType.WIP.name(), pat.toString());
+            	return true;
             }
         }
         return false;

@@ -1,6 +1,5 @@
 package com.polaris.gateway.request;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -31,13 +30,10 @@ public class IpHttpRequestFilter extends HttpRequestFilter {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
             String realIp = GatewayConstant.getRealIp(httpRequest);
-
-            for (Pattern pat : ConfUtil.getPattern(FilterType.IP.name())) {
-                Matcher matcher = pat.matcher(realIp);
-                if (matcher.find()) {
-                    hackLog(logger, GatewayConstant.getRealIp(httpRequest), FilterType.IP.name(), pat.toString());
-                    return true;
-                }
+            Pattern pat = ConfUtil.getPattern(FilterType.IP.name(),realIp);
+            if (pat != null) {
+                hackLog(logger, GatewayConstant.getRealIp(httpRequest), FilterType.IP.name(), pat.toString());
+                return true;
             }
         }
         return false;

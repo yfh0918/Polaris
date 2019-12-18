@@ -47,6 +47,9 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
     }
     
     private static void loadFile(String content) {
+    	if (StringUtil.isEmpty(content)) {
+    		return;
+    	}
     	String[] contents = content.split(Constant.LINE_SEP);
     	Set<String> UNCHECKED_PATHS_TEMP = new HashSet<>();
     	Set<String> UNCHECKED_PATHS_PREFIX_TEMP = new HashSet<>();
@@ -90,7 +93,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
                 url = uri;
             }
             for (String context : UNCHECKED_PATHS_PREFIX) {
-            	if (url.contains(context)) {
+            	if (url.startsWith(context)) {
             		return false;
             	}
             }

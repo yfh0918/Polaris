@@ -1,8 +1,7 @@
 package com.polaris.gateway.util;
 
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
@@ -20,7 +19,7 @@ import com.polaris.gateway.request.FilterType;
  *
  */
 public class ConfUtil {
-    private final static Map<String, List<Pattern>> confMap = new ConcurrentHashMap<>();
+    private final static Map<String, Map<String, Pattern>> confMap = new ConcurrentHashMap<>();
 
     static {
     	//第一次加载
@@ -40,25 +39,30 @@ public class ConfUtil {
     	}
     }
 
-    public static List<Pattern> getPattern(String type) {
-        return confMap.get(type);
+    public static Collection<Pattern> getPattern(String type) {
+        return confMap.get(type).values();
+    }
+    
+    public static Pattern getPattern(String type, String key) {
+        return confMap.get(type).get(key);
     }
     
     private static void loadPatters(String name, String content) {
     	if  (StringUtil.isEmpty(content)) {
-    		confMap.put(name, new ArrayList<>());
+        	Map<String, Pattern> contentMap = new ConcurrentHashMap<>();
+    		confMap.put(name, contentMap);
     		return;
     	}
     	String[] contents = content.split(Constant.LINE_SEP);
-    	List<Pattern> patterns = new ArrayList<>();
+    	Map<String, Pattern> contentMap = new ConcurrentHashMap<>();
     	for (String conf : contents) {
     		if (StringUtil.isNotEmpty(conf)) {
-    			conf = conf.replace("\n", "");
-    			conf = conf.replace("\r", "");
+    			conf = conf.replace("\n", "").trim();
+    			conf = conf.replace("\r", "").trim();
     			Pattern pattern = Pattern.compile(conf);
-                patterns.add(pattern);
+    			contentMap.put(conf, pattern);
     		}
     	}
-    	confMap.put(name, patterns);
+    	confMap.put(name, contentMap);
     }
 }
