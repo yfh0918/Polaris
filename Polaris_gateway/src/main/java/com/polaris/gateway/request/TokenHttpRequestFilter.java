@@ -48,6 +48,8 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
     
     private static void loadFile(String content) {
     	if (StringUtil.isEmpty(content)) {
+    		UNCHECKED_PATHS = new HashSet<>();
+    		UNCHECKED_PATHS_PREFIX = new HashSet<>();
     		return;
     	}
     	String[] contents = content.split(Constant.LINE_SEP);
