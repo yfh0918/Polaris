@@ -33,9 +33,11 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 	    	//获取日志文件logging.config=classpath:config/log4j2.xml
 			if (logFile == null || logFile.isEmpty()) {
 				//外部是否设置了project.config.name
-				String projectConfigLocation = System.getProperty(Constant.PROJECT_CONFIG_NAME);
-		    	if (projectConfigLocation != null && !projectConfigLocation.isEmpty()) {
+				String projectConfigLocation = System.getProperty(Constant.SPRING_CONFIG_LOCACTION);
+		    	if (StringUtil.isNotEmpty(projectConfigLocation)) {
 		    		Constant.DEFAULT_CONFIG_NAME = projectConfigLocation;
+		    	} else if (StringUtil.isNotEmpty(System.getProperty(Constant.PROJECT_CONFIG_NAME))) {
+		    		Constant.DEFAULT_CONFIG_NAME = System.getProperty(Constant.PROJECT_CONFIG_NAME);
 		    	}
 		    	
 		    	//获取配置内容

@@ -63,9 +63,11 @@ public abstract class ConfClient {
     	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
 
 		// 设置文件
-    	String projectConfigLocation = System.getProperty(Constant.PROJECT_CONFIG_NAME);
+    	String projectConfigLocation = System.getProperty(Constant.SPRING_CONFIG_LOCACTION);
     	if (StringUtil.isNotEmpty(projectConfigLocation)) {
     		Constant.DEFAULT_CONFIG_NAME = projectConfigLocation;
+    	} else if (StringUtil.isNotEmpty(System.getProperty(Constant.PROJECT_CONFIG_NAME))) {
+    		Constant.DEFAULT_CONFIG_NAME = System.getProperty(Constant.PROJECT_CONFIG_NAME);
     	}
     	
     	logger.info("{} loading start",Constant.DEFAULT_CONFIG_NAME);
