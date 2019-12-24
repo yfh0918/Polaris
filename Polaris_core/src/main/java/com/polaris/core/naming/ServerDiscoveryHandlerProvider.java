@@ -66,6 +66,9 @@ public class ServerDiscoveryHandlerProvider {
 
     //获取所有的url
 	public List<String> getAllUrl(String key) {
+		return getAllUrl(key, true);
+	}
+	public List<String> getAllUrl(String key, boolean subscribe) {
 		
 		List<String> temp = ServerDiscoveryHandlerSupport.getRemoteAddress(key);
 		// 单个IP或者多IP不走注册中心
