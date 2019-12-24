@@ -135,9 +135,13 @@ public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 		return null;
 	}
 	
-
 	@Override
 	public List<String> getAllUrls(String key) {
+		return getAllUrls(key, true);
+	}
+
+	@Override
+	public List<String> getAllUrls(String key, boolean subscribe) {
 		if (StringUtil.isEmpty(key)) {
 			return null;
 		}

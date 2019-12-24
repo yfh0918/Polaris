@@ -75,9 +75,13 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 		return null;
 	}
 	
-
 	@Override
 	public List<String> getAllUrls(String key) {
+		return getAllUrls(key, true);
+	}
+
+	@Override
+	public List<String> getAllUrls(String key, boolean subscribe) {
 		
 		if (StringUtil.isEmpty(key)) {
 			return null;
@@ -103,7 +107,7 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	        	groupName = ConfClient.getGroup();
 			}
 
-			instances = naming.selectInstances(key, groupName, true);
+			instances = naming.selectInstances(key, groupName, true, subscribe);
 
 			List<String> urls = new ArrayList<>();
 			if (instances != null && instances.size() > 0) {
