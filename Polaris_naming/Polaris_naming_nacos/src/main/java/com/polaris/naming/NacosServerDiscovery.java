@@ -112,7 +112,9 @@ public class NacosServerDiscovery implements ServerDiscoveryHandler {
 			List<String> urls = new ArrayList<>();
 			if (instances != null && instances.size() > 0) {
 				for (Instance instance : instances) {
-					urls.add(instance.toInetAddr());
+					if (instance.isHealthy()) {
+						urls.add(instance.toInetAddr());
+					}
 				}
 			}
 			return urls;
