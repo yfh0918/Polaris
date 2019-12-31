@@ -120,6 +120,9 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
                 	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
                     return true;
                 }
+                if (isExpire(claims)) {
+                	return true;
+                }
                 return false;
             } catch (Exception ex) {
             	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
@@ -128,6 +131,22 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
 
         }
         return false;
+    }
+	
+	//验证token有效器
+    private boolean isExpire(Claims claims) {
+    	try {
+            // jwt是否正常
+            long expireTime = claims.getExpiration().getTime();
+            long diff = expireTime - System.currentTimeMillis();
+            //是否过期
+            if (diff <= 1l) {
+                return true;
+            }
+        } catch (Exception e) {
+            return true;
+        }
+    	return false;
     }
     
 }
