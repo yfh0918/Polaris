@@ -10,6 +10,15 @@ import junit.framework.TestSuite;
 public class AppTest 
     extends TestCase
 {
+	
+//	private com.polaris.core.schedule.CronScheduledThreadPoolExecutor cronScheduledCronThreadPoolExecutor = new com.polaris.core.schedule.CronScheduledThreadPoolExecutor(1, new ThreadFactory() {
+//        @Override
+//        public Thread newThread(Runnable r) {
+//            Thread thread = new Thread(r);
+//            thread.setName("com.banyan.customer.schedule.AccountCheckSchedule");
+//            return thread;
+//        }
+//    });
     /**
      * Create the test case
      *
@@ -34,5 +43,9 @@ public class AppTest
     public void testApp()
     {
         assertTrue( true );
+//        String cron = ConfClient.get("account.schedule.cron", "0 0 10 * * ?");
+//        cronScheduledCronThreadPoolExecutor.scheduleWithCron(
+//                new BusinessTask(),
+//                cron, CronType.QUARTZ);
     }
 }

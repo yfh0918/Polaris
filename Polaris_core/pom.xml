@@ -184,7 +184,14 @@
             <artifactId>java-jwt</artifactId>
             <version>3.4.0</version>
         </dependency>
-        		
+
+		<!--定时器-->
+        <dependency>
+            <groupId>com.cronutils</groupId>
+            <artifactId>cron-utils</artifactId>
+            <version>9.0.2</version>
+        </dependency> 
+               		
 	</dependencies>
 	<build>
 	  <plugins>
