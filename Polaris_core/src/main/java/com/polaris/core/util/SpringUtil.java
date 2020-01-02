@@ -2,7 +2,6 @@ package com.polaris.core.util;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Configuration;
 
 import com.polaris.core.config.DefaultRootConfig;
 
@@ -40,12 +39,7 @@ public class SpringUtil {
     		AnnotationConfigApplicationContext annotationContext = new AnnotationConfigApplicationContext();
 	    	annotationContext.register(DefaultRootConfig.class);
 	    	if (clazzs != null && clazzs.length > 0) {
-	    		for (Class<?> clazz : clazzs) {
-	    			if (clazz.getAnnotation(Configuration.class) != null) {
-	    				annotationContext.register(clazzs);
-	    			}
-	    		}
-	    		
+				annotationContext.register(clazzs);
 	    	}
 	    	annotationContext.refresh();
 	    	annotationContext.registerShutdownHook();
