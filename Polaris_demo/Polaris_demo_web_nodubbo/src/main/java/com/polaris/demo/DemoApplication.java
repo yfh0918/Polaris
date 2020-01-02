@@ -3,10 +3,8 @@ package com.polaris.demo;
 
 import javax.servlet.ServletContext;
 
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-
 import com.polaris.core.Launcher;
+import com.polaris.core.annotation.PolarisApplication;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.NameingClient;
 import com.polaris.http.factory.ContainerServerFactory;
@@ -16,8 +14,7 @@ import com.polaris.http.listener.ServerListener;
  * 入口启动类
  *
  */
-@Configuration
-@ComponentScan( basePackages={"com.polaris"})
+@PolarisApplication(scanBasePackages={"com.polaris"})
 //@ComponentScan( basePackages={"com.polaris"},
 //excludeFilters = { @Filter(type=FilterType.ANNOTATION,value=EnableWebMvc.class)}
 //)

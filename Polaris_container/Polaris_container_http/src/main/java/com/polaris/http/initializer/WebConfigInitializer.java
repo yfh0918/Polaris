@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.springframework.context.annotation.Configuration;
 
+import com.polaris.core.annotation.PolarisApplication;
+
 abstract public class WebConfigInitializer {
 
 	private static Set<Class<?>> rootConfigs = new HashSet<>();
@@ -13,22 +15,22 @@ abstract public class WebConfigInitializer {
 	public static void loadRootConfig(Class<?>... clazzs) {
 		if (clazzs != null) {
 			for (Class<?> clazz : clazzs) {
-				if (clazz.getAnnotation(Configuration.class) != null) {
+				if (clazz.isAnnotationPresent(Configuration.class) || clazz.isAnnotationPresent(PolarisApplication.class)) {
 					rootConfigs.add(clazz);
-    			}
+    			} 
 			}
 		}
 	}
 	public static void loadWebConfig(Class<?>... clazzs) {
 		if (clazzs != null) {
 			for (Class<?> clazz : clazzs) {
-				if (clazz.getAnnotation(Configuration.class) != null) {
+				if (clazz.isAnnotationPresent(Configuration.class) || clazz.isAnnotationPresent(PolarisApplication.class)) {
 					webConfigs.add(clazz);
-    			}
+    			} 
 			}
 		}
 	}
-
+	
 	public static Class<?>[] getRootConfigs() {
 		if (rootConfigs.size() > 0) {
 			return rootConfigs.toArray(new Class[0]);

@@ -1,13 +1,11 @@
 package com.polaris.demo;
 
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import com.polaris.core.Launcher;
+import com.polaris.core.annotation.PolarisApplication;
 import com.polaris.dubbo.supports.MainSupport;
-@Configuration
-@EnableTransactionManagement(proxyTargetClass=true)
+
+@PolarisApplication(scanBasePackages={"com.polaris"})
 public class dubboApplication implements Launcher{
 	
 	public static void main(String[] args) throws Exception { 

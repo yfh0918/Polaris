@@ -2,12 +2,14 @@ package com.polaris.demo;
 
 
 import com.polaris.core.Launcher;
+import com.polaris.core.annotation.PolarisApplication;
 import com.polaris.http.supports.MainSupport;
 
 /**
  * 入口启动类
  *
  */
+@PolarisApplication(scanBasePackages={"com.polaris"})
 public class DemoApplication implements Launcher
 
 {
@@ -16,6 +18,6 @@ public class DemoApplication implements Launcher
     {
 
 		//启动WEB
-    	MainSupport.startWebServer(args);
+    	MainSupport.startWebServer(args,new Class[]{DemoApplication.class});
     }
 }
