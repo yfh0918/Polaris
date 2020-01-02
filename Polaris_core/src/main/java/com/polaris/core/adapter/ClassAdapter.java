@@ -18,9 +18,10 @@ import com.polaris.core.util.SpringUtil;
 /**
  * service管理类，用于实现针对不同的系统做不同处理
  */
-public class ServiceAdapter {
+@SuppressWarnings("unchecked")
+public class ClassAdapter {
 	
-	private static final Logger logger = LoggerFactory.getLogger(ServiceAdapter.class);
+	private static final Logger logger = LoggerFactory.getLogger(ClassAdapter.class);
 
 	//获取指定的service
     public static <T>T findServiceImpl(Class<T> cls) {
@@ -81,6 +82,16 @@ public class ServiceAdapter {
         return listSuperClass.size(); 
     }
     
+	public static <T> T convert(Object obj, Class<T> clazz) {
+		if (obj == null) {
+			return null;
+		}
+		if (clazz.isAssignableFrom(obj.getClass())) {
+			return (T)obj;
+		}
+		return null;
+	}
+    
     static class MapUtil {
     	
     	private static final Logger logger = LoggerFactory.getLogger(MapUtil.class);
@@ -107,7 +118,6 @@ public class ServiceAdapter {
     	}
     	
     	//获取最后一个元素
-    	@SuppressWarnings("unchecked")
     	public static <K, V> Entry<K, V> getTail(LinkedHashMap<K, V> map) {
     		try {
     			Field tail = map.getClass().getDeclaredField("tail");
