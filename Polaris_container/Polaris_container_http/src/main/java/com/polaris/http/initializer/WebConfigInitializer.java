@@ -3,10 +3,6 @@ package com.polaris.http.initializer;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.context.annotation.Configuration;
-
-import com.polaris.core.annotation.PolarisApplication;
-
 abstract public class WebConfigInitializer {
 
 	private static Set<Class<?>> rootConfigs = new HashSet<>();
@@ -15,18 +11,14 @@ abstract public class WebConfigInitializer {
 	public static void loadRootConfig(Class<?>... clazzs) {
 		if (clazzs != null) {
 			for (Class<?> clazz : clazzs) {
-				if (clazz.isAnnotationPresent(Configuration.class) || clazz.isAnnotationPresent(PolarisApplication.class)) {
-					rootConfigs.add(clazz);
-    			} 
+				rootConfigs.add(clazz);
 			}
 		}
 	}
 	public static void loadWebConfig(Class<?>... clazzs) {
 		if (clazzs != null) {
 			for (Class<?> clazz : clazzs) {
-				if (clazz.isAnnotationPresent(Configuration.class) || clazz.isAnnotationPresent(PolarisApplication.class)) {
-					webConfigs.add(clazz);
-    			} 
+				webConfigs.add(clazz);
 			}
 		}
 	}
