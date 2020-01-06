@@ -9,6 +9,7 @@
 
     <modules>
         <module>Polaris_core</module>
+        <module>Polaris_launcher</module>
         <module>Polaris_container</module>
         <module>Polaris_dubbo</module>
         <module>Polaris_conf</module>
@@ -86,6 +87,11 @@
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_core</artifactId>
+	            <version>${polaris-version}</version>
+	        </dependency> 
+	        <dependency>
+	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_launcher</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency> 
 	        <dependency>

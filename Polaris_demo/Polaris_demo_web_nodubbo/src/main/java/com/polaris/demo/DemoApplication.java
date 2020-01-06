@@ -3,7 +3,6 @@ package com.polaris.demo;
 
 import javax.servlet.ServletContext;
 
-import com.polaris.core.Launcher;
 import com.polaris.core.annotation.PolarisApplication;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.NameingClient;
@@ -18,7 +17,7 @@ import com.polaris.http.listener.ServerListener;
 //@ComponentScan( basePackages={"com.polaris"},
 //excludeFilters = { @Filter(type=FilterType.ANNOTATION,value=EnableWebMvc.class)}
 //)
-public class DemoApplication implements Launcher
+public class DemoApplication
 {
     
     public static void main( String[] args ) throws Exception

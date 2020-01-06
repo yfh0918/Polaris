@@ -348,3 +348,7 @@
 /Polaris_workflow/Polaris_workflow_test/target
 /Polaris_workflow/Polaris_workflow/logs
 /Polaris_workflow/Polaris_workflow_test/logs
+/Polaris_launcher/.settings
+/Polaris_launcher/target
+/Polaris_launcher/.classpath
+/Polaris_launcher/.project

@@ -17,6 +17,10 @@
 
 
     <dependencies>
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_launcher</artifactId>
+        </dependency>
       
         <dependency>
             <groupId>org.littleshoot</groupId>

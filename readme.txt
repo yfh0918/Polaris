@@ -45,10 +45,14 @@
   需要在自己的服务pom.xml中引入 Polaris_sentinel
   该接口主要用于提供api的servlet
 
-8,如何启动，打开eclipse后启动xxxApplication.java文件（该类需要实现Launcher接口，并且resources\META-INF\services\com.polaris.core.Launcher文件中记录该类）
+8,如何启动，打开eclipse后启动xxxApplication.java文件（该类需要实现Launcher接口，或者注解@PolarisApplication）
 
   8.1 pom.xml中提供 tomcat和jetty两种启动模式,并且提供resteasy和springmvc组合的方式
       具体参考pom.xml
+	  <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_launcher</artifactId>  ->用于检测启动类
+        </dependency>
 	  <dependency>
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_container_jetty</artifactId>  ->可修改成Polaris_container_tomcat

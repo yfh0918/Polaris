@@ -14,6 +14,10 @@
     <dependencies>
         <dependency>
             <groupId>com.polaris</groupId>
+            <artifactId>Polaris_launcher</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.polaris</groupId>
             <artifactId>Polaris_container_jetty</artifactId>
         </dependency>
         <dependency>

@@ -1,7 +1,6 @@
 package com.polaris.demo;
 
 
-import com.polaris.core.Launcher;
 import com.polaris.core.annotation.PolarisApplication;
 import com.polaris.http.supports.MainSupport;
 
@@ -10,7 +9,7 @@ import com.polaris.http.supports.MainSupport;
  *
  */
 @PolarisApplication(scanBasePackages={"com.polaris"})
-public class DemoApplication implements Launcher
+public class DemoApplication
 
 {
     
