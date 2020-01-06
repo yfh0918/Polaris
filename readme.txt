@@ -1,4 +1,4 @@
-1:install 全体
+﻿1:install 全体
 
 2:提供两种类型的 demo（调用dubbo应用 和 无dubbo应用）
   主要参数可以参考Polaris_demo_web_nodubbo的application.properties
@@ -46,6 +46,7 @@
   该接口主要用于提供api的servlet
 
 8,如何启动，打开eclipse后启动xxxApplication.java文件（该类需要实现Launcher接口，或者注解@PolarisApplication）
+ 总要，为了加快启动速度，请把Polaris_launcher放置到依赖包的最前面
 
   8.1 pom.xml中提供 tomcat和jetty两种启动模式,并且提供resteasy和springmvc组合的方式
       具体参考pom.xml
