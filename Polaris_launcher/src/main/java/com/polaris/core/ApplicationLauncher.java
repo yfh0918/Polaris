@@ -24,6 +24,7 @@ public class ApplicationLauncher {
 	}
 	
     private static void scanMainClass(String[] args) throws IOException {  
+    	logger.info("start class scan ...");
     	URL url = ClassUtils.getDefaultClassLoader().getResource("");
     	String path = java.net.URLDecoder.decode(url.getPath(),Charset.defaultCharset().name());
     	File directory = new File(path);
@@ -38,7 +39,7 @@ public class ApplicationLauncher {
 			}
 		}
 		if (file == null) {
-			logger.error("没有启动的可以启动的jar文件");
+			logger.error("jar file has not found");
 		}
 		try(JarFile jarFile = new JarFile(file)) {
 			for(Enumeration<JarEntry> enumeration =  jarFile.entries(); enumeration.hasMoreElements(); ) {
@@ -52,16 +53,12 @@ public class ApplicationLauncher {
 	                	className = className.replace('/', '.');
 	                	Class<?> startClass =Class.forName(className);
 	                	//获取注解
-	                	if (startClass.isAnnotationPresent(PolarisApplication.class)) {
+	                	if (startClass.isAnnotationPresent(PolarisApplication.class) || Launcher.class.isAssignableFrom(startClass)) {
+	                		logger.info("startup class:{} is found",className);
 	                		Method method = startClass.getMethod("main", String[].class);
 	            			method.invoke(null, (Object)args);
 	            			return;
 	                	}
-	                	if (Launcher.class.isAssignableFrom(startClass)) {
-	                		Method method = startClass.getMethod("main", String[].class);
-	            			method.invoke(null, (Object)args);
-	            			return;
-	            		}
 	            	}
 	            } catch (Exception e) {
 					logger.error("Error",e);
@@ -71,6 +68,6 @@ public class ApplicationLauncher {
 			logger.error("Error",e);
 			return;
 		}
-		logger.error("jar:{}没有可以启动的Class",file.getName());
+		logger.error("in jar:{} has not startup class",file.getName());
 	}
 }
