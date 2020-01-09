@@ -24,7 +24,7 @@ public class ApplicationLauncher {
 	}
 	
     private static void scanMainClass(String[] args) throws IOException {  
-    	logger.info("start class scan ...");
+    	logger.info("startup class scanning ...");
     	URL url = ClassUtils.getDefaultClassLoader().getResource("");
     	String path = java.net.URLDecoder.decode(url.getPath(),Charset.defaultCharset().name());
     	File directory = new File(path);
