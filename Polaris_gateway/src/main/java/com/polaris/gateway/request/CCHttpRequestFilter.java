@@ -78,7 +78,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 	private static volatile int timerinterval = 0;//每间隔600秒执行一次
 	private static volatile Timer timer = null;
 	
-	static {
+	public static void init() {
 		
 		//IP维度，每秒钟的访问数量
 		secIploadingCache = CacheBuilder.newBuilder()

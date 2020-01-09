@@ -15,6 +15,7 @@ import com.polaris.core.util.SpringUtil;
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.HostResolverImpl;
 import com.polaris.gateway.HttpFilterAdapterImpl;
+import com.polaris.gateway.HttpStatic;
 import com.polaris.http.util.NetUtils;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -27,6 +28,7 @@ public class ApplicationSupport {
     	
     	//载入参数
     	ConfClient.init();
+    	HttpStatic.init();
 
     	//载入spring
     	SpringUtil.refresh(clazzs);
