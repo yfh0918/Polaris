@@ -38,7 +38,7 @@ public class ApplicationLauncher {
 			}
 		}
 		if (file == null) {
-			logger.error("没有启动的jar文件");
+			logger.error("没有启动的可以启动的jar文件");
 		}
 		try(JarFile jarFile = new JarFile(file)) {
 			for(Enumeration<JarEntry> enumeration =  jarFile.entries(); enumeration.hasMoreElements(); ) {
@@ -51,7 +51,6 @@ public class ApplicationLauncher {
 	                    }
 	                	className = className.replace('/', '.');
 	                	Class<?> startClass =Class.forName(className);
-	                	logger.info(className);
 	                	//获取注解
 	                	if (startClass.isAnnotationPresent(PolarisApplication.class)) {
 	                		Method method = startClass.getMethod("main", String[].class);
@@ -70,6 +69,8 @@ public class ApplicationLauncher {
 	        }
 		} catch (Exception e) {
 			logger.error("Error",e);
+			return;
 		}
+		logger.error("jar:{}没有可以启动的Class",file.getName());
 	}
 }

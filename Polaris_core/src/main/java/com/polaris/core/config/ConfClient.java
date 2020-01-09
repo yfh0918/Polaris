@@ -1,6 +1,7 @@
 package com.polaris.core.config;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +28,16 @@ import com.polaris.core.util.StringUtil;
 public abstract class ConfClient {
 	private static final Logger logger = LoggerFactory.getLogger(ConfClient.class);
 	
+	//初始化标志
+	private static AtomicBoolean initialized = new AtomicBoolean(false);
+	
 	//初始化操作
 	public static void init() {
+		
+		//初始化
+		if (!initialized.compareAndSet(false, true)) {
+            return;
+        }
 		
     	//初始DEFAULT_CONFIG
 		loadDefaultConfig();
