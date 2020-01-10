@@ -219,15 +219,18 @@ public class HttpClientUtil {
      * @author 
      * @create 
      */
-    public static String post(String orgurl, Map<String, Object> params) {
+    public static String post(String orgurl, Map<String, Object> requestParams) {
+    	return post(orgurl,requestParams,null);
+    }
+    public static String post(String orgurl, Map<String, Object> requestParams, Map<String, String> headParams) {
     	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
     	LOGGER.debug(url);
         CloseableHttpResponse response = null;
         try {
             HttpPost httppost = new HttpPost(url);
             config(httppost);
-            setPostParams(httppost, params);
-            trace(httppost);//增加trace编号
+            setPostParams(httppost, requestParams);
+            trace(httppost,headParams);//增加trace编号
             response = getHttpClient(url).execute(httppost,
                     HttpClientContext.create());
             HttpEntity entity = response.getEntity();
@@ -257,13 +260,16 @@ public class HttpClientUtil {
      * @create 
      */
     public static String post(String orgurl, String body) {
+    	return post(orgurl,body,null);
+    }
+    public static String post(String orgurl, String body, Map<String, String> headParams) {
     	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
     	LOGGER.debug(url);
         CloseableHttpResponse response = null;
         try {
             HttpPost httppost = new HttpPost(url);
             config(httppost);
-            trace(httppost);//增加trace编号
+            trace(httppost,headParams);//增加trace编号
             
             //设置body
             StringEntity bodyEntity = new StringEntity(body, Charset.forName(UTF8));
@@ -291,8 +297,10 @@ public class HttpClientUtil {
         }
         return null;
     }
-    
-    public static String postFileMultiPart(String orgurl,Map<String,ContentBody> reqParam) {
+    public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestParam) {
+    	return postFileMultiPart(orgurl, requestParam, null);
+    }
+    public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestParam, Map<String, String> headParams) {
     	
     	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
     	LOGGER.debug(url);
@@ -300,11 +308,11 @@ public class HttpClientUtil {
         try {
             HttpPost httppost = new HttpPost(url);
             config(httppost);
-            trace(httppost);//增加trace编号
+            trace(httppost,headParams);//增加trace编号
             
             
             MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
-            for(Entry<String,ContentBody> param : reqParam.entrySet()){
+            for(Entry<String,ContentBody> param : requestParam.entrySet()){
             	multipartEntityBuilder.addPart(param.getKey(), param.getValue());
             }
             HttpEntity reqEntity = multipartEntityBuilder.build();
@@ -345,21 +353,24 @@ public class HttpClientUtil {
     	return get(orgurl, null);
     }
     public static String get(String orgurl,  Map<String, Object> params) {
+    	return get(orgurl, params, null);
+    }
+    public static String get(String orgurl,  Map<String, Object> requestParams, Map<String, String> headParams) {
     	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
     	LOGGER.debug(url);
     	CloseableHttpResponse response = null;
         try {
         	URIBuilder builder = new URIBuilder(url);
-            if (params != null) {
-                for (String key : params.keySet()) {
-                    builder.addParameter(key, String.valueOf(params.get(key)));
+            if (requestParams != null) {
+                for (String key : requestParams.keySet()) {
+                    builder.addParameter(key, String.valueOf(requestParams.get(key)));
                 }
             }
 
             URI uri = builder.build();
             HttpGet httpget = new HttpGet(uri);//增加参数
             config(httpget);
-            trace(httpget);
+            trace(httpget,headParams);
             
             response = getHttpClient(url).execute(httpget,
                     HttpClientContext.create());
@@ -463,10 +474,16 @@ public class HttpClientUtil {
         }
     }
     
-    private static void trace(HttpRequestBase request) {
+    private static void trace(HttpRequestBase request, Map<String, String> headParams) {
     	if (StringUtil.isNotEmpty(GlobalContext.getTraceId())) {
         	request.addHeader(GlobalContext.TRACE_ID, GlobalContext.getTraceId());
     	}
     	request.addHeader(GlobalContext.PARENT_ID, GlobalContext.getModuleId());//传递下去
+        if (headParams != null) {
+        	for (Map.Entry<String, String> entry : headParams.entrySet()) {
+        		request.addHeader(entry.getKey(), entry.getValue());
+        	}
+        }
+
     }
 }
