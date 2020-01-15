@@ -49,7 +49,6 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 			System.setProperty("log4j.configurationFile", logFile);
 
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 	
