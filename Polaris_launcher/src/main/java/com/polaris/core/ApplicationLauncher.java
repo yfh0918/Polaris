@@ -14,7 +14,6 @@ import java.util.jar.JarFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.asm.ClassReader;
-import org.springframework.util.ClassUtils;
 
 import com.polaris.core.annotation.PolarisApplication;
 
@@ -29,22 +28,13 @@ public class ApplicationLauncher {
 	
     private static void scanMainClass(String[] args) throws IOException {  
     	logger.info("startup class scanning ...");
-    	URL url = ClassUtils.getDefaultClassLoader().getResource("");
+    	URL url = ApplicationLauncher.class.getClassLoader().getResource("META-INF/MANIFEST.MF");
     	String path = java.net.URLDecoder.decode(url.getPath(),Charset.defaultCharset().name());
-    	File directory = new File(path);
-    	File file = null;
-		if(directory.isDirectory()){
-			File [] filelist =directory.listFiles();
-			for (File tempfile : filelist) {
-				if (tempfile.getName().endsWith(".jar")) {
-					file = tempfile;
-					break;
-				}
-			}
+    	if (path.startsWith("file:")) {
+			path = path.substring(5);
 		}
-		if (file == null) {
-			logger.error("jar file has not found");
-		}
+		path = path.split("!")[0];
+    	File file = new File(path);
 		try(JarFile jarFile = new JarFile(file)) {
 			for(Enumeration<JarEntry> enumeration =  jarFile.entries(); enumeration.hasMoreElements(); ) {
 	            JarEntry jarEntry = enumeration.nextElement();
