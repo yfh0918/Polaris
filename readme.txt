@@ -24,7 +24,6 @@
   #project.extension.properties=main.properties,redis.properties
   可以引入全局配置,比如关于redis集群配置，数据库的整体配置等等
   #global files
-  #project.global.config.name=global
   #project.global.properties=redis.properties,database.properties
   
   默认支持Spring注解@Value的自动更新-（nacos,zookeeper的推送更新会同步到@Value注解）
