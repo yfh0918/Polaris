@@ -21,19 +21,16 @@ public class ApplicationLauncher {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ApplicationLauncher.class);
 	private static final String DOT_CLASS = ".class";
+	private static final String MANIFEST_FILE = "META-INF/MANIFEST.MF";
 	
 	public static void main(String[] args) throws IOException {
 		ApplicationLauncher.scanMainClass(args);
 	}
 	
     private static void scanMainClass(String[] args) throws IOException {  
-    	logger.info("startup class scanning ...");
-    	URL url = ApplicationLauncher.class.getClassLoader().getResource("META-INF/MANIFEST.MF");
+    	URL url = ApplicationLauncher.class.getClassLoader().getResource(MANIFEST_FILE);
     	String path = java.net.URLDecoder.decode(url.getPath(),Charset.defaultCharset().name());
-    	if (path.startsWith("file:")) {
-			path = path.substring(5);
-		}
-		path = path.split("!")[0];
+		path = path.substring(5).split("!")[0];
     	File file = new File(path);
 		try(JarFile jarFile = new JarFile(file)) {
 			for(Enumeration<JarEntry> enumeration =  jarFile.entries(); enumeration.hasMoreElements(); ) {
