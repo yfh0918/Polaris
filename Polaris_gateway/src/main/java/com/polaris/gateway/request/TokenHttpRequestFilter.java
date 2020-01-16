@@ -33,7 +33,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
 	private final static String FILE_NAME = "token.txt";
 	private final static String TOKEN_MESSAGE="认证失败，请先登录";
 
-	public static void init() {
+	static {
 		//先获取
 		loadFile(ConfClient.getConfigValue(FILE_NAME));
 		

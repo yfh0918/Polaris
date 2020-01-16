@@ -21,7 +21,7 @@ import com.polaris.gateway.request.FilterType;
 public class ConfUtil {
     private final static Map<String, Map<String, Pattern>> confMap = new ConcurrentHashMap<>();
 
-    public static void init() {
+    static {
     	//第一次加载
     	for (FilterType filterType : FilterType.values()) {
     		

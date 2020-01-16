@@ -20,9 +20,6 @@ import com.polaris.core.util.SpringUtil;
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.HostResolverImpl;
 import com.polaris.gateway.HttpFilterAdapterImpl;
-import com.polaris.gateway.request.CCHttpRequestFilter;
-import com.polaris.gateway.request.TokenHttpRequestFilter;
-import com.polaris.gateway.util.ConfUtil;
 import com.polaris.gateway.util.GatewaySelfSignedSslEngineSource;
 import com.polaris.http.util.NetUtils;
 
@@ -38,9 +35,6 @@ public class ApplicationSupport {
     	
     	//载入参数
 		ConfClient.init();
-    	CCHttpRequestFilter.init();
-    	TokenHttpRequestFilter.init();
-    	ConfUtil.init();
     	
 		//载入spring
     	SpringUtil.refresh(clazzs);
