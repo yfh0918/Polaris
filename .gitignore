@@ -352,3 +352,7 @@
 /Polaris_launcher/target
 /Polaris_launcher/.classpath
 /Polaris_launcher/.project
+/Polaris_demo/Polaris_demo_gateway/.settings
+/Polaris_demo/Polaris_demo_gateway/.classpath
+/Polaris_demo/Polaris_demo_gateway/.project
+/Polaris_demo/Polaris_demo_gateway/target

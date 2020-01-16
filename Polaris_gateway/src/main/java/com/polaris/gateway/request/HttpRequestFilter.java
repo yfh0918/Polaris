@@ -18,6 +18,7 @@ import io.netty.handler.codec.http.HttpRequest;
  * <p>
  * HTTP Request拦截器抽象类
  */
+@SuppressWarnings("rawtypes")
 public abstract class HttpRequestFilter extends HttpFilterOrder {
 	
     /**
@@ -33,7 +34,7 @@ public abstract class HttpRequestFilter extends HttpFilterOrder {
      * 中途被拦截需要返回的信息
      *
      */
-    private ResultDto resultDto;
+	private ResultDto resultDto;
 	public ResultDto getResultDto() {
 		return resultDto;
 	}

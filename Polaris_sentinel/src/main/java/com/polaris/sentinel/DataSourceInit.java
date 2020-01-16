@@ -31,7 +31,7 @@ public class DataSourceInit implements InitFunc {
 		if (StringUtil.isEmpty(datasource)) {
 			datasource = ConfClient.get("csp.sentinel.datasource");
 			if (StringUtil.isEmpty(datasource)) {
-				datasource = "nacos";
+				datasource = "file";
 			}
 		}
 		

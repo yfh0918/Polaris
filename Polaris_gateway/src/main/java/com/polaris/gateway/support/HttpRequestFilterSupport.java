@@ -3,6 +3,7 @@ package com.polaris.gateway.support;
 import com.polaris.core.Constant;
 import com.polaris.core.dto.ResultDto;
 
+@SuppressWarnings("rawtypes")
 public class HttpRequestFilterSupport {
 
     //创建ResponseDto
@@ -12,7 +13,7 @@ public class HttpRequestFilterSupport {
     public static ResultDto createResultDto(Exception ex) {
     	return createResultDto(Constant.RESULT_FAIL, ex.getMessage());
     }
-    public static ResultDto createResultDto(String code,  String message) {
+	public static ResultDto createResultDto(String code,  String message) {
     	ResultDto resultDto = new ResultDto();
     	resultDto.setCode(code);
     	resultDto.setMessage(message);

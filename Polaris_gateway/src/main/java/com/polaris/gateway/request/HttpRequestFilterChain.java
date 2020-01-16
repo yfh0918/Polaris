@@ -13,6 +13,7 @@ import com.polaris.gateway.HttpFilterEnum;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
+import jodd.util.StringUtil;
 
 /**
  * @author:Tom.Yu
@@ -30,7 +31,12 @@ public class HttpRequestFilterChain extends HttpFilterChain{
 
     public static ImmutablePair<Boolean, HttpRequestFilter> doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
         for (HttpRequestFilter filter : requestFilters) {
-        	if (GatewayConstant.OFF.equals(ConfClient.get(HttpFilterEnum.getSwitch(filter.getClass())))) {
+        	//判断
+        	String strSwitch = HttpFilterEnum.getSwitch(filter.getClass());
+        	if (StringUtil.isEmpty(strSwitch)) {
+        		continue;
+        	}
+        	if (GatewayConstant.OFF.equals(ConfClient.get(strSwitch))) {
         		continue;
         	}
             boolean result = filter.doFilter(originalRequest, httpObject, channelHandlerContext);
