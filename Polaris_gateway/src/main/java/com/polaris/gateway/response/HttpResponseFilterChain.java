@@ -10,6 +10,7 @@ import com.polaris.gateway.HttpFilterEnum;
 
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
+import jodd.util.StringUtil;
 
 /**
  * @author:Tom.Yu
@@ -26,7 +27,11 @@ public class HttpResponseFilterChain extends HttpFilterChain {
 
     public static void doFilter(HttpRequest originalRequest, HttpResponse httpResponse) {
         for (HttpResponseFilter filter : responseFilters) {
-        	if (GatewayConstant.OFF.equals(ConfClient.get(HttpFilterEnum.getSwitch(filter.getClass())))) {
+        	String strSwitch = HttpFilterEnum.getSwitch(filter.getClass());
+        	if (StringUtil.isEmpty(strSwitch)) {
+        		continue;
+        	}
+        	if (GatewayConstant.OFF.equals(ConfClient.get(strSwitch))) {
         		continue;
         	}
             filter.doFilter(originalRequest, httpResponse);
