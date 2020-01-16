@@ -28,8 +28,8 @@ import io.netty.handler.codec.http.HttpRequest;
 @Service
 public class TokenHttpRequestFilter extends HttpRequestFilter {
 
-	private volatile static Set<String> UNCHECKED_PATHS = new HashSet<>();
-	private volatile static Set<String> UNCHECKED_PATHS_PREFIX = new HashSet<>();
+	public volatile static Set<String> UNCHECKED_PATHS = new HashSet<>();
+	public volatile static Set<String> UNCHECKED_PATHS_PREFIX = new HashSet<>();
 	private final static String FILE_NAME = "token.txt";
 	private final static String TOKEN_MESSAGE="认证失败，请先登录";
 
@@ -78,6 +78,28 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
     	UNCHECKED_PATHS = UNCHECKED_PATHS_TEMP;
     }
     
+    //验证url
+    public static boolean checkUrlPath(HttpRequest httpRequest) {
+    	//获取url
+        String uri = httpRequest.uri();
+        String url;
+        int index = uri.indexOf("?");
+        if (index > 0) {
+            url = uri.substring(0, index);
+        } else {
+            url = uri;
+        }
+        for (String context : UNCHECKED_PATHS_PREFIX) {
+        	if (url.startsWith(context)) {
+        		return false;
+        	}
+        }
+        if (UNCHECKED_PATHS.contains(url)) {
+        	return false;
+        }
+        return true;
+    }
+    
 	@Override
     public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
@@ -85,21 +107,9 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
             //获取request
             HttpRequest httpRequest = (HttpRequest) httpObject;
 
-            //获取url
-            String uri = httpRequest.uri();
-            String url;
-            int index = uri.indexOf("?");
-            if (index > 0) {
-                url = uri.substring(0, index);
-            } else {
-                url = uri;
-            }
-            for (String context : UNCHECKED_PATHS_PREFIX) {
-            	if (url.startsWith(context)) {
-            		return false;
-            	}
-            }
-            if (UNCHECKED_PATHS.contains(url)) {
+            //验证url
+            boolean checkResult = checkUrlPath(httpRequest);
+            if (!checkResult) {
             	return false;
             }
 

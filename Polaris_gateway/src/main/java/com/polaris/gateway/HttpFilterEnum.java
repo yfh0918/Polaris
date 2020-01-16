@@ -40,22 +40,17 @@ public enum HttpFilterEnum {
     private String switc;
     private Class<?> clazz;
     
-	//扩展的requestFilter
-	private static Map<String, Integer> defaultFilterSwith = new HashMap<>();
-	private static Map<Class<?>, String> defaultFilter = new HashMap<>();
-	private static Map<Class<?>, Integer> defaultFilterOrder = new HashMap<>();
-
-	//扩展的requestFilter
-	private static Map<String, Integer> extendFilterSwith = new HashMap<>();
-	private static Map<Class<?>, String> extendFilter = new HashMap<>();
-	private static Map<Class<?>, Integer> extendFilterOrder = new HashMap<>();
+	//requestFilter
+	private static Map<String, Class<?>> filterSwithMap = new HashMap<>();
+	private static Map<Class<?>, String> filterMap = new HashMap<>();
+	private static Map<Class<?>, Integer> filterOrderMap = new HashMap<>();
 
 	//加入默认过滤器
 	static {
 		for (HttpFilterEnum e : HttpFilterEnum.values()) {
-			defaultFilter.put(e.getClazz(), e.getSwitch());
-			defaultFilterOrder.put(e.getClazz(), e.getOrder());
-			defaultFilterSwith.put(e.getSwitch(), e.getOrder());
+			filterMap.put(e.getClazz(), e.getSwitch());
+			filterOrderMap.put(e.getClazz(), e.getOrder());
+			filterSwithMap.put(e.getSwitch(), e.getClazz());
 		}
 	}
 
@@ -76,18 +71,9 @@ public enum HttpFilterEnum {
 	public static String getSwitch(Class<?> clazz) {
 		
 		//循环扩展过滤器
-		String strSwitch = extendFilter.get(clazz);
+		String strSwitch = filterMap.get(clazz);
 		if (StringUtil.isNotEmpty(strSwitch)) {
 			return strSwitch;
-		}
-		
-		//循环默认的过滤器
-		strSwitch = defaultFilter.get(clazz);
-		if (StringUtil.isNotEmpty(strSwitch)) {
-			if (extendFilterSwith.containsKey(strSwitch)) {
-				return null;
-			}
-			return strSwitch; 
 		}
 		return null;
 	}
@@ -98,27 +84,34 @@ public enum HttpFilterEnum {
 	}
 	public static Integer getOrder(Class<?> clazz) {
 		//有限扩展
-		Integer intOrder = extendFilterOrder.get(clazz);
-		if (intOrder != null) {
-			return intOrder;
-		}
-		
-		//默认
-		intOrder = defaultFilterOrder.get(clazz);
+		Integer intOrder = filterOrderMap.get(clazz);
 		if (intOrder != null) {
 			return intOrder;
 		}
 		return -1;
 	}
 	public static void addExtendFilter(String switchKey, Class<?> clazz) {
-		extendFilter.put(clazz, switchKey);
-		Integer intOrder = defaultFilterSwith.get(switchKey);
-		extendFilterOrder.put(clazz, intOrder);
-		extendFilterSwith.put(switchKey, intOrder);
+		Class<?> defautlFilterClass = filterSwithMap.get(switchKey);
+		int order = -1;
+		if (defautlFilterClass != null) {
+			filterSwithMap.remove(switchKey);
+			filterMap.remove(defautlFilterClass);
+			order = filterOrderMap.get(defautlFilterClass);
+			filterOrderMap.remove(defautlFilterClass);
+		}
+		filterMap.put(clazz, switchKey);
+		filterOrderMap.put(clazz, order);
+		filterSwithMap.put(switchKey, clazz);
 	}
 	public static void addExtendFilter( String switchKey, Class<?> clazz, Integer order) {
-		extendFilter.put(clazz, switchKey);
-		extendFilterOrder.put(clazz, order);
-		extendFilterSwith.put(switchKey, order);
+		Class<?> defautlFilterClass = filterSwithMap.get(switchKey);
+		if (defautlFilterClass != null) {
+			filterSwithMap.remove(switchKey);
+			filterMap.remove(defautlFilterClass);
+			filterOrderMap.remove(defautlFilterClass);
+		}
+		filterMap.put(clazz, switchKey);
+		filterOrderMap.put(clazz, order);
+		filterSwithMap.put(switchKey, clazz);
 	}
 }

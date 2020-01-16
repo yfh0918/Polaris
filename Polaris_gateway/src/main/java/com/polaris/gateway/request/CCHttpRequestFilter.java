@@ -60,23 +60,23 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 	private final static String FILE_NAME = "cc.txt";
 	
     //控制总的流量
-	private static volatile RateLimiter totalRateLimiter;
-	private static volatile int int_all_rate = 0;
-	private static volatile int int_all_timeout=30;//最大等待30秒返回
+	public static volatile RateLimiter totalRateLimiter;
+	public static volatile int int_all_rate = 0;
+	public static volatile int int_all_timeout=30;//最大等待30秒返回
 	
 	//ip维度，每秒钟的访问数量
-	private static volatile LoadingCache<String, AtomicInteger> secIploadingCache;
-	private static volatile LoadingCache<String, AtomicInteger> minIploadingCache;
-	private static volatile int[] int_ip_rate = {10,60};
+	public static volatile LoadingCache<String, AtomicInteger> secIploadingCache;
+	public static volatile LoadingCache<String, AtomicInteger> minIploadingCache;
+	public static volatile int[] int_ip_rate = {10,60};
 	
 	//被禁止的IP是否要持久化磁盘 
-	private static volatile boolean isBlackIp = false;
-	private static volatile Cache blackIpCache = CacheFactory.getCache("cc.black.ip");//被禁止的ip
-	private static volatile Integer blockSeconds = 60;
-	private static volatile boolean blockIpPersistent = false;
-	private static volatile String blockIpSavePath = "";
-	private static volatile int timerinterval = 0;//每间隔600秒执行一次
-	private static volatile Timer timer = null;
+	public static volatile boolean isBlackIp = false;
+	public static volatile Cache blackIpCache = CacheFactory.getCache("cc.black.ip");//被禁止的ip
+	public static volatile Integer blockSeconds = 60;
+	public static volatile boolean blockIpPersistent = false;
+	public static volatile String blockIpSavePath = "";
+	public static volatile int timerinterval = 0;//每间隔600秒执行一次
+	public static volatile Timer timer = null;
 	
 	static {
 		
@@ -302,7 +302,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     }
 	
 	//目标拦截
-    private boolean doSentinel(String url, String realIp) {
+	public static boolean doSentinel(String url, String realIp) {
     	Entry entry = null;
     	try {
             UrlCleaner urlCleaner = WebCallbackManager.getUrlCleaner();
@@ -325,7 +325,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         }
     }
     
-    private String getUrl(HttpRequest httpRequest) {
+    public static String getUrl(HttpRequest httpRequest) {
     	//获取url
         String uri = httpRequest.uri();
         String url;
@@ -338,7 +338,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         return url;
     }
     
-    private boolean ccHack(String url, String realIp) {
+    public static boolean ccHack(String url, String realIp) {
        	
     	//IP每秒访问
 		try {
@@ -379,7 +379,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         return false;
     }
     
-    private void saveBlackCache(String realIp) {
+    public static void saveBlackCache(String realIp) {
     	if (isBlackIp) {
     		blackIpCache.put(realIp, new Object(),blockSeconds);//拒绝
     	}

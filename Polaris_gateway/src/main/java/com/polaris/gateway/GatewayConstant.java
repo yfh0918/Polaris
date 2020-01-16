@@ -30,6 +30,7 @@ public class GatewayConstant {
     public static final String X_Forwarded_For = "X-Forwarded-For";
     public static final String X_Real_IP = "X-Real-IP";
     public static final String OFF = "off";
+    public static final String ON = "on";
     
     public static final String HOST = "Host";
     public static final String DEFAULT="default";

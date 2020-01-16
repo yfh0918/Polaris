@@ -59,7 +59,7 @@ public class ApplicationSupport {
         InetSocketAddress inetSocketAddress = new InetSocketAddress(Integer.parseInt(ConfClient.get("server.port")));
         HttpProxyServerBootstrap httpProxyServerBootstrap = DefaultHttpProxyServer.bootstrap()
                 .withAddress(inetSocketAddress);
-        boolean proxy_tls = !GatewayConstant.OFF.equals(ConfClient.get("server.tls"));
+        boolean proxy_tls = GatewayConstant.ON.equals(ConfClient.get("server.tls"));
         
         //反向代理模式
         logger.info("反向代理模式开启");
