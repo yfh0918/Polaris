@@ -115,6 +115,10 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     }
     
     private static void loadFile(String content) {
+    	if (StringUtil.isEmpty(content)) {
+    		logger.error(FILE_NAME + " is null");
+    		return;
+    	}
     	String[] contents = content.split(Constant.LINE_SEP);
     	int blockSecondsTemp = 60;
     	boolean isBlackIpTemp = false;
@@ -345,7 +349,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 	    		return true;//拒绝
 	        } 
 		} catch (ExecutionException e) {
-			logger.error(e.getMessage());
+			logger.error(e.toString());
         	return true;
 		}
 		
@@ -358,14 +362,19 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 	    		return true;//拒绝
 	        } 
 		} catch (ExecutionException e) {
-			logger.error(e.getMessage());
+			logger.error(e.toString());
         	return true;
 		}
 		
         //总量控制
-        if (!totalRateLimiter.tryAcquire(1, int_all_timeout, TimeUnit.SECONDS)) {
-            return true;
-        }
+		try {
+	        if (!totalRateLimiter.tryAcquire(1, int_all_timeout, TimeUnit.SECONDS)) {
+	            return true;
+	        }
+		} catch (Exception ex) {
+			logger.error(ex.toString());
+        	return true;
+		}
 
         return false;
     }
