@@ -1,5 +1,7 @@
 ﻿1:install or deploy 全体
- Polaris_assembly插件可以install和deploy但是，jekins构建会存在问题（插件目前只能从http://repository.apache.org/snapshots/com/polaris/Polaris_assembly/1.0.0-SNAPSHOT/maven-metadata.xml拉取）需要本地Polaris_assembly包手动copy到jekins的maven仓库
+ Polaris_assembly插件可以install和deploy但是，jekins构建会存在问题
+ （插件目前只能从  http://repository.apache.org/snapshots/com/polaris/Polaris_assembly/1.0.0-SNAPSHOT/maven-metadata.xml拉取）
+ 需要本地Polaris_assembly包手动copy到jekins的maven仓库
 
 2:提供两种类型的 demo（调用dubbo应用 和 无dubbo应用）
   主要参数可以参考Polaris_demo_web_nodubbo的application.properties
