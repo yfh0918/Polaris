@@ -25,6 +25,15 @@
                  <include>*.*</include>  
              </includes>  
          </fileSet>    
+
+         <!-- webcontent  --> 
+         <fileSet>  
+             <directory>${project.basedir}${file.separator}src${file.separator}main${file.separator}resources${file.separator}WebContent</directory>  
+             <outputDirectory>WebContent</outputDirectory>  
+             <includes>  
+                 <include>**</include>  
+             </includes>  
+         </fileSet>  
          
          <!-- 把项目的脚本文件目录（ src/main/resources/scripts ）中的启动脚本文件，打包进zip文件的跟目录 -->  
          <fileSet>  

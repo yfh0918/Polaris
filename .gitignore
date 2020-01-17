@@ -356,3 +356,6 @@
 /Polaris_demo/Polaris_demo_gateway/.classpath
 /Polaris_demo/Polaris_demo_gateway/.project
 /Polaris_demo/Polaris_demo_gateway/target
+/Polaris_assembly/.settings
+/Polaris_assembly/target
+/Polaris_assembly/.project

@@ -8,6 +8,7 @@
     <name>Polaris_parent</name>
 
     <modules>
+        <module>Polaris_assembly</module>
         <module>Polaris_core</module>
         <module>Polaris_launcher</module>
         <module>Polaris_container</module>
@@ -1194,10 +1195,17 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>2.4</version>
+                    <dependencies>
+			          <dependency>
+			            <groupId>com.polaris</groupId>
+			            <artifactId>Polaris_assembly</artifactId>
+			            <version>${polaris-version}</version>
+			          </dependency>
+			        </dependencies>
                     <configuration>
-                        <descriptors>
-                            <descriptor>src/main/resources/assembly/package.xml</descriptor>
-                        </descriptors>
+                        <descriptorRefs>
+		                	<descriptorRef>PolarisAssemblyPackage</descriptorRef>
+		                </descriptorRefs>
                     </configuration>
                     <executions>
                         <execution>
