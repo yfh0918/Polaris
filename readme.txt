@@ -1,4 +1,5 @@
-﻿1:install 全体
+﻿1:install or deploy 全体
+ Polaris_assembly插件可以install和deploy但是，jekins构建会存在问题（插件目前只能从http://repository.apache.org/snapshots/com/polaris/Polaris_assembly/1.0.0-SNAPSHOT/maven-metadata.xml拉取）需要本地Polaris_assembly包手动copy到jekins的maven仓库
 
 2:提供两种类型的 demo（调用dubbo应用 和 无dubbo应用）
   主要参数可以参考Polaris_demo_web_nodubbo的application.properties
@@ -11,7 +12,6 @@
   #name.registry.address=127.0.0.1:8848
   需要在自己的服务pom.xml中引入 Polaris_naming_nacos
   
-
 4:配置中心支持多种模式（zookeeper,nacos,apollo的ConfigFile以及本地文件file），需要在自己的配置文件中设置配置中心
   所有的配置种类，需自己下载软件，比如nacos,apollo,zookeeper的建议使用ZooViewer（https://github.com/HelloKittyNII/ZooViewer）
   #zookeeper需要设置config.zk.root.path默认值【/polaris_conf】
