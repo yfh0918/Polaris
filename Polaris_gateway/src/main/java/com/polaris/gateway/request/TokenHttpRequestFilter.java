@@ -31,7 +31,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
 	public volatile static Set<String> UNCHECKED_PATHS = new HashSet<>();
 	public volatile static Set<String> UNCHECKED_PATHS_PREFIX = new HashSet<>();
 	private final static String FILE_NAME = "token.txt";
-	private final static String TOKEN_MESSAGE="认证失败，请先登录";
+	public final static String TOKEN_MESSAGE="认证失败，请先登录";
 
 	static {
 		//先获取

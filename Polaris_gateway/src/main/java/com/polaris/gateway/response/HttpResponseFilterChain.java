@@ -27,11 +27,11 @@ public class HttpResponseFilterChain extends HttpFilterChain {
 
     public static void doFilter(HttpRequest originalRequest, HttpResponse httpResponse) {
         for (HttpResponseFilter filter : responseFilters) {
-        	String strSwitch = HttpFilterEnum.getSwitch(filter.getClass());
-        	if (StringUtil.isEmpty(strSwitch)) {
+        	String key = HttpFilterEnum.getKey(filter.getClass());
+        	if (StringUtil.isEmpty(key)) {
         		continue;
         	}
-        	if (GatewayConstant.OFF.equals(ConfClient.get(strSwitch))) {
+        	if (GatewayConstant.OFF.equals(ConfClient.get(key))) {
         		continue;
         	}
             filter.doFilter(originalRequest, httpResponse);

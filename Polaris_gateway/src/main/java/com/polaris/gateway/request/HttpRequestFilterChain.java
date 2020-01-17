@@ -32,11 +32,11 @@ public class HttpRequestFilterChain extends HttpFilterChain{
     public static ImmutablePair<Boolean, HttpRequestFilter> doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
         for (HttpRequestFilter filter : requestFilters) {
         	//判断
-        	String strSwitch = HttpFilterEnum.getSwitch(filter.getClass());
-        	if (StringUtil.isEmpty(strSwitch)) {
+        	String key = HttpFilterEnum.getKey(filter.getClass());
+        	if (StringUtil.isEmpty(key)) {
         		continue;
         	}
-        	if (GatewayConstant.OFF.equals(ConfClient.get(strSwitch))) {
+        	if (GatewayConstant.OFF.equals(ConfClient.get(key))) {
         		continue;
         	}
             boolean result = filter.doFilter(originalRequest, httpObject, channelHandlerContext);
