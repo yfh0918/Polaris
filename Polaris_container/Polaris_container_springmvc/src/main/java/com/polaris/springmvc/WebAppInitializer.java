@@ -32,21 +32,16 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 	
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
-		Class<?>[] rootConfigs = WebConfigInitializer.getRootConfigs();
-		if (rootConfigs == null || rootConfigs.length == 0) {
+		Class<?> rootConfigClass = WebConfigInitializer.getRootConfigClass();
+		if (rootConfigClass == null) {
 			return new Class<?>[]{DefaultRootConfig.class};
 		}
-		Class<?>[] newRootConfigs = new Class<?>[rootConfigs.length+1];
-		newRootConfigs[0] = DefaultRootConfig.class;
-		for (int i0 = 0; i0 < rootConfigs.length; i0++) {
-			newRootConfigs[i0 + 1] = rootConfigs[i0];
-		}
-		return newRootConfigs;
+		return new Class<?>[]{DefaultRootConfig.class,rootConfigClass};
 	}
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		return WebConfigInitializer.getWebConfigs();
+		return null;
 	}
 
 	@Override

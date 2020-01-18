@@ -141,6 +141,7 @@ public class FlowControlFilter implements Filter {
 	}
 	
 	//设置返回值
+	@SuppressWarnings("rawtypes")
 	private void setRtnResponse(HttpServletResponse httpServletResponse) throws IOException  {
 		httpServletResponse.setStatus(200);
 		ResultDto responseDto = new ResultDto();

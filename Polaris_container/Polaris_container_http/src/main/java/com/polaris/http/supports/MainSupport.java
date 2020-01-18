@@ -36,13 +36,13 @@ public class MainSupport {
     * @Exception 
     * @since 
     */
-    public static void startWebServer(String[] args, Class<?>[] rootConfig, Class<?>[] webConfig) {
+    public static void startWebServer(String[] args, Class<?> rootConfigClass) {
     	
     	//各类参数载入
     	ConfClient.init();
     	
     	//启动
-    	ContainerServerFactory.startServer(rootConfig, webConfig, new ServerListener() {
+    	ContainerServerFactory.startServer(rootConfigClass, new ServerListener() {
 
 			@Override
 			public void started(ServletContext servletContext) {
@@ -60,16 +60,12 @@ public class MainSupport {
     	});
     }
     
-    public static void startWebServer(String[] args, Class<?>[] rootConfig) {
-    	
-    	//启动
-    	startWebServer(args, rootConfig, null);
-    }
+
     
     public static void startWebServer(String[] args) {
     	
     	//启动
-    	startWebServer(args, null, null);
+    	startWebServer(args, null);
     }
     
     

@@ -24,7 +24,7 @@ import io.netty.handler.codec.http.HttpRequest;
 public class ApplicationSupport {
 	
     //启动网关应用
-	public static void startGateway(Class<?>... clazzs) {
+	public static void startGateway(Class<?> clazzs) {
     	
     	//载入参数
     	ConfClient.init();

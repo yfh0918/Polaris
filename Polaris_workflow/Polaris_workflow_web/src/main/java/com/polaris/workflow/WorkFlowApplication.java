@@ -7,7 +7,7 @@ import com.polaris.http.supports.MainSupport;
  * 入口启动类
  *
  */
-@PolarisApplication(scanBasePackages={"com.polaris"})
+@PolarisApplication
 public class WorkFlowApplication
 {
     
@@ -15,6 +15,6 @@ public class WorkFlowApplication
     {
 
 		//启动WEB
-    	MainSupport.startWebServer(args,new Class[]{WorkFlowApplication.class});
+    	MainSupport.startWebServer(args,WorkFlowApplication.class);
     }
 }

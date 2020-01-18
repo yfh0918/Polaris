@@ -31,13 +31,13 @@ public class ApplicationSupport {
 	private static Logger logger = LoggerFactory.getLogger(ApplicationSupport.class);
 	
     //启动网关应用
-	public static void startGateway(Class<?>... clazzs) {
+	public static void startGateway(Class<?> clazz) {
     	
     	//载入参数
 		ConfClient.init();
     	
 		//载入spring
-    	SpringUtil.refresh(clazzs);
+    	SpringUtil.refresh(clazz);
     	
     	//注册服务
 		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {

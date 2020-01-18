@@ -1,40 +1,21 @@
 package com.polaris.http.initializer;
 
-import java.util.HashSet;
-import java.util.Set;
-
 abstract public class WebConfigInitializer {
 
-	private static Set<Class<?>> rootConfigs = new HashSet<>();
-	private static Set<Class<?>> webConfigs = new HashSet<>();
+	private static Class<?> rootConfigClass = null;
+	private static String scanPath = null;
 	
-	public static void loadRootConfig(Class<?>... clazzs) {
-		if (clazzs != null) {
-			for (Class<?> clazz : clazzs) {
-				rootConfigs.add(clazz);
-			}
+	public static void loadRootConfig(Class<?> clazz) {
+		rootConfigClass = clazz;
+		if (rootConfigClass != null) {
+			scanPath = rootConfigClass.getPackage().getName();
 		}
 	}
-	public static void loadWebConfig(Class<?>... clazzs) {
-		if (clazzs != null) {
-			for (Class<?> clazz : clazzs) {
-				webConfigs.add(clazz);
-			}
-		}
+	public static Class<?> getRootConfigClass() {
+		return rootConfigClass;
+	}
+	public static String getDefaultScanPath() {
+		return scanPath;
 	}
 	
-	public static Class<?>[] getRootConfigs() {
-		if (rootConfigs.size() > 0) {
-			return rootConfigs.toArray(new Class[0]);
-		}
-		return null;
-	}
-	
-	public static Class<?>[] getWebConfigs() {
-		if (webConfigs.size() > 0) {
-			return webConfigs.toArray(new Class[0]);
-		}
-		return null;
-	}
-
 }

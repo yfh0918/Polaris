@@ -8,7 +8,7 @@ import com.polaris.http.supports.MainSupport;
  * 入口启动类
  *
  */
-@PolarisApplication(scanBasePackages={"com.polaris"})
+@PolarisApplication
 public class DemoApplication
 
 {
@@ -17,6 +17,6 @@ public class DemoApplication
     {
 
 		//启动WEB
-    	MainSupport.startWebServer(args,new Class[]{DemoApplication.class});
+    	MainSupport.startWebServer(args,DemoApplication.class);
     }
 }

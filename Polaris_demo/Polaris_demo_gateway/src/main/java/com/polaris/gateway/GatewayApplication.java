@@ -1,14 +1,15 @@
 package com.polaris.gateway;
 
 
-import com.polaris.core.Launcher;
+import com.polaris.core.annotation.PolarisGatewayApplication;
 import com.polaris.gateway.support.ApplicationSupport;
 
-public class GatewayApplication implements Launcher{
+@PolarisGatewayApplication
+public class GatewayApplication {
 	
     public static void main(String[] args) {
     	
     	//启动网关应用
-    	ApplicationSupport.startGateway();
+    	ApplicationSupport.startGateway(GatewayApplication.class);
     }
 }

@@ -10,16 +10,11 @@ public class ContainerServerFactory {
     private ContainerServerFactory() {
     }
 
-    public static void startServer(Class<?>[] rootConfig, Class<?>[] webConfig, ServerListener listener) {
+    public static void startServer(Class<?> rootConfig, ServerListener listener) {
     	
     	//root context
     	if (rootConfig != null) {
     		WebConfigInitializer.loadRootConfig(rootConfig);
-    	}
-    	
-    	//web context
-    	if (webConfig != null) {
-    		WebConfigInitializer.loadWebConfig(webConfig);
     	}
     	
     	//start server
@@ -27,9 +22,6 @@ public class ContainerServerFactory {
     		container.start(listener);
     		break;
 		}
-    }
-    public static void startServer(Class<?>[] rootConfig, ServerListener listener) {
-    	startServer(rootConfig, null, listener);
     }
     public static void stopServer() {
     	for (ContainerDiscoveryHandler container : containers) {
