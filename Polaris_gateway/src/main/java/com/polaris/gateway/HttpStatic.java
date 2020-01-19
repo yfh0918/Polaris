@@ -6,11 +6,11 @@ import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.config.ConfListener;
+import com.polaris.core.util.StringUtil;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -38,7 +38,6 @@ public class HttpStatic {
 
     static {
     	
-
     	//先获取
     	loadUpstream(ConfClient.getConfigValue(LISTEN));
     	

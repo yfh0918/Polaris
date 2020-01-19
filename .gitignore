@@ -360,3 +360,7 @@
 /Polaris_assembly/target
 /Polaris_assembly/.project
 /Polaris_assembly/.classpath
+/Polaris_database/.settings
+/Polaris_database/target
+/Polaris_database/.classpath
+/Polaris_database/.project

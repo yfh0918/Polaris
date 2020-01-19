@@ -2,10 +2,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.polaris</groupId>
-    <artifactId>Polaris_base</artifactId>
+    <artifactId>Polaris</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Polaris_base</name>
+    <name>Polaris</name>
 
     <modules>
         <module>Polaris_assembly</module>
@@ -20,6 +20,7 @@
         <module>Polaris_cache</module>
         <module>Polaris_sentinel</module>
         <module>Polaris_gateway</module>
+        <module>Polaris_database</module>
     </modules>
         
 

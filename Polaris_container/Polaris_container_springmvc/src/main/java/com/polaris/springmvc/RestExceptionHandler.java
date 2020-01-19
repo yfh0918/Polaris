@@ -2,10 +2,10 @@ package com.polaris.springmvc;
 
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.dto.ResultDto;
+import com.polaris.core.util.StringUtil;
 
 abstract class RestExceptionHandler {  
     

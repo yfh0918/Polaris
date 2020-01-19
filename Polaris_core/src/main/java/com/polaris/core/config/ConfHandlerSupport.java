@@ -6,8 +6,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
+import com.polaris.core.util.StringUtil;
 
 public class ConfHandlerSupport {
 

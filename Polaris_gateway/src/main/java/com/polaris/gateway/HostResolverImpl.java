@@ -9,13 +9,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.littleshoot.proxy.HostResolver;
 
-import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.config.ConfListener;
 import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
 import com.polaris.core.naming.ServerDiscoveryHandlerSupport;
+import com.polaris.core.util.StringUtil;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 import io.netty.handler.codec.http.HttpRequest;

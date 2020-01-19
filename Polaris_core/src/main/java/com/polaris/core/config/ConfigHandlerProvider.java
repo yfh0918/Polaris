@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
-import com.github.pagehelper.util.StringUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.OrderWrapper;
 import com.polaris.core.config.value.AutoUpdateConfigChangeListener;
 import com.polaris.core.util.SpringUtil;
+import com.polaris.core.util.StringUtil;
 
 @SuppressWarnings("rawtypes")
 public abstract class ConfigHandlerProvider {
