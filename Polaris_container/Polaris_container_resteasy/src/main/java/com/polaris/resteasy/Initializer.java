@@ -4,13 +4,12 @@ import javax.servlet.ServletRegistration;
 
 import com.polaris.core.util.SpringUtil;
 import com.polaris.http.initializer.AbsHttpInitializer;
-import com.polaris.http.initializer.WebConfigInitializer;
 
 public class Initializer extends  AbsHttpInitializer { 
 
 	@Override
 	public void loadContext() {
-		SpringUtil.refresh(WebConfigInitializer.getRootConfigClass());
+		SpringUtil.refresh();
 	} 
 	
 	@Override

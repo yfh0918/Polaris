@@ -61,15 +61,6 @@ public class MainSupport {
     }
     
 
-    
-    public static void startWebServer(String[] args) {
-    	
-    	//启动
-    	startWebServer(args, null);
-    }
-    
-    
-
     /**
      * stopWebServer(关闭web容器)
      * @param 

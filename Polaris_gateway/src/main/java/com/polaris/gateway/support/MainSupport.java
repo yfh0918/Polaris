@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.ConfigLoader;
 import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
 import com.polaris.core.util.SpringUtil;
 import com.polaris.gateway.GatewayConstant;
@@ -26,9 +27,9 @@ import com.polaris.http.util.NetUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
-public class ApplicationSupport {
+public class MainSupport {
 	
-	private static Logger logger = LoggerFactory.getLogger(ApplicationSupport.class);
+	private static Logger logger = LoggerFactory.getLogger(MainSupport.class);
 	
     //启动网关应用
 	public static void startGateway(Class<?> clazz) {
@@ -36,8 +37,11 @@ public class ApplicationSupport {
     	//载入参数
 		ConfClient.init();
     	
+		//载入配置
+		ConfigLoader.loadRootConfig(clazz);
+		
 		//载入spring
-    	SpringUtil.refresh(clazz);
+    	SpringUtil.refresh();
     	
     	//注册服务
 		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {

@@ -8,9 +8,8 @@ import javax.servlet.ServletException;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-import com.polaris.core.config.DefaultRootConfig;
+import com.polaris.core.config.ConfigLoader;
 import com.polaris.core.util.SpringUtil;
-import com.polaris.http.initializer.WebConfigInitializer;
 
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 	private static AtomicBoolean initialized = new AtomicBoolean(false);
@@ -32,11 +31,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 	
 	@Override
 	protected Class<?>[] getRootConfigClasses() {
-		Class<?> rootConfigClass = WebConfigInitializer.getRootConfigClass();
-		if (rootConfigClass == null) {
-			return new Class<?>[]{DefaultRootConfig.class};
-		}
-		return new Class<?>[]{DefaultRootConfig.class,rootConfigClass};
+		return ConfigLoader.getRootConfigClass();
 	}
 
 	@Override

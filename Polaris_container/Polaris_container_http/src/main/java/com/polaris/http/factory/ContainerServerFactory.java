@@ -2,7 +2,7 @@ package com.polaris.http.factory;
 
 import java.util.ServiceLoader;
 
-import com.polaris.http.initializer.WebConfigInitializer;
+import com.polaris.core.config.ConfigLoader;
 import com.polaris.http.listener.ServerListener;
 
 public class ContainerServerFactory {
@@ -14,7 +14,7 @@ public class ContainerServerFactory {
     	
     	//root context
     	if (rootConfig != null) {
-    		WebConfigInitializer.loadRootConfig(rootConfig);
+    		ConfigLoader.loadRootConfig(rootConfig);
     	}
     	
     	//start server

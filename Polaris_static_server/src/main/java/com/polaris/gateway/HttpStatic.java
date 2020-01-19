@@ -36,7 +36,7 @@ public class HttpStatic {
     private static final String LISTEN = "static.txt";
     private static Map<String, Map<String, String>> urlMap = new HashMap<>();
 
-    public static void init() {
+    static {
     	
     	//先获取
     	loadUpstream(ConfClient.getConfigValue(LISTEN));

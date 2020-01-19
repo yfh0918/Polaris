@@ -3,6 +3,7 @@ package com.polaris.dubbo.supports;
 import java.io.IOException;
 
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.ConfigLoader;
 import com.polaris.core.util.SpringUtil;
 
 /**
@@ -34,12 +35,15 @@ public class MainSupport {
     * @Exception 
     * @since 
     */
-    public static void startDubboServer(String[] args, Class<?>... clazzs) throws IOException  {
+    public static void startDubboServer(String[] args, Class<?> clazz) throws IOException  {
     	//载入参数
     	ConfClient.init();
     	
+		//载入配置
+		ConfigLoader.loadRootConfig(clazz);
+		
     	//载入spring
-    	SpringUtil.refresh(clazzs);
+    	SpringUtil.refresh();
     	
     	//hold
     	System.in.read();

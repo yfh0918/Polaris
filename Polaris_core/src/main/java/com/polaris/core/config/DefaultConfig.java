@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan(basePackages={"com.polaris"})
-public class DefaultRootConfig {
+public class DefaultConfig {
 	@Bean
 	public static ConfPropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
 		return new ConfPropertyPlaceholderConfigurer();
