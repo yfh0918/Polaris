@@ -20,6 +20,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.StringUtil;
 
 @Configuration 
 @EnableWebMvc
@@ -55,10 +56,14 @@ public class WebMvcConfigurerImpl extends WebMvcConfigurerAdapter {
 	    FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
 	    String freeMarkerViewResolverSuffix = ConfClient.get("freeMarker.viewResolver.suffix", ".ftl");
 	    viewResolver.setSuffix(freeMarkerViewResolverSuffix);
-	    viewResolver.setCache(true);
+	    String freeMarkerViewResolverprefix = ConfClient.get("freeMarker.viewResolver.prefix");
+	    if (StringUtil.isNotEmpty(freeMarkerViewResolverprefix)) {
+	    	viewResolver.setPrefix(freeMarkerViewResolverprefix);
+	    }
+	    viewResolver.setCache(Boolean.parseBoolean(ConfClient.get("freeMarker.viewResolver.cache","true")));
 	    viewResolver.setContentType("text/html;charset="+Charset.defaultCharset().toString());
-	    viewResolver.setExposeRequestAttributes(true);
-	    viewResolver.setExposeSessionAttributes(true);
+	    viewResolver.setExposeRequestAttributes(Boolean.parseBoolean(ConfClient.get("freeMarker.viewResolver.exposeRequestAttributes","true")));
+	    viewResolver.setExposeSessionAttributes(Boolean.parseBoolean(ConfClient.get("freeMarker.viewResolver.exposeSessionAttributes","true")));
 	    viewResolver.setRequestContextAttribute("request");
 	    viewResolver.setOrder(0);
 	    return viewResolver;
