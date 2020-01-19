@@ -28,14 +28,9 @@
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_conf_file</artifactId>
         </dependency>
-        <!-- mybatis -->
-		<dependency>
-		    <groupId>com.zaxxer</groupId>
-		    <artifactId>HikariCP</artifactId>
-		</dependency>
         <dependency>
-            <groupId>tk.mybatis</groupId>
-            <artifactId>mapper</artifactId>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_database</artifactId>
         </dependency>
 		
 		<dependency>
