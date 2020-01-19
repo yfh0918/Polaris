@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import com.polaris.core.util.EncryptUtil;
 import com.polaris.core.util.StringUtil;
 
 /**
@@ -187,9 +186,6 @@ public class PlaceholderHelper {
 				placeholder = parseStringValue(placeholder, visitedPlaceholders);
 				// Now obtain the value for the fully resolved key...
 				String propVal = ConfClient.get(placeholder);
-				if (StringUtil.isEmpty(propVal)) {
-					propVal = resolveSystemProperty(placeholder);
-				}
 				if (StringUtil.isEmpty(propVal) && VALUE_SEPARATOR != null) {
 					int separatorIndex = placeholder.indexOf(VALUE_SEPARATOR);
 					if (separatorIndex != -1) {
@@ -197,21 +193,11 @@ public class PlaceholderHelper {
 						String defaultValue = placeholder.substring(separatorIndex + VALUE_SEPARATOR.length());
 						propVal = ConfClient.get(actualPlaceholder);
 						if (StringUtil.isEmpty(propVal)) {
-							propVal = resolveSystemProperty(placeholder);
-						}
-						if (StringUtil.isEmpty(propVal)) {
 							propVal = defaultValue;
 						}
 					}
 				}
 				if (StringUtil.isNotEmpty(propVal)) {
-					//解密操作
-					try {
-						EncryptUtil encrypt = EncryptUtil.getInstance();
-						propVal = encrypt.decrypt(EncryptUtil.START_WITH, propVal);
-					} catch (Exception ex) {
-						//nothing
-					}
 					
 					// Recursive invocation, parsing placeholders contained in the
 					// previously resolved placeholder value.
@@ -238,21 +224,5 @@ public class PlaceholderHelper {
 		}
 
 		return result.toString();
-	}
-	
-	private static String resolveSystemProperty(String key) {
-		try {
-			String value = System.getProperty(key);
-			if (value == null) {
-				value = System.getenv(key);
-			}
-			return value;
-		}
-		catch (Throwable ex) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Could not access system property '" + key + "': " + ex);
-			}
-			return null;
-		}
 	}
 }
