@@ -66,6 +66,8 @@
         </dependency>
   assembly目录下的配置文件不用修改，
   application.properties 定义服务的project.name,context,port,，是否开启servlet限流，等等
+  springmvc默认配置了MultipartResolver和FreeMarkerConfigurer等，请参考WebMvcConfigurerImpl类，
+  如果需要重载可以自定义@Configuration类，并在类里面重载相应的@Bean但是需要加上@Primary注解
 
 9,新增了基于netty的静态文件服务器（不支持jsp和servlet）
    具体context配置参照config\static.txt
