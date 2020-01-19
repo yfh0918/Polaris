@@ -1,10 +1,10 @@
 package com.polaris.gateway;
 
 
-import com.polaris.core.annotation.PolarisGatewayApplication;
+import com.polaris.core.annotation.PolarisBaseApplication;
 import com.polaris.gateway.support.ApplicationSupport;
 
-@PolarisGatewayApplication
+@PolarisBaseApplication
 public class StaticApplication {
     public static void main(String[] args) {
     	    	

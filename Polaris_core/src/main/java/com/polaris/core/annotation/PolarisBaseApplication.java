@@ -11,7 +11,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -19,10 +18,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Inherited
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass=true)
-@EnableTransactionManagement(proxyTargetClass=true)
 @ComponentScan
-public @interface PolarisApplication {
-
+public @interface PolarisBaseApplication {
 	@AliasFor(annotation = ComponentScan.class, attribute = "basePackages")
 	String[] scanBasePackages() default {};
 

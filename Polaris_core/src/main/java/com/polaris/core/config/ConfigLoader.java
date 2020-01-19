@@ -5,13 +5,18 @@ import java.util.Set;
 
 import org.springframework.context.annotation.ComponentScan;
 
+import com.polaris.core.annotation.PolarisApplication;
+
 abstract public class ConfigLoader {
 
 	private static Class<?> rootConfigClass = null;
 	private static Set<String> basePackages = new HashSet<>();
+	private static Set<String> basePackagesForMapper = new HashSet<>();
 	
 	public static void loadRootConfig(Class<?> clazz) {
 		rootConfigClass = clazz;
+		
+		//application-scan
 		ComponentScan compoentScanAnnotation = rootConfigClass.getAnnotation(ComponentScan.class);
 		if (compoentScanAnnotation != null) {
 			String[] tempBasePackages = compoentScanAnnotation.basePackages();
@@ -28,8 +33,27 @@ abstract public class ConfigLoader {
 			}
 		}
 		if (basePackages.size() == 0) {
+			basePackages.add(DefaultConfig.BASE_PACKAGE);
 			basePackages.add(rootConfigClass.getPackage().getName());
 		}
+		
+		//mapper-scan
+		PolarisApplication polarisAnnotation = rootConfigClass.getAnnotation(PolarisApplication.class);
+		if (polarisAnnotation != null) {
+			String[] tempPasePackagesForMapper = polarisAnnotation.scanBasePackagesForMapper();
+			if (tempPasePackagesForMapper != null && tempPasePackagesForMapper.length > 0) {
+				for (String basePackageForMapper : tempPasePackagesForMapper) {
+					basePackagesForMapper.add(basePackageForMapper);
+				}
+			}
+			if (basePackagesForMapper.size() == 0) {
+				for(String basePackage : basePackages) {
+					basePackagesForMapper.add(basePackage+".**.mapper");
+				}
+			}
+		}
+		
+		
 	}
 	public static Class<?>[] getRootConfigClass() {
 		if (rootConfigClass == null) {
@@ -39,6 +63,9 @@ abstract public class ConfigLoader {
 	}
 	public static Set<String> getBasePackages() {
 		return basePackages;
+	}
+	public static Set<String> getBasePackagesForMapper() {
+		return basePackagesForMapper;
 	}
 	
 }
