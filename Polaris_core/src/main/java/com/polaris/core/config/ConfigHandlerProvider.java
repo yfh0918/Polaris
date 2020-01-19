@@ -7,6 +7,7 @@ import java.util.ServiceLoader;
 import com.polaris.core.Constant;
 import com.polaris.core.OrderWrapper;
 import com.polaris.core.config.value.AutoUpdateConfigChangeListener;
+import com.polaris.core.util.EncryptUtil;
 import com.polaris.core.util.SpringUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -47,7 +48,7 @@ public abstract class ConfigHandlerProvider {
 			for (String content : contents) {
 				String[] keyvalue = ConfHandlerSupport.getKeyValue(content);
 				if (keyvalue != null) {
-					configEnum.put(keyvalue[0], keyvalue[1]);
+					configEnum.put(keyvalue[0], getDecryptValue(keyvalue[1]));
 				}
 			}
 	    	if (isListen) {
@@ -81,7 +82,14 @@ public abstract class ConfigHandlerProvider {
 		}
 	}
 	
-	
-	
-
+	private static String getDecryptValue(String propVal) {
+		//解密操作
+		try {
+			EncryptUtil encrypt = EncryptUtil.getInstance();
+			propVal = encrypt.decrypt(EncryptUtil.START_WITH, propVal);
+		} catch (Exception ex) {
+			//nothing
+		}
+		return propVal;
+	}
 }

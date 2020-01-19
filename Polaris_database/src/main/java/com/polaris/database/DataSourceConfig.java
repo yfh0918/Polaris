@@ -21,7 +21,6 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import com.github.pagehelper.PageInterceptor;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.datasource.DynamicDataSource;
-import com.polaris.core.util.EncryptUtil;
 import com.polaris.core.util.StringUtil;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -32,8 +31,8 @@ public class DataSourceConfig {
 	@Bean(name = "masterDataSource")    
     public DataSource masterDataSource() { 
 		String jdbcUrl = ConfClient.get("jdbc.url",ConfClient.get("spring.datasource.url"));
-		String username = getDecryptValue(ConfClient.get("jdbc.username",ConfClient.get("spring.datasource.username")));
-		String password = getDecryptValue(ConfClient.get("jdbc.password",ConfClient.get("spring.datasource.password")));
+		String username = ConfClient.get("jdbc.username",ConfClient.get("spring.datasource.username"));
+		String password = ConfClient.get("jdbc.password",ConfClient.get("spring.datasource.password"));
 		String driver = ConfClient.get("jdbc.driver",ConfClient.get("spring.datasource.driver"));
 		if (StringUtil.isEmpty(jdbcUrl) || StringUtil.isEmpty(username) || StringUtil.isEmpty(password)) {
 			return null;
@@ -105,15 +104,4 @@ public class DataSourceConfig {
         factory.setMapperLocations(resolver.getResources("classpath*:/mappers/**/*.xml"));
         return factory.getObject();
     }
-	
-	private String getDecryptValue(String propVal) {
-		//解密操作
-		try {
-			EncryptUtil encrypt = EncryptUtil.getInstance();
-			propVal = encrypt.decrypt(EncryptUtil.START_WITH, propVal);
-		} catch (Exception ex) {
-			//nothing
-		}
-		return propVal;
-	}
 }
