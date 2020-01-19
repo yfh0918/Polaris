@@ -26,7 +26,7 @@ import com.alibaba.csp.sentinel.util.StringUtil;
  * @author lianglin
  * @since 1.7.0
  */
-public final class DubboConfig {
+public final class SentinelDubboConfig {
 
     public static final String DUBBO_USE_PREFIX = "csp.sentinel.dubbo.resource.use.prefix";
     private static final String TRUE_STR = "true";

@@ -34,7 +34,7 @@ import com.alibaba.csp.sentinel.log.RecordLog;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.polaris.core.GlobalContext;
 import com.polaris.core.util.StringUtil;
-import com.polaris.dubbo.config.DubboConfig;
+import com.polaris.dubbo.config.SentinelDubboConfig;
 import com.polaris.dubbo.fallback.DubboFallbackRegistry;
 
 /**
@@ -71,7 +71,7 @@ public class SentinelDubboProviderFilter extends AbstractDubboFilter implements 
         Entry interfaceEntry = null;
         Entry methodEntry = null;
         try {
-            String resourceName = getResourceName(invoker, invocation, DubboConfig.getDubboProviderPrefix());
+            String resourceName = getResourceName(invoker, invocation, SentinelDubboConfig.getDubboProviderPrefix());
             String interfaceName = invoker.getInterface().getName();
             ContextUtil.enter(resourceName, application);
             interfaceEntry = SphU.entry(interfaceName, EntryType.IN);

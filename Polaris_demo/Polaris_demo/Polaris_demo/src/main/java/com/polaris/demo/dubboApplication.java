@@ -1,10 +1,10 @@
 package com.polaris.demo;
 
 
-import com.polaris.core.annotation.PolarisApplication;
+import com.polaris.dubbo.annotation.PolarisDubboApplication;
 import com.polaris.dubbo.supports.MainSupport;
 
-@PolarisApplication
+@PolarisDubboApplication
 public class dubboApplication{
 	
 	public static void main(String[] args) throws Exception { 

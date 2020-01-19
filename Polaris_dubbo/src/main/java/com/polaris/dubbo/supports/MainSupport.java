@@ -35,7 +35,8 @@ public class MainSupport {
     * @Exception 
     * @since 
     */
-    public static void startDubboServer(String[] args, Class<?> clazz) throws IOException  {
+	public static void startDubboServer(String[] args, Class<?> clazz) throws IOException  {
+    	
     	//载入参数
     	ConfClient.init();
     	

@@ -7,7 +7,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.annotation.AliasFor;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -18,10 +17,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @PolarisBaseApplication
 @EnableTransactionManagement(proxyTargetClass=true)
 public @interface PolarisApplication {
-	@AliasFor(annotation = ComponentScan.class, attribute = "basePackages")
+	@AliasFor(annotation = PolarisBaseApplication.class, attribute = "scanBasePackages")
 	String[] scanBasePackages() default {};
 
-	@AliasFor(annotation = ComponentScan.class, attribute = "basePackageClasses")
+	@AliasFor(annotation = PolarisBaseApplication.class, attribute = "scanBasePackageClasses")
 	Class<?>[] scanBasePackageClasses() default {};
 
 	String[] scanBasePackagesForMapper() default {};

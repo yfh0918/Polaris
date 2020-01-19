@@ -1,14 +1,14 @@
 package com.polaris.demo;
 
 
-import com.polaris.core.annotation.PolarisApplication;
+import com.polaris.dubbo.annotation.PolarisDubboApplication;
 import com.polaris.http.supports.MainSupport;
 
 /**
  * 入口启动类
  *
  */
-@PolarisApplication
+@PolarisDubboApplication
 public class DemoApplication
 
 {

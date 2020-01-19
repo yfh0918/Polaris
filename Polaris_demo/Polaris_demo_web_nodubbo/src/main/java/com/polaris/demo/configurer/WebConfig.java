@@ -13,8 +13,7 @@
 //import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 //import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 //
-//@Configuration
-//@EnableWebMvc 
+//@Configuration 
 //public class WebConfig extends WebMvcConfigurerAdapter {
 //	
 //	@Value("${uploadFilePath}")
@@ -23,38 +22,7 @@
 //	@Value("${uploadImgPath}")
 //	private String uploadImgPath;
 //	
-//	@Bean(name = "multipartResolver")
-//    public MultipartResolver multipartResolver() {
-//        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-//        multipartResolver.setDefaultEncoding("UTF-8");
-//        multipartResolver.setMaxUploadSize(1024*1024*1024);//1G
-//        multipartResolver.setMaxInMemorySize(40960);
-//        return multipartResolver;
-//    }
-//
-//	/**
-//       * 
-//       * Description：FreeMarker视图配置
-//       * @return 
-//       */
-//	@Bean
-//    public FreeMarkerConfigurer freeMarkerConfigurer() {
-//		FreeMarkerConfigurer freeMarkerConfigurer = new FreeMarkerConfigurer();
-//		freeMarkerConfigurer.setTemplateLoaderPath("classpath:template/");
-//		freeMarkerConfigurer.setDefaultEncoding("UTF-8");
-//	    return freeMarkerConfigurer;
-//   }
-//    @Bean
-//    public FreeMarkerViewResolver freeMarkerViewResolver() {
-//	    FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
-//	    viewResolver.setPrefix("/template/");
-//	    viewResolver.setSuffix(".ftl");
-//	    viewResolver.setCache(true);
-//	    viewResolver.setContentType("text/html;charset=UTF-8");
-//	    viewResolver.setRequestContextAttribute("requestContext");
-//	    viewResolver.setOrder(0);
-//	    return viewResolver;
-//   }
+
 //	
 //	@Override
 //    public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -73,22 +41,5 @@
 //        super.addResourceHandlers(registry);
 //    }
 //
-//	 @Override
-//	 public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
-//		 configurer.enable();
-//	 }
-//    @Override
-//    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-//    	
-//    	//string utf-8
-//        converters.add(new StringHttpMessageConverter(Charset.defaultCharset()));
-//        
-//        //pojo utf-8
-//    	List<MediaType> list = new ArrayList<MediaType>();
-//    	list.add(MediaType.APPLICATION_JSON_UTF8);
-//    	MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
-//    	mappingJackson2HttpMessageConverter.setSupportedMediaTypes(list);
-//        converters.add(mappingJackson2HttpMessageConverter);
-//    }
-////
+
 //}
