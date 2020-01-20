@@ -14,9 +14,9 @@ import com.polaris.core.dto.ResultDto;
 import com.polaris.core.util.StringUtil;
 
 @Provider  
-public class RestExceptionHandler implements ExceptionMapper<Exception>{  
+public class ResteasyExceptionHandler implements ExceptionMapper<Exception>{  
     
-	private static final Logger logger = LoggerFactory.getLogger(RestExceptionHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(ResteasyExceptionHandler.class);
 	
     @SuppressWarnings({ "rawtypes" })
 	@Override  

@@ -18,14 +18,8 @@ import com.polaris.core.util.SpringUtil;
 * @version
 *
 */
-public class MainSupport {
+public abstract class MainSupport {
 	
-	/**
-	* 创建一个新的实例 MainSupport.
-	*
-	*/
-	private MainSupport() {}
-    
     /**
     * startDubboServer(启动dubbo容器)
     * @param 

@@ -3,9 +3,9 @@ package com.polaris.resteasy;
 import javax.servlet.ServletRegistration;
 
 import com.polaris.core.util.SpringUtil;
-import com.polaris.http.initializer.AbsHttpInitializer;
+import com.polaris.http.initializer.ExtensionInitializerAbs;
 
-public class Initializer extends  AbsHttpInitializer { 
+public class ResteasyInitializer extends  ExtensionInitializerAbs { 
 
 	@Override
 	public void loadContext() {
@@ -14,7 +14,7 @@ public class Initializer extends  AbsHttpInitializer {
 	
 	@Override
 	public void addInitParameter() {
-        servletContext.setInitParameter("javax.ws.rs.core.Application", "com.polaris.resteasy.ResteasyApplication");
+        servletContext.setInitParameter("javax.ws.rs.core.Application", ResteasyApplication.class.getName());
         super.addInitParameter();
 	}
 
@@ -37,5 +37,6 @@ public class Initializer extends  AbsHttpInitializer {
 			    servletRegistration.setLoadOnStartup(1);
 			    servletRegistration.addMapping("/*");	
 	}
+	
 
 }

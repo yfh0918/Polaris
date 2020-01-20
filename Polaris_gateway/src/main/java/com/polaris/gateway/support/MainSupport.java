@@ -26,7 +26,7 @@ import com.polaris.http.util.NetUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
-public class MainSupport {
+public abstract class MainSupport {
 	
 	private static Logger logger = LoggerFactory.getLogger(MainSupport.class);
 	

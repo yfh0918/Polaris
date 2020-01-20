@@ -7,7 +7,7 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.dto.ResultDto;
 import com.polaris.core.util.StringUtil;
 
-abstract class RestExceptionHandler {  
+abstract class SpringMvcExceptionHandlerAbs {  
     
 	@SuppressWarnings("rawtypes")
 	@ExceptionHandler(Exception.class)

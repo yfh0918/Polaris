@@ -2,6 +2,6 @@ package com.polaris.http.initializer;
 
 import javax.servlet.ServletContext;
 
-public interface HttpInitializer {
+public interface ExtensionInitializer {
 	public void onStartup(ServletContext servletContext);
 }

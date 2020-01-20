@@ -8,7 +8,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 public class ServletInitializerImpl implements  ServletContainerInitializer { 
-	private final ServiceLoader<HttpInitializer> serviceLoader = ServiceLoader.load(HttpInitializer.class);
+	private final ServiceLoader<ExtensionInitializer> serviceLoader = ServiceLoader.load(ExtensionInitializer.class);
 	public void onStartup(Set<Class<?>> requestFirstFilters, ServletContext servletContext)  throws ServletException {
 		
 		//contex为空直接返回
@@ -17,8 +17,9 @@ public class ServletInitializerImpl implements  ServletContainerInitializer {
 		}
 		
 		//加载外部扩展的filter,Listener,servlet
-		for (HttpInitializer httpInitializer : serviceLoader) {
+		for (ExtensionInitializer httpInitializer : serviceLoader) {
 			httpInitializer.onStartup(servletContext);
+			break;
 		}
 	} 
 	

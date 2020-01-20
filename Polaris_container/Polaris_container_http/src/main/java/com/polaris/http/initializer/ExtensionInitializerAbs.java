@@ -7,10 +7,9 @@ import javax.servlet.ServletContext;
 
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.StringUtil;
-import com.polaris.http.filter.FlowControlFilter;
 import com.polaris.http.filter.RequestFirstFilter;
 
-public abstract class AbsHttpInitializer implements HttpInitializer {
+public abstract class ExtensionInitializerAbs implements ExtensionInitializer {
 	protected ServletContext servletContext = null;
 	public void onStartup(ServletContext servletContext) {
 		this.servletContext = servletContext;
@@ -43,17 +42,10 @@ public abstract class AbsHttpInitializer implements HttpInitializer {
 	}
 	public void addFilter() {
 		String POLARIS_REQUEST_FIRST_FILTER = "PolarisRequestFirstFilter";
-		String POLARIS_FLOW_CONTROL_FILTER = "PolarisFlowControlFilter";
 		
 		// filter
 		servletContext.addFilter(POLARIS_REQUEST_FIRST_FILTER, new RequestFirstFilter())
 					  .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-		
-		// 流控
-		if ("true".equals(ConfClient.get("server.flowcontrol.enabled", "false"))) {
-			servletContext.addFilter(POLARIS_FLOW_CONTROL_FILTER, new FlowControlFilter())
-			  .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
-		}
 		
 		//其他filter
 		String names = ConfClient.get("servlet.filter.names");

@@ -20,7 +20,7 @@ import com.polaris.http.util.NetUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
-public class ApplicationSupport {
+public abstract class ApplicationSupport {
 	
     //启动网关应用
 	public static void startGateway(Class<?> clazz) {

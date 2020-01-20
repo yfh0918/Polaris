@@ -24,7 +24,7 @@ import com.polaris.core.util.StringUtil;
 
 @Configuration 
 @EnableWebMvc
-public class WebMvcConfigurerImpl extends WebMvcConfigurerAdapter {
+public class SpringMvcConfigurerImpl extends WebMvcConfigurerAdapter {
 	
 	@Bean(name = DispatcherServlet.MULTIPART_RESOLVER_BEAN_NAME)
     public MultipartResolver multipartResolver() {

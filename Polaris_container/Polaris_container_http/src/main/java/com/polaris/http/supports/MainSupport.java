@@ -20,15 +20,8 @@ import com.polaris.http.listener.ServerListener;
 * @version
 *
 */
-public class MainSupport {
+public abstract class MainSupport {
 	
-	/**
-	* 创建一个新的实例 MainSupport.
-	*
-	*/
-	private MainSupport() {}
-
-    
     /**
     * startWebServer(启动web容器)
     * @param 
