@@ -34,13 +34,13 @@ abstract public class CronScheduledBusinessTask implements Runnable {
             if (registerIpAndPort.equals(scheduleIpAndPort)) {
             	
             	//执行业务代码
-            	taskExcute();
+            	taskExecute();
             }
         } catch (Exception e) {
             logger.error("ERROR", e);
         }
 	}
 	
-	abstract public void taskExcute();
+	abstract public void taskExecute();
 
 }
