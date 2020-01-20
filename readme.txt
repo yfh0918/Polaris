@@ -149,15 +149,9 @@
             <artifactId>Polaris_database</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
-        
-       <dependency>
-           <groupId>commons-fileupload</groupId>
-           <artifactId>commons-fileupload</artifactId>
-           <version>1.3.3</version>
-       </dependency>
 		
 	在代码启动前加入如下
-	@SpringBootApplication(exclude= {DataSourceAutoConfiguration.class,MultipartAutoConfiguration.class})
+	@SpringBootApplication(exclude= {DataSourceAutoConfiguration.class})
 	@ComponentScan(basePackages = {"com.xxx","com.polaris"})
 	@EnableTransactionManagement(proxyTargetClass=true)
 	public class xxxApplication {
