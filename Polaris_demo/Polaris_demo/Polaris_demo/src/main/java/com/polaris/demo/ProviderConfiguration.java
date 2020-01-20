@@ -3,13 +3,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.dubbo.config.MethodConfig;
-import org.apache.dubbo.config.ProtocolConfig;
 import org.apache.dubbo.config.ServiceConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
-import com.polaris.core.config.ConfClient;
 import com.polaris.demo.api.service.DemoEntryIF;
 import com.polaris.demo.core.entry.DemoEntry;
 
@@ -17,16 +14,6 @@ import com.polaris.demo.core.entry.DemoEntry;
 @Configuration
 public class ProviderConfiguration {
 
-    //<dubbo:protocol name="dubbo" port="20882"></dubbo:protocol>
-    @Bean
-    @Primary
-    public ProtocolConfig protocolConfig() {
-        ProtocolConfig protocolConfig = new ProtocolConfig();
-        protocolConfig.setName(ConfClient.get("dubbo.protocol.name"));
-        protocolConfig.setPort(Integer.parseInt(ConfClient.get("dubbo.protocol.port")));
-        return protocolConfig;
-    }
-    
     /**
     <dubbo:service interface="com.polaris.demo.api.service.DemoEntryIF" ref="demoEntry" timeout="1000" version="1.0.0">
         <dubbo:method name="test" timeout="1000"/>
