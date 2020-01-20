@@ -46,14 +46,12 @@ abstract public class ConfigLoader {
 					basePackagesForMapper.add(basePackageForMapper);
 				}
 			}
-			if (basePackagesForMapper.size() == 0) {
-				for(String basePackage : basePackages) {
-					basePackagesForMapper.add(basePackage+".**.mapper");
-				}
+		}
+		if (basePackagesForMapper.size() == 0) {
+			for(String basePackage : basePackages) {
+				basePackagesForMapper.add(basePackage+".**.mapper");
 			}
 		}
-		
-		
 	}
 	public static Class<?>[] getRootConfigClass() {
 		if (rootConfigClass == null) {
