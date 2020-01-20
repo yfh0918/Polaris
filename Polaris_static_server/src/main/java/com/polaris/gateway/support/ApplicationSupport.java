@@ -10,7 +10,6 @@ import org.littleshoot.proxy.impl.ThreadPoolConfiguration;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.ConfigLoader;
 import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
 import com.polaris.core.util.SpringUtil;
 import com.polaris.gateway.GatewayConstant;
@@ -27,10 +26,7 @@ public class ApplicationSupport {
 	public static void startGateway(Class<?> clazz) {
     	
     	//载入参数
-    	ConfClient.init();
-
-    	//载入配置
-    	ConfigLoader.loadRootConfig(clazz);
+    	ConfClient.init(clazz);
     			
     	//载入spring
     	SpringUtil.refresh();

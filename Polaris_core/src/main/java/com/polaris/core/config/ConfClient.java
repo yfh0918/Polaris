@@ -32,7 +32,7 @@ public abstract class ConfClient {
 	private static AtomicBoolean initialized = new AtomicBoolean(false);
 	
 	//初始化操作
-	public static void init() {
+	public static void init(Class<?> clazz) {
 		
 		//初始化
 		if (!initialized.compareAndSet(false, true)) {
@@ -65,6 +65,8 @@ public abstract class ConfClient {
 		//载入Sentinel
 		loadSentinelConfig();
 		
+		//载入配置类
+		ConfigLoader.loadRootConfig(clazz);		
 	}
 	public static void loadDefaultConfig() {
 		

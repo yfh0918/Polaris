@@ -39,10 +39,10 @@ public class MainSupport {
     public static void startWebServer(String[] args, Class<?> rootConfigClass) {
     	
     	//各类参数载入
-    	ConfClient.init();
+    	ConfClient.init(rootConfigClass);
     	
     	//启动
-    	ContainerServerFactory.startServer(rootConfigClass, new ServerListener() {
+    	ContainerServerFactory.startServer(new ServerListener() {
 
 			@Override
 			public void started(ServletContext servletContext) {

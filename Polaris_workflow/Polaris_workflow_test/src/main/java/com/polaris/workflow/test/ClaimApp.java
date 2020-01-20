@@ -25,7 +25,7 @@ public class ClaimApp {
     private final String businessKey = "test002";
 
     public static void main(String[] args) {
-    	ConfClient.init();
+    	ConfClient.init(null);
         SpringUtil.refresh();
         ClaimApp app = SpringUtil.getBean(ClaimApp.class);
         app.deployDiagram();//载入流程（即使重复调用，也不会重复载入）

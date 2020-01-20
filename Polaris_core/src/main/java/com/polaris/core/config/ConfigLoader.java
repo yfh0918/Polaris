@@ -17,33 +17,39 @@ abstract public class ConfigLoader {
 		rootConfigClass = clazz;
 		
 		//application-scan
-		ComponentScan compoentScanAnnotation = rootConfigClass.getAnnotation(ComponentScan.class);
-		if (compoentScanAnnotation != null) {
-			String[] tempBasePackages = compoentScanAnnotation.basePackages();
-			if (tempBasePackages != null && tempBasePackages.length > 0) {
-				for (String basePackage : tempBasePackages) {
-					basePackages.add(basePackage);
+		if (rootConfigClass != null) {
+			ComponentScan compoentScanAnnotation = rootConfigClass.getAnnotation(ComponentScan.class);
+			if (compoentScanAnnotation != null) {
+				String[] tempBasePackages = compoentScanAnnotation.basePackages();
+				if (tempBasePackages != null && tempBasePackages.length > 0) {
+					for (String basePackage : tempBasePackages) {
+						basePackages.add(basePackage);
+					}
 				}
-			}
-			Class<?>[] tempBasePackageClasses = compoentScanAnnotation.basePackageClasses();
-			if (tempBasePackageClasses != null && tempBasePackageClasses.length > 0) {
-				for (Class<?> basePackageClass : tempBasePackageClasses) {
-					basePackages.add(basePackageClass.getPackage().getName());
+				Class<?>[] tempBasePackageClasses = compoentScanAnnotation.basePackageClasses();
+				if (tempBasePackageClasses != null && tempBasePackageClasses.length > 0) {
+					for (Class<?> basePackageClass : tempBasePackageClasses) {
+						basePackages.add(basePackageClass.getPackage().getName());
+					}
 				}
 			}
 		}
 		if (basePackages.size() == 0) {
 			basePackages.add(DefaultConfig.BASE_PACKAGE);
-			basePackages.add(rootConfigClass.getPackage().getName());
+			if (rootConfigClass != null) {
+				basePackages.add(rootConfigClass.getPackage().getName());
+			}
 		}
 		
 		//mapper-scan
-		PolarisApplication polarisAnnotation = rootConfigClass.getAnnotation(PolarisApplication.class);
-		if (polarisAnnotation != null) {
-			String[] tempPasePackagesForMapper = polarisAnnotation.scanBasePackagesForMapper();
-			if (tempPasePackagesForMapper != null && tempPasePackagesForMapper.length > 0) {
-				for (String basePackageForMapper : tempPasePackagesForMapper) {
-					basePackagesForMapper.add(basePackageForMapper);
+		if (rootConfigClass != null) {
+			PolarisApplication polarisAnnotation = rootConfigClass.getAnnotation(PolarisApplication.class);
+			if (polarisAnnotation != null) {
+				String[] tempPasePackagesForMapper = polarisAnnotation.scanBasePackagesForMapper();
+				if (tempPasePackagesForMapper != null && tempPasePackagesForMapper.length > 0) {
+					for (String basePackageForMapper : tempPasePackagesForMapper) {
+						basePackagesForMapper.add(basePackageForMapper);
+					}
 				}
 			}
 		}
