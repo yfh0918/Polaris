@@ -20,7 +20,7 @@ abstract public class CronScheduledBusinessTask implements Runnable {
 			//获取IP列表
             List<String> list = ServerDiscoveryHandlerProvider.getInstance().getAllUrl(ConfClient.getAppName(), false);
             if (list == null || list.size() == 0) {
-            	taskExcute();
+            	taskExecute();
             	return;
             }
             
