@@ -2,7 +2,9 @@ package com.polaris.gateway.request;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
@@ -64,6 +66,9 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 	public static volatile int int_all_rate = 0;
 	public static volatile int int_all_timeout=30;//最大等待30秒返回
 	
+	//无需验证的IP
+	public static volatile Set<String> ccSkipIp = new HashSet<>();
+	
 	//ip维度，每秒钟的访问数量
 	public static volatile LoadingCache<String, AtomicInteger> secIploadingCache;
 	public static volatile LoadingCache<String, AtomicInteger> minIploadingCache;
@@ -77,6 +82,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 	public static volatile String blockIpSavePath = "";
 	public static volatile int timerinterval = 0;//每间隔600秒执行一次
 	public static volatile Timer timer = null;
+	
 	
 	static {
 		
@@ -128,12 +134,25 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     	int timerintervalTemp = 600;
     	boolean blockIpPersistentTemp = false;
     	String blockIpSavePathTemp = null;
+    	
+    	Set<String> tempCcSkipIp = new HashSet<>();
+    	
     	for (String conf : contents) {
     		if (StringUtil.isNotEmpty(conf) && !conf.startsWith("#")) {
     			conf = conf.replace("\n", "");
     			conf = conf.replace("\r", "");
 
 				String[] kv = ConfHandlerSupport.getKeyValue(conf);
+				// skip.ip
+    			if (kv[0].equals("cc.skip.ip")) {
+    				try {
+    					String[] ips = kv[1].split(",");
+    					for (String ip : ips) {
+    						tempCcSkipIp.add(ip);
+    					}
+    				} catch (Exception ex) {
+    				}
+    			}
     			// ip.rate
     			if (kv[0].equals("cc.ip.rate")) {
     				try {
@@ -160,8 +179,6 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     				} catch (Exception ex) {
     				}
     			}
-
-    			
     			// 被禁止IP的时间-seconds
     			if (kv[0].equals("cc.ip.block")) {
     				try {
@@ -199,6 +216,9 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 
     		}
     	}
+    	
+    	//无需验证的IP
+    	ccSkipIp = tempCcSkipIp;
     	
     	//总访问量
     	if (int_all_rate != ALL_RATE) {
@@ -258,6 +278,11 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             String realIp = GatewayConstant.getRealIp((DefaultHttpRequest) httpObject);
+            
+            //判断是否是无需验证的IP
+            if (ccSkipIp.contains(realIp)) {
+            	return false;
+            }
             
         	//是否黑名单
         	if (isBlackIp && blackIpCache.get(realIp) != null){
