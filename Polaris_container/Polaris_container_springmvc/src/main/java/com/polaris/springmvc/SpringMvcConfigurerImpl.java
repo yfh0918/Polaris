@@ -1,5 +1,6 @@
 package com.polaris.springmvc;
 
+import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.ReflectionUtils;
+import org.springframework.util.ReflectionUtils.MethodCallback;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -20,7 +23,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.StringUtil;
+import com.polaris.core.util.ReflectionUtil;
 
 @Configuration 
 @EnableWebMvc
@@ -29,11 +32,17 @@ public class SpringMvcConfigurerImpl implements WebMvcConfigurer {
 	@Bean(name = DispatcherServlet.MULTIPART_RESOLVER_BEAN_NAME)
     public MultipartResolver multipartResolver() {
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+		ReflectionUtils.doWithMethods(CommonsMultipartResolver.class, new MethodCallback() {
+			@Override
+			public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+				ReflectionUtil.setMethodValueForSet(method, multipartResolver, "multipartResolver.");
+			}
+		});
+		
+		//存在默认值
         multipartResolver.setDefaultEncoding(Charset.defaultCharset().toString());
-        long maxUploadSize = Long.parseLong(ConfClient.get("multipart.maxUploadSize","1073741824"));
-        multipartResolver.setMaxUploadSize(maxUploadSize);//1G
-        int maxInMemorySize = Integer.parseInt(ConfClient.get("multipart.maxInMemorySize","40960"));
-        multipartResolver.setMaxInMemorySize(maxInMemorySize);
+        multipartResolver.setMaxUploadSize(Long.parseLong(ConfClient.get("multipartResolver.maxUploadSize","1073741824")));//1G
+        multipartResolver.setMaxInMemorySize(Integer.parseInt(ConfClient.get("multipartResolver.maxInMemorySize","40960")));
         return multipartResolver;
     }
 	
@@ -45,8 +54,15 @@ public class SpringMvcConfigurerImpl implements WebMvcConfigurer {
 	@Bean
     public FreeMarkerConfigurer freeMarkerConfigurer() {
 		FreeMarkerConfigurer freeMarkerConfigurer = new FreeMarkerConfigurer();
-		String templateLoaderPath = ConfClient.get("freeMarker.templateLoaderPath", "classpath:template/");
-		freeMarkerConfigurer.setTemplateLoaderPath(templateLoaderPath);
+		ReflectionUtils.doWithMethods(FreeMarkerConfigurer.class, new MethodCallback() {
+			@Override
+			public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+				ReflectionUtil.setMethodValueForSet(method, freeMarkerConfigurer, "freeMarkerConfigurer.");
+			}
+		});
+
+		//存在默认值
+		freeMarkerConfigurer.setTemplateLoaderPath(ConfClient.get("freeMarkerConfigurer.templateLoaderPath", "classpath:template/"));
 		freeMarkerConfigurer.setDefaultEncoding(Charset.defaultCharset().toString());
 	    return freeMarkerConfigurer;
    }
@@ -54,18 +70,22 @@ public class SpringMvcConfigurerImpl implements WebMvcConfigurer {
     @Bean
     public FreeMarkerViewResolver freeMarkerViewResolver() {
 	    FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
-	    String freeMarkerViewResolverSuffix = ConfClient.get("freeMarker.viewResolver.suffix", ".ftl");
-	    viewResolver.setSuffix(freeMarkerViewResolverSuffix);
-	    String freeMarkerViewResolverprefix = ConfClient.get("freeMarker.viewResolver.prefix");
-	    if (StringUtil.isNotEmpty(freeMarkerViewResolverprefix)) {
-	    	viewResolver.setPrefix(freeMarkerViewResolverprefix);
-	    }
-	    viewResolver.setCache(Boolean.parseBoolean(ConfClient.get("freeMarker.viewResolver.cache","true")));
+	    
+		ReflectionUtils.doWithMethods(FreeMarkerViewResolver.class, new MethodCallback() {
+			@Override
+			public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+				ReflectionUtil.setMethodValueForSet(method, viewResolver, "viewResolver.");
+			}
+		});
+		
+		//存在默认值
+	    viewResolver.setSuffix(ConfClient.get("viewResolver.suffix", ".ftl"));
+	    viewResolver.setCache(Boolean.parseBoolean(ConfClient.get("viewResolver.cache","true")));
 	    viewResolver.setContentType("text/html;charset="+Charset.defaultCharset().toString());
-	    viewResolver.setExposeRequestAttributes(Boolean.parseBoolean(ConfClient.get("freeMarker.viewResolver.exposeRequestAttributes","true")));
-	    viewResolver.setExposeSessionAttributes(Boolean.parseBoolean(ConfClient.get("freeMarker.viewResolver.exposeSessionAttributes","true")));
-	    viewResolver.setRequestContextAttribute("request");
-	    viewResolver.setOrder(0);
+	    viewResolver.setExposeRequestAttributes(Boolean.parseBoolean(ConfClient.get("viewResolver.exposeRequestAttributes","true")));
+	    viewResolver.setExposeSessionAttributes(Boolean.parseBoolean(ConfClient.get("viewResolver.exposeSessionAttributes","true")));
+	    viewResolver.setRequestContextAttribute(ConfClient.get("viewResolver.requestContextAttribute", "request"));
+	    viewResolver.setOrder(Integer.parseInt(ConfClient.get("viewResolver.order", "0")));
 	    return viewResolver;
    }
     
@@ -87,5 +107,5 @@ public class SpringMvcConfigurerImpl implements WebMvcConfigurer {
     	mappingJackson2HttpMessageConverter.setSupportedMediaTypes(list);
         converters.add(mappingJackson2HttpMessageConverter);
     }
-
+    
 }

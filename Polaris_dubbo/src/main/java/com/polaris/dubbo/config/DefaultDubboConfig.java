@@ -1,104 +1,69 @@
 package com.polaris.dubbo.config;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ProtocolConfig;
 import org.apache.dubbo.config.ProviderConfig;
 import org.apache.dubbo.config.RegistryConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.ReflectionUtils.FieldCallback;
+import org.springframework.util.ReflectionUtils.MethodCallback;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.StringUtil;
+import com.polaris.core.util.ReflectionUtil;
 
 @Configuration
 public class DefaultDubboConfig {
-	private static Logger logger = LoggerFactory.getLogger(DefaultDubboConfig.class);
 	@Bean
     public ApplicationConfig applicationConfig() {
         ApplicationConfig applicationConfig = new ApplicationConfig();
-        applicationConfig.setName(ConfClient.getAppName());
-        ReflectionUtils.doWithFields(ApplicationConfig.class, new FieldCallback() {
+        ReflectionUtils.doWithMethods(ApplicationConfig.class, new MethodCallback() {
 			@Override
-			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-				String fieldName = "dubbo.application." + field.getName();
-				setFieldValue(field,applicationConfig,fieldName);
+			public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+				ReflectionUtil.setMethodValueForSet(method, applicationConfig, "dubbo.application.");
 			}
-    		
-    	});
+		});
+        applicationConfig.setName(ConfClient.getAppName());
         return applicationConfig;
     }
     
     @Bean
     public RegistryConfig registryConfig() {
         RegistryConfig registryConfig = new RegistryConfig();
-        ReflectionUtils.doWithFields(RegistryConfig.class, new FieldCallback() {
+        ReflectionUtils.doWithMethods(RegistryConfig.class, new MethodCallback() {
 			@Override
-			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-				String fieldName = "dubbo.registry." + field.getName();
-				setFieldValue(field,registryConfig,fieldName);
+			public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+				ReflectionUtil.setMethodValueForSet(method, registryConfig, "dubbo.registry.");
 			}
-    		
-    	});
+		});
         return registryConfig;
     }
     
     @Bean
     public ProtocolConfig protocolConfig() {
     	ProtocolConfig protocolConfig = new ProtocolConfig();
-    	ReflectionUtils.doWithFields(ProtocolConfig.class, new FieldCallback() {
-
+        ReflectionUtils.doWithMethods(ProtocolConfig.class, new MethodCallback() {
 			@Override
-			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-				String fieldName = "dubbo.protocol." + field.getName();
-				setFieldValue(field,protocolConfig,fieldName);
+			public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+				ReflectionUtil.setMethodValueForSet(method, protocolConfig, "dubbo.protocol.");
 			}
-    		
-    	});
+		});
         return protocolConfig;
     }
     
     @Bean    
     public ProviderConfig providerConfig() {
     	ProviderConfig providerConfig = new ProviderConfig();
-     	ReflectionUtils.doWithFields(ProviderConfig.class, new FieldCallback() {
+        ReflectionUtils.doWithMethods(ProviderConfig.class, new MethodCallback() {
 			@Override
-			public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-				String fieldName = "dubbo.provider." + field.getName();
-				setFieldValue(field,providerConfig,fieldName);
+			public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+				ReflectionUtil.setMethodValueForSet(method, providerConfig, "dubbo.provider.");
 			}
-    		
-    	});
+		});
     	return providerConfig;
     }
     
-    private void setFieldValue(Field field, Object obj, String fieldName) {
-    	String fieldValue = ConfClient.get(fieldName);
-		if (StringUtil.isEmpty(fieldValue)) {
-			return;
-		}
-		try {
-	    	if (field.getType() == String.class) {
-	    		field.setAccessible(true);
-				field.set(obj, fieldValue);
-	    	} else if (field.getType() == Integer.class) {
-	    		field.setAccessible(true);
-				field.set(obj, Integer.parseInt(fieldValue));
-	    	} else if (field.getType() == Boolean.class) {
-	    		field.setAccessible(true);
-				field.set(obj, Boolean.parseBoolean(fieldValue));
-	    	} else if (field.getType() == Long.class) {
-	    		field.setAccessible(true);
-				field.set(obj, Long.parseLong(fieldValue));
-	    	}
-		} catch (Exception e) {
-			logger.error("ERROR:",e);
-		} 
 
-    }
 }

@@ -58,7 +58,7 @@
 	<!--activiti -->
 	<dependency>
 		<groupId>org.infinispan</groupId>
-		<artifactId>infinispan-core</artifactId>
+		<artifactId>infinispan-core</artifactId>		
 	</dependency>
 
 	<!-- PERSISTENCE begin -->
@@ -69,13 +69,16 @@
 	</dependency>
 	<dependency>
 		<groupId>org.hibernate</groupId>
-		<artifactId>hibernate-entitymanager</artifactId>
+		<artifactId>hibernate-entitymanager</artifactId>		
 	</dependency>
 	<dependency>
 		<groupId>org.hibernate.javax.persistence</groupId>
 		<artifactId>hibernate-jpa-2.0-api</artifactId>
 	</dependency>
-
+	<dependency>
+	    <groupId>org.jboss.logging</groupId>
+	    <artifactId>jboss-logging</artifactId>
+	</dependency>
 	<!-- spring data access -->
 	<dependency>
 		<groupId>org.springframework.data</groupId>
