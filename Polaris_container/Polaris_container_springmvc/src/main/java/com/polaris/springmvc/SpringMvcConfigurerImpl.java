@@ -15,7 +15,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
@@ -24,7 +24,7 @@ import com.polaris.core.util.StringUtil;
 
 @Configuration 
 @EnableWebMvc
-public class SpringMvcConfigurerImpl extends WebMvcConfigurerAdapter {
+public class SpringMvcConfigurerImpl implements WebMvcConfigurer {
 	
 	@Bean(name = DispatcherServlet.MULTIPART_RESOLVER_BEAN_NAME)
     public MultipartResolver multipartResolver() {
@@ -82,7 +82,7 @@ public class SpringMvcConfigurerImpl extends WebMvcConfigurerAdapter {
         
         //pojo utf-8
     	List<MediaType> list = new ArrayList<MediaType>();
-    	list.add(MediaType.APPLICATION_JSON_UTF8);
+    	list.add(MediaType.APPLICATION_JSON);
     	MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
     	mappingJackson2HttpMessageConverter.setSupportedMediaTypes(list);
         converters.add(mappingJackson2HttpMessageConverter);
