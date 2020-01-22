@@ -12,6 +12,7 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
 
 import reactor.netty.DisposableServer;
+import reactor.netty.http.HttpProtocol;
 import reactor.netty.http.server.HttpServer;
 
 /**
@@ -51,6 +52,7 @@ public abstract class MainSupport {
         DisposableServer server =
                 HttpServer.create()
                 		  .port(port)
+                		  .protocol(new HttpProtocol[] { HttpProtocol.HTTP11 })
                 		  .compress(true)
                           .handle(httpHandlerAdapter) 
                           .bindNow();
