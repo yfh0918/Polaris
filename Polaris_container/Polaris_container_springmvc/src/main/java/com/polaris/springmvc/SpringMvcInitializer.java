@@ -44,7 +44,7 @@ public class SpringMvcInitializer extends  ExtensionInitializerAbs {
 	} 
 	
 	public static class InnerInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
-		private static AtomicBoolean initialized = new AtomicBoolean(false);
+		private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 
 		@Override
 		public void onStartup(ServletContext servletContext) throws ServletException {

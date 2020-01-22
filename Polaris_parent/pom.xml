@@ -96,6 +96,11 @@
 	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_container_webflux</artifactId>
+	            <version>${polaris-version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_container_jetty</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency>
@@ -772,6 +777,13 @@
                 <artifactId>spring-webflux</artifactId>
                 <version>${spring_version}</version>
             </dependency>
+            <!-- https://mvnrepository.com/artifact/io.projectreactor/reactor-core -->
+			<dependency>
+			    <groupId>io.projectreactor.netty</groupId>
+			    <artifactId>reactor-netty</artifactId>
+			    <version>0.9.4.RELEASE</version>
+			</dependency>
+            
             <dependency>
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>

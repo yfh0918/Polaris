@@ -17,6 +17,7 @@
 	<module>Polaris_container_springmvc</module>
 	<module>Polaris_container_jetty</module>
 	<module>Polaris_container_tomcat</module>
+	<module>Polaris_container_webflux</module>
   </modules>
   
   <dependencies>

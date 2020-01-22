@@ -9,12 +9,21 @@ public class SpringUtil {
 	private static ApplicationContext context = null;
 	
     public static ApplicationContext getApplicationContext() {
-           return context;
+    	if (context == null) {
+    		synchronized(SpringUtil.class) {
+    			if (context == null) {
+    				AnnotationConfigApplicationContext annotationContext = new AnnotationConfigApplicationContext();
+    		    	annotationContext.register(ConfigLoader.getRootConfigClass());
+    		    	context = annotationContext;
+    			}
+    		}
+    	}
+        return context;
     }
     
     public static Object getBean(String serviceName){
     	try {
-            return context.getBean(serviceName);
+            return getApplicationContext().getBean(serviceName);
     	} catch (Exception ex) {
     		return null;
     	}
@@ -22,7 +31,7 @@ public class SpringUtil {
 
     public static <T> T getBean(Class<T> requiredType){
     	try {
-        	return context.getBean(requiredType);
+        	return getApplicationContext().getBean(requiredType);
     	} catch (Exception ex) {
     		return null;
     	}
@@ -32,15 +41,14 @@ public class SpringUtil {
     	context = inputContext;
     }
     
-    public synchronized static void refresh() {
-    	if (context == null) {
-    		AnnotationConfigApplicationContext annotationContext = new AnnotationConfigApplicationContext();
-    		ConfigLoader.getRootConfigClass();
-	    	annotationContext.register(ConfigLoader.getRootConfigClass());
-	    	annotationContext.refresh();
-	    	annotationContext.registerShutdownHook();
-	    	context = annotationContext;
-    	}
+    public static void refresh() {
+		context = getApplicationContext();
+		if (context instanceof AnnotationConfigApplicationContext) {
+			((AnnotationConfigApplicationContext)context).refresh();
+			((AnnotationConfigApplicationContext)context).registerShutdownHook();
+		} else {
+			throw new RuntimeException("context can't refresh");
+		}
     }
 
 
