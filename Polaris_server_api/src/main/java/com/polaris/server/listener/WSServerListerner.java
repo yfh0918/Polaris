@@ -19,10 +19,12 @@ import com.polaris.core.util.SpringUtil;
 
 public class WSServerListerner implements  ServerListener{
 	private static Logger logger = LoggerFactory.getLogger(WSServerListerner.class);
-	public void started(ServletContext servletContext){
+	
+	@Override
+	public void started(ServletContext... servletContext){
 		//加载websocket
     	WSEndpointExporter wsEndpointExporter = new WSEndpointExporter();
-    	wsEndpointExporter.initServerContainer(servletContext);
+    	wsEndpointExporter.initServerContainer(servletContext[0]);
 	}
 	
 	public static class WSEndpointExporter {

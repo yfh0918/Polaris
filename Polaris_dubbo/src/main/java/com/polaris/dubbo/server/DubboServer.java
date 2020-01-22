@@ -44,13 +44,17 @@ public class DubboServer {
 
     	//创建context
     	SpringUtil.refresh();
-    	listener.started(null);
+    	
+    	//监听
+    	listener.started();
     	
     	// add shutdown hook to stop server
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
-                	listener.stopped(null);
+                	
+                	//监听
+                	listener.stopped();
                 } catch (Exception e) {
                     logger.error("failed to stop dubbo.", e);
                 }

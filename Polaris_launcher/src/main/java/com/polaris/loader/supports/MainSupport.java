@@ -38,14 +38,14 @@ public abstract class MainSupport {
     	ContainerServerFactory.startServer(new ServerListener() {
 
 			@Override
-			public void started(ServletContext servletContext) {
+			public void started(ServletContext... servletContext) {
 				//注册服务
 		    	NameingClient.register();
 				
 			}
 			
 			@Override
-			public void stopped(ServletContext servletContext) {
+			public void stopped(ServletContext... servletContext) {
 				//注销服务
 		    	NameingClient.unRegister();
 			}
