@@ -16,13 +16,15 @@
     </properties>
     
 	<dependencies>
-
+      	<dependency>
+			<groupId>com.polaris</groupId>
+			<artifactId>Polaris_container_http</artifactId>
+		</dependency>
 	  	<dependency>
 			<groupId>com.polaris</groupId>
 			<artifactId>Polaris_core</artifactId>
 		</dependency>
-
-	  
+  
 	    <!-- https://mvnrepository.com/artifact/org.apache.dubbo/dubbo -->
 		<dependency>
 		    <groupId>org.apache.dubbo</groupId>
@@ -53,11 +55,6 @@
         <dependency>
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
-		</dependency>
-
-	   	<dependency>
-			<groupId>com.polaris</groupId>
-			<artifactId>Polaris_naming_nacos</artifactId>
 		</dependency>
 		
 	</dependencies>

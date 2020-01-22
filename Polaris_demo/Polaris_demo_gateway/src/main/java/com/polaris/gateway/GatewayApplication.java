@@ -10,6 +10,6 @@ public class GatewayApplication {
     public static void main(String[] args) {
     	
     	//启动网关应用
-    	MainSupport.startWebServer(args,GatewayApplication.class);
+    	MainSupport.startServer(args,GatewayApplication.class);
     }
 }

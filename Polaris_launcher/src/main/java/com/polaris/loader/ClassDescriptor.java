@@ -1,4 +1,4 @@
-package com.polaris.core;
+package com.polaris.loader;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

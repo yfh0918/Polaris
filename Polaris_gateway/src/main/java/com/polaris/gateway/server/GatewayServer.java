@@ -68,8 +68,6 @@ public class GatewayServer {
 
     	//创建context
     	SpringUtil.refresh();
-    	
-    			
         ThreadPoolConfiguration threadPoolConfiguration = new ThreadPoolConfiguration();
         threadPoolConfiguration.withAcceptorThreads(GatewayConstant.AcceptorThreads);
         threadPoolConfiguration.withClientToProxyWorkerThreads(GatewayConstant.ClientToProxyWorkerThreads);
@@ -140,7 +138,7 @@ public class GatewayServer {
                 try {
                 	listener.stopped(null);
                 } catch (Exception e) {
-                    logger.error("failed to stop tomcat.", e);
+                    logger.error("failed to stop gateway.", e);
                 }
             }
         });

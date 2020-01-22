@@ -1,4 +1,4 @@
-package com.polaris.core;
+package com.polaris.loader;
 
 import java.io.BufferedInputStream;
 import java.io.File;

@@ -15,6 +15,6 @@ public class DemoApplication
     public static void main( String[] args ) throws Exception
     {
 		//启动WEB
-    	MainSupport.startWebServer(args, DemoApplication.class);
+    	MainSupport.startServer(args, DemoApplication.class);
     }
 }

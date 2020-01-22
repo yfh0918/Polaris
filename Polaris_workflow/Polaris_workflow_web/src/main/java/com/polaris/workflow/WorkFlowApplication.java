@@ -15,6 +15,6 @@ public class WorkFlowApplication
     {
 
 		//启动WEB
-    	MainSupport.startWebServer(args,WorkFlowApplication.class);
+    	MainSupport.startServer(args,WorkFlowApplication.class);
     }
 }

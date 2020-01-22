@@ -23,13 +23,13 @@ import com.polaris.http.listener.ServerListener;
 public abstract class MainSupport {
 	
     /**
-    * startWebServer(启动web容器)
+    * startServer
     * @param 
     * @return 
     * @Exception 
     * @since 
     */
-    public static void startWebServer(String[] args, Class<?> rootConfigClass) {
+    public static void startServer(String[] args, Class<?> rootConfigClass) {
     	
     	//各类参数载入
     	ConfClient.init(rootConfigClass);
@@ -61,7 +61,7 @@ public abstract class MainSupport {
      * @Exception 
      * @since 
      */
-     public static void stopWebServer() {
+     public static void stopServer() {
      	
      	//关闭
     	 ContainerServerFactory.stopServer();

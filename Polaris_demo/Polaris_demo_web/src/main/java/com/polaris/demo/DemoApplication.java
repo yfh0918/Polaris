@@ -17,6 +17,6 @@ public class DemoApplication
     {
 
 		//启动WEB
-    	MainSupport.startWebServer(args,DemoApplication.class);
+    	MainSupport.startServer(args,DemoApplication.class);
     }
 }
