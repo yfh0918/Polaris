@@ -19,7 +19,6 @@
         <dependency>
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_container_webflux</artifactId>
- 	        <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
 						

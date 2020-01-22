@@ -1,8 +1,8 @@
 package com.polaris.demo;
 
 
+import com.polaris.http.supports.MainSupport;
 import com.polaris.webflux.annotation.PolarisWebfluxApplication;
-import com.polaris.webflux.supports.MainSupport;
 
 /**
  * 入口启动类
@@ -15,6 +15,6 @@ public class DemoApplication
     public static void main( String[] args ) throws Exception
     {
 		//启动WEB
-    	MainSupport.startWebflux(args,DemoApplication.class);
+    	MainSupport.startWebServer(args,DemoApplication.class);
     }
 }

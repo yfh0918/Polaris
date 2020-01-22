@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.container.jetty.listener.ServerHandlerLifeCycle;
 import com.polaris.container.jetty.listener.ServerHandlerListerner;
+import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.http.listener.ServerListener;
@@ -49,7 +50,7 @@ public class JettyServer {
         try {
 
             //定义server
-        	String serverPort = ConfClient.get("server.port","");
+        	String serverPort = ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE);
             InetSocketAddress addr = new InetSocketAddress("0.0.0.0", Integer.parseInt(serverPort));
             server = new Server(addr);
             QueuedThreadPool threadPool = (QueuedThreadPool)server.getThreadPool();

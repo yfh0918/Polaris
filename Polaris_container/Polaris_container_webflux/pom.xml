@@ -11,6 +11,11 @@
 	<name>Polaris_container_webflux</name>
 
 	<dependencies>
+	    <!-- Polaris_container_http -->
+		<dependency>
+			<groupId>com.polaris</groupId>
+			<artifactId>Polaris_container_http</artifactId>
+		</dependency>
 	
 		<dependency>
 		    <groupId>org.springframework</groupId>

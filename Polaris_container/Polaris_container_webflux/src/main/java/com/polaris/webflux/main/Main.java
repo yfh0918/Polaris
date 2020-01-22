@@ -1,20 +1,14 @@
-package com.polaris.container.tomcat.main;
+package com.polaris.webflux.main;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.polaris.container.tomcat.server.TomcatServer;
 import com.polaris.http.factory.ContainerDiscoveryHandler;
 import com.polaris.http.listener.ServerListener;
+import com.polaris.webflux.server.WebfluxServer;
 
 /**
  * 入口启动类
  *
  */
 public class Main implements ContainerDiscoveryHandler {
-
-	private static Logger logger = LoggerFactory.getLogger(Main.class);
-	
 	/**
      * 服务启动
      *
@@ -24,9 +18,7 @@ public class Main implements ContainerDiscoveryHandler {
     	new Thread(new Runnable() {
 			@Override
 			public void run() {
-				logger.info("tomcat启动！");
-				TomcatServer server = TomcatServer.getInstance();
-				server.start(listener);
+				WebfluxServer.getInstance().start(listener);
 			}
 		}).start();
 	}
@@ -40,9 +32,7 @@ public class Main implements ContainerDiscoveryHandler {
     	new Thread(new Runnable() {
 			@Override
 			public void run() {
-				logger.info("tomcat关闭！");
-				TomcatServer server = TomcatServer.getInstance();
-		        server.stop();
+				WebfluxServer.getInstance().stop();
 			}
     	}).start();
 	}
