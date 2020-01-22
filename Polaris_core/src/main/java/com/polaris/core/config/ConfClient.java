@@ -29,7 +29,7 @@ public abstract class ConfClient {
 	private static final Logger logger = LoggerFactory.getLogger(ConfClient.class);
 	
 	//初始化标志
-	private static AtomicBoolean initialized = new AtomicBoolean(false);
+	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	
 	//初始化操作
 	public static void init(Class<?> clazz) {

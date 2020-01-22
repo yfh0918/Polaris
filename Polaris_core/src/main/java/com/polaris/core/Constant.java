@@ -67,6 +67,7 @@ public class Constant {
 	public static String SPRING_BOOT_NAME = "spring.application.name";//融合springboot
 	
 	// server端口号和注册中心
+	public static String SERVER_PORT_DEFAULT_VALUE = "80";
 	public static String SERVER_PORT_NAME = "server.port";
 	public static String NAME_REGISTRY_SWITCH = "name.registry.switch";
 	public static final String NAMING_REGISTRY_ADDRESS_NAME = "name.registry.address";

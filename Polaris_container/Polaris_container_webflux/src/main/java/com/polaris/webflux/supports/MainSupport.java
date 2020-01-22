@@ -8,6 +8,7 @@ import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 
+import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
 
@@ -48,7 +49,7 @@ public abstract class MainSupport {
     	//通过ApplicationContext创建HttpHandler
         HttpHandler httpHandler = WebHttpHandlerBuilder.applicationContext(SpringUtil.getApplicationContext()).build();
         ReactorHttpHandlerAdapter httpHandlerAdapter = new ReactorHttpHandlerAdapter(httpHandler);
-        int port = Integer.parseInt(ConfClient.get("server.port", "80"));
+        int port = Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE));
         DisposableServer server =
                 HttpServer.create()
                 		  .port(port)
