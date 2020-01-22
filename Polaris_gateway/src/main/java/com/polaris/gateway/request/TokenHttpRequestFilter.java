@@ -5,12 +5,14 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.config.ConfListener;
 import com.polaris.core.util.JwtUtil;
 import com.polaris.core.util.StringUtil;
+import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.support.HttpRequestFilterSupport;
 
 import cn.hutool.core.util.StrUtil;
@@ -130,6 +132,8 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
                 	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
                     return true;
                 }
+                //claim对象
+                httpRequest.headers().add(GatewayConstant.CLAIMS, JSON.toJSONString(claims));
                 return false;
             } catch (Exception ex) {
             	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
