@@ -1,2 +1,0 @@
-/puds=D:/projects/Polaris_extension/puds/static/puds;startup=index.html;error=404.html
-/supplier=D:/projects/Polaris_extension/puds/static/supplier;startup=index.html;error=404.html
