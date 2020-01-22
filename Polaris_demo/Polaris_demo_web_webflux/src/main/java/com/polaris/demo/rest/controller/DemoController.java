@@ -1,7 +1,5 @@
 package com.polaris.demo.rest.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +25,7 @@ public class DemoController {
      * @return
      */
     @GetMapping(value = "/test")
-    public Mono<String> test(HttpServletRequest request) {
+    public Mono<String> test() {
         return Mono.just("test");
     }
 }
