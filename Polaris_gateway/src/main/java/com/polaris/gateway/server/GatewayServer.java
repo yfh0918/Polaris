@@ -1,4 +1,4 @@
-package com.polaris.gateway.support;
+package com.polaris.gateway.server;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -13,43 +13,62 @@ import org.littleshoot.proxy.impl.ThreadPoolConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
 import com.polaris.core.util.SpringUtil;
 import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.HostResolverImpl;
 import com.polaris.gateway.HttpFilterAdapterImpl;
 import com.polaris.gateway.util.GatewaySelfSignedSslEngineSource;
+import com.polaris.http.listener.ServerListener;
 import com.polaris.http.util.NetUtils;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
-public abstract class MainSupport {
+public class GatewayServer {
 	
-	private static Logger logger = LoggerFactory.getLogger(MainSupport.class);
+	private static Logger logger = LoggerFactory.getLogger(GatewayServer.class);
 	
-    //启动网关应用
-	public static void startGateway(Class<?> clazz) {
-    	
-    	//载入参数
-		ConfClient.init(clazz);
-    	
-		//载入spring
+	/**
+     * 服务器
+     */
+    private HttpProxyServerBootstrap httpProxyServerBootstrap = null;
+    
+	/**
+     * 私有构造方法
+     */
+    private GatewayServer() {
+    }
+    
+    /**
+     * 获取单实例公共静态方法
+     *
+     * @return 单实例
+     */
+    public static GatewayServer getInstance() {
+        return Singletone.INSTANCE;
+    }
+
+    /**
+     * 静态内部类实现单例
+     */
+    private static class Singletone {
+        /**
+         * 单实例
+         */
+        private static final GatewayServer INSTANCE = new GatewayServer();
+    }
+    
+    /**
+     * 启动服务器
+     *
+     * @throws Exception
+     */
+    public void start(ServerListener listener) {
+
+    	//创建context
     	SpringUtil.refresh();
     	
-    	//注册服务
-		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {
-			ServerDiscoveryHandlerProvider.getInstance().register(NetUtils.getLocalHost(), Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME)));
-			
-			// add shutdown hook to stop server
-	        Runtime.getRuntime().addShutdownHook(new Thread() {
-	            public void run() {
-	            	ServerDiscoveryHandlerProvider.getInstance().deregister(NetUtils.getLocalHost(), Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME)));
-	            }
-	        });
-		}
     			
         ThreadPoolConfiguration threadPoolConfiguration = new ThreadPoolConfiguration();
         threadPoolConfiguration.withAcceptorThreads(GatewayConstant.AcceptorThreads);
@@ -57,7 +76,7 @@ public abstract class MainSupport {
         threadPoolConfiguration.withProxyToServerWorkerThreads(GatewayConstant.ProxyToServerWorkerThreads);
 
         InetSocketAddress inetSocketAddress = new InetSocketAddress(Integer.parseInt(ConfClient.get("server.port")));
-        HttpProxyServerBootstrap httpProxyServerBootstrap = DefaultHttpProxyServer.bootstrap()
+        httpProxyServerBootstrap = DefaultHttpProxyServer.bootstrap()
                 .withAddress(inetSocketAddress);
         boolean proxy_tls = GatewayConstant.ON.equals(ConfClient.get("server.tls"));
         
@@ -112,5 +131,22 @@ public abstract class MainSupport {
                         return new HttpFilterAdapterImpl(originalRequest, ctx);
                     }
                 }).start();
-    }   
+        
+        listener.started(null);//监听启动
+        
+        // add shutdown hook to stop server
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                try {
+                	listener.stopped(null);
+                } catch (Exception e) {
+                    logger.error("failed to stop tomcat.", e);
+                }
+            }
+        });
+    	
+    }
+    
+    public void stop() {
+    }
 }
