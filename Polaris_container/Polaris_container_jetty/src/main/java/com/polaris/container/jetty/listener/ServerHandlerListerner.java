@@ -7,7 +7,7 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.http.listener.ServerListener;
+import com.polaris.server.listener.ServerListener;
 
 /**
  * Class Name : ServerHandler

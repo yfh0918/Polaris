@@ -12,12 +12,6 @@
 
   <dependencies>
   
-   	<!-- Polaris_container_http -->
-	<dependency>
-		<groupId>com.polaris</groupId>
-		<artifactId>Polaris_container_http</artifactId>
-	</dependency>
-	
 	<!-- jetty -->
 	<dependency>
 	  <groupId>org.eclipse.jetty</groupId>

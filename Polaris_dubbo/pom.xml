@@ -18,7 +18,7 @@
 	<dependencies>
       	<dependency>
 			<groupId>com.polaris</groupId>
-			<artifactId>Polaris_container_http</artifactId>
+			<artifactId>Polaris_server_api</artifactId>
 		</dependency>
 	  	<dependency>
 			<groupId>com.polaris</groupId>

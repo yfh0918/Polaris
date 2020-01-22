@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.util.SpringUtil;
-import com.polaris.http.listener.ServerListener;
+import com.polaris.server.listener.ServerListener;
 
 public class DubboServer {
 	

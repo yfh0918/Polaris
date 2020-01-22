@@ -15,7 +15,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
-import com.polaris.http.util.RequestUtil;
+import com.polaris.server.util.RequestUtil;
 import com.polaris.workflow.api.dto.WorkflowDto;
 import com.polaris.workflow.api.service.WorkflowService;
 

@@ -2,7 +2,7 @@ package com.polaris.demo;
 
 
 import com.polaris.dubbo.annotation.PolarisDubboApplication;
-import com.polaris.http.supports.MainSupport;
+import com.polaris.loader.supports.MainSupport;
 
 /**
  * 入口启动类

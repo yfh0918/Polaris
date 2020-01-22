@@ -19,8 +19,8 @@ import com.polaris.gateway.GatewayConstant;
 import com.polaris.gateway.HostResolverImpl;
 import com.polaris.gateway.HttpFilterAdapterImpl;
 import com.polaris.gateway.util.GatewaySelfSignedSslEngineSource;
-import com.polaris.http.listener.ServerListener;
-import com.polaris.http.util.NetUtils;
+import com.polaris.server.listener.ServerListener;
+import com.polaris.server.util.NetUtils;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;

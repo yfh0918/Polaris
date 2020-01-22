@@ -12,7 +12,6 @@
   <name>Polaris_container</name>
   
   <modules>
-	<module>Polaris_container_http</module>
 	<module>Polaris_container_resteasy</module>
 	<module>Polaris_container_springmvc</module>
 	<module>Polaris_container_jetty</module>
@@ -22,33 +21,9 @@
   
   <dependencies>
   
- 	<!-- common -->
-	<dependency>
-		<groupId>com.polaris</groupId>
-		<artifactId>Polaris_core</artifactId>
-	</dependency>
-	<dependency>
-		<groupId>com.polaris</groupId>
-		<artifactId>Polaris_logger</artifactId>
-	</dependency>
-  
-	<!-- servlet and resteasy -->
-	<dependency>
-	    <groupId>javax.servlet</groupId>
-	    <artifactId>javax.servlet-api</artifactId>
-	</dependency>
-	<dependency>  
-        <groupId>javax.annotation</groupId>  
-        <artifactId>javax.annotation-api</artifactId>  
-	</dependency> 
-	<dependency>  
-        <groupId>org.jboss.resteasy</groupId>  
-        <artifactId>resteasy-jaxrs</artifactId>  
-	</dependency> 
-	<dependency>  
-	    <groupId>org.jboss.resteasy</groupId>  
-	    <artifactId>resteasy-jackson-provider</artifactId>  
-	</dependency>
-	
+		<dependency>
+	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_server_api</artifactId>
+        </dependency> 		
   </dependencies>
 </project>

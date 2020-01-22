@@ -12,7 +12,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 import com.polaris.core.config.ConfigLoader;
 import com.polaris.core.util.SpringUtil;
-import com.polaris.http.initializer.ExtensionInitializerAbs;
+import com.polaris.server.initializer.ExtensionInitializerAbs;
 
 public class SpringMvcInitializer extends  ExtensionInitializerAbs { 
 	final static Logger logger = LoggerFactory.getLogger(SpringMvcInitializer.class);

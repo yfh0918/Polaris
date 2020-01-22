@@ -3,7 +3,7 @@ package com.polaris.resteasy;
 import javax.servlet.ServletRegistration;
 
 import com.polaris.core.util.SpringUtil;
-import com.polaris.http.initializer.ExtensionInitializerAbs;
+import com.polaris.server.initializer.ExtensionInitializerAbs;
 
 public class ResteasyInitializer extends  ExtensionInitializerAbs { 
 

@@ -1,0 +1,68 @@
+﻿<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<groupId>com.polaris</groupId>
+		<artifactId>Polaris_parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>Polaris_server_api</artifactId>
+	<packaging>jar</packaging>
+	<name>Polaris_server_api</name>
+
+	<dependencies>
+	 	<!-- common -->
+		<dependency>
+			<groupId>com.polaris</groupId>
+			<artifactId>Polaris_core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.polaris</groupId>
+			<artifactId>Polaris_logger</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>javax.servlet</groupId>
+		    <artifactId>javax.servlet-api</artifactId>
+		</dependency>
+		<dependency>  
+	        <groupId>javax.annotation</groupId>  
+	        <artifactId>javax.annotation-api</artifactId>  
+		</dependency> 
+		<dependency>  
+	        <groupId>org.jboss.resteasy</groupId>  
+	        <artifactId>resteasy-jaxrs</artifactId>  
+		</dependency> 
+		<dependency>  
+		    <groupId>org.jboss.resteasy</groupId>  
+		    <artifactId>resteasy-jackson-provider</artifactId>  
+		</dependency>
+
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>javax.websocket</groupId>
+		    <artifactId>javax.websocket-api</artifactId>
+		</dependency>
+		
+	</dependencies>
+	
+	<build>
+	  <plugins>
+		<!-- Source attach plugin -->
+		<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+	  </plugins>
+   </build>
+</project>

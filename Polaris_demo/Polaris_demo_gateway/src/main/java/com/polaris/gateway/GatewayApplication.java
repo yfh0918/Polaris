@@ -2,7 +2,7 @@ package com.polaris.gateway;
 
 
 import com.polaris.core.annotation.PolarisBaseApplication;
-import com.polaris.http.supports.MainSupport;
+import com.polaris.loader.supports.MainSupport;
 
 @PolarisBaseApplication
 public class GatewayApplication {
