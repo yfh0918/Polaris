@@ -16,15 +16,16 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 
 import com.polaris.core.util.SpringUtil;
+import com.polaris.server.factory.ContainerServerFactory;
 
 public class WSServerListerner implements  ServerListener{
 	private static Logger logger = LoggerFactory.getLogger(WSServerListerner.class);
 	
 	@Override
-	public void started(ServletContext... servletContext){
+	public void started(){
 		//加载websocket
     	WSEndpointExporter wsEndpointExporter = new WSEndpointExporter();
-    	wsEndpointExporter.initServerContainer(servletContext[0]);
+    	wsEndpointExporter.initServerContainer(ContainerServerFactory.getServletContext());
 	}
 	
 	public static class WSEndpointExporter {

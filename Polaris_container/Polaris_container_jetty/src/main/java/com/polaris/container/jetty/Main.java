@@ -1,5 +1,7 @@
 package com.polaris.container.jetty;
 
+import javax.servlet.ServletContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,4 +50,14 @@ public class Main implements ContainerDiscoveryHandler{
         }).start();
         
 	}
+	
+	/**
+     * servlet上下文
+     *
+     */
+	@Override
+	public ServletContext getServletContex() {
+		JettyServer server = JettyServer.getInstance();
+		return server.getServletContex();
+    }
 }

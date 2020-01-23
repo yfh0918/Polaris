@@ -1,7 +1,5 @@
 package com.polaris.container.jetty.listener;
 
-import javax.servlet.ServletContext;
-
 import org.eclipse.jetty.util.component.AbstractLifeCycle.AbstractLifeCycleListener;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
@@ -24,11 +22,9 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 服务器监听器集合
 	 */
 	private ServerListener[] serverlisteners;
-	private ServletContext servletContext;
 
-	public ServerHandlerListerner(ServletContext servletContext, ServerListener... serverlisteners) {
+	public ServerHandlerListerner(ServerListener... serverlisteners) {
 		this.serverlisteners = serverlisteners;
-		this.servletContext = servletContext;
 	}
 
 	/**
@@ -38,7 +34,7 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	public void lifeCycleStarting(LifeCycle event) {
 		if (serverlisteners != null) {
     		for (ServerListener serverListener:serverlisteners) {
-    			serverListener.starting(servletContext);
+    			serverListener.starting();
     		}
     	}
     	logger.info("JettyServer启动中！");
@@ -51,7 +47,7 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
     public void lifeCycleStarted(LifeCycle event) {
 		if (serverlisteners != null) {
     		for (ServerListener serverListener:serverlisteners) {
-    			serverListener.started(servletContext);
+    			serverListener.started();
     		}
     	}
     	
@@ -66,7 +62,7 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
     public void lifeCycleFailure(LifeCycle event,Throwable cause) {
 		if (serverlisteners != null) {
     		for (ServerListener serverListener:serverlisteners) {
-    			serverListener.failure(servletContext);
+    			serverListener.failure();
     		}
     	}
     	logger.info("JettyServer启动失败！");
@@ -79,7 +75,7 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
    public void lifeCycleStopping(LifeCycle event) {
 		if (serverlisteners != null) {
     		for (ServerListener serverListener:serverlisteners) {
-    			serverListener.stopping(servletContext);
+    			serverListener.stopping();
     		}
     	}
 	   logger.info("JettyServer已经中！");
@@ -92,7 +88,7 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
     public void lifeCycleStopped(LifeCycle event) {
 		if (serverlisteners != null) {
     		for (ServerListener serverListener:serverlisteners) {
-    			serverListener.stopped(servletContext);
+    			serverListener.stopped();
     		}
     	}
     	logger.info("JettyServer已经停止！");

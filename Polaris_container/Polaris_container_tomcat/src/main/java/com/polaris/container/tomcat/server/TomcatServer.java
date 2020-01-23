@@ -2,6 +2,8 @@ package com.polaris.container.tomcat.server;
 
 import java.io.File;
 
+import javax.servlet.ServletContext;
+
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.core.AprLifecycleListener;
 import org.apache.catalina.core.StandardContext;
@@ -45,6 +47,11 @@ public class TomcatServer {
      */
     private TomcatServer() {
     }
+    
+    /**
+     * servlet上下文
+     */
+    private StandardContext standardContext;
 
     /**
      * 服务器初始化
@@ -93,7 +100,7 @@ public class TomcatServer {
             server.addLifecycleListener(listener);
             
             //加载上下文
-            StandardContext standardContext = new StandardContext();
+            standardContext = new StandardContext();
             
             //其他参数加载
             standardContext.setPath(contextPath);//contextPath
@@ -102,7 +109,6 @@ public class TomcatServer {
             standardContext.addLifecycleListener(new ContextConfig());
             standardContext.addLifecycleListener(
             		new ServerHandlerListerner(
-            		standardContext,
             		new WSServerListerner(),
             		startlistener));
          
@@ -118,7 +124,7 @@ public class TomcatServer {
             tomcat.getHost().addChild(standardContext);
 
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Error:",e);
         }
 
     }
@@ -205,5 +211,14 @@ public class TomcatServer {
             //停止了就清空服务
             this.tomcat = null;
         }
+    }
+    
+    /**
+     * 获取servlet上下文
+     *
+     * @throws Exception
+     */
+    public ServletContext getServletContex() {
+    	return standardContext.getServletContext();
     }
 }

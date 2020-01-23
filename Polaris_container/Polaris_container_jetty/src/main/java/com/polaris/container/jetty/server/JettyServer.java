@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import javax.servlet.ServletContext;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -35,6 +37,11 @@ public class JettyServer {
     private Server server = null;
     
     private ServerListener startlistener;
+    
+    /**
+     * servlet上下文
+     */
+    private ServletContext servletContext;
 
     /**
      * 私有构造方法
@@ -71,13 +78,12 @@ public class JettyServer {
             File resDir = new File(resourceBase);
             context.setResourceBase(resDir.getCanonicalPath());
             context.setMaxFormContentSize(Integer.parseInt(ConfClient.get("server.maxSavePostSize",String.valueOf(MAX_SAVE_POST_SIZE))));
-            context.addBean(new ServerHandlerLifeCycle(context.getServletContext()),false);
-            
+            servletContext = context.getServletContext();
+            context.addBean(new ServerHandlerLifeCycle(servletContext),false);
             //context加入server
             this.server.setHandler(context); // 将Application注册到服务器
             this.server.addLifeCycleListener(
             		new ServerHandlerListerner(
-            				context.getServletContext(), 
             				new WSServerListerner(),
             				startlistener));//监听handler
         } catch (IOException e) {
@@ -145,7 +151,7 @@ public class JettyServer {
 
             //启动出错的话，清空服务
             this.server = null;
-            logger.error(e.getMessage());
+            logger.error("Error:",e);
         }
 
 
@@ -172,5 +178,14 @@ public class JettyServer {
             this.server = null;
         }
 
+    }
+    
+    /**
+     * 获取servlet上下文
+     *
+     * @throws Exception
+     */
+    public ServletContext getServletContex() {
+    	return servletContext;
     }
 }

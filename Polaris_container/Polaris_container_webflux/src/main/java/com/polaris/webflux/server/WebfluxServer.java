@@ -71,13 +71,13 @@ public class WebfluxServer {
                           .handle(httpHandlerAdapter) 
                           .bindNow();
         logger.info("netty-webflux is started,port:{}",port);
-        listener.started(null);//监听启动
+        listener.started();//监听启动
         
         // add shutdown hook to stop server
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
-                	listener.stopped(null);
+                	listener.stopped();
                 } catch (Exception e) {
                     logger.error("failed to stop tomcat.", e);
                 }

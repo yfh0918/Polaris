@@ -1,5 +1,7 @@
 package com.polaris.container.tomcat;
 
+import javax.servlet.ServletContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,4 +48,15 @@ public class Main implements ContainerDiscoveryHandler {
 			}
     	}).start();
 	}
+	
+	/**
+     * servlet上下文
+     *
+     */
+	@Override
+	public ServletContext getServletContex() {
+		TomcatServer server = TomcatServer.getInstance();
+		return server.getServletContex();
+    }
+		
 }

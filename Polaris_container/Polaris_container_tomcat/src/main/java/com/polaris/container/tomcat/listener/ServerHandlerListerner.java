@@ -3,7 +3,6 @@ package com.polaris.container.tomcat.listener;
 import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
-import org.apache.catalina.core.StandardContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +20,9 @@ public class ServerHandlerListerner implements LifecycleListener{
 	
 	private static final Logger logger = LoggerFactory.getLogger(ServerHandlerListerner.class);
 	private ServerListener[] serverlisteners;
-	private StandardContext standardContext;
 	
-	public ServerHandlerListerner (StandardContext standardContext, ServerListener... serverlisteners) {
+	public ServerHandlerListerner (ServerListener... serverlisteners) {
 		this.serverlisteners = serverlisteners;
-		this.standardContext = standardContext; 
 	}
 
 	@Override
@@ -35,7 +32,7 @@ public class ServerHandlerListerner implements LifecycleListener{
         } else if (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) {
         	if (serverlisteners != null) {
         		for (ServerListener serverListener:serverlisteners) {
-        			serverListener.starting(standardContext.getServletContext());
+        			serverListener.starting();
         		}
         	}
         	
@@ -44,21 +41,21 @@ public class ServerHandlerListerner implements LifecycleListener{
         	
         	if (serverlisteners != null) {
         		for (ServerListener serverListener:serverlisteners) {
-        			serverListener.started(standardContext.getServletContext());
+        			serverListener.started();
         		}
         	}
         	logger.info("TomcatServer启动成功！");
         } else if (event.getType().equals(Lifecycle.BEFORE_STOP_EVENT)) {
         	if (serverlisteners != null) {
         		for (ServerListener serverListener:serverlisteners) {
-        			serverListener.stopping(standardContext.getServletContext());
+        			serverListener.stopping();
         		}
         	}
         	logger.info("TomcatServer停止中！");
         } else if (event.getType().equals(Lifecycle.AFTER_STOP_EVENT)) {
         	if (serverlisteners != null) {
         		for (ServerListener serverListener:serverlisteners) {
-        			serverListener.stopped(standardContext.getServletContext());
+        			serverListener.stopped();
         		}
         	}
         	logger.info("TomcatServer已经停止！");
