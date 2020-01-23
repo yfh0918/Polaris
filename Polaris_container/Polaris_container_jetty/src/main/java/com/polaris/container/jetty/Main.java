@@ -1,18 +1,16 @@
 package com.polaris.container.jetty;
 
-import javax.servlet.ServletContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.jetty.server.JettyServer;
-import com.polaris.server.factory.ContainerDiscoveryHandler;
+import com.polaris.server.factory.Container;
 import com.polaris.server.listener.ServerListener;
 
 /**
  * 入口启动类
  */
-public class Main implements ContainerDiscoveryHandler{
+public class Main implements Container{
 
 	private static Logger logger = LoggerFactory.getLogger(Main.class);
     /**
@@ -56,7 +54,7 @@ public class Main implements ContainerDiscoveryHandler{
      *
      */
 	@Override
-	public ServletContext getServletContex() {
+	public Object getContext() {
 		JettyServer server = JettyServer.getInstance();
 		return server.getServletContex();
     }

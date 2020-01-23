@@ -1,6 +1,6 @@
 package com.polaris.webflux;
 
-import com.polaris.server.factory.ContainerDiscoveryHandler;
+import com.polaris.server.factory.Container;
 import com.polaris.server.listener.ServerListener;
 import com.polaris.webflux.server.WebfluxServer;
 
@@ -8,7 +8,7 @@ import com.polaris.webflux.server.WebfluxServer;
  * 入口启动类
  *
  */
-public class Main implements ContainerDiscoveryHandler {
+public class Main implements Container {
 	/**
      * 服务启动
      *

@@ -2,7 +2,7 @@ package com.polaris.loader.supports;
 
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.NameingClient;
-import com.polaris.server.factory.ContainerServerFactory;
+import com.polaris.server.factory.ContainerFactory;
 import com.polaris.server.listener.ServerListener;
 
 /**
@@ -33,7 +33,7 @@ public abstract class MainSupport {
     	ConfClient.init(rootConfigClass);
     	
     	//启动
-    	ContainerServerFactory.startServer(new ServerListener() {
+    	ContainerFactory.getContainer().start(new ServerListener() {
 
 			@Override
 			public void started() {
@@ -61,7 +61,7 @@ public abstract class MainSupport {
      */
      public static void stopServer() {
      	
-     	//关闭
-    	 ContainerServerFactory.stopServer();
+     	 //关闭
+    	 ContainerFactory.getContainer().stop();
      }
 }
