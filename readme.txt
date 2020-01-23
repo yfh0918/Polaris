@@ -1,4 +1,4 @@
-﻿1:install or deploy 全体
+﻿1:install or deploy 全体(在之前先install或者deploy Polaris_parent)
  Polaris_assembly插件可以install和deploy但是，jekins构建会存在问题
  （插件目前只能从  http://repository.apache.org/snapshots/com/polaris/Polaris_assembly/1.0.0-SNAPSHOT/maven-metadata.xml拉取）
  需要本地Polaris_assembly包手动copy到jekins的maven仓库
@@ -47,14 +47,14 @@
   需要在自己的服务pom.xml中引入 Polaris_sentinel
   该接口主要用于提供api的servlet
 
-8,如何启动，打开eclipse后启动xxxApplication.java文件（该类需要实现Launcher接口，或者注解@PolarisApplication）
+8,如何启动，打开eclipse后启动xxxApplication.java文件（注解@PolarisApplication 网关注解@PolarisBaseApplciation Dubbo注解@PolarisDubboApplicaiton 具体参考demo）
  总要，为了加快启动速度，请把Polaris_launcher放置到依赖包的最前面
 
   8.1 pom.xml中提供 tomcat和jetty两种启动模式,并且提供resteasy和springmvc组合的方式
       具体参考pom.xml
 	  <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_launcher</artifactId>  ->用于检测启动类
+            <artifactId>Polaris_container_launcher</artifactId>  ->用于检测启动类
         </dependency>
 	  <dependency>
             <groupId>com.polaris</groupId>
@@ -75,7 +75,7 @@
 10，支持整体调用链路的跟踪，比如traceId, moduleId, parentId, 
     日志采用slf4j的 Logger xLogger = LoggerFactory.getLogger(xxx.class);只需引入Polaris_core包
 	另外如果采用线程池的方式，需要InheritableThreadLocalExecutor和InheritablePolarisThreadLocal搭配方式使用，线程池中的traceId信息也会进行传递
-	采用dubbo方式 需要映入polaris_dubbo模块，帮你做了traceID的传递，
+	采用dubbo方式 需要映入polaris_container_dubbo模块，帮你做了traceID的传递，
 	http方式 采用HttpClientUtil方式，帮你做了traceID的传递
 	
 11,缓存模块Polaris_cache,
