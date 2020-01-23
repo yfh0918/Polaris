@@ -1,8 +1,8 @@
 package com.polaris.demo;
 
 
-import com.polaris.dubbo.annotation.PolarisDubboApplication;
-import com.polaris.loader.supports.MainSupport;
+import com.polaris.container.dubbo.annotation.PolarisDubboApplication;
+import com.polaris.container.loader.supports.MainSupport;
 
 @PolarisDubboApplication
 public class DubboApplication{

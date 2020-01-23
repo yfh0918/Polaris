@@ -1,7 +1,7 @@
 package org.littleshoot.proxy.impl;
 
 import com.google.common.io.BaseEncoding;
-import com.polaris.gateway.HttpStatic;
+import com.polaris.container.gateway.HttpStatic;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

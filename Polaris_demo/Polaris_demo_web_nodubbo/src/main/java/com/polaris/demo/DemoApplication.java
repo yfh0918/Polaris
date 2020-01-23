@@ -1,8 +1,8 @@
 package com.polaris.demo;
 
 
+import com.polaris.container.loader.supports.MainSupport;
 import com.polaris.core.annotation.PolarisApplication;
-import com.polaris.loader.supports.MainSupport;
 
 /**
  * 入口启动类

@@ -2,9 +2,10 @@ package com.polaris.gateway.request;
 
 import org.springframework.stereotype.Service;
 
+import com.polaris.container.gateway.HttpFilterEnum;
+import com.polaris.container.gateway.request.HttpRequestFilter;
+import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.core.Constant;
-import com.polaris.gateway.HttpFilterEnum;
-import com.polaris.gateway.support.HttpRequestFilterSupport;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;

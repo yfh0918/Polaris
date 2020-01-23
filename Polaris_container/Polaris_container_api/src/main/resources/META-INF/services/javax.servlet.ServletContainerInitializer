@@ -1,1 +1,1 @@
-com.polaris.server.initializer.ServletInitializerImpl
+com.polaris.container.servlet.initializer.ServletInitializerImpl

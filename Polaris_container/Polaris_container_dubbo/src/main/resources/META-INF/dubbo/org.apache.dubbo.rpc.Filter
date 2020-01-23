@@ -1,3 +1,3 @@
-sentinel.dubbo.provider.filter=com.polaris.dubbo.filter.SentinelDubboProviderFilter
-sentinel.dubbo.consumer.filter=com.polaris.dubbo.filter.SentinelDubboConsumerFilter
-dubbo.application.context.name.filter=com.polaris.dubbo.filter.DubboAppContextFilter
+sentinel.dubbo.provider.filter=com.polaris.container.dubbo.filter.SentinelDubboProviderFilter
+sentinel.dubbo.consumer.filter=com.polaris.container.dubbo.filter.SentinelDubboConsumerFilter
+dubbo.application.context.name.filter=com.polaris.container.dubbo.filter.DubboAppContextFilter
