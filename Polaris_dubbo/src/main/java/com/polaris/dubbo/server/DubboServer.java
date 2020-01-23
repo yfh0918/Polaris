@@ -1,5 +1,7 @@
 package com.polaris.dubbo.server;
 
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,5 +62,12 @@ public class DubboServer {
                 }
             }
         });
+        
+        //block
+        try {
+			System.in.read();
+		} catch (IOException e) {
+			logger.error("ERROR:",e);
+		}
     }
 }

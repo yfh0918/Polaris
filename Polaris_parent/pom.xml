@@ -25,6 +25,9 @@
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <swagger-version>2.9.2</swagger-version>
         <polaris-version>1.0.0-SNAPSHOT</polaris-version>
+        <nacos.version>1.1.4</nacos.version>
+        <dubbo-version>2.7.4</dubbo-version>
+        <sentinel-version>1.7.0</sentinel-version>
     </properties>
     <profiles>
         <profile>
@@ -1194,7 +1197,82 @@
 			    <artifactId>swagger-jaxrs</artifactId>
 			    <version>1.5.22</version>
 			</dependency>
-            
+
+			<!-- nacos -->
+			<dependency>
+				<groupId>com.alibaba.nacos</groupId>
+				<artifactId>nacos-client</artifactId>
+				<version>${nacos.version}</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>logback-classic</artifactId>
+						<groupId>ch.qos.logback</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>logback-core</artifactId>
+						<groupId>ch.qos.logback</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.nacos</groupId>
+				<artifactId>nacos-common</artifactId>
+				<version>${nacos.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.alibaba.nacos</groupId>
+				<artifactId>nacos-api</artifactId>
+				<version>${nacos.version}</version>
+			</dependency>
+
+		    <!-- dubbo -->
+			<dependency>
+			    <groupId>org.apache.dubbo</groupId>
+			    <artifactId>dubbo</artifactId>
+			    <version>${dubbo-version}</version>
+	            <exclusions>
+	                <exclusion>
+	                    <groupId>log4j</groupId>
+	                    <artifactId>log4j</artifactId>
+	                </exclusion>
+	                <exclusion>
+	                    <groupId>org.springframework</groupId>
+	                    <artifactId>spring</artifactId>
+	                </exclusion>
+	            </exclusions>
+			</dependency>
+		    <dependency>
+		        <groupId>org.apache.dubbo</groupId>
+		        <artifactId>dubbo-registry-nacos</artifactId>
+		        <version>${dubbo-version}</version>
+		    </dependency>	  
+
+			<!-- sentinel -->
+			<dependency>
+			    <groupId>com.alibaba.csp</groupId>
+			    <artifactId>sentinel-core</artifactId>
+			    <version>${sentinel-version}</version>
+			</dependency>
+			<dependency>
+			    <groupId>com.alibaba.csp</groupId>
+			    <artifactId>sentinel-transport-simple-http</artifactId>
+			    <version>${sentinel-version}</version>
+			</dependency>
+			<dependency>
+			    <groupId>com.alibaba.csp</groupId>
+			    <artifactId>sentinel-web-servlet</artifactId>
+			    <version>${sentinel-version}</version>
+			</dependency>
+			<dependency>
+			    <groupId>com.alibaba.csp</groupId>
+			    <artifactId>sentinel-datasource-nacos</artifactId>
+			    <version>${sentinel-version}</version>
+			</dependency>	
+			<dependency>
+			    <groupId>com.alibaba.csp</groupId>
+			    <artifactId>sentinel-parameter-flow-control</artifactId>
+			    <version>${sentinel-version}</version>
+			</dependency>			            
         </dependencies>
     </dependencyManagement>
 

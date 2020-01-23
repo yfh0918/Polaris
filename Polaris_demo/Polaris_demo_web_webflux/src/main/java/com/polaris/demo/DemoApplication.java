@@ -1,7 +1,7 @@
 package com.polaris.demo;
 
 
-import com.polaris.http.supports.MainSupport;
+import com.polaris.loader.supports.MainSupport;
 import com.polaris.webflux.annotation.PolarisWebfluxApplication;
 
 /**
@@ -15,6 +15,6 @@ public class DemoApplication
     public static void main( String[] args ) throws Exception
     {
 		//启动WEB
-    	MainSupport.startWebServer(args,DemoApplication.class);
+    	MainSupport.startServer(args,DemoApplication.class);
     }
 }

@@ -10,11 +10,6 @@
 	<packaging>jar</packaging>
 	<name>Polaris_dubbo</name>
 
-    <properties>
-        <dubbo-version>2.7.3</dubbo-version>
-        <sentinel-version>1.6.3</sentinel-version>
-    </properties>
-    
 	<dependencies>
       	<dependency>
 			<groupId>com.polaris</groupId>
@@ -29,27 +24,19 @@
 		<dependency>
 		    <groupId>org.apache.dubbo</groupId>
 		    <artifactId>dubbo</artifactId>
-		    <version>${dubbo-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring</artifactId>
-                </exclusion>
-            </exclusions>
 		</dependency>
 	    <dependency>
 	        <groupId>org.apache.dubbo</groupId>
 	        <artifactId>dubbo-registry-nacos</artifactId>
-	        <version>${dubbo-version}</version>
 	    </dependency>	  
 		<dependency>
 		    <groupId>com.alibaba.csp</groupId>
 		    <artifactId>sentinel-core</artifactId>
-		    <version>${sentinel-version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.alibaba.nacos</groupId>
+			<artifactId>nacos-client</artifactId>
 		</dependency>
         
         <dependency>

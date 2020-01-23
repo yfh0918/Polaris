@@ -25,24 +25,21 @@
 		<dependency>
 		    <groupId>com.alibaba.csp</groupId>
 		    <artifactId>sentinel-transport-simple-http</artifactId>
-		    <version>${sentinel-version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>com.alibaba.csp</groupId>
 		    <artifactId>sentinel-web-servlet</artifactId>
-		    <version>${sentinel-version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>com.alibaba.csp</groupId>
 		    <artifactId>sentinel-datasource-nacos</artifactId>
-		    <version>${sentinel-version}</version>
 		</dependency>	
 		<dependency>
 		    <groupId>com.alibaba.csp</groupId>
 		    <artifactId>sentinel-parameter-flow-control</artifactId>
-		    <version>${sentinel-version}</version>
 		</dependency>				
 	</dependencies>
+	
 	<build>
 	  <plugins>
 		<!-- Source attach plugin -->

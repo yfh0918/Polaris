@@ -26,6 +26,7 @@ public class DefaultDubboConfig {
 			}
 		});
         applicationConfig.setName(ConfClient.getAppName());
+        applicationConfig.setQosEnable(Boolean.parseBoolean(ConfClient.get("dubbo.application.qosEnable", "false")));
         return applicationConfig;
     }
     
