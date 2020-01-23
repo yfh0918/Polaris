@@ -12,6 +12,10 @@
 
   <dependencies>
   
+  	<dependency>
+		<groupId>com.polaris</groupId>
+		<artifactId>Polaris_container_api</artifactId>
+	</dependency>
 	<!-- tomcat -->
 	<dependency>
 	    <groupId>org.apache.tomcat.embed</groupId>

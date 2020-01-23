@@ -12,7 +12,6 @@
         <module>Polaris_parent</module>
         <module>Polaris_core</module>
         <module>Polaris_launcher</module>
-        <module>Polaris_server_api</module>
         <module>Polaris_container</module>
         <module>Polaris_dubbo</module>
         <module>Polaris_conf</module>

@@ -13,7 +13,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.polaris</groupId>
-			<artifactId>Polaris_server_api</artifactId>
+			<artifactId>Polaris_container_api</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

@@ -120,10 +120,11 @@
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_cache</artifactId>
         </dependency>
-      	<dependency>
+		<dependency>
 			<groupId>com.polaris</groupId>
-			<artifactId>Polaris_server_api</artifactId>
-		</dependency>	
+			<artifactId>Polaris_container_api</artifactId>
+		</dependency>
+
         <dependency>
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_conf_file</artifactId>

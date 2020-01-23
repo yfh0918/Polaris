@@ -74,17 +74,17 @@
 	        </dependency> 
 	        <dependency>
 	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_server_api</artifactId>
-	            <version>${polaris-version}</version>
-	        </dependency> 
-	        <dependency>
-	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_launcher</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency> 
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_container</artifactId>
+	            <version>${polaris-version}</version>
+	        </dependency> 
+	        <dependency>
+	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_container_api</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency> 
 	        <dependency>

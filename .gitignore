@@ -376,3 +376,7 @@
 /Polaris_server_api/.project
 /Polaris_server_api/.settings
 /Polaris_server_api/target
+/Polaris_container/Polaris_container_api/.settings
+/Polaris_container/Polaris_container_api/target
+/Polaris_container/Polaris_container_api/.classpath
+/Polaris_container/Polaris_container_api/.project
