@@ -19,7 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_launcher</artifactId>
+            <artifactId>Polaris_container_launcher</artifactId>
         </dependency>
       <dependency>
             <groupId>com.polaris</groupId>
