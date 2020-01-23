@@ -119,9 +119,15 @@
 	        </dependency>	        	        	        
 	        <dependency>
 	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_dubbo</artifactId>
+	            <artifactId>Polaris_container_dubbo</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency> 
+	        <dependency>
+	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_container_gateway</artifactId>
+	            <version>${polaris-version}</version>
+	        </dependency>  
+	        
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_conf</artifactId>
@@ -176,11 +182,6 @@
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_sentinel</artifactId>
-	            <version>${polaris-version}</version>
-	        </dependency>  
-	        <dependency>
-	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_gateway</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency>  
 

@@ -17,7 +17,7 @@
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_dubbo</artifactId>
+            <artifactId>Polaris_container_dubbo</artifactId>
         </dependency> 
 		<dependency>
             <groupId>com.polaris_demo</groupId>

@@ -18,6 +18,9 @@
 	<module>Polaris_container_jetty</module>
 	<module>Polaris_container_tomcat</module>
 	<module>Polaris_container_webflux</module>
+	<module>Polaris_container_dubbo</module>
+	<module>Polaris_container_gateway</module>
+	
   </modules>
   
   <dependencies>

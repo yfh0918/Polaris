@@ -2,13 +2,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>com.polaris</groupId>
-		<artifactId>Polaris_parent</artifactId>
+		<artifactId>Polaris_container</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>Polaris_dubbo</artifactId>
+	<artifactId>Polaris_container_dubbo</artifactId>
 	<packaging>jar</packaging>
-	<name>Polaris_dubbo</name>
+	<name>Polaris_container_dubbo</name>
 
 	<dependencies>
 		<dependency>
