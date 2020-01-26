@@ -14,8 +14,7 @@
   <modules>
 	<module>Polaris_container_api</module>
 	<module>Polaris_container_launcher</module>
-	<module>Polaris_container_resteasy</module>
-	<module>Polaris_container_springmvc</module>
+	<module>Polaris_container_servlet</module>
 	<module>Polaris_container_jetty</module>
 	<module>Polaris_container_tomcat</module>
 	<module>Polaris_container_webflux</module>

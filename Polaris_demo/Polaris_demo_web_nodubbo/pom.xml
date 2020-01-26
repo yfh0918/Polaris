@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_container_resteasy</artifactId>
+            <artifactId>Polaris_container_servlet_resteasy</artifactId>
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>

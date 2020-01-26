@@ -89,22 +89,17 @@
 	        </dependency> 
 	        <dependency>
 	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_container_http</artifactId>
+	            <artifactId>Polaris_container_servlet</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_container_resteasy</artifactId>
+	            <artifactId>Polaris_container_servlet_resteasy</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_container_springmvc</artifactId>
-	            <version>${polaris-version}</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_container_webflux</artifactId>
+	            <artifactId>Polaris_container_servlet_springmvc</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency>
 	        <dependency>
@@ -117,6 +112,11 @@
 	            <artifactId>Polaris_container_tomcat</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency>	        	        	        
+	        <dependency>
+	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_container_webflux</artifactId>
+	            <version>${polaris-version}</version>
+	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_container_dubbo</artifactId>
