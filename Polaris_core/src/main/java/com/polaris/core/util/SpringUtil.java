@@ -3,7 +3,7 @@ package com.polaris.core.util;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.polaris.core.config.ConfigLoader;
+import com.polaris.core.ConfigurationLoader;
 
 public class SpringUtil {
 	private static ApplicationContext context = null;
@@ -13,7 +13,7 @@ public class SpringUtil {
     		synchronized(SpringUtil.class) {
     			if (context == null) {
     				AnnotationConfigApplicationContext annotationContext = new AnnotationConfigApplicationContext();
-    		    	annotationContext.register(ConfigLoader.getRootConfigClass());
+    		    	annotationContext.register(ConfigurationLoader.getRootConfigClass());
     		    	context = annotationContext;
     			}
     		}

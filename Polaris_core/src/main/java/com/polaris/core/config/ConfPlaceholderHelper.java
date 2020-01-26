@@ -18,7 +18,7 @@ import com.polaris.core.util.StringUtil;
 /**
  * Placeholder helper functions.
  */
-public class PlaceholderHelper {
+public class ConfPlaceholderHelper {
 
   private static final String PLACEHOLDER_PREFIX = "${";
   private static final String PLACEHOLDER_SUFFIX = "}";
@@ -27,7 +27,7 @@ public class PlaceholderHelper {
   private static final String EXPRESSION_PREFIX = "#{";
   private static final String EXPRESSION_SUFFIX = "}";
   private static boolean ignoreUnresolvablePlaceholders = true;
-  private static final Logger logger = LoggerFactory.getLogger(PlaceholderHelper.class);
+  private static final Logger logger = LoggerFactory.getLogger(ConfPlaceholderHelper.class);
 
   /**
    * Resolve placeholder property values, e.g.

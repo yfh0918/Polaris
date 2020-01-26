@@ -12,22 +12,22 @@ import com.polaris.core.util.SpringUtil;
 import com.polaris.core.util.StringUtil;
 
 @SuppressWarnings("rawtypes")
-public abstract class ConfigHandlerProvider {
+public abstract class ConfHandlerProvider {
 
-    private static final ServiceLoader<ConfigHandler> serviceLoader = ServiceLoader.load(ConfigHandler.class);
+    private static final ServiceLoader<ConfHandler> serviceLoader = ServiceLoader.load(ConfHandler.class);
 	private static List<OrderWrapper> configHandlerList = new ArrayList<OrderWrapper>();
-	private static ConfigHandler handler;
+	private static ConfHandler handler;
     static {
-    	for (ConfigHandler configHandler : serviceLoader) {
+    	for (ConfHandler configHandler : serviceLoader) {
     		OrderWrapper.insertSorted(configHandlerList, configHandler);
         }
     	if (configHandlerList.size() > 0) {
-        	handler = (ConfigHandler)configHandlerList.get(0).getHandler();
+        	handler = (ConfHandler)configHandlerList.get(0).getHandler();
     	}
     }
     
     //载入缓存+监听
-    public static void loadConfig(ConfigEnum configEnum, String fileName) {
+    public static void loadConfig(ConfHandlerEnum configEnum, String fileName) {
 
 		//载入配置到缓存
     	cacheConfig(configEnum, getConfig(fileName), false);
@@ -42,7 +42,7 @@ public abstract class ConfigHandlerProvider {
     }
     
     // 载入缓存
-    public static void cacheConfig(ConfigEnum configEnum, String config, boolean isListen) {
+    public static void cacheConfig(ConfHandlerEnum configEnum, String config, boolean isListen) {
     	if (StringUtil.isNotEmpty(config)) {
 			String[] contents = config.split(Constant.LINE_SEP);
 			for (String content : contents) {
@@ -62,7 +62,7 @@ public abstract class ConfigHandlerProvider {
 		//扩展点
 		if (handler != null) {
 			if (ConfHandlerSupport.isGlobal(fileName)) {
-				return handler.getConfig(fileName,ConfigEnum.GLOBAL.getType());
+				return handler.getConfig(fileName,ConfHandlerEnum.GLOBAL.getType());
 			} else {
 				return handler.getConfig(fileName,ConfClient.getAppName());
 			}
@@ -75,7 +75,7 @@ public abstract class ConfigHandlerProvider {
 	public static void addListener(String fileName, ConfListener listener) {
 		if (handler != null) {
 			if (ConfHandlerSupport.isGlobal(fileName)) {
-				handler.addListener(fileName, ConfigEnum.GLOBAL.getType(), listener);				
+				handler.addListener(fileName, ConfHandlerEnum.GLOBAL.getType(), listener);				
 			} else {
 				handler.addListener(fileName, ConfClient.getAppName(), listener);
 			}

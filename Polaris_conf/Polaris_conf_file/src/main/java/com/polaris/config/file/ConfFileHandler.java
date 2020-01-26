@@ -1,9 +1,9 @@
 package com.polaris.config.file;
 
 import com.polaris.core.config.ConfListener;
-import com.polaris.core.config.ConfigHandler;
+import com.polaris.core.config.ConfHandler;
 
-public class ConfFileHandler implements ConfigHandler {
+public class ConfFileHandler implements ConfHandler {
 
 	@Override
 	public String getConfig(String fileName, String group) {

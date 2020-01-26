@@ -26,7 +26,7 @@ public class ConfPropertyPlaceholderConfigurer extends PropertyPlaceholderConfig
 		StringValueResolver valueResolver = new StringValueResolver() {
 			@Override
 			public String resolveStringValue(String strVal) {
-				return PlaceholderHelper.parseStringValue(strVal, new HashSet<String>()).trim();
+				return ConfPlaceholderHelper.parseStringValue(strVal, new HashSet<String>()).trim();
 			}
 		};
 		super.doProcessProperties(beanFactoryToProcess, valueResolver);

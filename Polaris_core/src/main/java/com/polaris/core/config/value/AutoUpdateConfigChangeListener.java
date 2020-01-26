@@ -17,7 +17,7 @@ import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.PlaceholderHelper;
+import com.polaris.core.config.ConfPlaceholderHelper;
 
 
 @Component
@@ -80,7 +80,7 @@ public class AutoUpdateConfigChangeListener implements BeanFactoryAware{
    */
   private Object resolvePropertyValue(SpringValue springValue) {
     // value will never be null, as @Value and @ApolloJsonValue will not allow that
-    Object value = PlaceholderHelper
+    Object value = ConfPlaceholderHelper
         .resolvePropertyValue(beanFactory, springValue.getBeanName(), springValue.getPlaceholder());
 
     if (springValue.isJson()) {

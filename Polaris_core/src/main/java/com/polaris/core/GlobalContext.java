@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.ConfigEnum;
+import com.polaris.core.config.ConfHandlerEnum;
 import com.polaris.core.thread.InheritablePolarisThreadLocal;
 
 public class GlobalContext {
@@ -36,8 +36,8 @@ public class GlobalContext {
 
 	public static String getModuleId() {
 		return  ConfClient.getAppName() + "|" +	
-				ConfigEnum.DEFAULT.get(Constant.IP_ADDRESS) + "|" +
-				ConfigEnum.DEFAULT.get(Constant.SERVER_PORT_NAME);
+				ConfHandlerEnum.DEFAULT.get(Constant.IP_ADDRESS) + "|" +
+				ConfHandlerEnum.DEFAULT.get(Constant.SERVER_PORT_NAME);
 	}
 	//构造函数
 	private static final InheritablePolarisThreadLocal<Map<String, Object>> holder=new InheritablePolarisThreadLocal<Map<String,Object>>(){

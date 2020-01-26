@@ -1,13 +1,16 @@
-package com.polaris.core.config;
+package com.polaris.core;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 import com.polaris.core.annotation.PolarisApplication;
+import com.polaris.core.config.ConfPropertyPlaceholderConfigurer;
 
-abstract public class ConfigLoader {
+abstract public class ConfigurationLoader {
 
 	private static Class<?> rootConfigClass = null;
 	private static Set<String> basePackages = new HashSet<>();
@@ -35,7 +38,7 @@ abstract public class ConfigLoader {
 			}
 		}
 		if (basePackages.size() == 0) {
-			basePackages.add(DefaultConfig.BASE_PACKAGE);
+			basePackages.add(InnerConfig.BASE_PACKAGE);
 			if (rootConfigClass != null) {
 				basePackages.add(rootConfigClass.getPackage().getName());
 			}
@@ -61,15 +64,25 @@ abstract public class ConfigLoader {
 	}
 	public static Class<?>[] getRootConfigClass() {
 		if (rootConfigClass == null) {
-			return new Class[] {DefaultConfig.class};
+			return new Class[] {InnerConfig.class};
 		}
-		return new Class[] {DefaultConfig.class, rootConfigClass};
+		return new Class[] {InnerConfig.class, rootConfigClass};
 	}
 	public static Set<String> getBasePackages() {
 		return basePackages;
 	}
 	public static Set<String> getBasePackagesForMapper() {
 		return basePackagesForMapper;
+	}
+	
+	@Configuration
+	@ComponentScan(basePackages={InnerConfig.BASE_PACKAGE})
+	public static class InnerConfig {
+		public static final String BASE_PACKAGE = "com.polaris";
+		@Bean
+		public static ConfPropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
+			return new ConfPropertyPlaceholderConfigurer();
+		}
 	}
 	
 }

@@ -19,7 +19,7 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
-import com.polaris.core.config.PlaceholderHelper;
+import com.polaris.core.config.ConfPlaceholderHelper;
 
 @Component
 public class SpringValueProcessor implements BeanFactoryAware, BeanPostProcessor, PriorityOrdered{
@@ -56,7 +56,7 @@ public class SpringValueProcessor implements BeanFactoryAware, BeanPostProcessor
 	    if (value == null) {
 	      return;
 	    }
-	    Set<String> keys = PlaceholderHelper.extractPlaceholderKeys(value.value());
+	    Set<String> keys = ConfPlaceholderHelper.extractPlaceholderKeys(value.value());
 
 	    if (keys.isEmpty()) {
 	      return;
@@ -86,7 +86,7 @@ public class SpringValueProcessor implements BeanFactoryAware, BeanPostProcessor
 	      return;
 	    }
 
-	    Set<String> keys = PlaceholderHelper.extractPlaceholderKeys(value.value());
+	    Set<String> keys = ConfPlaceholderHelper.extractPlaceholderKeys(value.value());
 
 	    if (keys.isEmpty()) {
 	      return;

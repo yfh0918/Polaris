@@ -3,10 +3,10 @@ package com.polaris.config.nacos;
 import org.springframework.core.annotation.Order;
 
 import com.polaris.core.config.ConfListener;
-import com.polaris.core.config.ConfigHandler;
+import com.polaris.core.config.ConfHandler;
 
 @Order(0)
-public class ConfNacosHandler implements ConfigHandler {
+public class ConfNacosHandler implements ConfHandler {
 
 	@Override
 	public String getConfig(String fileName, String group) {
