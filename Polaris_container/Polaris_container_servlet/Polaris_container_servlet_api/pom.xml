@@ -12,27 +12,19 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.polaris</groupId>
-			<artifactId>Polaris_container_api</artifactId>
-		</dependency>
-		<dependency>
 		    <groupId>javax.servlet</groupId>
 		    <artifactId>javax.servlet-api</artifactId>
+		</dependency>
+	
+		<dependency>
+			<groupId>com.polaris</groupId>
+			<artifactId>Polaris_container_api</artifactId>
 		</dependency>
 		<dependency>  
 	        <groupId>javax.annotation</groupId>  
 	        <artifactId>javax.annotation-api</artifactId>  
 		</dependency> 
 
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-		</dependency>
-		<dependency>
-		    <groupId>javax.websocket</groupId>
-		    <artifactId>javax.websocket-api</artifactId>
-		</dependency>
-		
 	</dependencies>
 	
 	<build>

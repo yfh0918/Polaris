@@ -15,6 +15,10 @@
 			<groupId>com.polaris</groupId>
 			<artifactId>Polaris_container_servlet_api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+		</dependency>
 		<!-- servlet and resteasy -->
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>

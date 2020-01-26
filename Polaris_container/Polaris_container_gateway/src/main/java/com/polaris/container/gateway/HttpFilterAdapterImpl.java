@@ -4,8 +4,6 @@ import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-import javax.ws.rs.core.MediaType;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.littleshoot.proxy.HttpFiltersAdapter;
 import org.littleshoot.proxy.impl.ClientToProxyConnection;
@@ -165,7 +163,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         if (responseDto != null) {
         	ByteBuf buf = io.netty.buffer.Unpooled.copiedBuffer(responseDto.toJSONString(), CharsetUtil.UTF_8); 
         	httpResponse  = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, httpResponseStatus, buf);
-        	httpHeaders.set("Content-Type", MediaType.APPLICATION_JSON);
+        	httpHeaders.set("Content-Type", "application/json");
         } else {
             httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, httpResponseStatus);
         }
