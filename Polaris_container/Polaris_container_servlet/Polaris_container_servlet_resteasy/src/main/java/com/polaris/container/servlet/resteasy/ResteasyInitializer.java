@@ -2,9 +2,12 @@ package com.polaris.container.servlet.resteasy;
 
 import javax.servlet.ServletRegistration;
 
+import org.springframework.core.annotation.Order;
+
 import com.polaris.container.servlet.initializer.ExtensionInitializerAbs;
 import com.polaris.core.util.SpringUtil;
 
+@Order(1)
 public class ResteasyInitializer extends  ExtensionInitializerAbs { 
 
 	@Override

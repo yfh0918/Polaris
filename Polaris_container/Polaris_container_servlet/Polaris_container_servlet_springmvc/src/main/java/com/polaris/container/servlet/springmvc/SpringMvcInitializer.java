@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -14,6 +15,7 @@ import com.polaris.container.servlet.initializer.ExtensionInitializerAbs;
 import com.polaris.core.config.ConfigLoader;
 import com.polaris.core.util.SpringUtil;
 
+@Order(1)
 public class SpringMvcInitializer extends  ExtensionInitializerAbs { 
 	final static Logger logger = LoggerFactory.getLogger(SpringMvcInitializer.class);
 	InnerInitializer initializer = null;
