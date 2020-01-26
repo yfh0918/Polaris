@@ -1,6 +1,6 @@
 package com.polaris.container;
 
-import com.polaris.container.servlet.listener.ServerListener;
+import com.polaris.container.listener.ServerListener;
 
 public interface Server {
 	public void start(ServerListener listener);

@@ -16,6 +16,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 
 import com.polaris.container.ServerFactory;
+import com.polaris.container.listener.ServerListener;
 import com.polaris.core.util.SpringUtil;
 
 public class WSServerListerner implements  ServerListener{

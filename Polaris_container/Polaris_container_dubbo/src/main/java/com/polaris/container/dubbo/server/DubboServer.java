@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.servlet.listener.ServerListener;
+import com.polaris.container.listener.ServerListener;
 import com.polaris.core.util.SpringUtil;
 
 public class DubboServer {

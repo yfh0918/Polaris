@@ -1,4 +1,4 @@
-package com.polaris.container.servlet.listener;
+package com.polaris.container.listener;
 
 public interface ServerListener {
 

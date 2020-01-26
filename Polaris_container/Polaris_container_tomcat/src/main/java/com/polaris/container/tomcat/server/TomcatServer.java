@@ -15,7 +15,7 @@ import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.servlet.listener.ServerListener;
+import com.polaris.container.listener.ServerListener;
 import com.polaris.container.servlet.listener.WSServerListerner;
 import com.polaris.container.tomcat.listener.ServerHandlerListerner;
 import com.polaris.core.Constant;

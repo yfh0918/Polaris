@@ -12,6 +12,7 @@
   <name>Polaris_container_servlet</name>
   
   <modules>
+	<module>Polaris_container_servlet_api</module>
 	<module>Polaris_container_servlet_resteasy</module>
 	<module>Polaris_container_servlet_springmvc</module>
   </modules>

@@ -18,7 +18,7 @@
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_container_tomcat</artifactId>
+            <artifactId>Polaris_container_jetty</artifactId>
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 
 import com.polaris.container.Server;
-import com.polaris.container.servlet.listener.ServerListener;
+import com.polaris.container.listener.ServerListener;
 import com.polaris.container.tomcat.server.TomcatServer;
 
 /**

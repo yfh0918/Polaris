@@ -17,7 +17,7 @@ import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.HostResolverImpl;
 import com.polaris.container.gateway.HttpFilterAdapterImpl;
 import com.polaris.container.gateway.util.GatewaySelfSignedSslEngineSource;
-import com.polaris.container.servlet.listener.ServerListener;
+import com.polaris.container.listener.ServerListener;
 import com.polaris.container.util.NetUtils;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
