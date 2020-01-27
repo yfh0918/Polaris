@@ -11,10 +11,6 @@
 	<name>Polaris_container_api</name>
 
 	<dependencies>
-		<dependency>
-		    <groupId>javax.websocket</groupId>
-		    <artifactId>javax.websocket-api</artifactId>
-		</dependency>
 		
 	</dependencies>
 	
