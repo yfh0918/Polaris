@@ -6,6 +6,7 @@
     <groupId>com.polaris</groupId>
     <artifactId>Polaris_parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+	<relativePath>../Polaris_parent/pom.xml</relativePath>
   </parent>
   <artifactId>Polaris_naming</artifactId>
   <packaging>pom</packaging>
