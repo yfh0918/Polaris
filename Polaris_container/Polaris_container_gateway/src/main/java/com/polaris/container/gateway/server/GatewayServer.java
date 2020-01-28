@@ -144,7 +144,4 @@ public class GatewayServer {
         });
     	
     }
-    
-    public void stop() {
-    }
 }

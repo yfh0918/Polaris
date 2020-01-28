@@ -26,17 +26,5 @@ public class Main implements Server {
 		}).start();
 	}
 
-	/**
-     * 服务关闭
-     *
-     */
-	@Override
-	public void stop() {
-    	new Thread(new Runnable() {
-			@Override
-			public void run() {
-				GatewayServer.getInstance().stop();
-			}
-    	}).start();
-	}
+
 }
