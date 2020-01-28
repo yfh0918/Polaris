@@ -79,7 +79,7 @@ public class WebfluxServer {
                 try {
                 	listener.stopped();
                 } catch (Exception e) {
-                    logger.error("failed to stop tomcat.", e);
+                    logger.error("failed to stop netty-webflux.", e);
                 }
             }
         });
