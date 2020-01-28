@@ -2,9 +2,9 @@ package com.polaris.gateway;
 
 
 import com.polaris.container.loader.supports.MainSupport;
-import com.polaris.core.annotation.PolarisBaseApplication;
+import com.polaris.core.annotation.PolarisApplication;
 
-@PolarisBaseApplication
+@PolarisApplication
 public class GatewayApplication {
 	
     public static void main(String[] args) {

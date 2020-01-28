@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import com.polaris.core.annotation.PolarisApplication;
+import com.polaris.core.annotation.PolarisWebApplication;
 import com.polaris.core.config.ConfPropertyPlaceholderConfigurer;
 
 abstract public class ConfigurationLoader {
@@ -46,7 +46,7 @@ abstract public class ConfigurationLoader {
 		
 		//mapper-scan
 		if (rootConfigClass != null) {
-			PolarisApplication polarisAnnotation = rootConfigClass.getAnnotation(PolarisApplication.class);
+			PolarisWebApplication polarisAnnotation = rootConfigClass.getAnnotation(PolarisWebApplication.class);
 			if (polarisAnnotation != null) {
 				String[] tempPasePackagesForMapper = polarisAnnotation.scanBasePackagesForMapper();
 				if (tempPasePackagesForMapper != null && tempPasePackagesForMapper.length > 0) {

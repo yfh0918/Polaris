@@ -10,23 +10,23 @@ import java.lang.annotation.Target;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.core.annotation.AliasFor;
 
-import com.polaris.core.annotation.PolarisApplication;
+import com.polaris.core.annotation.PolarisWebApplication;
 
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@PolarisApplication
+@PolarisWebApplication
 @EnableDubbo
 public @interface PolarisDubboApplication {
-	@AliasFor(annotation = PolarisApplication.class, attribute = "scanBasePackages")
+	@AliasFor(annotation = PolarisWebApplication.class, attribute = "scanBasePackages")
 	String[] scanBasePackages() default {};
 
-	@AliasFor(annotation = PolarisApplication.class, attribute = "scanBasePackageClasses")
+	@AliasFor(annotation = PolarisWebApplication.class, attribute = "scanBasePackageClasses")
 	Class<?>[] scanBasePackageClasses() default {};
 
-	@AliasFor(annotation = PolarisApplication.class, attribute = "scanBasePackagesForMapper")
+	@AliasFor(annotation = PolarisWebApplication.class, attribute = "scanBasePackagesForMapper")
 	String[] scanBasePackagesForMapper() default {};
 	
     @AliasFor(annotation = EnableDubbo.class, attribute = "scanBasePackages")
