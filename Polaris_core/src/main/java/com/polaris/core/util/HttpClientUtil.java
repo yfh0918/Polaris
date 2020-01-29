@@ -20,7 +20,6 @@ import javax.net.ssl.SSLHandshakeException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.NameValuePair;
 import org.apache.http.NoHttpResponseException;
@@ -36,7 +35,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.LayeredConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
@@ -68,7 +66,6 @@ public class HttpClientUtil {
  
 	private static final String RETRY_COUNT = "http.connect.retry.count";
 	private static final String POOL_CONN_MAX_COUNT="http.connect.max.conn.count";
-	private static final String POOL_CONN_MAX_PERROUTE = "http.connect.max.per.route.count";
 	private static final String POOL_CONN_DEFAULT_PERROUTE = "http.connect.default.per.route.count";
 	private static final String UTF8 = "UTF-8";
 	private static Logger LOGGER = LoggerFactory.getLogger(HttpClientUtil.class);
@@ -103,23 +100,14 @@ public class HttpClientUtil {
      * @author 
      * @create 
      */
-    public static CloseableHttpClient getHttpClient(String url) {
-    	
-    	//必须为http://获这https://开头
-        String hostname = url.split("/")[2];
-        int port = 80;
-        if (hostname.contains(":")) {
-            String[] arr = hostname.split(":");
-            hostname = arr[0];
-            port = Integer.parseInt(arr[1]);
-        }
-        int connPoolMaxCount = Integer.parseInt(ConfClient.get(POOL_CONN_MAX_COUNT, "100"));
-        int connPoolMaxPerRoute = Integer.parseInt(ConfClient.get(POOL_CONN_MAX_PERROUTE, "50"));
-        int connPoolDefaultPerRoute = Integer.parseInt(ConfClient.get(POOL_CONN_DEFAULT_PERROUTE, "20"));
+    public static CloseableHttpClient getHttpClient() {
         if (httpClient == null) {
             synchronized (syncLock) {
                 if (httpClient == null) {
-                    httpClient = createHttpClient(connPoolMaxCount, connPoolDefaultPerRoute, connPoolMaxPerRoute, hostname, port);
+                    int connPoolMaxCount = Integer.parseInt(ConfClient.get(POOL_CONN_MAX_COUNT, "100"));
+                    int connPoolDefaultPerRoute = Integer.parseInt(ConfClient.get(POOL_CONN_DEFAULT_PERROUTE, "20"));
+                	int retryCount = Integer.parseInt(ConfClient.get(RETRY_COUNT, "2"));
+                    httpClient = createHttpClient(connPoolMaxCount, connPoolDefaultPerRoute, retryCount);
                 }
             }
         }
@@ -133,8 +121,7 @@ public class HttpClientUtil {
      * @author 
      * @create 
      */
-    public static CloseableHttpClient createHttpClient(int maxTotal,
-            int maxPerRoute, int maxRoute, String hostname, int port) {
+    public static CloseableHttpClient createHttpClient(int maxTotal, int maxPerRoute,int retryCount) {
         ConnectionSocketFactory plainsf = PlainConnectionSocketFactory
                 .getSocketFactory();
         LayeredConnectionSocketFactory sslsf = SSLConnectionSocketFactory
@@ -148,15 +135,11 @@ public class HttpClientUtil {
         cm.setMaxTotal(maxTotal);
         // 将每个路由基础的连接增加
         cm.setDefaultMaxPerRoute(maxPerRoute);
-        HttpHost httpHost = new HttpHost(hostname, port);
-        // 将目标主机的最大连接数增加
-        cm.setMaxPerRoute(new HttpRoute(httpHost), maxRoute);
  
         // 请求重试处理
         HttpRequestRetryHandler httpRequestRetryHandler = new HttpRequestRetryHandler() {
             public boolean retryRequest(IOException exception,
                     int executionCount, HttpContext context) {
-            	int retryCount = Integer.parseInt(ConfClient.get(RETRY_COUNT, "2"));
                 if (executionCount >= retryCount) {// 如果已经重试了5次，就放弃
                     return false;
                 }
@@ -231,7 +214,7 @@ public class HttpClientUtil {
             config(httppost);
             setPostParams(httppost, requestParams);
             trace(httppost,headParams);//增加trace编号
-            response = getHttpClient(url).execute(httppost,
+            response = getHttpClient().execute(httppost,
                     HttpClientContext.create());
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity, UTF8);
@@ -278,7 +261,7 @@ public class HttpClientUtil {
 			httppost.setEntity(bodyEntity);
 			
 			//返回内容
-            response = getHttpClient(url).execute(httppost,
+            response = getHttpClient().execute(httppost,
                     HttpClientContext.create());
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity, UTF8);
@@ -319,7 +302,7 @@ public class HttpClientUtil {
             httppost.setEntity(reqEntity);
             
 			//返回内容
-            response = getHttpClient(url).execute(httppost,
+            response = getHttpClient().execute(httppost,
                     HttpClientContext.create());
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity, UTF8);
@@ -372,7 +355,7 @@ public class HttpClientUtil {
             config(httpget);
             trace(httpget,headParams);
             
-            response = getHttpClient(url).execute(httpget,
+            response = getHttpClient().execute(httpget,
                     HttpClientContext.create());
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity, UTF8);
