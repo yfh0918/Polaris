@@ -64,14 +64,14 @@ import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
  */
 public class HttpClientUtil {
  
-	private static final String RETRY_COUNT = "http.connect.retry.count";
-	private static final String POOL_CONN_MAX_COUNT="http.connect.max.conn.count";
-	private static final String POOL_CONN_DEFAULT_PERROUTE = "http.connect.default.per.route.count";
+	private static final String RETRY_COUNT = "http.connect.retryCount";
+	private static final String POOL_CONN_MAX_COUNT="http.connect.maxCount";
+	private static final String POOL_CONN_PERROUTE = "http.connect.perRouteCount";
+	private static final String REQUEST_TIME_OUT = "http.request.timeout";
 	private static final String UTF8 = "UTF-8";
 	private static Logger LOGGER = LoggerFactory.getLogger(HttpClientUtil.class);
-    static final int TIME_OUT = 10 * 1000;
  
-    private static CloseableHttpClient httpClient = null;
+    private static CloseableHttpClient defaultHttpClient = null;
  
     private final static Object syncLock = new Object();
  
@@ -87,9 +87,10 @@ public class HttpClientUtil {
         // "ISO-8859-1,utf-8,gbk,gb2312;q=0.7,*;q=0.7");
  
         // 配置请求的超时设置
+    	int timeOut = Integer.parseInt(ConfClient.get(REQUEST_TIME_OUT, "10000"));
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(TIME_OUT)
-                .setConnectTimeout(TIME_OUT).setSocketTimeout(TIME_OUT).build();
+                .setConnectionRequestTimeout(timeOut)
+                .setConnectTimeout(timeOut).setSocketTimeout(timeOut).build();
         httpRequestBase.setConfig(requestConfig);
     }
  
@@ -100,18 +101,25 @@ public class HttpClientUtil {
      * @author 
      * @create 
      */
-    public static CloseableHttpClient getHttpClient() {
-        if (httpClient == null) {
+    private static CloseableHttpClient getHttpClient(CloseableHttpClient... httpClient) {
+    	
+    	//用户自定义优先
+    	if (httpClient != null && httpClient.length > 0) {
+    		return httpClient[0];
+    	}
+    	
+    	//没有自定义可以选着默认
+        if (defaultHttpClient == null) {
             synchronized (syncLock) {
-                if (httpClient == null) {
+                if (defaultHttpClient == null) {
                     int connPoolMaxCount = Integer.parseInt(ConfClient.get(POOL_CONN_MAX_COUNT, "100"));
-                    int connPoolDefaultPerRoute = Integer.parseInt(ConfClient.get(POOL_CONN_DEFAULT_PERROUTE, "20"));
+                    int connPoolDefaultPerRoute = Integer.parseInt(ConfClient.get(POOL_CONN_PERROUTE, "20"));
                 	int retryCount = Integer.parseInt(ConfClient.get(RETRY_COUNT, "2"));
-                    httpClient = createHttpClient(connPoolMaxCount, connPoolDefaultPerRoute, retryCount);
+                	defaultHttpClient = createHttpClient(connPoolMaxCount, connPoolDefaultPerRoute, retryCount);
                 }
             }
         }
-        return httpClient;
+        return defaultHttpClient;
     }
  
     /**
@@ -137,46 +145,50 @@ public class HttpClientUtil {
         cm.setDefaultMaxPerRoute(maxPerRoute);
  
         // 请求重试处理
-        HttpRequestRetryHandler httpRequestRetryHandler = new HttpRequestRetryHandler() {
-            public boolean retryRequest(IOException exception,
-                    int executionCount, HttpContext context) {
-                if (executionCount >= retryCount) {// 如果已经重试了5次，就放弃
+        CloseableHttpClient httpClient = null;
+        if (retryCount > 0) {
+            HttpRequestRetryHandler httpRequestRetryHandler = new HttpRequestRetryHandler() {
+                public boolean retryRequest(IOException exception,
+                        int executionCount, HttpContext context) {
+                    if (executionCount >= retryCount) {// 如果已经重试了5次，就放弃
+                        return false;
+                    }
+                    if (exception instanceof NoHttpResponseException) {// 如果服务器丢掉了连接，那么就重试
+                        return true;
+                    }
+                    if (exception instanceof SSLHandshakeException) {// 不要重试SSL握手异常
+                        return false;
+                    }
+                    if (exception instanceof InterruptedIOException) {// 超时
+                        return false;
+                    }
+                    if (exception instanceof UnknownHostException) {// 目标服务器不可达
+                        return false;
+                    }
+                    if (exception instanceof ConnectTimeoutException) {// 连接被拒绝
+                        return false;
+                    }
+                    if (exception instanceof SSLException) {// SSL握手异常
+                        return false;
+                    }
+     
+                    HttpClientContext clientContext = HttpClientContext
+                            .adapt(context);
+                    HttpRequest request = clientContext.getRequest();
+                    // 如果请求是幂等的，就再次尝试
+                    if (!(request instanceof HttpEntityEnclosingRequest)) {
+                        return true;
+                    }
                     return false;
                 }
-                if (exception instanceof NoHttpResponseException) {// 如果服务器丢掉了连接，那么就重试
-                    return true;
-                }
-                if (exception instanceof SSLHandshakeException) {// 不要重试SSL握手异常
-                    return false;
-                }
-                if (exception instanceof InterruptedIOException) {// 超时
-                    return false;
-                }
-                if (exception instanceof UnknownHostException) {// 目标服务器不可达
-                    return false;
-                }
-                if (exception instanceof ConnectTimeoutException) {// 连接被拒绝
-                    return false;
-                }
-                if (exception instanceof SSLException) {// SSL握手异常
-                    return false;
-                }
- 
-                HttpClientContext clientContext = HttpClientContext
-                        .adapt(context);
-                HttpRequest request = clientContext.getRequest();
-                // 如果请求是幂等的，就再次尝试
-                if (!(request instanceof HttpEntityEnclosingRequest)) {
-                    return true;
-                }
-                return false;
-            }
-        };
- 
-        CloseableHttpClient httpClient = HttpClients.custom()
-                .setConnectionManager(cm)
-                .setRetryHandler(httpRequestRetryHandler).build();
- 
+            };
+            httpClient = HttpClients.custom()
+                    .setConnectionManager(cm)
+                    .setRetryHandler(httpRequestRetryHandler).build();
+        } else {
+            httpClient = HttpClients.custom()
+                    .setConnectionManager(cm).build();
+        }
         return httpClient;
     }
  
@@ -202,10 +214,10 @@ public class HttpClientUtil {
      * @author 
      * @create 
      */
-    public static String post(String orgurl, Map<String, Object> requestParams) {
-    	return post(orgurl,requestParams,null);
+    public static String post(String orgurl, Map<String, Object> requestParams, CloseableHttpClient... httpClient) {
+    	return post(orgurl,requestParams,null,httpClient);
     }
-    public static String post(String orgurl, Map<String, Object> requestParams, Map<String, String> headParams) {
+    public static String post(String orgurl, Map<String, Object> requestParams, Map<String, String> headParams, CloseableHttpClient... httpClient) {
     	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
     	LOGGER.debug(url);
         CloseableHttpResponse response = null;
@@ -214,7 +226,7 @@ public class HttpClientUtil {
             config(httppost);
             setPostParams(httppost, requestParams);
             trace(httppost,headParams);//增加trace编号
-            response = getHttpClient().execute(httppost,
+            response = getHttpClient(httpClient).execute(httppost,
                     HttpClientContext.create());
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity, UTF8);
@@ -242,10 +254,10 @@ public class HttpClientUtil {
      * @author 
      * @create 
      */
-    public static String post(String orgurl, String body) {
-    	return post(orgurl,body,null);
+    public static String post(String orgurl, String body, CloseableHttpClient... httpClient) {
+    	return post(orgurl,body,null,httpClient);
     }
-    public static String post(String orgurl, String body, Map<String, String> headParams) {
+    public static String post(String orgurl, String body, Map<String, String> headParams, CloseableHttpClient... httpClient) {
     	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
     	LOGGER.debug(url);
         CloseableHttpResponse response = null;
@@ -261,7 +273,7 @@ public class HttpClientUtil {
 			httppost.setEntity(bodyEntity);
 			
 			//返回内容
-            response = getHttpClient().execute(httppost,
+            response = getHttpClient(httpClient).execute(httppost,
                     HttpClientContext.create());
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity, UTF8);
@@ -280,10 +292,10 @@ public class HttpClientUtil {
         }
         return null;
     }
-    public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestParam) {
-    	return postFileMultiPart(orgurl, requestParam, null);
+    public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestParam, CloseableHttpClient... httpClient) {
+    	return postFileMultiPart(orgurl, requestParam, null,httpClient);
     }
-    public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestParam, Map<String, String> headParams) {
+    public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestParam, Map<String, String> headParams, CloseableHttpClient... httpClient) {
     	
     	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
     	LOGGER.debug(url);
@@ -302,7 +314,7 @@ public class HttpClientUtil {
             httppost.setEntity(reqEntity);
             
 			//返回内容
-            response = getHttpClient().execute(httppost,
+            response = getHttpClient(httpClient).execute(httppost,
                     HttpClientContext.create());
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity, UTF8);
@@ -332,13 +344,13 @@ public class HttpClientUtil {
      * @create 
      */
     
-    public static String get(String orgurl) {
-    	return get(orgurl, null);
+    public static String get(String orgurl, CloseableHttpClient... httpClient) {
+    	return get(orgurl, null,httpClient);
     }
-    public static String get(String orgurl,  Map<String, Object> params) {
-    	return get(orgurl, params, null);
+    public static String get(String orgurl,  Map<String, Object> params, CloseableHttpClient... httpClient) {
+    	return get(orgurl, params, null,httpClient);
     }
-    public static String get(String orgurl,  Map<String, Object> requestParams, Map<String, String> headParams) {
+    public static String get(String orgurl,  Map<String, Object> requestParams, Map<String, String> headParams, CloseableHttpClient... httpClient) {
     	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
     	LOGGER.debug(url);
     	CloseableHttpResponse response = null;
@@ -354,8 +366,7 @@ public class HttpClientUtil {
             HttpGet httpget = new HttpGet(uri);//增加参数
             config(httpget);
             trace(httpget,headParams);
-            
-            response = getHttpClient().execute(httpget,
+            response = getHttpClient(httpClient).execute(httpget,
                     HttpClientContext.create());
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity, UTF8);
