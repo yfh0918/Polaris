@@ -16,6 +16,10 @@ public class WebFilterInit {
     private volatile static Set<String> restUriSet = new HashSet<>();
 
 	private static void loadFile(String content) {
+		if (StringUtil.isEmpty(content)) {
+			restUriSet = new HashSet<>();
+			return;
+		}
     	String[] contents = content.split(Constant.LINE_SEP);
     	Set<String> TEMP_REST_URI = new HashSet<>();
  
