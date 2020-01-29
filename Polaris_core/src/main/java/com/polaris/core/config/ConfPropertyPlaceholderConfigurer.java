@@ -1,12 +1,12 @@
 package com.polaris.core.config;
 
 import java.util.HashSet;
-import java.util.Properties;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
+import org.springframework.core.env.ConfigurablePropertyResolver;
 import org.springframework.util.StringValueResolver;
 
 /**
@@ -16,10 +16,10 @@ import org.springframework.util.StringValueResolver;
  * <bean id="confPropertyPlaceholderConfigurer" class="com.polaris_conf_core.spring.ConfPropertyPlaceholderConfigurer" />
  *
  */
-public class ConfPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
+public class ConfPropertyPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer {
 
 	@Override
-	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
+	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, ConfigurablePropertyResolver propertyResolver) throws BeansException {
 		
 		
 		// init value resolver
