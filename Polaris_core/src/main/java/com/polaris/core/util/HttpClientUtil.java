@@ -2,18 +2,14 @@ package com.polaris.core.util;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
@@ -30,6 +26,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.config.Registry;
@@ -64,6 +61,10 @@ import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
  */
 public class HttpClientUtil {
  
+
+	private static final String HTTP = "http";
+	private static final String HTTPS = "https";
+	
 	private static final String RETRY_COUNT = "http.connect.retryCount";
 	private static final String POOL_CONN_MAX_COUNT="http.connect.maxCount";
 	private static final String POOL_CONN_PERROUTE = "http.connect.perRouteCount";
@@ -75,22 +76,11 @@ public class HttpClientUtil {
  
     private final static Object syncLock = new Object();
  
-    private static void config(HttpRequestBase httpRequestBase) {
-        // 设置Header等
-        // httpRequestBase.setHeader("User-Agent", "Mozilla/5.0");
-        // httpRequestBase
-        // .setHeader("Accept",
-        // "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-        // httpRequestBase.setHeader("Accept-Language",
-        // "zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3");// "en-US,en;q=0.5");
-        // httpRequestBase.setHeader("Accept-Charset",
-        // "ISO-8859-1,utf-8,gbk,gb2312;q=0.7,*;q=0.7");
- 
+    private static void setTimeout(HttpRequestBase httpRequestBase, int timeout) {
         // 配置请求的超时设置
-    	int timeOut = Integer.parseInt(ConfClient.get(REQUEST_TIME_OUT, "10000"));
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(timeOut)
-                .setConnectTimeout(timeOut).setSocketTimeout(timeOut).build();
+                .setConnectionRequestTimeout(timeout)
+                .setConnectTimeout(timeout).setSocketTimeout(timeout).build();
         httpRequestBase.setConfig(requestConfig);
     }
  
@@ -135,8 +125,8 @@ public class HttpClientUtil {
         LayeredConnectionSocketFactory sslsf = SSLConnectionSocketFactory
                 .getSocketFactory();
         Registry<ConnectionSocketFactory> registry = RegistryBuilder
-                .<ConnectionSocketFactory> create().register("http", plainsf)
-                .register("https", sslsf).build();
+                .<ConnectionSocketFactory> create().register(HTTP, plainsf)
+                .register(HTTPS, sslsf).build();
         PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(
                 registry);
         // 将最大连接数增加
@@ -192,64 +182,59 @@ public class HttpClientUtil {
         return httpClient;
     }
  
-    private static void setPostParams(HttpPost httpost,
-            Map<String, Object> params) {
-        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-        Set<String> keySet = params.keySet();
-        for (String key : keySet) {
-            nvps.add(new BasicNameValuePair(key, params.get(key).toString()));
-        }
-        try {
-            httpost.setEntity(new UrlEncodedFormEntity(nvps, UTF8));
-        } catch (UnsupportedEncodingException e) {
-        	LOGGER.error(e.getMessage());
-        }
-    }
+
  
     /**
-     * GET请求URL获取内容
+     * request请求URL获取内容
      * 
-     * @param url
+     * @param orgurl
      * @return
      * @author 
      * @create 
      */
-    public static String post(String orgurl, Map<String, Object> requestParams, CloseableHttpClient... httpClient) {
-    	return post(orgurl,requestParams,null,httpClient);
-    }
-    public static String post(String orgurl, Map<String, Object> requestParams, Map<String, String> headParams, CloseableHttpClient... httpClient) {
-    	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
-    	LOGGER.debug(url);
-        CloseableHttpResponse response = null;
+    public static String request(HTTPRequestParameter parameter, CloseableHttpClient... httpClient) {
+    	HttpUriRequest request = null;
         try {
-            HttpPost httppost = new HttpPost(url);
-            config(httppost);
-            setPostParams(httppost, requestParams);
-            trace(httppost,headParams);//增加trace编号
-            response = getHttpClient(httpClient).execute(httppost,
-                    HttpClientContext.create());
-            HttpEntity entity = response.getEntity();
-            String result = EntityUtils.toString(entity, UTF8);
-            EntityUtils.consume(entity);
-            return result;
-        } catch (Exception e) {
-        	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
-        	LOGGER.error(e.getMessage());
-        } finally {
-            try {
-                if (response != null)
-                    response.close();
-            } catch (IOException e) {
-            	LOGGER.debug(e.getMessage());
-            }
-        }
+        	
+        	//构建request
+        	request = getHttpUriRequest(parameter);
+        	
+        	//结构返回
+        	return getHttpUriResponse(getHttpClient(httpClient),request);
+        	
+        } catch (Exception ex) {
+        	setHttpException(parameter.getUrl(),request.getURI().toString(),ex);
+        } 
         return null;
     }
     
     /**
-     * GET请求URL获取内容
+     * post请求URL获取内容
      * 
-     * @param url
+     * @param orgurl
+     * @return
+     * @author 
+     * @create 
+     */
+    public static String post(String orgurl, CloseableHttpClient... httpClient) {
+    	return post(orgurl,new HashMap<>(),httpClient);
+    }
+    public static String post(String orgurl, Map<String, Object> requestParams, CloseableHttpClient... httpClient) {
+    	return post(orgurl,requestParams,null,httpClient);
+    }
+    public static String post(String orgurl, Map<String, Object> requestParams, Map<String, String> headParams, CloseableHttpClient... httpClient) {
+    	HTTPRequestParameter parameter = new HTTPRequestParameter();
+    	parameter.setRequstType(RequstType.HTTP_POST);
+    	parameter.setUrl(orgurl);
+    	parameter.setRequestParams(requestParams);
+    	parameter.setHeadParams(headParams);
+    	return request(parameter,httpClient);
+    }
+    
+    /**
+     * post-body请求URL获取内容
+     * 
+     * @param orgurl
      * @return
      * @author 
      * @create 
@@ -258,80 +243,33 @@ public class HttpClientUtil {
     	return post(orgurl,body,null,httpClient);
     }
     public static String post(String orgurl, String body, Map<String, String> headParams, CloseableHttpClient... httpClient) {
-    	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
-    	LOGGER.debug(url);
-        CloseableHttpResponse response = null;
-        try {
-            HttpPost httppost = new HttpPost(url);
-            config(httppost);
-            trace(httppost,headParams);//增加trace编号
-            
-            //设置body
-            StringEntity bodyEntity = new StringEntity(body, Charset.forName(UTF8));
-            bodyEntity.setContentEncoding(UTF8);
-            bodyEntity.setContentType("application/json");
-			httppost.setEntity(bodyEntity);
-			
-			//返回内容
-            response = getHttpClient(httpClient).execute(httppost,
-                    HttpClientContext.create());
-            HttpEntity entity = response.getEntity();
-            String result = EntityUtils.toString(entity, UTF8);
-            EntityUtils.consume(entity);
-            return result;
-        } catch (Exception e) {
-        	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
-        	LOGGER.error(e.getMessage());
-        } finally {
-            try {
-                if (response != null)
-                    response.close();
-            } catch (IOException e) {
-            	LOGGER.debug(e.getMessage());
-            }
-        }
-        return null;
+    	HTTPRequestParameter parameter = new HTTPRequestParameter();
+    	parameter.setRequstType(RequstType.HTTP_POST_BODY);
+    	parameter.setUrl(orgurl);
+    	parameter.setBody(body);
+    	parameter.setHeadParams(headParams);
+    	return request(parameter, httpClient);
     }
+
+    
+    /**
+     * post-multipart请求URL获取内容
+     * 
+     * @param orgurl
+     * @return
+     * @author 
+     * @create 
+     */
     public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestParam, CloseableHttpClient... httpClient) {
     	return postFileMultiPart(orgurl, requestParam, null,httpClient);
     }
-    public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestParam, Map<String, String> headParams, CloseableHttpClient... httpClient) {
-    	
-    	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
-    	LOGGER.debug(url);
-    	CloseableHttpResponse response = null;
-        try {
-            HttpPost httppost = new HttpPost(url);
-            config(httppost);
-            trace(httppost,headParams);//增加trace编号
-            
-            
-            MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
-            for(Entry<String,ContentBody> param : requestParam.entrySet()){
-            	multipartEntityBuilder.addPart(param.getKey(), param.getValue());
-            }
-            HttpEntity reqEntity = multipartEntityBuilder.build();
-            httppost.setEntity(reqEntity);
-            
-			//返回内容
-            response = getHttpClient(httpClient).execute(httppost,
-                    HttpClientContext.create());
-            HttpEntity entity = response.getEntity();
-            String result = EntityUtils.toString(entity, UTF8);
-            EntityUtils.consume(entity);
-            return result;
-        } catch (Exception e) {
-        	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
-        	LOGGER.error(e.getMessage());
-        } finally {  
-        	try {
-                if (response != null)
-                    response.close();
-            } catch (IOException e) {
-            	LOGGER.debug(e.getMessage());
-            }
-        }
-        return null;  
+    public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestContentBodys, Map<String, String> headParams, CloseableHttpClient... httpClient) {
+    	HTTPRequestParameter parameter = new HTTPRequestParameter();
+    	parameter.setRequstType(RequstType.HTTP_POST_MULTIPART);
+    	parameter.setUrl(orgurl);
+    	parameter.setRequestContentBodys(requestContentBodys);
+    	parameter.setHeadParams(headParams);
+    	return request(parameter,httpClient);
     }
 
  
@@ -343,7 +281,6 @@ public class HttpClientUtil {
      * @author 
      * @create 
      */
-    
     public static String get(String orgurl, CloseableHttpClient... httpClient) {
     	return get(orgurl, null,httpClient);
     }
@@ -351,124 +288,88 @@ public class HttpClientUtil {
     	return get(orgurl, params, null,httpClient);
     }
     public static String get(String orgurl,  Map<String, Object> requestParams, Map<String, String> headParams, CloseableHttpClient... httpClient) {
-    	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(orgurl);
-    	LOGGER.debug(url);
-    	CloseableHttpResponse response = null;
-        try {
-        	URIBuilder builder = new URIBuilder(url);
-            if (requestParams != null) {
-                for (String key : requestParams.keySet()) {
-                    builder.addParameter(key, String.valueOf(requestParams.get(key)));
-                }
-            }
+    	///构建request
+    	HTTPRequestParameter parameter = new HTTPRequestParameter();
+    	parameter.setRequstType(RequstType.HTTP_GET);
+    	parameter.setUrl(orgurl);
+    	parameter.setRequestParams(requestParams);
+    	parameter.setHeadParams(headParams);
+    	return request(parameter,httpClient);
+    }
+    
+    //获取uri
+    private static HttpUriRequest getHttpUriRequest( 
+    		HTTPRequestParameter parameter) throws Exception {
+    	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(parameter.getUrl());
+    	LOGGER.info(url);
+    	HttpRequestBase request = null;
 
+    	//GET
+    	if (parameter.getRequstType() == RequstType.HTTP_GET) {
+    		URIBuilder builder = new URIBuilder(url);
+            if (parameter.getRequestParams() != null) {
+                for(Entry<String,Object> param : parameter.getRequestParams().entrySet()){
+                	builder.addParameter(param.getKey(), param.getValue().toString());
+                }
+
+            }
             URI uri = builder.build();
-            HttpGet httpget = new HttpGet(uri);//增加参数
-            config(httpget);
-            trace(httpget,headParams);
-            response = getHttpClient(httpClient).execute(httpget,
-                    HttpClientContext.create());
+            request = new HttpGet(uri);
+    	} else {
+    		URI uri = URI.create(url);
+    		HttpPost httpost = new HttpPost(uri);
+    		if (parameter.getRequstType() == RequstType.HTTP_POST){
+    			//POST
+        		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        		if (parameter.getRequestParams() != null) {
+                    for(Entry<String,Object> param : parameter.getRequestParams().entrySet()){
+                    	nvps.add(new BasicNameValuePair(param.getKey(), param.getValue().toString()));
+                    }
+        		}
+                httpost.setEntity(new UrlEncodedFormEntity(nvps, UTF8));
+    		} else if (parameter.getRequstType() == RequstType.HTTP_POST_BODY) {
+        		//设置body
+                StringEntity bodyEntity = new StringEntity(parameter.getBody(), Charset.forName(UTF8));
+                bodyEntity.setContentEncoding(UTF8);
+                bodyEntity.setContentType("application/json");
+                httpost.setEntity(bodyEntity);
+        	} else if (parameter.getRequstType() == RequstType.HTTP_POST_MULTIPART){
+        		MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+                for(Entry<String,ContentBody> param : parameter.getRequestContentBodys().entrySet()){
+                	multipartEntityBuilder.addPart(param.getKey(), param.getValue());
+                }
+                HttpEntity reqEntity = multipartEntityBuilder.build();
+                httpost.setEntity(reqEntity);
+        	}
+            request = httpost;
+    	}
+    	
+    	//设置其他参数
+    	setTimeout(request,parameter.getTimeout());
+        setHeaderParams(request,parameter.getHeadParams());
+        return request;
+    }
+    
+    //执行结果
+    private static String getHttpUriResponse(CloseableHttpClient httpClient,HttpUriRequest request) throws Exception {
+    	try (CloseableHttpResponse response = getHttpClient(httpClient).execute(request,HttpClientContext.create())) {
             HttpEntity entity = response.getEntity();
             String result = EntityUtils.toString(entity, UTF8);
             EntityUtils.consume(entity);   //关闭HttpEntity是的流，如果手动关闭了InputStream instream = entity.getContent();这个流，也可以不调用这个方法
             return result;
-        } catch (Exception e) {
-        	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
-        	LOGGER.error(e.getMessage());
-        } finally {
-            try {
-                if (response != null)
-                    response.close();
-            } catch (IOException e) {
-            	LOGGER.debug(e.getMessage());
-            }
-        }
-        return null;
-    }
- 
-    public static void main(String[] args) {
-    	
-    	//post请求
-//    	String ret = HttpClientUtil.post(url, params);
-//        jsonRet = new JSONObject(ret);
-        
-        // URL列表数组
-        String[] urisToGet = {
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
- 
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
- 
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
- 
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
- 
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
- 
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497",
-                "http://blog.csdn.net/catoop/article/details/38849497" };
- 
-        long start = System.currentTimeMillis();
-        try {
-            int pagecount = urisToGet.length;
-            ExecutorService executors = Executors.newFixedThreadPool(pagecount);
-            CountDownLatch countDownLatch = new CountDownLatch(pagecount);
-            for (int i = 0; i < pagecount; i++) {
-                HttpGet httpget = new HttpGet(urisToGet[i]);
-                config(httpget);
-                // 启动线程抓取
-                executors
-                        .execute(new GetRunnable(urisToGet[i], countDownLatch));
-            }
-            countDownLatch.await();
-            executors.shutdown();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } finally {
-            System.out.println("线程" + Thread.currentThread().getName() + ","
-                    + System.currentTimeMillis() + ", 所有线程已完成，开始进入下一步！");
-        }
- 
-        long end = System.currentTimeMillis();
-        System.out.println("consume -> " + (end - start));
-    }
- 
-    static class GetRunnable implements Runnable {
-        private CountDownLatch countDownLatch;
-        private String url;
- 
-        public GetRunnable(String url, CountDownLatch countDownLatch) {
-            this.url = url;
-            this.countDownLatch = countDownLatch;
-        }
- 
-        @Override
-        public void run() {
-            try {
-                System.out.println(HttpClientUtil.get(url));
-            } finally {
-                countDownLatch.countDown();
-            }
-        }
+    	}
     }
     
-    private static void trace(HttpRequestBase request, Map<String, String> headParams) {
+    //错误处理
+    private static void setHttpException(String orgurl, String url, Exception ex) {
+    	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
+    	if (LOGGER.isDebugEnabled()) {
+        	LOGGER.debug("ERROR:",ex);
+    	}
+    }
+ 
+    //设置头部
+    private static void setHeaderParams(HttpRequestBase request, Map<String, String> headParams) {
     	if (StringUtil.isNotEmpty(GlobalContext.getTraceId())) {
         	request.addHeader(GlobalContext.TRACE_ID, GlobalContext.getTraceId());
     	}
@@ -478,6 +379,87 @@ public class HttpClientUtil {
         		request.addHeader(entry.getKey(), entry.getValue());
         	}
         }
-
     }
+
+    public static void main(String[] args) {
+    	System.out.println(HttpClientUtil.get("http://blog.csdn.net/catoop/article/details/38849497"));
+    	System.out.println(HttpClientUtil.post("http://blog.csdn.net/catoop/article/details/38849497"));
+    }
+    
+    public static class HTTPRequestParameter {
+    	private RequstType requestType;
+    	private String url;
+    	private String body;
+    	private Map<String, Object> requestParams = new HashMap<>();
+    	private Map<String, String> headParams = new HashMap<>();
+    	private Map<String,ContentBody> requestContentBodys = new HashMap<>();
+    	private int timeout = Integer.parseInt(ConfClient.get(REQUEST_TIME_OUT, "10000"));
+    	public RequstType getRequstType() {
+			return requestType;
+		}
+		public void setRequstType(RequstType requestType) {
+			this.requestType = requestType;
+		}
+		public String getUrl() {
+			return url;
+		}
+		public void setUrl(String url) {
+			this.url = url;
+		}
+		public String getBody() {
+			return body;
+		}
+		public void setBody(String body) {
+			this.body = body;
+		}
+		public Map<String, Object> getRequestParams() {
+			return requestParams;
+		}
+		public void setRequestParam(String key, Object value) {
+			this.requestParams.put(key, value);
+		}
+		public void setRequestParams(Map<String, Object> requestParams) {
+			this.requestParams = requestParams;
+		}
+		public Map<String, String> getHeadParams() {
+			return headParams;
+		}
+		public void setHeadParam(String key, String value) {
+			this.headParams.put(key, value);
+		}
+		public void setHeadParams(Map<String, String> headParams) {
+			this.headParams = headParams;
+		}
+		public Map<String, ContentBody> getRequestContentBodys() {
+			return requestContentBodys;
+		}
+		public void setRequestContentBody(String key, ContentBody value) {
+			this.requestContentBodys.put(key, value);
+		}
+		public void setRequestContentBodys(Map<String, ContentBody> requestContentBodys) {
+			this.requestContentBodys = requestContentBodys;
+		}
+		public int getTimeout() {
+			return timeout;
+		}
+		public void setTimeout(int timeout) {
+			this.timeout = timeout;
+		}
+    }
+    
+    public static enum RequstType {
+    	HTTP_GET("get"),
+    	HTTP_POST("post"),
+    	HTTP_POST_BODY("body"),
+    	HTTP_POST_MULTIPART("multipart");
+        private String type;
+        RequstType(String type) {
+            this.type = type;
+        }
+
+        public String getType() {
+            return type;
+        }
+    }
+    
 }
