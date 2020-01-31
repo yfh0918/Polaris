@@ -27,11 +27,4 @@ public class Main implements Server {
 		}).start();
 	}
 
-	/**
-     * 服务关闭
-     *
-     */
-	@Override
-	public void stop() {
-	}
 }

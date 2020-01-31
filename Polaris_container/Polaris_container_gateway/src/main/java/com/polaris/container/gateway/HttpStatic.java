@@ -54,6 +54,7 @@ public class HttpStatic {
     //载入需要代理的IP(需要动态代理)
     private static void loadUpstream(String content) {
         if (StringUtil.isEmpty(content)) {
+        	urlMap = new HashMap<>();
             return;
         }
 
