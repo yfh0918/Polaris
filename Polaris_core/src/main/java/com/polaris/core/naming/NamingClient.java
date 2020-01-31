@@ -5,7 +5,7 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
-public abstract class NameingClient {
+public abstract class NamingClient {
 
 	public static boolean register() {
 		//注册中心

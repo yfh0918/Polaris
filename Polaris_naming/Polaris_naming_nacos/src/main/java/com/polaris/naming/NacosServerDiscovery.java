@@ -13,10 +13,11 @@ import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.naming.NamingOrder;
 import com.polaris.core.naming.ServerDiscoveryHandler;
 import com.polaris.core.util.StringUtil;
 
-@Order(0)
+@Order(NamingOrder.NACOS)
 public class NacosServerDiscovery implements ServerDiscoveryHandler {
 	private static final Logger logger = LoggerFactory.getLogger(NacosServerDiscovery.class);
 	private volatile NamingService naming;

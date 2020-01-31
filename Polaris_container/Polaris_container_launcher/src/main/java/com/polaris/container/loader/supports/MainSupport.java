@@ -3,7 +3,7 @@ package com.polaris.container.loader.supports;
 import com.polaris.container.ServerFactory;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.NameingClient;
+import com.polaris.core.naming.NamingClient;
 
 /**
 *
@@ -38,14 +38,14 @@ public abstract class MainSupport {
 			@Override
 			public void started() {
 				//注册服务
-		    	NameingClient.register();
+		    	NamingClient.register();
 				
 			}
 			
 			@Override
 			public void stopped() {
 				//注销服务
-		    	NameingClient.unRegister();
+		    	NamingClient.unRegister();
 			}
     		
     	});

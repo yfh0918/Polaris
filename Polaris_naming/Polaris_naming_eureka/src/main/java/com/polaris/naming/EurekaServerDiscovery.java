@@ -32,11 +32,12 @@ import com.netflix.niws.loadbalancer.DiscoveryEnabledNIWSServerList;
 import com.netflix.niws.loadbalancer.DiscoveryEnabledServer;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.naming.NamingOrder;
 import com.polaris.core.naming.ServerDiscoveryHandler;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
-@Order(1)
+@Order(NamingOrder.EUREKA)
 public class EurekaServerDiscovery implements ServerDiscoveryHandler {
 	private static final Logger logger = LoggerFactory.getLogger(EurekaServerDiscovery.class);
 	private ApplicationInfoManager applicationInfoManager;
