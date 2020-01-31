@@ -3,9 +3,10 @@ package com.polaris.config.zk;
 import org.springframework.core.annotation.Order;
 
 import com.polaris.core.config.ConfListener;
+import com.polaris.core.config.ConfOrder;
 import com.polaris.core.config.ConfHandler;
 
-@Order(2)
+@Order(ConfOrder.ZK)
 public class ConfZkHandler implements ConfHandler {
 
 	@Override

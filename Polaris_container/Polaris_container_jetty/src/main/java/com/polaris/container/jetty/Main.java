@@ -5,13 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 
 import com.polaris.container.Server;
+import com.polaris.container.ServerOrder;
 import com.polaris.container.jetty.server.JettyServer;
 import com.polaris.container.listener.ServerListener;
 
 /**
  * 入口启动类
  */
-@Order(1)
+@Order(ServerOrder.JETTY)
 public class Main implements Server{
 
 	private static Logger logger = LoggerFactory.getLogger(Main.class);

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 
 import com.polaris.container.Server;
+import com.polaris.container.ServerOrder;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.tomcat.server.TomcatServer;
 
@@ -12,7 +13,7 @@ import com.polaris.container.tomcat.server.TomcatServer;
  * 入口启动类
  *
  */
-@Order(0)
+@Order(ServerOrder.TOMCAT)
 public class Main implements Server {
 
 	private static Logger logger = LoggerFactory.getLogger(Main.class);

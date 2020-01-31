@@ -12,11 +12,12 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import com.polaris.container.servlet.ServletOrder;
 import com.polaris.container.servlet.initializer.ExtensionInitializerAbs;
 import com.polaris.core.ConfigurationLoader;
 import com.polaris.core.util.SpringUtil;
 
-@Order(1)
+@Order(ServletOrder.SPRINGMVC)
 public class SpringMvcInitializer extends  ExtensionInitializerAbs { 
 	final static Logger logger = LoggerFactory.getLogger(SpringMvcInitializer.class);
 	InnerInitializer initializer = null;

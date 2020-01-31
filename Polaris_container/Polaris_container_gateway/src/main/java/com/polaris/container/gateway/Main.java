@@ -3,6 +3,7 @@ package com.polaris.container.gateway;
 import org.springframework.core.annotation.Order;
 
 import com.polaris.container.Server;
+import com.polaris.container.ServerOrder;
 import com.polaris.container.gateway.server.GatewayServer;
 import com.polaris.container.listener.ServerListener;
 
@@ -10,7 +11,7 @@ import com.polaris.container.listener.ServerListener;
  * 入口启动类
  *
  */
-@Order(3)
+@Order(ServerOrder.GATEWAY)
 public class Main implements Server {
 	/**
      * 服务启动
