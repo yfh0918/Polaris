@@ -15,8 +15,6 @@ import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.listener.ServerListener;
-import com.polaris.container.servlet.listener.WebsocketListerner;
 import com.polaris.container.tomcat.listener.ServerHandlerListerner;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
@@ -34,7 +32,6 @@ public class TomcatServer {
     private static final String MAX_THREADS = "300";//和jetty保持一致
     private static final  int MAX_SAVE_POST_SIZE = 4 * 1024;
     private static final  int MAX_HTTP_HEADER_SIZE = 8 * 1024;
-    private ServerListener startlistener;
     
 
     /**
@@ -108,9 +105,7 @@ public class TomcatServer {
             standardContext.addLifecycleListener(new Tomcat.DefaultWebXmlListener());
             standardContext.addLifecycleListener(new ContextConfig());
             standardContext.addLifecycleListener(
-            		new ServerHandlerListerner(
-            		new WebsocketListerner(),
-            		startlistener));
+            		new ServerHandlerListerner());
          
             //关闭jarScan
             StandardJarScanner jarScanner = new StandardJarScanner();
@@ -153,7 +148,7 @@ public class TomcatServer {
      *
      * @throws Exception
      */
-    public void start(ServerListener listener) {
+    public void start() {
 
         try {
 
@@ -165,7 +160,6 @@ public class TomcatServer {
 
             //没有初始化过，需要重新初始化
             if (this.tomcat == null) {
-            	startlistener = listener;
                 init();
             }
 

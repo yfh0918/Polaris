@@ -7,7 +7,6 @@ import org.springframework.core.annotation.Order;
 import com.polaris.container.Server;
 import com.polaris.container.ServerOrder;
 import com.polaris.container.jetty.server.JettyServer;
-import com.polaris.container.listener.ServerListener;
 
 /**
  * 入口启动类
@@ -21,14 +20,14 @@ public class Main implements Server{
      *
      */
 	@Override
-	public void start(ServerListener listener) {
+	public void start() {
 		//启动jetty
         new Thread(new Runnable() {
             @Override
             public void run() {
             	logger.info("jetty启动！");
                 JettyServer server = JettyServer.getInstance();
-                server.start(listener);
+                server.start();
             }
         }).start();
 		

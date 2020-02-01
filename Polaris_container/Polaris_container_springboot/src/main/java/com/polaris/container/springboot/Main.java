@@ -4,7 +4,6 @@ import org.springframework.core.annotation.Order;
 
 import com.polaris.container.Server;
 import com.polaris.container.ServerOrder;
-import com.polaris.container.listener.ServerListener;
 import com.polaris.container.springboot.server.SpringbootServer;
 
 /**
@@ -18,11 +17,11 @@ public class Main implements Server {
      *
      */
 	@Override
-	public void start(ServerListener listener) {
+	public void start() {
     	new Thread(new Runnable() {
 			@Override
 			public void run() {
-				SpringbootServer.getInstance().start(listener);
+				SpringbootServer.getInstance().start();
 			}
 		}).start();
 	}

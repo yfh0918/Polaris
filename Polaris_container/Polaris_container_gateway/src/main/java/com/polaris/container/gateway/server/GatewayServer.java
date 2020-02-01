@@ -17,7 +17,7 @@ import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.HostResolverImpl;
 import com.polaris.container.gateway.HttpFilterAdapterImpl;
 import com.polaris.container.gateway.util.GatewaySelfSignedSslEngineSource;
-import com.polaris.container.listener.ServerListener;
+import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.container.util.NetUtils;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
@@ -64,7 +64,7 @@ public class GatewayServer {
      *
      * @throws Exception
      */
-    public void start(ServerListener listener) {
+    public void start() {
 
     	//创建context
     	SpringUtil.refresh();
@@ -130,13 +130,13 @@ public class GatewayServer {
                     }
                 }).start();
         
-        listener.started();//监听启动
+        ServerListenerSupport.started();//监听启动
         
         // add shutdown hook to stop server
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
-                	listener.stopped();
+                	ServerListenerSupport.stopped();
                 } catch (Exception e) {
                     logger.error("failed to stop gateway.", e);
                 }

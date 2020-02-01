@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.listener.ServerListener;
+import com.polaris.container.listener.ServerListenerSupport;
+import com.polaris.container.servlet.listener.WebsocketListerner;
 
 /**
  * Class Name : ServerHandler
@@ -19,10 +21,9 @@ import com.polaris.container.listener.ServerListener;
 public class ServerHandlerListerner implements LifecycleListener{
 	
 	private static final Logger logger = LoggerFactory.getLogger(ServerHandlerListerner.class);
-	private ServerListener[] serverlisteners;
+	private ServerListener websocketListerner = new WebsocketListerner();
 	
-	public ServerHandlerListerner (ServerListener... serverlisteners) {
-		this.serverlisteners = serverlisteners;
+	public ServerHandlerListerner () {
 	}
 
 	@Override
@@ -30,34 +31,20 @@ public class ServerHandlerListerner implements LifecycleListener{
 		// Process the event that has occurred
         if (event.getType().equals(Lifecycle.CONFIGURE_START_EVENT)) {
         } else if (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) {
-        	if (serverlisteners != null) {
-        		for (ServerListener serverListener:serverlisteners) {
-        			serverListener.starting();
-        		}
-        	}
-        	
+        	websocketListerner.starting();
+        	ServerListenerSupport.starting();
         	logger.info("TomcatServer启动中！");
         } else if (event.getType().equals(Lifecycle.AFTER_START_EVENT)) {
-        	
-        	if (serverlisteners != null) {
-        		for (ServerListener serverListener:serverlisteners) {
-        			serverListener.started();
-        		}
-        	}
+        	websocketListerner.started();
+			ServerListenerSupport.started();
         	logger.info("TomcatServer启动成功！");
         } else if (event.getType().equals(Lifecycle.BEFORE_STOP_EVENT)) {
-        	if (serverlisteners != null) {
-        		for (ServerListener serverListener:serverlisteners) {
-        			serverListener.stopping();
-        		}
-        	}
+        	websocketListerner.stopping();
+			ServerListenerSupport.stopping();
         	logger.info("TomcatServer停止中！");
         } else if (event.getType().equals(Lifecycle.AFTER_STOP_EVENT)) {
-        	if (serverlisteners != null) {
-        		for (ServerListener serverListener:serverlisteners) {
-        			serverListener.stopped();
-        		}
-        	}
+        	websocketListerner.stopped();
+			ServerListenerSupport.stopped();
         	logger.info("TomcatServer已经停止！");
         } else if (event.getType().equals(Lifecycle.AFTER_DESTROY_EVENT)) {
         }

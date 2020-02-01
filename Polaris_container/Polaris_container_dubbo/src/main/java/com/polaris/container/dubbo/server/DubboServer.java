@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.listener.ServerListener;
+import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.core.util.SpringUtil;
 
 public class DubboServer {
@@ -42,13 +43,13 @@ public class DubboServer {
      *
      * @throws Exception
      */
-    public void start(ServerListener listener) {
+    public void start() {
 
     	//创建context
     	SpringUtil.refresh();
     	
     	//监听
-    	listener.started();
+    	ServerListenerSupport.started();
     	
     	// add shutdown hook to stop server
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -56,7 +57,7 @@ public class DubboServer {
                 try {
                 	
                 	//监听
-                	listener.stopped();
+                	ServerListenerSupport.stopped();
                 } catch (Exception e) {
                     logger.error("failed to stop dubbo.", e);
                 }

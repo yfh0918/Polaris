@@ -2,6 +2,7 @@ package com.polaris.container.loader.supports;
 
 import com.polaris.container.ServerFactory;
 import com.polaris.container.listener.ServerListener;
+import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.NamingClient;
 
@@ -27,13 +28,16 @@ public abstract class MainSupport {
     * @Exception 
     * @since 
     */
-    public static void startServer(String[] args, Class<?> rootConfigClass) {
+	public static void startServer(String[] args, ServerListener... serverListener) {
+		startServer(args, null, serverListener);
+	}
+    public static void startServer(String[] args, Class<?> rootConfigClass, ServerListener... serverListeners) {
     	
     	//各类参数载入
     	ConfClient.init(rootConfigClass,args);
     	
-    	//启动
-    	ServerFactory.getServer().start(new ServerListener() {
+    	//载入监听器
+    	ServerListenerSupport.add(serverListeners, new ServerListener() {//载入自定义的监听
 
 			@Override
 			public void started() {
@@ -49,6 +53,12 @@ public abstract class MainSupport {
 			}
     		
     	});
+    	
+    	//开始
+    	ServerListenerSupport.starting();
+    	
+    	//启动
+    	ServerFactory.getServer().start();
     }
     
 

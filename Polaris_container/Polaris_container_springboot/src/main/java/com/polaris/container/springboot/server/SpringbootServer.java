@@ -5,7 +5,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextStoppedEvent;
 
-import com.polaris.container.listener.ServerListener;
+import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.core.ConfigurationLoader;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
@@ -43,7 +43,7 @@ public class SpringbootServer {
      *
      * @throws Exception
      */
-    public void start(ServerListener listener) {
+    public void start() {
     	
     	//project
     	String projectName = ConfClient.get(Constant.PROJECT_NAME);
@@ -61,7 +61,7 @@ public class SpringbootServer {
 
 			@Override
 			public void onApplicationEvent(ContextRefreshedEvent event) {
-				listener.started();
+				ServerListenerSupport.started();
 			}
         	
         });
@@ -70,7 +70,7 @@ public class SpringbootServer {
 
 			@Override
 			public void onApplicationEvent(ContextStoppedEvent event) {
-				listener.stopped();
+				ServerListenerSupport.stopped();
 			}
         	
         });

@@ -14,8 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.container.jetty.listener.ServerHandlerLifeCycle;
 import com.polaris.container.jetty.listener.ServerHandlerListerner;
-import com.polaris.container.listener.ServerListener;
-import com.polaris.container.servlet.listener.WebsocketListerner;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.PropertyUtils;
@@ -35,8 +33,6 @@ public class JettyServer {
      * 服务器
      */
     private Server server = null;
-    
-    private ServerListener startlistener;
     
     /**
      * servlet上下文
@@ -83,9 +79,7 @@ public class JettyServer {
             //context加入server
             this.server.setHandler(context); // 将Application注册到服务器
             this.server.addLifeCycleListener(
-            		new ServerHandlerListerner(
-            				new WebsocketListerner(),
-            				startlistener));//监听handler
+            		new ServerHandlerListerner());//监听handler
         } catch (IOException e) {
             logger.error(e.getMessage());
         } 
@@ -116,7 +110,7 @@ public class JettyServer {
      *
      * @throws Exception
      */
-    public void start(ServerListener listener) {
+    public void start() {
 
         try {
 
@@ -128,7 +122,6 @@ public class JettyServer {
 
             //没有初始化过，需要重新初始化
             if (this.server == null) {
-            	startlistener = listener;
                 init();
             }
 

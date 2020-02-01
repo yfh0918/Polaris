@@ -6,7 +6,7 @@ import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 
-import com.polaris.container.listener.ServerListener;
+import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
@@ -54,7 +54,7 @@ public class WebfluxServer {
      *
      * @throws Exception
      */
-    public void start(ServerListener listener) {
+    public void start() {
 
     	//创建context
     	SpringUtil.refresh();
@@ -71,13 +71,13 @@ public class WebfluxServer {
                           .handle(httpHandlerAdapter) 
                           .bindNow();
         logger.info("netty-webflux is started,port:{}",port);
-        listener.started();//监听启动
+        ServerListenerSupport.started();
         
         // add shutdown hook to stop server
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
-                	listener.stopped();
+                	ServerListenerSupport.stopped();
                 } catch (Exception e) {
                     logger.error("failed to stop netty-webflux.", e);
                 }
