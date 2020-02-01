@@ -21,7 +21,7 @@
 	<module>Polaris_container_webflux</module>
 	<module>Polaris_container_dubbo</module>
 	<module>Polaris_container_gateway</module>
-	
+	<module>Polaris_container_springboot</module>
   </modules>
   
   <dependencies>

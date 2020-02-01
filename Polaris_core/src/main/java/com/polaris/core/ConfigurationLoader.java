@@ -15,8 +15,10 @@ abstract public class ConfigurationLoader {
 	private static Class<?> rootConfigClass = null;
 	private static Set<String> basePackages = new HashSet<>();
 	private static Set<String> basePackagesForMapper = new HashSet<>();
+	private static String[] args;
 	
-	public static void loadRootConfig(Class<?> clazz) {
+	public static void loadRootConfig(Class<?> clazz, String... arg) {
+		args = arg;
 		rootConfigClass = clazz;
 		
 		//application-scan
@@ -73,6 +75,9 @@ abstract public class ConfigurationLoader {
 	}
 	public static Set<String> getBasePackagesForMapper() {
 		return basePackagesForMapper;
+	}
+	public static String[] getArgs() {
+		return args;
 	}
 	
 	@Configuration

@@ -69,7 +69,7 @@ public class JettyServer {
             //定义context
             WebAppContext context = new WebAppContext();
             context.setDefaultsDescriptor("webdefault.xml");
-            String contextPath =ConfClient.get("server.contextPath","/"); 
+            String contextPath =ConfClient.get(Constant.SERVER_CONTEXT,"/"); 
             if (!contextPath.startsWith("/")) {
             	contextPath = "/" + contextPath;
             }

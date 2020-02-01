@@ -28,6 +28,7 @@
         <nacos.version>1.1.4</nacos.version>
         <dubbo-version>2.7.4</dubbo-version>
         <sentinel-version>1.7.0</sentinel-version>
+        <springboot-version>2.2.4.RELEASE</springboot-version>
     </properties>
     <profiles>
         <profile>
@@ -127,6 +128,11 @@
 	            <artifactId>Polaris_container_dubbo</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency> 
+	        <dependency>
+	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_container_springboot</artifactId>
+	            <version>${polaris-version}</version>
+	        </dependency>  
 	        <dependency>
 	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_container_gateway</artifactId>

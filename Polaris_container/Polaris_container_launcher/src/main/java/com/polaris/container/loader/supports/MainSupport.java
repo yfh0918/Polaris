@@ -30,7 +30,7 @@ public abstract class MainSupport {
     public static void startServer(String[] args, Class<?> rootConfigClass) {
     	
     	//各类参数载入
-    	ConfClient.init(rootConfigClass);
+    	ConfClient.init(rootConfigClass,args);
     	
     	//启动
     	ServerFactory.getServer().start(new ServerListener() {

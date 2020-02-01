@@ -73,7 +73,7 @@ public class TomcatServer {
             	resDir.mkdirs();
             }
             String catalina_home = resDir.getCanonicalPath();
-            String contextPath =ConfClient.get("server.contextPath","/"); 
+            String contextPath =ConfClient.get(Constant.SERVER_CONTEXT,"/"); 
             if (!contextPath.startsWith("/")) {
             	contextPath = "/" + contextPath;
             }

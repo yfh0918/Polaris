@@ -66,6 +66,10 @@ public class Constant {
 	public static String PROJECT_NAME = "project.name";
 	public static String SPRING_BOOT_NAME = "spring.application.name";//融合springboot
 	
+	// serverContext
+	public static String SERVER_CONTEXT = "server.contextPath";
+	public static String SERVER_SPRING_CONTEXT = "server.servlet.context-path";
+
 	// server端口号和注册中心
 	public static String SERVER_PORT_DEFAULT_VALUE = "80";
 	public static String SERVER_PORT_NAME = "server.port";

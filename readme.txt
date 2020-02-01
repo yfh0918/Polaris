@@ -62,7 +62,7 @@
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_container_springmvc</artifactId> ->可修改成Polaris_container_resteasy
+            <artifactId>Polaris_container_servlet_springmvc</artifactId> ->可修改成Polaris_container_resteasy
         </dependency>
   assembly目录下的配置文件不用修改，
   application.properties 定义服务的project.name,context,port,，是否开启servlet限流，等等
@@ -91,107 +91,6 @@
    缓存 序列化可以自己配置，默认KryoSerializer
    
 12，和Springboot的融合
-        <!--spring boot-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>1.3.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.polaris</groupId>
-            <artifactId>Polaris_core</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.polaris</groupId>
-            <artifactId>Polaris_naming_nacos</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.polaris</groupId>
-            <artifactId>Polaris_conf_nacos</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.polaris</groupId>
-            <artifactId>Polaris_cache</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.polaris</groupId>
-            <artifactId>Polaris_logger</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.polaris</groupId>
-            <artifactId>Polaris_database</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
-		
-	在代码启动前加入如下
-	@SpringBootApplication(exclude= {DataSourceAutoConfiguration.class})
-	@ComponentScan(basePackages = {"com.xxx","com.polaris"})
-	@EnableTransactionManagement(proxyTargetClass=true)
-	public class xxxApplication {
-	
-	    public static void main(String[] args) {
-	    	
-	    	//载入配置
-	    	ConfClient.init(xxxApplication.class);
-	    	
-	
-		//服务启动
-	        SpringApplication springApplication = new SpringApplication(xxxApplication.class);
-	        
-	        //注册服务
-	        springApplication.addListeners(new ApplicationListener<ContextRefreshedEvent>() {
-	
-				@Override
-				public void onApplicationEvent(ContextRefreshedEvent event) {
-					
-				//注册中心
-			    	NameingClient.register();
-				}
-	        	
-	        });
-	        
-	        //注销服务
-	        springApplication.addListeners(new ApplicationListener<ContextStoppedEvent>() {
-	
-				@Override
-				public void onApplicationEvent(ContextStoppedEvent event) {
-					
-				//注册中心
-			    	NameingClient.unRegister();
-				}
-	        	
-	        });
-	        
-	        //启动服务
-	        springApplication.run(args);
-	    }
-	}
+ 详细请参考Polaris_demo_springboot
 
    

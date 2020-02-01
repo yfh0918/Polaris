@@ -33,7 +33,7 @@ public abstract class ConfClient {
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	
 	//初始化操作
-	public static void init(Class<?> clazz) {
+	public static void init(Class<?> clazz, String... arg) {
 		
 		//初始化
 		if (!initialized.compareAndSet(false, true)) {
@@ -67,7 +67,7 @@ public abstract class ConfClient {
 		loadSentinelConfig();
 		
 		//载入配置类
-		ConfigurationLoader.loadRootConfig(clazz);		
+		ConfigurationLoader.loadRootConfig(clazz,arg);		
 	}
 	public static void loadDefaultConfig() {
 		
