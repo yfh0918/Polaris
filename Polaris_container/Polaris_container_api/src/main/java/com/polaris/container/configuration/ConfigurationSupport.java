@@ -1,4 +1,4 @@
-package com.polaris.core;
+package com.polaris.container.configuration;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,14 +10,14 @@ import org.springframework.context.annotation.Configuration;
 import com.polaris.core.annotation.PolarisWebApplication;
 import com.polaris.core.config.ConfPropertyPlaceholderConfigurer;
 
-abstract public class ConfigurationLoader {
+abstract public class ConfigurationSupport {
 
 	private static Class<?> rootConfigClass = null;
 	private static Set<String> basePackages = new HashSet<>();
 	private static Set<String> basePackagesForMapper = new HashSet<>();
 	private static String[] args;
 	
-	public static void loadRootConfig(Class<?> clazz, String... arg) {
+	public static void set(Class<?> clazz, String... arg) {
 		args = arg;
 		rootConfigClass = clazz;
 		
@@ -40,7 +40,7 @@ abstract public class ConfigurationLoader {
 			}
 		}
 		if (basePackages.size() == 0) {
-			basePackages.add(InnerConfig.BASE_PACKAGE);
+			basePackages.add(InnerConfiguration.BASE_PACKAGE);
 			if (rootConfigClass != null) {
 				basePackages.add(rootConfigClass.getPackage().getName());
 			}
@@ -64,11 +64,11 @@ abstract public class ConfigurationLoader {
 			}
 		}
 	}
-	public static Class<?>[] getRootConfigClass() {
+	public static Class<?>[] getConfiguration() {
 		if (rootConfigClass == null) {
-			return new Class[] {InnerConfig.class};
+			return new Class[] {InnerConfiguration.class};
 		}
-		return new Class[] {InnerConfig.class, rootConfigClass};
+		return new Class[] {InnerConfiguration.class, rootConfigClass};
 	}
 	public static Set<String> getBasePackages() {
 		return basePackages;
@@ -81,8 +81,8 @@ abstract public class ConfigurationLoader {
 	}
 	
 	@Configuration
-	@ComponentScan(basePackages={InnerConfig.BASE_PACKAGE})
-	public static class InnerConfig {
+	@ComponentScan(basePackages={InnerConfiguration.BASE_PACKAGE})
+	public static class InnerConfiguration {
 		public static final String BASE_PACKAGE = "com.polaris";
 		@Bean
 		public static ConfPropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {

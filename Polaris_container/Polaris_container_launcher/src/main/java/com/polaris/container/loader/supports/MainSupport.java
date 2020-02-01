@@ -1,6 +1,7 @@
 package com.polaris.container.loader.supports;
 
 import com.polaris.container.ServerFactory;
+import com.polaris.container.configuration.ConfigurationSupport;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.core.config.ConfClient;
@@ -34,7 +35,10 @@ public abstract class MainSupport {
     public static void startServer(String[] args, Class<?> rootConfigClass, ServerListener... serverListeners) {
     	
     	//各类参数载入
-    	ConfClient.init(rootConfigClass,args);
+    	ConfClient.init();
+    	
+		//载入配置类
+		ConfigurationSupport.set(rootConfigClass,args);		
     	
     	//载入监听器
     	ServerListenerSupport.add(serverListeners, new ServerListener() {//载入自定义的监听
@@ -60,18 +64,4 @@ public abstract class MainSupport {
     	//启动
     	ServerFactory.getServer().start();
     }
-    
-
-    /**
-     * stopServer(关闭web容器)
-     * @param 
-     * @return 
-     * @Exception 
-     * @since 
-     */
-     public static void stopServer() {
-     	
-     	 //关闭
-    	 ServerFactory.getServer().stop();
-     }
 }

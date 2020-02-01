@@ -13,6 +13,7 @@ import org.littleshoot.proxy.impl.ThreadPoolConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.container.configuration.ConfigurationSupport;
 import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.HostResolverImpl;
 import com.polaris.container.gateway.HttpFilterAdapterImpl;
@@ -67,7 +68,7 @@ public class GatewayServer {
     public void start() {
 
     	//创建context
-    	SpringUtil.refresh();
+    	SpringUtil.refresh(ConfigurationSupport.getConfiguration());
         ThreadPoolConfiguration threadPoolConfiguration = new ThreadPoolConfiguration();
         threadPoolConfiguration.withAcceptorThreads(GatewayConstant.AcceptorThreads);
         threadPoolConfiguration.withClientToProxyWorkerThreads(GatewayConstant.ClientToProxyWorkerThreads);

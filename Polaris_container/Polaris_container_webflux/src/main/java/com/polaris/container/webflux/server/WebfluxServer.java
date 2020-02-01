@@ -6,6 +6,7 @@ import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 
+import com.polaris.container.configuration.ConfigurationSupport;
 import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
@@ -19,11 +20,6 @@ public class WebfluxServer {
 	
 	private static Logger logger = LoggerFactory.getLogger(WebfluxServer.class);
 	
-	/**
-     * 服务器
-     */
-    private DisposableServer server = null;
-    
 	/**
      * 私有构造方法
      */
@@ -57,13 +53,13 @@ public class WebfluxServer {
     public void start() {
 
     	//创建context
-    	SpringUtil.refresh();
+    	SpringUtil.refresh(ConfigurationSupport.getConfiguration());
     	
     	//通过ApplicationContext创建HttpHandler
         HttpHandler httpHandler = WebHttpHandlerBuilder.applicationContext(SpringUtil.getApplicationContext()).build();
         ReactorHttpHandlerAdapter httpHandlerAdapter = new ReactorHttpHandlerAdapter(httpHandler);
         int port = Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE));
-        server =
+        DisposableServer server =
                 HttpServer.create()
                 		  .port(port)
                 		  .protocol(new HttpProtocol[] { HttpProtocol.HTTP11 })
@@ -78,6 +74,7 @@ public class WebfluxServer {
             public void run() {
                 try {
                 	ServerListenerSupport.stopped();
+                	server.disposeNow();
                 } catch (Exception e) {
                     logger.error("failed to stop netty-webflux.", e);
                 }
@@ -88,11 +85,4 @@ public class WebfluxServer {
         server.onDispose().block();
     }
     
-    public void stop() {
-    	if (server != null) {
-    		server.disposeNow();
-    		server = null;
-			logger.info("netty-webflux is stopped");
-    	}
-    }
 }

@@ -5,8 +5,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextStoppedEvent;
 
+import com.polaris.container.configuration.ConfigurationSupport;
 import com.polaris.container.listener.ServerListenerSupport;
-import com.polaris.core.ConfigurationLoader;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerEnum;
@@ -56,7 +56,7 @@ public class SpringbootServer {
     	System.setProperty(Constant.SERVER_SPRING_CONTEXT, serverContext);
     	
     	//启动应用
-    	SpringApplication springApplication = new SpringApplication(ConfigurationLoader.getRootConfigClass());
+    	SpringApplication springApplication = new SpringApplication(ConfigurationSupport.getConfiguration());
         springApplication.addListeners(new ApplicationListener<ContextRefreshedEvent>() {
 
 			@Override
@@ -74,7 +74,7 @@ public class SpringbootServer {
 			}
         	
         });
-        springApplication.run(ConfigurationLoader.getArgs());
+        springApplication.run(ConfigurationSupport.getArgs());
     	
     }
     

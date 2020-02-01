@@ -15,7 +15,7 @@
 
 		<dependency>
 			<groupId>com.polaris</groupId>
-			<artifactId>Polaris_core</artifactId>
+			<artifactId>Polaris_container_api</artifactId>
 		</dependency>
 		<!-- mybatis -->
 		<dependency>

@@ -32,22 +32,6 @@ public class Main implements Server {
 			}
 		}).start();
 	}
-
-	/**
-     * 服务关闭
-     *
-     */
-	@Override
-	public void stop() {
-    	new Thread(new Runnable() {
-			@Override
-			public void run() {
-				logger.info("tomcat关闭！");
-				TomcatServer server = TomcatServer.getInstance();
-		        server.stop();
-			}
-    	}).start();
-	}
 	
 	/**
      * servlet上下文

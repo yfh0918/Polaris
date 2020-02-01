@@ -15,8 +15,8 @@ public abstract class ServerListenerSupport {
     	}
 	}
 	public static void add(ServerListener[] serverListeners, ServerListener serverListener) {
-		serverListenerList.add(serverListener);
 		ServerListenerSupport.add(serverListeners);
+		serverListenerList.add(serverListener);
 	}
 
 	public static void starting() {

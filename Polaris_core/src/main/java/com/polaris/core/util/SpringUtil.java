@@ -3,17 +3,15 @@ package com.polaris.core.util;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.polaris.core.ConfigurationLoader;
-
 public class SpringUtil {
 	private static ApplicationContext context = null;
 	
-    public static ApplicationContext getApplicationContext() {
+    public static ApplicationContext getApplicationContext(Class<?>... clazz) {
     	if (context == null) {
     		synchronized(SpringUtil.class) {
     			if (context == null) {
     				AnnotationConfigApplicationContext annotationContext = new AnnotationConfigApplicationContext();
-    		    	annotationContext.register(ConfigurationLoader.getRootConfigClass());
+    		    	annotationContext.register(clazz);
     		    	context = annotationContext;
     			}
     		}
@@ -41,8 +39,8 @@ public class SpringUtil {
     	context = inputContext;
     }
     
-    public static void refresh() {
-		context = getApplicationContext();
+    public static void refresh(Class<?>... clazz) {
+		context = getApplicationContext(clazz);
 		if (context instanceof AnnotationConfigApplicationContext) {
 			((AnnotationConfigApplicationContext)context).refresh();
 			((AnnotationConfigApplicationContext)context).registerShutdownHook();

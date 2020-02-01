@@ -10,6 +10,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
+import com.polaris.container.configuration.ConfigurationSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
@@ -25,8 +26,8 @@ public class ClaimApp {
     private final String businessKey = "test002";
 
     public static void main(String[] args) {
-    	ConfClient.init(null);
-        SpringUtil.refresh();
+    	ConfClient.init();
+        SpringUtil.refresh(ConfigurationSupport.getConfiguration());
         ClaimApp app = SpringUtil.getBean(ClaimApp.class);
         app.deployDiagram();//载入流程（即使重复调用，也不会重复载入）
 //    	app.startWorkflow();//启动流程

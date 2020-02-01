@@ -186,26 +186,6 @@ public class TomcatServer {
 
 
     }
-
-    /**
-     * 停止服务器
-     *
-     * @throws Exception
-     */
-    public void stop() {
-
-        try {
-            if (this.tomcat != null) {
-                this.tomcat.stop();
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        } finally {
-
-            //停止了就清空服务
-            this.tomcat = null;
-        }
-    }
     
     /**
      * 获取servlet上下文

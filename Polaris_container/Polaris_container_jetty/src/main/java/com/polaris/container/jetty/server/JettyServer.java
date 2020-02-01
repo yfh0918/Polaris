@@ -150,28 +150,6 @@ public class JettyServer {
 
     }
 
-    /**
-     * 停止服务器
-     *
-     * @throws Exception
-     */
-    public void stop() {
-
-        try {
-            if (this.server != null) {
-                if (!this.server.isStopped() && !this.server.isStopping()) {
-                    this.server.stop();
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        } finally {
-
-            //停止了就清空服务
-            this.server = null;
-        }
-
-    }
     
     /**
      * 获取servlet上下文

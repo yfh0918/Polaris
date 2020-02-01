@@ -6,7 +6,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.core.ConfigurationLoader;
 import com.polaris.core.Constant;
 import com.polaris.core.util.EnvironmentUtil;
 import com.polaris.core.util.NetUtils;
@@ -33,7 +32,7 @@ public abstract class ConfClient {
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	
 	//初始化操作
-	public static void init(Class<?> clazz, String... arg) {
+	public static void init() {
 		
 		//初始化
 		if (!initialized.compareAndSet(false, true)) {
@@ -66,8 +65,6 @@ public abstract class ConfClient {
 		//载入Sentinel
 		loadSentinelConfig();
 		
-		//载入配置类
-		ConfigurationLoader.loadRootConfig(clazz,arg);		
 	}
 	public static void loadDefaultConfig() {
 		

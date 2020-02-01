@@ -4,6 +4,7 @@ import javax.servlet.ServletRegistration;
 
 import org.springframework.core.annotation.Order;
 
+import com.polaris.container.configuration.ConfigurationSupport;
 import com.polaris.container.servlet.ServletOrder;
 import com.polaris.container.servlet.initializer.ExtensionInitializerAbs;
 import com.polaris.core.util.SpringUtil;
@@ -13,7 +14,7 @@ public class ResteasyInitializer extends  ExtensionInitializerAbs {
 
 	@Override
 	public void loadContext() {
-		SpringUtil.refresh();
+		SpringUtil.refresh(ConfigurationSupport.getConfiguration());
 	} 
 	
 	@Override

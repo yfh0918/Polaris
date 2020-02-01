@@ -33,23 +33,6 @@ public class Main implements Server{
 		
 	}
 	
-	/**
-     * 服务关闭
-     *
-     */
-	@Override
-	public void stop() {
-		//启动jetty
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-            	logger.info("jetty关闭！");
-            	JettyServer server = JettyServer.getInstance();
-                server.stop();
-            }
-        }).start();
-        
-	}
 	
 	/**
      * servlet上下文
