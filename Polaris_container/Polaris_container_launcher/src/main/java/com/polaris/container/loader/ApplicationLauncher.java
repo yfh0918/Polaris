@@ -15,9 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.asm.ClassReader;
 
-import com.polaris.core.annotation.PolarisWebApplication;
-import com.polaris.core.annotation.PolarisApplication;
-
 public class ApplicationLauncher {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ApplicationLauncher.class);
@@ -41,8 +38,7 @@ public class ApplicationLauncher {
 	    				ClassDescriptor classDescriptor = createClassDescriptor(inputStream);
 	    				if (classDescriptor != null && 
 	    					classDescriptor.isMainMethodFound() && 
-	    					(classDescriptor.getAnnotationNames().contains(PolarisWebApplication.class.getName()) ||
-	    					 classDescriptor.getAnnotationNames().contains(PolarisApplication.class.getName()))) {
+	    					classDescriptor.isTargetAnnotationFound()) {
 	    					String className = convertToClassName(jarEntry.getName());
 	    					logger.info("startup class:{} is found",className);
 	    					Class<?> startClass =Class.forName(className);

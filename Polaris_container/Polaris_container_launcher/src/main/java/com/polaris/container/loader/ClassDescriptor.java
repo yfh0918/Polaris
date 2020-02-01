@@ -1,7 +1,6 @@
 package com.polaris.container.loader;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.lang.annotation.Annotation;
 
 import org.springframework.asm.AnnotationVisitor;
 import org.springframework.asm.ClassVisitor;
@@ -10,15 +9,20 @@ import org.springframework.asm.Opcodes;
 import org.springframework.asm.SpringAsmInfo;
 import org.springframework.asm.Type;
 
+import com.polaris.core.annotation.PolarisApplication;
+import com.polaris.core.annotation.PolarisWebApplication;
+
 public class ClassDescriptor extends ClassVisitor{
 	private static final Type STRING_ARRAY_TYPE = Type.getType(String[].class);
 	private static final Type MAIN_METHOD_TYPE = Type.getMethodType(Type.VOID_TYPE, STRING_ARRAY_TYPE);
 
 	private static final String MAIN_METHOD_NAME = "main";
+	
+	private static final Class<? extends Annotation> TARGET_ANNOTATION = PolarisApplication.class;
+	private static final Class<? extends Annotation> TARGET_WEB_ANNOTATION = PolarisWebApplication.class;
 
-	private final Set<String> annotationNames = new LinkedHashSet<>();
-	private final Set<String> interfaceNames = new LinkedHashSet<>();
 
+	private boolean targetAnnotationFound;
 	private boolean mainMethodFound;
 
 	ClassDescriptor() {
@@ -28,17 +32,24 @@ public class ClassDescriptor extends ClassVisitor{
 	@Override
 	public void visit(int version, int access, String name, String signature,
             String superName, String[] interfaces) {
-		if (interfaces != null) {
-			for (String intefaceName : interfaces) {
-				interfaceNames.add(convertToClassName(intefaceName));
-			}
-		}
         super.visit(version, access, name, signature, superName, interfaces);
     }
 	
 	@Override
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
-		this.annotationNames.add(Type.getType(desc).getClassName());
+		String className = Type.getType(desc).getClassName();
+		if (className.equals(TARGET_ANNOTATION.getName()) || className.equals(TARGET_WEB_ANNOTATION.getName())) {
+			targetAnnotationFound = true;
+		} else {
+			try {
+				Class<?> clazz = Class.forName(className);
+				if (clazz.isAnnotationPresent(TARGET_ANNOTATION) || clazz.isAnnotationPresent(TARGET_WEB_ANNOTATION) ) {
+					targetAnnotationFound = true;
+				}
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
 		return null;
 	}
 
@@ -64,11 +75,8 @@ public class ClassDescriptor extends ClassVisitor{
 		return this.mainMethodFound;
 	}
 
-	Set<String> getAnnotationNames() {
-		return this.annotationNames;
-	}
-	Set<String> getInterfaceNames() {
-		return this.interfaceNames;
+	boolean isTargetAnnotationFound() {
+		return this.targetAnnotationFound;
 	}
 	
     String convertToClassName(String name) {
