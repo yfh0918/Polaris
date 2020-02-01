@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.annotation.AliasFor;
 
-import com.polaris.core.annotation.PolarisApplication;
+import com.polaris.container.annotation.PolarisApplication;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

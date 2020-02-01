@@ -1,7 +1,7 @@
 package com.polaris.demo;
 
 
-import com.polaris.container.loader.supports.MainSupport;
+import com.polaris.container.loader.MainSupport;
 import com.polaris.container.springboot.annotation.PolarisSpringbootApplication;
 
 /**

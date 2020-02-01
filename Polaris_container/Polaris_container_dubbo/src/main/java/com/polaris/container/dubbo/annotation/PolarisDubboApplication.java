@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.core.annotation.AliasFor;
 
-import com.polaris.core.annotation.PolarisWebApplication;
+import com.polaris.container.annotation.PolarisWebApplication;
 
 
 @Target(ElementType.TYPE)

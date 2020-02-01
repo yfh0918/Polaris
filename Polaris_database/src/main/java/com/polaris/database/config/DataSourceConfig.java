@@ -1,4 +1,4 @@
-package com.polaris.database;
+package com.polaris.database.config;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -97,7 +97,7 @@ public class DataSourceConfig {
         pageHelper.setProperties(properties);
         
         //添加插件
-        factory.setPlugins(new Interceptor[]{pageHelper,new com.polaris.core.interceptor.MybatisInterceptor()});
+        factory.setPlugins(new Interceptor[]{pageHelper,new com.polaris.database.interceptor.MybatisInterceptor()});
         
         //添加XML目录
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();

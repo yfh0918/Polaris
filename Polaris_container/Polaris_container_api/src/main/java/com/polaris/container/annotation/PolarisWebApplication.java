@@ -1,4 +1,4 @@
-package com.polaris.core.annotation;
+package com.polaris.container.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

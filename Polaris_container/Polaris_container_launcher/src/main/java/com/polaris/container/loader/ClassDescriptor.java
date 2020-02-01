@@ -9,8 +9,8 @@ import org.springframework.asm.Opcodes;
 import org.springframework.asm.SpringAsmInfo;
 import org.springframework.asm.Type;
 
-import com.polaris.core.annotation.PolarisApplication;
-import com.polaris.core.annotation.PolarisWebApplication;
+import com.polaris.container.annotation.PolarisApplication;
+import com.polaris.container.annotation.PolarisWebApplication;
 
 public class ClassDescriptor extends ClassVisitor{
 	private static final Type STRING_ARRAY_TYPE = Type.getType(String[].class);

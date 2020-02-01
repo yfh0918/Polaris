@@ -1,4 +1,4 @@
-package com.polaris.container.configuration;
+package com.polaris.container.config;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import com.polaris.core.annotation.PolarisWebApplication;
+import com.polaris.container.annotation.PolarisWebApplication;
 import com.polaris.core.config.ConfPropertyPlaceholderConfigurer;
 
 abstract public class ConfigurationSupport {

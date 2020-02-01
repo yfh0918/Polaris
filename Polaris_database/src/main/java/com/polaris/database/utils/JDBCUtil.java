@@ -1,4 +1,4 @@
-package com.polaris.core.util;
+package com.polaris.database.utils;
 
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.datasource.DynamicDataSource;
+import com.polaris.core.util.SpringUtil;
 
 abstract public class JDBCUtil {
 

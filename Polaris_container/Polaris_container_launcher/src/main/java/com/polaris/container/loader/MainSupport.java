@@ -1,7 +1,7 @@
-package com.polaris.container.loader.supports;
+package com.polaris.container.loader;
 
 import com.polaris.container.ServerFactory;
-import com.polaris.container.configuration.ConfigurationSupport;
+import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.core.config.ConfClient;

@@ -1,4 +1,4 @@
-package com.polaris.core.interceptor;
+package com.polaris.database.interceptor;
 
 import java.text.DateFormat;
 import java.util.Date;

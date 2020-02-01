@@ -1,4 +1,4 @@
-package com.polaris.database;
+package com.polaris.database.config;
 
 
 import java.util.Properties;
@@ -8,7 +8,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.google.common.base.Joiner;
-import com.polaris.container.configuration.ConfigurationSupport;
+import com.polaris.container.config.ConfigurationSupport;
+import com.polaris.database.PolarisBaseMapper;
 
 import tk.mybatis.spring.mapper.MapperScannerConfigurer;
  
