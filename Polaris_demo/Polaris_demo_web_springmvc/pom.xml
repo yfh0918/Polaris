@@ -1,0 +1,47 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.polaris</groupId>
+        <artifactId>Polaris_parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.polaris_demo</groupId>
+    <artifactId>Polaris_demo_web_springmvc</artifactId>
+    <packaging>jar</packaging>
+    <name>Polaris_demo_web_springmvc</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_container_launcher</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_container_tomcat</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_container_servlet_springmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_conf_file</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_database</artifactId>
+        </dependency>
+						
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+            </plugin>
+        </plugins>
+        <finalName>Polaris_demo_web_springmvc</finalName>
+    </build>
+</project>

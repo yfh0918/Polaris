@@ -47,7 +47,7 @@
   需要在自己的服务pom.xml中引入 Polaris_sentinel
   该接口主要用于提供api的servlet
 
-8,如何启动，打开eclipse后启动xxxApplication.java文件（注解@PolarisApplication 网关注解@PolarisBaseApplciation Dubbo注解@PolarisDubboApplicaiton 具体参考demo）
+8,如何启动，打开eclipse后启动xxxApplication.java文件（注解@PolarisApplication） 
  总要，为了加快启动速度，请把Polaris_launcher放置到依赖包的最前面
 
   8.1 pom.xml中提供 tomcat和jetty两种启动模式,并且提供resteasy和springmvc组合的方式
@@ -64,10 +64,8 @@
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_container_servlet_springmvc</artifactId> ->可修改成Polaris_container_resteasy
         </dependency>
-  assembly目录下的配置文件不用修改，
-  application.properties 定义服务的project.name,context,port,，是否开启servlet限流，等等
-  springmvc默认配置了MultipartResolver和FreeMarkerConfigurer等，请参考WebMvcConfigurerImpl类，
-  如果需要重载可以自定义@Configuration类，并在类里面重载相应的@Bean但是需要加上@Primary注解
+  参考Polaris_demo_web_springmvc和Polaris_demo_web_nodubbo
+  
 
 9,新增了基于netty的静态文件服务器（不支持jsp和servlet）
    具体context配置参照config\static.txt

@@ -1,14 +1,14 @@
 package com.polaris.demo;
 
 
+import com.polaris.container.annotation.PolarisApplication;
 import com.polaris.container.loader.MainSupport;
-import com.polaris.container.webflux.annotation.PolarisWebfluxApplication;
 
 /**
  * 入口启动类
  *
  */
-@PolarisWebfluxApplication
+@PolarisApplication
 public class DemoApplication
 {
     

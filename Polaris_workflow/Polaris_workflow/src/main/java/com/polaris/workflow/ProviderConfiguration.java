@@ -8,8 +8,10 @@ import org.apache.dubbo.config.ServiceConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.polaris.container.dubbo.annotation.EnablePolarisDubbo;
 import com.polaris.workflow.api.service.WorkflowService;
 
+@EnablePolarisDubbo
 @Configuration
 public class ProviderConfiguration {
 	

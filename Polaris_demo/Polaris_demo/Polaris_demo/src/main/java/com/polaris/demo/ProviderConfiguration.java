@@ -7,10 +7,11 @@ import org.apache.dubbo.config.ServiceConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.polaris.container.dubbo.annotation.EnablePolarisDubbo;
 import com.polaris.demo.api.service.DemoEntryIF;
 import com.polaris.demo.core.entry.DemoEntry;
 
-
+@EnablePolarisDubbo
 @Configuration
 public class ProviderConfiguration {
 

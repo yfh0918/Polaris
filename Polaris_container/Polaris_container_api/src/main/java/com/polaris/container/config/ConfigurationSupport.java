@@ -6,8 +6,9 @@ import java.util.Set;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 
-import com.polaris.container.annotation.PolarisWebApplication;
+import com.polaris.container.annotation.PolarisApplication;
 import com.polaris.core.config.ConfPropertyPlaceholderConfigurer;
 
 abstract public class ConfigurationSupport {
@@ -22,16 +23,16 @@ abstract public class ConfigurationSupport {
 		rootConfigClass = clazz;
 		
 		//application-scan
+		ComponentScan scanAnnotation = AnnotatedElementUtils.findMergedAnnotation(clazz, ComponentScan.class);
 		if (rootConfigClass != null) {
-			ComponentScan compoentScanAnnotation = rootConfigClass.getAnnotation(ComponentScan.class);
-			if (compoentScanAnnotation != null) {
-				String[] tempBasePackages = compoentScanAnnotation.basePackages();
+			if (scanAnnotation != null) {
+				String[] tempBasePackages = scanAnnotation.basePackages();
 				if (tempBasePackages != null && tempBasePackages.length > 0) {
 					for (String basePackage : tempBasePackages) {
 						basePackages.add(basePackage);
 					}
 				}
-				Class<?>[] tempBasePackageClasses = compoentScanAnnotation.basePackageClasses();
+				Class<?>[] tempBasePackageClasses = scanAnnotation.basePackageClasses();
 				if (tempBasePackageClasses != null && tempBasePackageClasses.length > 0) {
 					for (Class<?> basePackageClass : tempBasePackageClasses) {
 						basePackages.add(basePackageClass.getPackage().getName());
@@ -40,7 +41,7 @@ abstract public class ConfigurationSupport {
 			}
 		}
 		if (basePackages.size() == 0) {
-			basePackages.add(InnerConfiguration.BASE_PACKAGE);
+			//basePackages.add(InnerConfiguration.BASE_PACKAGE);
 			if (rootConfigClass != null) {
 				basePackages.add(rootConfigClass.getPackage().getName());
 			}
@@ -48,7 +49,7 @@ abstract public class ConfigurationSupport {
 		
 		//mapper-scan
 		if (rootConfigClass != null) {
-			PolarisWebApplication polarisAnnotation = rootConfigClass.getAnnotation(PolarisWebApplication.class);
+			PolarisApplication polarisAnnotation = AnnotatedElementUtils.findMergedAnnotation(clazz, PolarisApplication.class);
 			if (polarisAnnotation != null) {
 				String[] tempPasePackagesForMapper = polarisAnnotation.scanBasePackagesForMapper();
 				if (tempPasePackagesForMapper != null && tempPasePackagesForMapper.length > 0) {
@@ -81,9 +82,7 @@ abstract public class ConfigurationSupport {
 	}
 	
 	@Configuration
-	@ComponentScan(basePackages={InnerConfiguration.BASE_PACKAGE})
 	public static class InnerConfiguration {
-		public static final String BASE_PACKAGE = "com.polaris";
 		@Bean
 		public static ConfPropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
 			return new ConfPropertyPlaceholderConfigurer();

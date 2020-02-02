@@ -8,9 +8,9 @@ import org.springframework.asm.MethodVisitor;
 import org.springframework.asm.Opcodes;
 import org.springframework.asm.SpringAsmInfo;
 import org.springframework.asm.Type;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import com.polaris.container.annotation.PolarisApplication;
-import com.polaris.container.annotation.PolarisWebApplication;
 
 public class ClassDescriptor extends ClassVisitor{
 	private static final Type STRING_ARRAY_TYPE = Type.getType(String[].class);
@@ -19,7 +19,6 @@ public class ClassDescriptor extends ClassVisitor{
 	private static final String MAIN_METHOD_NAME = "main";
 	
 	private static final Class<? extends Annotation> TARGET_ANNOTATION = PolarisApplication.class;
-	private static final Class<? extends Annotation> TARGET_WEB_ANNOTATION = PolarisWebApplication.class;
 
 
 	private boolean targetAnnotationFound;
@@ -38,12 +37,13 @@ public class ClassDescriptor extends ClassVisitor{
 	@Override
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 		String className = Type.getType(desc).getClassName();
-		if (className.equals(TARGET_ANNOTATION.getName()) || className.equals(TARGET_WEB_ANNOTATION.getName())) {
+		if (className.equals(TARGET_ANNOTATION.getName())) {
 			targetAnnotationFound = true;
 		} else {
 			try {
 				Class<?> clazz = Class.forName(className);
-				if (clazz.isAnnotationPresent(TARGET_ANNOTATION) || clazz.isAnnotationPresent(TARGET_WEB_ANNOTATION) ) {
+				Object annotation = AnnotationUtils.findAnnotation(clazz, TARGET_ANNOTATION);
+				if (annotation != null) {
 					targetAnnotationFound = true;
 				}
 			} catch (ClassNotFoundException e) {

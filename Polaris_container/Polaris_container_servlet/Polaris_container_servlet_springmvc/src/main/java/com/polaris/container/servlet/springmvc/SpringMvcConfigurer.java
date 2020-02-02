@@ -27,7 +27,7 @@ import com.polaris.core.util.ReflectionUtil;
 
 @Configuration 
 @EnableWebMvc
-public class SpringMvcConfigurerImpl implements WebMvcConfigurer {
+public class SpringMvcConfigurer implements WebMvcConfigurer {
 	
 	@Bean(name = DispatcherServlet.MULTIPART_RESOLVER_BEAN_NAME)
     public MultipartResolver multipartResolver() {

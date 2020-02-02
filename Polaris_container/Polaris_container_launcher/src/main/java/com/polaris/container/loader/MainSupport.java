@@ -29,9 +29,6 @@ public abstract class MainSupport {
     * @Exception 
     * @since 
     */
-	public static void startServer(String[] args, ServerListener... serverListener) {
-		startServer(args, null, serverListener);
-	}
     public static void startServer(String[] args, Class<?> rootConfigClass, ServerListener... serverListeners) {
     	
     	//各类参数载入

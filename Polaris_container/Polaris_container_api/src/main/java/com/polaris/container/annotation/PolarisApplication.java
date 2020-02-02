@@ -15,12 +15,14 @@ import org.springframework.core.annotation.AliasFor;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
-@Configuration
 @ComponentScan
+@Configuration
 public @interface PolarisApplication {
 	@AliasFor(annotation = ComponentScan.class, attribute = "basePackages")
 	String[] scanBasePackages() default {};
 
 	@AliasFor(annotation = ComponentScan.class, attribute = "basePackageClasses")
 	Class<?>[] scanBasePackageClasses() default {};
+	
+	String[] scanBasePackagesForMapper() default {};
 }
