@@ -20,8 +20,6 @@ import tk.mybatis.spring.mapper.MapperScannerConfigurer;
  */
 @Configuration
 public class MybatisConfigurer{
- 
-	
 	
     @Bean
     public static MapperScannerConfigurer mapperScannerConfigurer() {

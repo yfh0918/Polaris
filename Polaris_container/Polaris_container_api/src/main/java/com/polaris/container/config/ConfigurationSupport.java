@@ -40,7 +40,6 @@ abstract public class ConfigurationSupport {
 			}
 		}
 		if (basePackages.size() == 0) {
-			//basePackages.add(InnerConfiguration.BASE_PACKAGE);
 			if (rootConfigClass != null) {
 				basePackages.add(rootConfigClass.getPackage().getName());
 			}
@@ -52,8 +51,6 @@ abstract public class ConfigurationSupport {
 				basePackagesForMapper.add(basePackage+".**.mapper");
 			}
 		}
-		
-
 	}
 	public static Class<?>[] getConfiguration() {
 		if (rootConfigClass == null) {
@@ -78,6 +75,5 @@ abstract public class ConfigurationSupport {
 		public static ConfPropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
 			return new ConfPropertyPlaceholderConfigurer();
 		}
-	}
-	
+	}	
 }
