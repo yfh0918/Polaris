@@ -3,6 +3,7 @@ package com.polaris.core.config;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.polaris.core.Constant;
 import com.polaris.core.OrderWrapper;
@@ -16,19 +17,26 @@ public abstract class ConfHandlerProvider {
 
     private static final ServiceLoader<ConfHandler> serviceLoader = ServiceLoader.load(ConfHandler.class);
 	private static List<OrderWrapper> configHandlerList = new ArrayList<OrderWrapper>();
-	private static ConfHandler handler;
-    static {
+	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
+	private static ConfHandler handler = getConfHandler();
+	
+	//初始化
+    private static ConfHandler getConfHandler() {
+		if (!initialized.compareAndSet(false, true)) {
+            return handler;
+        }
     	for (ConfHandler configHandler : serviceLoader) {
     		OrderWrapper.insertSorted(configHandlerList, configHandler);
         }
     	if (configHandlerList.size() > 0) {
         	handler = (ConfHandler)configHandlerList.get(0).getHandler();
     	}
+    	return handler;
     }
     
     //载入缓存+监听
     public static void loadConfig(ConfHandlerEnum configEnum, String fileName) {
-
+    	
 		//载入配置到缓存
     	cacheConfig(configEnum, getConfig(fileName), false);
 		
@@ -59,6 +67,7 @@ public abstract class ConfHandlerProvider {
 	
     // 获取文件的所有内容-扩展
 	public static String getConfig(String fileName) {
+		
 		//扩展点
 		if (handler != null) {
 			if (ConfHandlerSupport.isGlobal(fileName)) {
@@ -73,6 +82,8 @@ public abstract class ConfHandlerProvider {
 	
 	// 监听文件内容变化-扩展
 	public static void addListener(String fileName, ConfListener listener) {
+		
+    	//扩展点
 		if (handler != null) {
 			if (ConfHandlerSupport.isGlobal(fileName)) {
 				handler.addListener(fileName, ConfHandlerEnum.GLOBAL.getType(), listener);				

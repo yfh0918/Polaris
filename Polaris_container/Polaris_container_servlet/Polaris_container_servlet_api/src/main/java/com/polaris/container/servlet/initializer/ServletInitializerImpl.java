@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
@@ -15,19 +16,21 @@ import com.polaris.core.OrderWrapper;
 public class ServletInitializerImpl implements  ServletContainerInitializer { 
 	
 	private static final ServiceLoader<ExtensionInitializer> servlets = ServiceLoader.load(ExtensionInitializer.class);
-	
+	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	private static List<OrderWrapper> servletList = new ArrayList<OrderWrapper>();
     private static volatile ExtensionInitializer extensionInitializer;
-    static {
-    	for (ExtensionInitializer extensionInitializer : servlets) {
-    		OrderWrapper.insertSorted(servletList, extensionInitializer);
-        }
-    	if (servletList.size() > 0) {
-    		extensionInitializer = (ExtensionInitializer)servletList.get(0).getHandler();
-    	}
-    }
 
-	public void onStartup(Set<Class<?>> requestFirstFilters, ServletContext servletContext)  throws ServletException {
+    public void onStartup(Set<Class<?>> requestFirstFilters, ServletContext servletContext)  throws ServletException {
+		
+    	//初始化
+		if (initialized.compareAndSet(false, true)) {
+			for (ExtensionInitializer extensionInitializer : servlets) {
+	    		OrderWrapper.insertSorted(servletList, extensionInitializer);
+	        }
+	    	if (servletList.size() > 0) {
+	    		extensionInitializer = (ExtensionInitializer)servletList.get(0).getHandler();
+	    	}
+		}
 		
 		//contex为空直接返回
 		if (servletContext == null || extensionInitializer == null) {

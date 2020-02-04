@@ -3,6 +3,7 @@ package com.polaris.core.naming;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.polaris.core.OrderWrapper;
 import com.polaris.core.util.StringUtil;
@@ -11,14 +12,21 @@ import com.polaris.core.util.StringUtil;
 public class ServerDiscoveryHandlerProvider {
 	private static final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoader.load(ServerDiscoveryHandler.class);
 	private static List<OrderWrapper> discoveryHandlerList = new ArrayList<OrderWrapper>();
-	private static ServerDiscoveryHandler handler;
-	static {
+	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
+	private static ServerDiscoveryHandler handler = getHandler();
+	
+	//初始化
+	private static ServerDiscoveryHandler getHandler() {
+		if (!initialized.compareAndSet(false, true)) {
+            return handler;
+        }
     	for (ServerDiscoveryHandler discoveryHandler : serviceLoader) {
     		OrderWrapper.insertSorted(discoveryHandlerList, discoveryHandler);
         }
     	if (discoveryHandlerList.size() > 0) {
     		handler = (ServerDiscoveryHandler)discoveryHandlerList.get(0).getHandler();
     	}
+    	return handler;
     }
     private static final ServerDiscoveryHandlerProvider INSTANCE = new ServerDiscoveryHandlerProvider();
 
@@ -69,7 +77,6 @@ public class ServerDiscoveryHandlerProvider {
 		return getAllUrl(key, true);
 	}
 	public List<String> getAllUrl(String key, boolean subscribe) {
-		
 		List<String> temp = ServerDiscoveryHandlerSupport.getRemoteAddress(key);
 		// 单个IP或者多IP不走注册中心
 		if (ServerDiscoveryHandlerSupport.isSkip(temp.get(1))) {
