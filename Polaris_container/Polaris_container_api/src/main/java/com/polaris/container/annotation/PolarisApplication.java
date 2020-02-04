@@ -23,6 +23,4 @@ public @interface PolarisApplication {
 
 	@AliasFor(annotation = ComponentScan.class, attribute = "basePackageClasses")
 	Class<?>[] scanBasePackageClasses() default {};
-	
-	String[] scanBasePackagesForMapper() default {};
 }

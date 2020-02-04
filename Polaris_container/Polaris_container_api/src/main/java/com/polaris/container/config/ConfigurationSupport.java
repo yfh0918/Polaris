@@ -8,15 +8,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
-import com.polaris.container.annotation.PolarisApplication;
 import com.polaris.core.config.ConfPropertyPlaceholderConfigurer;
 
 abstract public class ConfigurationSupport {
 
 	private static Class<?> rootConfigClass = null;
 	private static Set<String> basePackages = new HashSet<>();
-	private static Set<String> basePackagesForMapper = new HashSet<>();
 	private static String[] args;
+	private static Set<String> basePackagesForMapper = new HashSet<>();
 	
 	public static void set(Class<?> clazz, String... arg) {
 		args = arg;
@@ -47,23 +46,14 @@ abstract public class ConfigurationSupport {
 			}
 		}
 		
-		//mapper-scan
-		if (rootConfigClass != null) {
-			PolarisApplication polarisAnnotation = AnnotatedElementUtils.findMergedAnnotation(clazz, PolarisApplication.class);
-			if (polarisAnnotation != null) {
-				String[] tempPasePackagesForMapper = polarisAnnotation.scanBasePackagesForMapper();
-				if (tempPasePackagesForMapper != null && tempPasePackagesForMapper.length > 0) {
-					for (String basePackageForMapper : tempPasePackagesForMapper) {
-						basePackagesForMapper.add(basePackageForMapper);
-					}
-				}
-			}
-		}
+		//设置默认的mapper-scan
 		if (basePackagesForMapper.size() == 0) {
 			for(String basePackage : basePackages) {
 				basePackagesForMapper.add(basePackage+".**.mapper");
 			}
 		}
+		
+
 	}
 	public static Class<?>[] getConfiguration() {
 		if (rootConfigClass == null) {
@@ -74,11 +64,12 @@ abstract public class ConfigurationSupport {
 	public static Set<String> getBasePackages() {
 		return basePackages;
 	}
-	public static Set<String> getBasePackagesForMapper() {
-		return basePackagesForMapper;
-	}
+
 	public static String[] getArgs() {
 		return args;
+	}
+	public static Set<String> getBasePackagesForMapper() {
+		return basePackagesForMapper;
 	}
 	
 	@Configuration

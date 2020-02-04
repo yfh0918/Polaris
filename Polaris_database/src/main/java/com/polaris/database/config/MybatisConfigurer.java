@@ -19,16 +19,23 @@ import tk.mybatis.spring.mapper.MapperScannerConfigurer;
  * @Description:
  */
 @Configuration
-public class MybatisConfigurer {
+public class MybatisConfigurer{
  
+	
+	
     @Bean
     public static MapperScannerConfigurer mapperScannerConfigurer() {
     	
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
         mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactoryBean");
         //Mapper接口目录，具体的mapper
-        Set<String> basePackagesForMapper = ConfigurationSupport.getBasePackagesForMapper();
-        mapperScannerConfigurer.setBasePackage(Joiner.on(',').skipNulls().join(basePackagesForMapper));
+        
+        if (MybatisScanPackagesImporter.getScanBasePackages() != null && MybatisScanPackagesImporter.getScanBasePackages().length > 0) {
+            mapperScannerConfigurer.setBasePackage(Joiner.on(',').skipNulls().join(MybatisScanPackagesImporter.getScanBasePackages()));
+        } else {
+        	Set<String> basePackagesForMapper = ConfigurationSupport.getBasePackagesForMapper();
+            mapperScannerConfigurer.setBasePackage(Joiner.on(',').skipNulls().join(basePackagesForMapper));
+        }
  
         //配置通用Mapper，详情请查阅官方文档
         Properties properties = new Properties();
