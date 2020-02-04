@@ -13,12 +13,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.polaris.database.config.DataSourceConfig;
 import com.polaris.database.config.MybatisConfigurer;
-import com.polaris.database.config.MybatisScanPackagesImporter;
+import com.polaris.database.config.MybatisScanPackagesImportSelector;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import({MybatisScanPackagesImporter.class,DataSourceConfig.class,MybatisConfigurer.class})
+@Import({MybatisScanPackagesImportSelector.class,DataSourceConfig.class,MybatisConfigurer.class})
 @EnableTransactionManagement
 public @interface EnablePolarisDB {
 	@AliasFor(annotation = EnableTransactionManagement.class, attribute = "proxyTargetClass")
