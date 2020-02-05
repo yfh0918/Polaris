@@ -279,6 +279,25 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             logger.debug("filter:{}", this.getClass().getName());
             String realIp = GatewayConstant.getRealIp((DefaultHttpRequest) httpObject);
             
+            //控制总流量，超标直接返回
+            HttpRequest httpRequest = (HttpRequest)httpObject;
+            String url = getUrl(httpRequest);
+            
+            //获取cc宜兰
+            if (url.equals("/gateway/cc/ip")) {
+            	@SuppressWarnings("rawtypes")
+				ResultDto<List> dto = new ResultDto<>();
+            	dto.setCode(Constant.RESULT_SUCCESS);
+            	try {
+                	for (Object key : blackIpCache.getKeys()) {
+                		blackIpCache.get(key);
+                	}
+            	} catch (Exception ex) {}
+            	dto.setData(blackIpCache.getKeys());
+            	this.setResultDto(dto);
+            	return true;
+            }
+            
             //判断是否是无需验证的IP
             if (ccSkipIp.contains(realIp)) {
             	return false;
@@ -291,22 +310,8 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
                 hackLog(logger, realIp, "cc", message);
         		return true;
         	}
-            
-            //控制总流量，超标直接返回
-            HttpRequest httpRequest = (HttpRequest)httpObject;
-            String url = getUrl(httpRequest);
-            
-            //获取cc宜兰
-            if (url.equals("/cc/ip")) {
-            	@SuppressWarnings("rawtypes")
-				ResultDto<List> dto = new ResultDto<>();
-            	dto.setCode(Constant.RESULT_SUCCESS);
-            	dto.setData(blackIpCache.getKeys());
-            	this.setResultDto(dto);
-            	return true;
-            }
-            
-            //cc攻击
+
+        	//cc攻击
             if (ccHack(url, realIp)) {
             	String message = httpRequest.uri() + " " + realIp + " access  has exceeded ";
             	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.RESULT_FAIL,message));

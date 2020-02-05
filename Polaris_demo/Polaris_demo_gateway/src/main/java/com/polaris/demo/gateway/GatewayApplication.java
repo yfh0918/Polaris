@@ -1,4 +1,4 @@
-package com.polaris.gateway;
+package com.polaris.demo.gateway;
 
 
 import com.polaris.container.annotation.PolarisApplication;

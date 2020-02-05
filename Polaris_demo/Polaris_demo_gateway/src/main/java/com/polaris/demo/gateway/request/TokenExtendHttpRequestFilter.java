@@ -1,4 +1,4 @@
-package com.polaris.gateway.request;
+package com.polaris.demo.gateway.request;
 
 import org.springframework.stereotype.Service;
 
