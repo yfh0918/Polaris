@@ -69,11 +69,21 @@ abstract public class ConfigurationSupport {
 		return basePackagesForMapper;
 	}
 	
+    public static Class<?>[] getConfiguration(Class<?> clazz) {
+    	Class<?>[] oldConfigs = ConfigurationSupport.getConfiguration();
+    	Class<?>[] newConfigs = new Class[oldConfigs.length + 1];
+    	System.arraycopy(oldConfigs,0,newConfigs,0,oldConfigs.length);
+    	newConfigs[oldConfigs.length] = clazz;
+		return newConfigs;
+	}
+	
 	@Configuration
 	public static class InnerConfiguration {
 		@Bean
 		public static ConfPropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
 			return new ConfPropertyPlaceholderConfigurer();
 		}
-	}	
+	}
+	
+
 }

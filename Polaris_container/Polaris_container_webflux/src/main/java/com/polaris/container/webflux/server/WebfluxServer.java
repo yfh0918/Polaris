@@ -2,8 +2,10 @@ package com.polaris.container.webflux.server;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
+import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 
 import com.polaris.container.config.ConfigurationSupport;
@@ -53,7 +55,7 @@ public class WebfluxServer {
     public void start() {
 
     	//创建context
-    	SpringUtil.refresh(ConfigurationSupport.getConfiguration());
+    	SpringUtil.refresh(ConfigurationSupport.getConfiguration(WebFluxConfiguration.class));
     	
     	//通过ApplicationContext创建HttpHandler
         HttpHandler httpHandler = WebHttpHandlerBuilder.applicationContext(SpringUtil.getApplicationContext()).build();
@@ -85,4 +87,8 @@ public class WebfluxServer {
         server.onDispose().block();
     }
     
+    @EnableWebFlux
+    @Configuration 
+	public static class WebFluxConfiguration {
+	}
 }
