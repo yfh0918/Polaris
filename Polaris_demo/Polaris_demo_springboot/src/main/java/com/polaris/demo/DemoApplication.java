@@ -3,14 +3,16 @@ package com.polaris.demo;
 
 import com.polaris.container.annotation.PolarisApplication;
 import com.polaris.container.loader.MainSupport;
-import com.polaris.container.springboot.annotation.EnablePolarisSpringboot;
+import com.polaris.container.springboot.annotation.EnablePolarisSpringBoot;
+import com.polaris.database.annotation.EnablePolarisDB;
 
 /**
  * 入口启动类
  *
  */
 @PolarisApplication
-@EnablePolarisSpringboot
+@EnablePolarisSpringBoot
+@EnablePolarisDB
 public class DemoApplication
 {
     

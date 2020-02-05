@@ -22,9 +22,9 @@
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_logger</artifactId>
+            <artifactId>Polaris_database</artifactId>
         </dependency>
-
+        
 						
     </dependencies>
 
