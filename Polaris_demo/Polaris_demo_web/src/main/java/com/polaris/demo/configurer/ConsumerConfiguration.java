@@ -10,10 +10,8 @@ import org.apache.dubbo.config.RegistryConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.polaris.container.dubbo.annotation.EnablePolarisDubbo;
 import com.polaris.demo.api.service.DemoEntryIF;
 
-@EnablePolarisDubbo(scanBasePackages="com.polaris.demo")
 @Configuration
 public class ConsumerConfiguration {
 

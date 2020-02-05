@@ -4,11 +4,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.polaris.container.servlet.springmvc.EnablePolarisSpringMvc;
-import com.polaris.database.annotation.EnablePolarisDB;
-
-@EnablePolarisSpringMvc
-@EnablePolarisDB
 @Configuration 
 public class WebConfig implements WebMvcConfigurer {
 	

@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 
+import com.polaris.container.annotation.PolarisApplication;
 import com.polaris.container.springboot.config.SpringbootConfigurer;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -17,7 +18,8 @@ import com.polaris.container.springboot.config.SpringbootConfigurer;
 @Documented
 @Import(SpringbootConfigurer.class)
 @SpringBootApplication
-public @interface EnablePolarisSpringBoot {
+@PolarisApplication
+public @interface PolarisSpringBootApplicaiton {
 	@AliasFor(annotation = SpringBootApplication.class, attribute = "exclude")
 	Class<?>[] exclude() default {};
 
