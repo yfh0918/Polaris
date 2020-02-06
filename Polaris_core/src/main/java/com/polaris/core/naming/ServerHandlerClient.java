@@ -5,7 +5,7 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
-public abstract class ServerClient {
+public abstract class ServerHandlerClient {
 
 	public static boolean register() {
 		//注册中心

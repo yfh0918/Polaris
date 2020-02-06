@@ -5,7 +5,7 @@ import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.ServerClient;
+import com.polaris.core.naming.ServerHandlerClient;
 
 /**
 *
@@ -46,14 +46,14 @@ public abstract class MainSupport {
 			@Override
 			public void started() {
 				//注册服务
-		    	ServerClient.register();
+		    	ServerHandlerClient.register();
 				
 			}
 			
 			@Override
 			public void stopped() {
 				//注销服务
-		    	ServerClient.unRegister();
+		    	ServerHandlerClient.unRegister();
 			}
     		
     	});

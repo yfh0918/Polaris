@@ -3,10 +3,10 @@ package com.polaris.config.apollo;
 import org.springframework.core.annotation.Order;
 
 import com.polaris.core.config.ConfListener;
-import com.polaris.core.config.ConfOrder;
+import com.polaris.core.config.ConfHandlerOrder;
 import com.polaris.core.config.ConfHandler;
 
-@Order(ConfOrder.APOLLO)
+@Order(ConfHandlerOrder.APOLLO)
 public class ConfApolloHandler implements ConfHandler {
 
 	@Override

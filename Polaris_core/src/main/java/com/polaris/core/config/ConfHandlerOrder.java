@@ -1,6 +1,6 @@
 package com.polaris.core.config;
 
-public interface ConfOrder {
+public interface ConfHandlerOrder {
 
 	public static int NACOS = 0;
 	public static int ZK = 1;

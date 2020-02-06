@@ -1,13 +1,13 @@
 package com.polaris.config.file;
 
 import com.polaris.core.config.ConfListener;
-import com.polaris.core.config.ConfOrder;
+import com.polaris.core.config.ConfHandlerOrder;
 
 import org.springframework.core.annotation.Order;
 
 import com.polaris.core.config.ConfHandler;
 
-@Order(ConfOrder.FILE)
+@Order(ConfHandlerOrder.FILE)
 public class ConfFileHandler implements ConfHandler {
 
 	@Override
