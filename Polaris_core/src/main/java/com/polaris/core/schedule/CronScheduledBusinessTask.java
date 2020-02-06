@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
+import com.polaris.core.naming.ServerHandlerProvider;
 import com.polaris.core.util.NetUtils;
 
 abstract public class CronScheduledBusinessTask implements Runnable {
@@ -18,7 +18,7 @@ abstract public class CronScheduledBusinessTask implements Runnable {
 		try {
 			
 			//获取IP列表
-            List<String> list = ServerDiscoveryHandlerProvider.getInstance().getAllUrl(ConfClient.getAppName(), false);
+            List<String> list = ServerHandlerProvider.getInstance().getAllUrl(ConfClient.getAppName(), false);
             if (list == null || list.size() == 0) {
             	taskExecute();
             	return;

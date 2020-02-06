@@ -13,8 +13,8 @@ import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.config.ConfListener;
-import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
-import com.polaris.core.naming.ServerDiscoveryHandlerSupport;
+import com.polaris.core.naming.ServerHandlerProvider;
+import com.polaris.core.naming.ServerHandlerSupport;
 import com.polaris.core.util.StringUtil;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
@@ -69,7 +69,7 @@ public class HostResolverImpl implements HostResolver {
         staticServerSet = tempStaticServerSet;
         portServerMap = tempPortServerMap;
         uriPortMap = tempUriPortMap;
-        ServerDiscoveryHandlerSupport.reset();
+        ServerHandlerSupport.reset();
     }
 
     //构造函数（单例）
@@ -166,13 +166,13 @@ public class HostResolverImpl implements HostResolver {
         
         //存在端口号
         if (portServerMap.containsKey(strPort)) {
-            String uri = ServerDiscoveryHandlerProvider.getInstance().getUrl(portServerMap.get(strPort));
+            String uri = ServerHandlerProvider.getInstance().getUrl(portServerMap.get(strPort));
             if (StringUtil.isNotEmpty(uri)) {
                 si = uri.split(":");
             } 
         }
         if (si == null) {
-        	String defaultUri = ServerDiscoveryHandlerProvider.getInstance().getUrl(portServerMap.get(uriPortMap.get(GatewayConstant.DEFAULT)));
+        	String defaultUri = ServerHandlerProvider.getInstance().getUrl(portServerMap.get(uriPortMap.get(GatewayConstant.DEFAULT)));
             si = defaultUri.split(":");
         }
         

@@ -9,28 +9,28 @@ import com.polaris.core.OrderWrapper;
 import com.polaris.core.util.StringUtil;
 
 @SuppressWarnings("rawtypes")
-public class ServerDiscoveryHandlerProvider {
-	private static final ServiceLoader<ServerDiscoveryHandler> serviceLoader = ServiceLoader.load(ServerDiscoveryHandler.class);
+public class ServerHandlerProvider {
+	private static final ServiceLoader<ServerHandler> serviceLoader = ServiceLoader.load(ServerHandler.class);
 	private static List<OrderWrapper> discoveryHandlerList = new ArrayList<OrderWrapper>();
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
-	private static ServerDiscoveryHandler handler = getHandler();
+	private static ServerHandler handler = getHandler();
 	
 	//初始化
-	private static ServerDiscoveryHandler getHandler() {
+	private static ServerHandler getHandler() {
 		if (!initialized.compareAndSet(false, true)) {
             return handler;
         }
-    	for (ServerDiscoveryHandler discoveryHandler : serviceLoader) {
+    	for (ServerHandler discoveryHandler : serviceLoader) {
     		OrderWrapper.insertSorted(discoveryHandlerList, discoveryHandler);
         }
     	if (discoveryHandlerList.size() > 0) {
-    		handler = (ServerDiscoveryHandler)discoveryHandlerList.get(0).getHandler();
+    		handler = (ServerHandler)discoveryHandlerList.get(0).getHandler();
     	}
     	return handler;
     }
-    private static final ServerDiscoveryHandlerProvider INSTANCE = new ServerDiscoveryHandlerProvider();
+    private static final ServerHandlerProvider INSTANCE = new ServerHandlerProvider();
 
-    public static ServerDiscoveryHandlerProvider getInstance() {
+    public static ServerHandlerProvider getInstance() {
         return INSTANCE;
     }
     
@@ -54,9 +54,9 @@ public class ServerDiscoveryHandlerProvider {
     
     //获取url
 	public String getUrl(String key) {
-		List<String> temp = ServerDiscoveryHandlerSupport.getRemoteAddress(key);
+		List<String> temp = ServerHandlerSupport.getRemoteAddress(key);
 		// 单个IP或者多IP不走注册中心
-		if (!ServerDiscoveryHandlerSupport.isSkip(temp.get(1))) {
+		if (!ServerHandlerSupport.isSkip(temp.get(1))) {
 			
 			//走注册中心
 			if (handler != null) {
@@ -69,7 +69,7 @@ public class ServerDiscoveryHandlerProvider {
 				}
 			}
 		}
-		return temp.get(0) + ServerDiscoveryHandlerSupport.getUrl(temp.get(1)) + temp.get(2);
+		return temp.get(0) + ServerHandlerSupport.getUrl(temp.get(1)) + temp.get(2);
 	}
 
     //获取所有的url
@@ -77,9 +77,9 @@ public class ServerDiscoveryHandlerProvider {
 		return getAllUrl(key, true);
 	}
 	public List<String> getAllUrl(String key, boolean subscribe) {
-		List<String> temp = ServerDiscoveryHandlerSupport.getRemoteAddress(key);
+		List<String> temp = ServerHandlerSupport.getRemoteAddress(key);
 		// 单个IP或者多IP不走注册中心
-		if (ServerDiscoveryHandlerSupport.isSkip(temp.get(1))) {
+		if (ServerHandlerSupport.isSkip(temp.get(1))) {
 			List<String> urlList = new ArrayList<>();
 			String[] ips = temp.get(1).split(",");
 			for (int i0 = 0; i0 < ips.length; i0++) {
@@ -102,21 +102,21 @@ public class ServerDiscoveryHandlerProvider {
 
 	//获取失败的处理
 	public void connectionFail(String key, String url) {
-		List<String> temp = ServerDiscoveryHandlerSupport.getRemoteAddress(key);
-		List<String> temp2 = ServerDiscoveryHandlerSupport.getRemoteAddress(url);
+		List<String> temp = ServerHandlerSupport.getRemoteAddress(key);
+		List<String> temp2 = ServerHandlerSupport.getRemoteAddress(url);
 		// 单个IP或者多IP不走注册中心
-		if (!ServerDiscoveryHandlerSupport.isSkip(temp.get(1))) {
+		if (!ServerHandlerSupport.isSkip(temp.get(1))) {
 			if (handler != null) {
 				handler.connectionFail(temp.get(1), temp2.get(1));
 				return;
 			}
 		}
-		ServerDiscoveryHandlerSupport.connectionFail(temp.get(1), temp2.get(1));
+		ServerHandlerSupport.connectionFail(temp.get(1), temp2.get(1));
 	}
 	
 	public static void main(String[] args) {
 		String key = "FMS.APIRes.test.mcpsystem.com/api/partner/add";
-		System.out.println(ServerDiscoveryHandlerProvider.INSTANCE.getUrl(key));
+		System.out.println(ServerHandlerProvider.INSTANCE.getUrl(key));
     }
 	
 }

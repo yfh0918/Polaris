@@ -2,7 +2,7 @@ package com.polaris.core.naming;
 
 import java.util.List;
 
-public interface ServerDiscoveryHandler {
+public interface ServerHandler {
 
 	void register(String ip, int port);
 

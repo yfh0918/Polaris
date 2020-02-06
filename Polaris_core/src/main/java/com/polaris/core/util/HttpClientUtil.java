@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.GlobalContext;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.ServerDiscoveryHandlerProvider;
+import com.polaris.core.naming.ServerHandlerProvider;
  
 /**
  * HttpClient工具类
@@ -300,7 +300,7 @@ public class HttpClientUtil {
     //获取uri
     private static HttpUriRequest getHttpUriRequest( 
     		HTTPRequestParameter parameter) throws Exception {
-    	String url = ServerDiscoveryHandlerProvider.getInstance().getUrl(parameter.getUrl());
+    	String url = ServerHandlerProvider.getInstance().getUrl(parameter.getUrl());
     	LOGGER.info(url);
     	HttpRequestBase request = null;
 
@@ -362,7 +362,7 @@ public class HttpClientUtil {
     
     //错误处理
     private static void setHttpException(String orgurl, String url, Exception ex) {
-    	ServerDiscoveryHandlerProvider.getInstance().connectionFail(orgurl, url);
+    	ServerHandlerProvider.getInstance().connectionFail(orgurl, url);
     	if (LOGGER.isDebugEnabled()) {
         	LOGGER.debug("ERROR:",ex);
     	}

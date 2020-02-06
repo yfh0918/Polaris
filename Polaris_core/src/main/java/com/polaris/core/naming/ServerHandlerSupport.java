@@ -11,7 +11,7 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.WeightedRoundRobinScheduling;
 import com.polaris.core.util.WeightedRoundRobinScheduling.Server;
 
-public class ServerDiscoveryHandlerSupport {
+public class ServerHandlerSupport {
 	public static final String HTTP_PREFIX = "http://";
 	public static final String HTTPS_PREFIX = "https://";
 
@@ -26,7 +26,7 @@ public class ServerDiscoveryHandlerSupport {
     	
     	//初期化定时器
 		if (scheduledThreadPoolExecutor == null) {
-			synchronized(ServerDiscoveryHandlerSupport.class){
+			synchronized(ServerHandlerSupport.class){
 				if (scheduledThreadPoolExecutor == null) {
 					scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
 			        scheduledThreadPoolExecutor.scheduleAtFixedRate(new ServerCheckTask(serverMap), 

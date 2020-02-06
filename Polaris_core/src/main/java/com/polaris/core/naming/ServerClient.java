@@ -5,7 +5,7 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
-public abstract class NamingClient {
+public abstract class ServerClient {
 
 	public static boolean register() {
 		//注册中心
@@ -15,7 +15,7 @@ public abstract class NamingClient {
 				return false;
 			}
 			String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
-			return ServerDiscoveryHandlerProvider.getInstance().register(registerIp, Integer.parseInt(port));
+			return ServerHandlerProvider.getInstance().register(registerIp, Integer.parseInt(port));
 		}
 		return false;
 	}
@@ -28,7 +28,7 @@ public abstract class NamingClient {
 				return false;
 			}
 			String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
-        	return ServerDiscoveryHandlerProvider.getInstance().deregister(registerIp, Integer.parseInt(port));
+        	return ServerHandlerProvider.getInstance().deregister(registerIp, Integer.parseInt(port));
 		}
 		return false;
 	}
