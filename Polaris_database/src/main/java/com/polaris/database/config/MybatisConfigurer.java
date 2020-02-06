@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.google.common.base.Joiner;
+import com.polaris.container.config.ConfigurationSupport;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.StringUtil;
 import com.polaris.database.PolarisBaseMapper;
 
 import tk.mybatis.spring.mapper.MapperScannerConfigurer;
@@ -22,10 +25,16 @@ public class MybatisConfigurer{
     @Bean
     public static MapperScannerConfigurer mapperScannerConfigurer() {
     	
+		String mapperScanBasePackage = ConfClient.get("jdbc.mapperScanner.basePackage",ConfClient.get("spring.datasource.mapperScanner.basePackage"));
         MapperScannerConfigurer mapperScannerConfigurer = new MapperScannerConfigurer();
         mapperScannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactoryBean");
+        
         //Mapper接口目录，具体的mapper
-        mapperScannerConfigurer.setBasePackage(Joiner.on(',').skipNulls().join(MybatisScanPackagesImportSelector.getScanBasePackages()));
+        if (StringUtil.isNotEmpty(mapperScanBasePackage)) {
+            mapperScannerConfigurer.setBasePackage(mapperScanBasePackage);
+        } else {
+            mapperScannerConfigurer.setBasePackage(Joiner.on(',').skipNulls().join(ConfigurationSupport.getBasePackagesForMapper()));
+        }
  
         //配置通用Mapper，详情请查阅官方文档
         Properties properties = new Properties();

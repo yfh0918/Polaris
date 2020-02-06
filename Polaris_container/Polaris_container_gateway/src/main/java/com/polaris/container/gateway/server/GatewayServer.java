@@ -70,7 +70,7 @@ public class GatewayServer {
     public void start() {
 
     	//创建context
-    	SpringUtil.refresh(ConfigurationSupport.getConfiguration(InnerConfiguration.class));
+    	SpringUtil.refresh(ConfigurationSupport.getConfiguration(GatewayConfiguration.class));
         ThreadPoolConfiguration threadPoolConfiguration = new ThreadPoolConfiguration();
         threadPoolConfiguration.withAcceptorThreads(GatewayConstant.AcceptorThreads);
         threadPoolConfiguration.withClientToProxyWorkerThreads(GatewayConstant.ClientToProxyWorkerThreads);
@@ -150,6 +150,6 @@ public class GatewayServer {
     
     @Configuration
     @ComponentScan("com.polaris.container.gateway")
-	public static class InnerConfiguration {
+	public static class GatewayConfiguration {
 	}
 }

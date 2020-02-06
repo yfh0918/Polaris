@@ -1,6 +1,9 @@
 package com.polaris.container.config;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.ServiceLoader;
 import java.util.Set;
 
 import org.springframework.context.annotation.Bean;
@@ -12,18 +15,16 @@ import com.polaris.core.config.ConfPropertyPlaceholderConfigurer;
 
 abstract public class ConfigurationSupport {
 
-	private static Class<?> rootConfigClass = null;
+	private static List<Class<?>> configClassList = new ArrayList<>();
 	private static Set<String> basePackages = new HashSet<>();
 	private static String[] args;
 	private static Set<String> basePackagesForMapper = new HashSet<>();
 	
 	public static void set(Class<?> clazz, String... arg) {
-		args = arg;
-		rootConfigClass = clazz;
 		
 		//application-scan
 		ComponentScan scanAnnotation = AnnotatedElementUtils.findMergedAnnotation(clazz, ComponentScan.class);
-		if (rootConfigClass != null) {
+		if (clazz != null) {
 			if (scanAnnotation != null) {
 				String[] tempBasePackages = scanAnnotation.basePackages();
 				if (tempBasePackages != null && tempBasePackages.length > 0) {
@@ -40,24 +41,31 @@ abstract public class ConfigurationSupport {
 			}
 		}
 		if (basePackages.size() == 0) {
-			if (rootConfigClass != null) {
-				basePackages.add(rootConfigClass.getPackage().getName());
+			if (clazz != null) {
+				basePackages.add(clazz.getPackage().getName());
 			}
 		}
 		
 		//设置默认的mapper-scan
-		if (basePackagesForMapper.size() == 0) {
-			for(String basePackage : basePackages) {
-				basePackagesForMapper.add(basePackage+".**.mapper");
-			}
+		for(String basePackage : basePackages) {
+			basePackagesForMapper.add(basePackage+".**.mapper");
 		}
+		
+		//设置
+		args = arg;
+		configClassList.add(ConfPropertyConfiguration.class);
+		configClassList.add(clazz);
+		addConfigurationExtension();
 	}
 	public static Class<?>[] getConfiguration() {
-		if (rootConfigClass == null) {
-			return new Class[] {InnerConfiguration.class};
-		}
-		return new Class[] {InnerConfiguration.class, rootConfigClass};
+		Class<?>[] returnClass = new Class[configClassList.size()];
+		return configClassList.toArray(returnClass);
 	}
+    public static Class<?>[] getConfiguration(Class<?> clazz) {
+    	configClassList.add(clazz);
+    	return getConfiguration();
+ 	} 
+
 	public static Set<String> getBasePackages() {
 		return basePackages;
 	}
@@ -69,21 +77,18 @@ abstract public class ConfigurationSupport {
 		return basePackagesForMapper;
 	}
 	
-    public static Class<?>[] getConfiguration(Class<?> clazz) {
-    	Class<?>[] oldConfigs = ConfigurationSupport.getConfiguration();
-    	Class<?>[] newConfigs = new Class[oldConfigs.length + 1];
-    	System.arraycopy(oldConfigs,0,newConfigs,0,oldConfigs.length);
-    	newConfigs[oldConfigs.length] = clazz;
-		return newConfigs;
+	private static void addConfigurationExtension() {
+		ServiceLoader<ConfigurationExtension> configurationExtensions = ServiceLoader.load(ConfigurationExtension.class);
+		for (ConfigurationExtension configurationExtension : configurationExtensions) {
+			configClassList.add(configurationExtension.getClass());
+        }
 	}
 	
 	@Configuration
-	public static class InnerConfiguration {
+	public static class ConfPropertyConfiguration {
 		@Bean
 		public static ConfPropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
 			return new ConfPropertyPlaceholderConfigurer();
 		}
 	}
-	
-
 }
