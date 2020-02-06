@@ -29,13 +29,16 @@ public abstract class MainSupport {
     * @Exception 
     * @since 
     */
-    public static void startServer(String[] args, Class<?> rootConfigClass, ServerListener... serverListeners) {
+	public static void startServer(String[] args, Class<?> configClass, ServerListener... serverListeners) {
+		startServer(args, new Class<?>[]{configClass}, serverListeners);
+	}
+    public static void startServer(String[] args, Class<?>[] configClass, ServerListener... serverListeners) {
     	
     	//各类参数载入
     	ConfClient.init();
     	
 		//载入配置类
-		ConfigurationSupport.set(rootConfigClass,args);		
+		ConfigurationSupport.add(args, configClass);		
     	
     	//载入监听器
     	ServerListenerSupport.add(serverListeners, new ServerListener() {//载入自定义的监听

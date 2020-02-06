@@ -33,7 +33,7 @@ public class MybatisConfigurer{
         if (StringUtil.isNotEmpty(mapperScanBasePackage)) {
             mapperScannerConfigurer.setBasePackage(mapperScanBasePackage);
         } else {
-            mapperScannerConfigurer.setBasePackage(Joiner.on(',').skipNulls().join(ConfigurationSupport.getBasePackagesForMapper()));
+            mapperScannerConfigurer.setBasePackage(Joiner.on(',').skipNulls().join(ConfigurationSupport.getDefaultBasePackagesForMapper()));
         }
  
         //配置通用Mapper，详情请查阅官方文档
