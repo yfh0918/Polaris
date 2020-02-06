@@ -1,7 +1,9 @@
 package com.polaris.database.config;
 
 
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,7 +35,12 @@ public class MybatisConfigurer{
         if (StringUtil.isNotEmpty(mapperScanBasePackage)) {
             mapperScannerConfigurer.setBasePackage(mapperScanBasePackage);
         } else {
-            mapperScannerConfigurer.setBasePackage(Joiner.on(',').skipNulls().join(ConfigurationSupport.getDefaultBasePackagesForMapper()));
+        	Class<?>[] clazz = ConfigurationSupport.getClasses();
+        	Set<String> mappers = new HashSet<>();
+        	for (int i0 = 0; i0 < clazz.length; i0++) {
+        		mappers.add(clazz[i0].getPackage().getName()+".**.mapper");
+        	}
+            mapperScannerConfigurer.setBasePackage(Joiner.on(',').skipNulls().join(mappers));
         }
  
         //配置通用Mapper，详情请查阅官方文档

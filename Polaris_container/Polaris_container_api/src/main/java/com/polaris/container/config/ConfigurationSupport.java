@@ -1,10 +1,8 @@
 package com.polaris.container.config;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.ServiceLoader;
-import java.util.Set;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,19 +13,12 @@ abstract public class ConfigurationSupport {
 
 	private static List<Class<?>> configClassList = new ArrayList<>();
 	private static String[] args;
-	private static Set<String> defaultBasePackagesForMapper = new HashSet<>();
+	private static Class<?>[] classes;
 	
 	public static void add(String[] arg, Class<?>... clazz) {
-		
-		//设置默认的mapper-scan
-		if (clazz != null) {
-			for (Class<?> clazz0 : clazz) {
-				defaultBasePackagesForMapper.add(clazz0.getPackage().getName()+".**.mapper");
-			}
-		}
-		
 		//设置
 		args = arg;
+		classes = clazz;
 		addConfiguration(ConfPropertyConfiguration.class);
 		addConfiguration(clazz);
 		addConfigurationExtension();
@@ -57,8 +48,8 @@ abstract public class ConfigurationSupport {
 	public static String[] getArgs() {
 		return args;
 	}
-	public static Set<String> getDefaultBasePackagesForMapper() {
-		return defaultBasePackagesForMapper;
+	public static Class<?>[] getClasses() {
+		return classes;
 	}
 	
 	@Configuration
