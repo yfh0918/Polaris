@@ -27,10 +27,10 @@ public class TokenHttpResponseFilter extends HttpResponseFilter {
     	String tokenBody = httpResponse.headers().get(Constant.TOKEN_KEY);
     	if (StringUtil.isNotEmpty(tokenBody)) {
     		try {
-    			JSONObject jsonObject = JSONObject.parseObject(tokenBody);
-    			long tokenTime = jsonObject.getLong(Constant.TOKEN_TTL_MILLIS);
-    			String token = JwtUtil.createJWT(tokenTime, jsonObject);
     			if (httpResponse instanceof DefaultFullHttpResponse) {
+        			JSONObject jsonObject = JSONObject.parseObject(tokenBody);
+        			long tokenTime = Long.parseLong(jsonObject.remove(Constant.TOKEN_TTL_MILLIS).toString());
+        			String token = JwtUtil.createJWT(tokenTime, jsonObject);
         			ByteBuf content = io.netty.buffer.Unpooled.copiedBuffer(token, CharsetUtil.UTF_8); 
         			httpResponse = ((DefaultFullHttpResponse)httpResponse).replace(content);
     			}            	
@@ -39,4 +39,5 @@ public class TokenHttpResponseFilter extends HttpResponseFilter {
     	}
         return httpResponse;
     }
+
 }
