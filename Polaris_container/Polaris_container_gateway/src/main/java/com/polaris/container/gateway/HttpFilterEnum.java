@@ -15,6 +15,7 @@ import com.polaris.container.gateway.request.UrlHttpRequestFilter;
 import com.polaris.container.gateway.request.WIpHttpRequestFilter;
 import com.polaris.container.gateway.request.WUrlHttpRequestFilter;
 import com.polaris.container.gateway.response.ClickjackHttpResponseFilter;
+import com.polaris.container.gateway.response.TokenHttpResponseFilter;
 import com.polaris.core.util.StringUtil;
 
 public enum HttpFilterEnum {
@@ -33,7 +34,8 @@ public enum HttpFilterEnum {
 	Token(TokenHttpRequestFilter.class, "gateway.token", 11),
 
 	//responseFilter
-	Clickjack(ClickjackHttpResponseFilter.class, "gateway.click.jack", 1);
+	ResponseClickjack(ClickjackHttpResponseFilter.class, "gateway.response.clickjack", 1),
+	ResponseToken(TokenHttpResponseFilter.class, "gateway.response.token", 2);
 	
 	// 成员变量  
     private int order;  
