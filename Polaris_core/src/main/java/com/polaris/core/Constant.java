@@ -15,8 +15,6 @@ public class Constant {
     /**
      * token_ID
      **/
-    public static final String TOKEN_KEY = "X-TokenID-Key";
-    public static final String TOKEN_TTL_MILLIS = "X-TokenID-TtlMillis";
     public static final String TOKEN_ID = "X-TokenID";
     
     /**

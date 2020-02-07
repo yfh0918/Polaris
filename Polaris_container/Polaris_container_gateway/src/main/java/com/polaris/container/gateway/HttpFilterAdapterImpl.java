@@ -2,7 +2,6 @@ package com.polaris.container.gateway;
 
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
-import java.util.List;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.littleshoot.proxy.HttpFiltersAdapter;
@@ -163,17 +162,10 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         if (responseDto != null) {
         	ByteBuf buf = io.netty.buffer.Unpooled.copiedBuffer(responseDto.toJSONString(), CharsetUtil.UTF_8); 
         	httpResponse  = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, httpResponseStatus, buf);
-        	httpHeaders.set("Content-Type", "application/json");
         } else {
             httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, httpResponseStatus);
         }
-
-        //support CORS（服务器跨域请求）
-        List<String> originHeader = GatewayConstant.getHeaderValues(originalRequest, "Origin");
-        if (originHeader.size() > 0) {
-            httpHeaders.set("Access-Control-Allow-Credentials", "true");
-            httpHeaders.set("Access-Control-Allow-Origin", originHeader.get(0));
-        }
+    	httpHeaders.set("Content-Type", "application/json");
         httpResponse.headers().add(httpHeaders);
         return httpResponse;
     }
