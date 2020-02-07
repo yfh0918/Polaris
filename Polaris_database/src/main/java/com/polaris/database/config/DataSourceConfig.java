@@ -38,7 +38,7 @@ public class DataSourceConfig {
 			return null;
 		}
 		if (StringUtil.isEmpty(driver)) {
-			driver = "com.mysql.jdbc.Driver";
+			driver = "com.mysql.cj.jdbc.Driver";
 		}
 		HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName(driver); 
