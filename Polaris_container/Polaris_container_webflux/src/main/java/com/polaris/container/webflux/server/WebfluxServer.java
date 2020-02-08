@@ -89,6 +89,6 @@ public class WebfluxServer {
     
     @EnableWebFlux
     @Configuration 
-	public static class WebFluxConfiguration {
+    protected static class WebFluxConfiguration {
 	}
 }

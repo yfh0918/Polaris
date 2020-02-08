@@ -150,6 +150,6 @@ public class GatewayServer {
     
     @Configuration
     @ComponentScan("com.polaris.container.gateway")
-	public static class GatewayConfiguration {
+	protected static class GatewayConfiguration {
 	}
 }

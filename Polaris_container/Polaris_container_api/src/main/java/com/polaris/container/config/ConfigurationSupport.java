@@ -53,7 +53,7 @@ abstract public class ConfigurationSupport {
 	}
 	
 	@Configuration
-	public static class ConfPropertyConfiguration {
+	protected static class ConfPropertyConfiguration {
 		@Bean
 		public static ConfPropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
 			return new ConfPropertyPlaceholderConfigurer();
