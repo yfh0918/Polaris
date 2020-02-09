@@ -219,10 +219,20 @@
 
 	        <dependency>
 	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_database</artifactId>
+	            <artifactId>Polaris_extension</artifactId>
+	            <version>${polaris-version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_extension_db</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency>	    
-	            
+	        <dependency>
+	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_extension_mvc_config</artifactId>
+	            <version>${polaris-version}</version>
+	        </dependency>
+	        	            
             <!-- common通用类 -->
             <dependency>
                 <groupId>com.google.guava</groupId>

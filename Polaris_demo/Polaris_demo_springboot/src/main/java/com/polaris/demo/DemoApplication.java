@@ -1,14 +1,15 @@
 package com.polaris.demo;
 
 
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import com.polaris.container.loader.MainSupport;
-import com.polaris.container.springboot.annotation.PolarisSpringBootApplicaiton;
 
 /**
  * 入口启动类
  *
  */
-@PolarisSpringBootApplicaiton
+@SpringBootApplication
 public class DemoApplication
 {
     

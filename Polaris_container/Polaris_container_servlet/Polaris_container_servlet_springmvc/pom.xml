@@ -16,26 +16,19 @@
 			<artifactId>Polaris_container_servlet_api</artifactId>
 		</dependency>
 
-	        <dependency>
-	            <groupId>org.springframework</groupId>
-	            <artifactId>spring-web</artifactId>
-	        </dependency>
-	        <dependency>
-	            <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-	        </dependency>
-	        <dependency>
-	            <groupId>org.springframework</groupId>
-	            <artifactId>spring-context-support</artifactId>
-	        </dependency>
-			<dependency>
-			    <groupId>org.freemarker</groupId>
-			    <artifactId>freemarker</artifactId>
-			</dependency>
-	       <dependency>
-	           <groupId>commons-fileupload</groupId>
-	           <artifactId>commons-fileupload</artifactId>
-	       </dependency>				
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+               <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
+				
 	</dependencies>
 	<build>
 	  <plugins>

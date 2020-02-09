@@ -19,6 +19,7 @@ public class ClassDescriptor extends ClassVisitor{
 	private static final String MAIN_METHOD_NAME = "main";
 	
 	private static final Class<? extends Annotation> TARGET_ANNOTATION = PolarisApplication.class;
+	private static final String SPRING_BOOT_APPLICATION = "org.springframework.boot.autoconfigure.SpringBootApplication";
 
 
 	private boolean targetAnnotationFound;
@@ -37,7 +38,7 @@ public class ClassDescriptor extends ClassVisitor{
 	@Override
 	public AnnotationVisitor visitAnnotation(String desc, boolean visible) {
 		String className = Type.getType(desc).getClassName();
-		if (className.equals(TARGET_ANNOTATION.getName())) {
+		if (className.equals(TARGET_ANNOTATION.getName()) || SPRING_BOOT_APPLICATION.equals(className)) {//兼容是prongboot启动
 			targetAnnotationFound = true;
 		} else {
 			try {

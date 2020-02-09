@@ -17,22 +17,7 @@
         <module>Polaris_logger</module>
         <module>Polaris_cache</module>
         <module>Polaris_sentinel</module>
-        <module>Polaris_database</module>
+        <module>Polaris_extension</module>
     </modules>
-        
-
-	<distributionManagement>
-	    <repository>
-	        <id>releases</id>
-	        <name>Releases</name>
-	        <url>http://192.168.1.2:8081/nexus/content/repositories/releases/</url>
-	    </repository>
-	    <snapshotRepository>
-	        <id>snapshots</id>
-	        <name>snapshots</name>
-	        <url>http://192.168.1.2:8081/nexus/content/repositories/snapshots/</url>
-	    </snapshotRepository>
-	</distributionManagement>
-
 
 </project>
