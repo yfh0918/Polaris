@@ -6,7 +6,6 @@ import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ProtocolConfig;
 import org.apache.dubbo.config.ProviderConfig;
 import org.apache.dubbo.config.RegistryConfig;
-import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ReflectionUtils;
@@ -23,7 +22,6 @@ public class DubboConfigurer implements ConfigurationExtension{
 		return new Class<?>[]{DefaultDubboConfig.class};
 	}
 
-	@EnableDubbo
 	@Configuration
 	protected static class DefaultDubboConfig {
 		
