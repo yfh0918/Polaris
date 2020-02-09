@@ -1,8 +1,6 @@
 package com.polaris.demo;
 
 
-import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
-
 import com.polaris.container.annotation.PolarisApplication;
 import com.polaris.container.loader.MainSupport;
 
@@ -11,7 +9,6 @@ import com.polaris.container.loader.MainSupport;
  *
  */
 @PolarisApplication
-@EnableDubbo
 public class DemoApplication
 
 {
