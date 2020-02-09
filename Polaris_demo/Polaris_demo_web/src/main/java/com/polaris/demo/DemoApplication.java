@@ -1,14 +1,17 @@
 package com.polaris.demo;
 
 
-import com.polaris.container.dubbo.annotation.PolarisDubboApplication;
+import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
+
+import com.polaris.container.annotation.PolarisApplication;
 import com.polaris.container.loader.MainSupport;
 
 /**
  * 入口启动类
  *
  */
-@PolarisDubboApplication
+@PolarisApplication
+@EnableDubbo
 public class DemoApplication
 
 {

@@ -1,10 +1,13 @@
 package com.polaris.demo;
 
 
-import com.polaris.container.dubbo.annotation.PolarisDubboApplication;
+import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
+
+import com.polaris.container.annotation.PolarisApplication;
 import com.polaris.container.loader.MainSupport;
 
-@PolarisDubboApplication
+@PolarisApplication
+@EnableDubbo
 public class DubboApplication{
 	
 	public static void main(String[] args) throws Exception { 

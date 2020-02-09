@@ -11,11 +11,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
+import com.polaris.container.config.ConfigurationExtension;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.ReflectionUtil;
 
 @Configuration
-public class DefaultDubboConfig {
+public class DefaultDubboConfig implements ConfigurationExtension{
 	@Bean
     public ApplicationConfig applicationConfig() {
         ApplicationConfig applicationConfig = new ApplicationConfig();
