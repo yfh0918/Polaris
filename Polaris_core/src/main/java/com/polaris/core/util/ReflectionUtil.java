@@ -1,7 +1,11 @@
 package com.polaris.core.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,5 +72,14 @@ public abstract class ReflectionUtil {
 			logger.error("ERROR:",e);
 		} 
     }
-
+    
+    @SuppressWarnings("unchecked")
+	public static Map<String, Object> getMemberValuesMap(Class<?> clazz, Class<? extends Annotation> annotationType) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+    	Annotation annotation = clazz.getAnnotation(annotationType);
+		InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
+		Field value = invocationHandler.getClass().getDeclaredField("memberValues");
+		value.setAccessible(true);
+		Map<String, Object> memberValuesMap = (Map<String, Object>) value.get(invocationHandler);
+		return memberValuesMap;
+    }
 }

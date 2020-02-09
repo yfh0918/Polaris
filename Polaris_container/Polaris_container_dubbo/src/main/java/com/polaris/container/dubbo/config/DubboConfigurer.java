@@ -1,9 +1,6 @@
 package com.polaris.container.dubbo.config;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,17 +26,13 @@ import com.polaris.core.util.StringUtil;
 public class DubboConfigurer implements ConfigurationExtension{
 	private static final Logger logger = LoggerFactory.getLogger(DubboConfigurer.class);
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public Class<?>[] getExtensionConfigurations() {
 		Class<?> clazz = DefaultDubboConfig.class;
 		
 		try {
-			EnableDubbo enableDubbo = clazz.getAnnotation(EnableDubbo.class);
-			InvocationHandler invocationHandler = Proxy.getInvocationHandler(enableDubbo);
-			Field value = invocationHandler.getClass().getDeclaredField("memberValues");
-			value.setAccessible(true);
-			Map<String, Object> memberValues = (Map<String, Object>) value.get(invocationHandler);
+			Map<String, Object> memberValues = 
+					ReflectionUtil.getMemberValuesMap(clazz, EnableDubbo.class);
 			
 			//scanBasePackages
 			String scanBasePackages = ConfClient.get("dubbo.scanBasePackages");
@@ -49,8 +42,8 @@ public class DubboConfigurer implements ConfigurationExtension{
 			
 			//scanBasePackageClasses
 			String scanBasePackageClasses = ConfClient.get("dubbo.scanBasePackageClasses");
+			List<Class<?>> scanBasePackageClassList = new ArrayList<>();
 			if (StringUtil.isNotEmpty(scanBasePackageClasses)) {
-				List<Class<?>> scanBasePackageClassList = new ArrayList<>();
 				for (String scanBasePackaeClassName : scanBasePackageClasses.split(",")) {
 					try {
 						scanBasePackageClassList.add(Class.forName(scanBasePackaeClassName));
@@ -58,10 +51,10 @@ public class DubboConfigurer implements ConfigurationExtension{
 						logger.warn("Class:{} is not found", scanBasePackaeClassName);
 					}
 				}
-				if (scanBasePackageClassList.size() > 0) {
-					Class<?>[] classArray = new Class[scanBasePackageClassList.size()];
-					memberValues.put("scanBasePackageClasses", scanBasePackageClassList.toArray(classArray));
-				}
+			}
+			if (scanBasePackageClassList.size() > 0) {
+				Class<?>[] classArray = new Class[scanBasePackageClassList.size()];
+				memberValues.put("scanBasePackageClasses", scanBasePackageClassList.toArray(classArray));
 			} else {
 				memberValues.put("scanBasePackageClasses", ConfigurationSupport.getClasses());
 			}
