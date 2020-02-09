@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.github.pagehelper.PageInterceptor;
 import com.polaris.core.config.ConfClient;
@@ -25,6 +26,7 @@ import com.polaris.core.util.StringUtil;
 import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
+@EnableTransactionManagement(proxyTargetClass=true)
 public class DataSourceConfig {
 	
 	@Primary

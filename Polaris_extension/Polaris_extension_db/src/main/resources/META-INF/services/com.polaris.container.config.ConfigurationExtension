@@ -1,1 +1,1 @@
-com.polaris.extension.db.config.PolarisDBConfig
+com.polaris.extension.db.config.DBConfigurer

@@ -41,7 +41,12 @@ abstract public class ConfigurationSupport {
 	private static void addConfigurationExtension() {
 		ServiceLoader<ConfigurationExtension> configurationExtensions = ServiceLoader.load(ConfigurationExtension.class);
 		for (ConfigurationExtension configurationExtension : configurationExtensions) {
-			configClassList.add(configurationExtension.getClass());
+			Class<?>[] classes = configurationExtension.getExtensionConfigurations();
+			if (classes != null && classes.length > 0) {
+				for (Class<?> clazz : classes) {
+					configClassList.add(clazz);
+				}
+			}
         }
 	}
 
