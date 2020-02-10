@@ -46,12 +46,12 @@ public class SpringbootServer {
     public void start() {
     	
     	//project
-    	String projectName = ConfClient.get(Constant.PROJECT_NAME);
+    	String projectName = ConfClient.get(Constant.SPRING_BOOT_NAME, ConfClient.get(Constant.PROJECT_NAME));
     	ConfHandlerEnum.DEFAULT.put(Constant.SPRING_BOOT_NAME, projectName);
     	System.setProperty(Constant.SPRING_BOOT_NAME, projectName);
     	
     	//context
-    	String serverContext = ConfClient.get(Constant.SERVER_CONTEXT);
+    	String serverContext = ConfClient.get(Constant.SERVER_SPRING_CONTEXT,ConfClient.get(Constant.SERVER_CONTEXT));
     	ConfHandlerEnum.DEFAULT.put(Constant.SERVER_SPRING_CONTEXT, serverContext);
     	System.setProperty(Constant.SERVER_SPRING_CONTEXT, serverContext);
     	
