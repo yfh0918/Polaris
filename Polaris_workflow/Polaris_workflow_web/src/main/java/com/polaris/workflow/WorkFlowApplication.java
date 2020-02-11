@@ -1,7 +1,7 @@
 package com.polaris.workflow;
 
+import com.polaris.container.MainSupport;
 import com.polaris.container.annotation.PolarisApplication;
-import com.polaris.container.loader.MainSupport;
 
 /**
  * 入口启动类

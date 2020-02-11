@@ -1,6 +1,5 @@
-package com.polaris.container.loader;
+package com.polaris.container;
 
-import com.polaris.container.ServerFactory;
 import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerSupport;
@@ -9,7 +8,6 @@ import com.polaris.core.naming.ServerHandlerClient;
 
 /**
 *
-* 项目名称：Polaris_comm
 * 类名称：MainSupport
 * 类描述：
 * 创建人：yufenghua

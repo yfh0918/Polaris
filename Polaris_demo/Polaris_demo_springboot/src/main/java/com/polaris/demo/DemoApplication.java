@@ -3,7 +3,7 @@ package com.polaris.demo;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.polaris.container.loader.MainSupport;
+import com.polaris.container.MainSupport;
 
 /**
  * 入口启动类

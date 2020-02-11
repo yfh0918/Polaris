@@ -1,8 +1,8 @@
 package com.polaris.demo.gateway;
 
 
+import com.polaris.container.MainSupport;
 import com.polaris.container.annotation.PolarisApplication;
-import com.polaris.container.loader.MainSupport;
 
 @PolarisApplication
 public class GatewayApplication {
