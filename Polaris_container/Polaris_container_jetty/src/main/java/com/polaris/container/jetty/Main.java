@@ -22,15 +22,9 @@ public class Main implements Server{
 	@Override
 	public void start() {
 		//启动jetty
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-            	logger.info("jetty启动！");
-                JettyServer server = JettyServer.getInstance();
-                server.start();
-            }
-        }).start();
-		
+    	logger.info("jetty启动！");
+        JettyServer server = JettyServer.getInstance();
+        server.start();
 	}
 	
 	
