@@ -1,6 +1,6 @@
 package com.polaris.container.dubbo.server;
 
-import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,8 +66,9 @@ public class DubboServer {
         
         //block
         try {
-			System.in.read();
-		} catch (IOException e) {
+        	logger.info("dubbo service started");
+            new CountDownLatch(1).await();
+		} catch (Exception e) {
 			logger.error("ERROR:",e);
 		}
     }

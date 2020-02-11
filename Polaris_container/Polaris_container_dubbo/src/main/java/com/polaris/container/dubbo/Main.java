@@ -18,12 +18,7 @@ public class Main implements Server {
      */
 	@Override
 	public void start() {
-    	new Thread(new Runnable() {
-			@Override
-			public void run() {
-				DubboServer.getInstance().start();
-			}
-		}).start();
+		DubboServer.getInstance().start();
 	}
 
 }

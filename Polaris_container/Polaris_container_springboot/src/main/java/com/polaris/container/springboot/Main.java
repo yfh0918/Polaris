@@ -18,12 +18,7 @@ public class Main implements Server {
      */
 	@Override
 	public void start() {
-    	new Thread(new Runnable() {
-			@Override
-			public void run() {
-				SpringbootServer.getInstance().start();
-			}
-		}).start();
+		SpringbootServer.getInstance().start();
 	}
 
 }

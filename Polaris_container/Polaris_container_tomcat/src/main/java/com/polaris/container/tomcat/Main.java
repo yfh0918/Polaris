@@ -23,14 +23,9 @@ public class Main implements Server {
      */
 	@Override
 	public void start() {
-    	new Thread(new Runnable() {
-			@Override
-			public void run() {
-				logger.info("tomcat启动！");
-				TomcatServer server = TomcatServer.getInstance();
-				server.start();
-			}
-		}).start();
+		logger.info("tomcat启动！");
+		TomcatServer server = TomcatServer.getInstance();
+		server.start();
 	}
 	
 	/**
