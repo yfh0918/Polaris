@@ -14,6 +14,7 @@ import com.polaris.core.util.StringUtil;
 
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
 
 /**
  * @author:Tom.Yu
@@ -35,6 +36,7 @@ public class TokenHttpResponseFilter extends HttpResponseFilter {
         			if (requestDto != null) {
         				String token = JwtUtil.createJWT(requestDto);
             			this.setResultDto(ResultUtil.success(token));
+            			this.setStatus(HttpResponseStatus.OK);
             			return true;
         			}
         		}

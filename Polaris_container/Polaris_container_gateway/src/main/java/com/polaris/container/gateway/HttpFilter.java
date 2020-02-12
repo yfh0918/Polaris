@@ -23,8 +23,8 @@ public abstract class HttpFilter extends HttpFilterOrder {
 	public HttpResponseStatus getStatus() {
 		return status;
 	}
-
-	public void setResultDto(HttpResponseStatus status) {
+	public void setStatus(HttpResponseStatus status) {
 		this.status = status;
 	}
+
 }
