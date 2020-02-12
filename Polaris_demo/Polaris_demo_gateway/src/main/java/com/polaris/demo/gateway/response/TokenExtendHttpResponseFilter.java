@@ -15,16 +15,15 @@ import io.netty.handler.codec.http.HttpResponse;
  *
  */
 @Service
-public class TokenHttpResponseFilter extends HttpResponseFilter {
+public class TokenExtendHttpResponseFilter extends HttpResponseFilter {
 	
 	static {
 		//注册扩展过滤器
-		HttpFilterEnum.addExtendFilter("gateway.response.token", TokenHttpResponseFilter.class, 2);
+		HttpFilterEnum.addExtendFilter(HttpFilterEnum.TokenResponse.getKey(), TokenExtendHttpResponseFilter.class);
     }
 	
     @Override
     public boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse) {
-        
         return false;
     }
 }
