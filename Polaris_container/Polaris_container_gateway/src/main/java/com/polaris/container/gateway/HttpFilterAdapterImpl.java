@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.request.HttpRequestFilter;
 import com.polaris.container.gateway.request.HttpRequestFilterChain;
+import com.polaris.container.gateway.response.HttpResponseFilter;
 import com.polaris.container.gateway.response.HttpResponseFilterChain;
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.container.gateway.util.RequestUtil;
@@ -70,7 +71,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             
             //过滤不通过的直接进入response过滤器
             if (immutablePair.left) {
-                httpResponse = createResponse(HttpResponseStatus.FORBIDDEN, originalRequest, immutablePair.right.getResultDto());
+                httpResponse = createResponse(immutablePair.right.getStatus(), originalRequest, immutablePair.right.getResultDto());
             }
         } catch (Exception e) {
         	
@@ -112,9 +113,21 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     @Override
     public HttpObject proxyToClientResponse(HttpObject httpObject) {
         if (httpObject instanceof HttpResponse) {
-        	HttpResponseFilterChain.doFilter(originalRequest, (HttpResponse) httpObject);
+        	
+        	//系统异常
         	if (((HttpResponse) httpObject).status().code() == HttpResponseStatus.BAD_GATEWAY.code()) {
-                ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR)));
+                ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, 
+                		originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR)));
+                return httpObject;
+        	}
+
+        	//response调用链
+        	ImmutablePair<Boolean, HttpResponseFilter> immutablePair = HttpResponseFilterChain.doFilter(originalRequest, (HttpResponse) httpObject);
+        	
+        	//业务异常
+        	if (immutablePair.left) {
+        		ctx.writeAndFlush(createResponse(immutablePair.right.getStatus(), originalRequest, immutablePair.right.getResultDto()));
+                return httpObject;
         	}
         }
         return httpObject;

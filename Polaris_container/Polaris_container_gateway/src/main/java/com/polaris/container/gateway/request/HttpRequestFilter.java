@@ -4,8 +4,7 @@ import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 
-import com.polaris.container.gateway.HttpFilterOrder;
-import com.polaris.core.dto.ResultDto;
+import com.polaris.container.gateway.HttpFilter;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -18,8 +17,7 @@ import io.netty.handler.codec.http.HttpRequest;
  * <p>
  * HTTP Request拦截器抽象类
  */
-@SuppressWarnings("rawtypes")
-public abstract class HttpRequestFilter extends HttpFilterOrder {
+public abstract class HttpRequestFilter extends HttpFilter  {
 	
     /**
      * 构造函数并加入调用链
@@ -30,19 +28,6 @@ public abstract class HttpRequestFilter extends HttpFilterOrder {
 		HttpRequestFilterChain.addFilter(this);
 	} 
 	
-    /**
-     * 中途被拦截需要返回的信息
-     *
-     */
-	private ResultDto resultDto;
-	public ResultDto getResultDto() {
-		return resultDto;
-	}
-
-	public void setResultDto(ResultDto resultDto) {
-		this.resultDto = resultDto;
-	}
-    
 	/**
      * httpRequest拦截逻辑
      *

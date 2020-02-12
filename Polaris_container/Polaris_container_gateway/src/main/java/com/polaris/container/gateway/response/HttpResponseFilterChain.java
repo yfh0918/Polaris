@@ -2,6 +2,8 @@ package com.polaris.container.gateway.response;
 
 import java.util.Collections;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.HttpFilterChain;
 import com.polaris.container.gateway.HttpFilterCompare;
@@ -25,7 +27,7 @@ public class HttpResponseFilterChain extends HttpFilterChain {
         Collections.sort(responseFilters, new HttpFilterCompare());
     }
 
-    public static void doFilter(HttpRequest originalRequest, HttpResponse httpResponse) {
+    public static ImmutablePair<Boolean, HttpResponseFilter> doFilter(HttpRequest originalRequest, HttpResponse httpResponse) {
         for (HttpResponseFilter filter : responseFilters) {
         	String key = HttpFilterEnum.getKey(filter.getClass());
         	if (StringUtil.isEmpty(key)) {
@@ -34,8 +36,12 @@ public class HttpResponseFilterChain extends HttpFilterChain {
         	if (GatewayConstant.OFF.equals(ConfClient.get(key))) {
         		continue;
         	}
-            filter.doFilter(originalRequest, httpResponse);
+            boolean result = filter.doFilter(originalRequest, httpResponse);
+            if (result) {
+            	return new ImmutablePair<>(true, filter);
+            }
         }
+        return new ImmutablePair<>(false, null);
     }
     
     

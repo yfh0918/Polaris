@@ -2,7 +2,7 @@ package com.polaris.container.gateway.response;
 
 import javax.annotation.PostConstruct;
 
-import com.polaris.container.gateway.HttpFilterOrder;
+import com.polaris.container.gateway.HttpFilter;
 
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
@@ -13,7 +13,7 @@ import io.netty.handler.codec.http.HttpResponse;
  * Description:
  *
  */
-public abstract class HttpResponseFilter extends HttpFilterOrder {
+public abstract class HttpResponseFilter extends HttpFilter {
 	
     /**
      * 构造函数并加入调用链
@@ -24,5 +24,5 @@ public abstract class HttpResponseFilter extends HttpFilterOrder {
 		HttpResponseFilterChain.addFilter(this);
 	} 
 	
-	abstract HttpResponse doFilter(HttpRequest originalRequest, HttpResponse httpResponse);
+	abstract boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse);
 }

@@ -38,7 +38,7 @@ public enum HttpFilterEnum {
 	// 成员变量  
     private int order;  
     private String key;
-    private Class<?> clazz;
+    private Class<? extends HttpFilter> clazz;
     
 	//requestFilter
 	private static Map<String, Class<?>> filterKeyMap = new HashMap<>();
@@ -55,12 +55,12 @@ public enum HttpFilterEnum {
 	}
 
     // 构造方法  
-    private HttpFilterEnum(Class<?> clazz, String key, int order) {  
+    private HttpFilterEnum(Class<? extends HttpFilter> clazz, String key, int order) {  
     	this.clazz = clazz;
     	this.key = key;
         this.order = order;   
     }
-	public Class<?> getClazz() {
+	public Class<? extends HttpFilter> getClazz() {
 		return clazz;
 	}
 	
