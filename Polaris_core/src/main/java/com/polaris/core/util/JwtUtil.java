@@ -21,6 +21,7 @@ public class JwtUtil {
 
 	private final static String RANDOM_UUID = UUID.randomUUID().toString();
 	private final static String JWT_TTL_MILLIS_KEY = "jwtTtlMillis";
+	public static String JWT_KEY = "jwtKey";
     /**
      * 用户登录成功后生成Jwt
      * 使用Hs256算法  私匙使用用户密码

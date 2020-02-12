@@ -32,6 +32,7 @@ public class RequestFirstFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
 		GlobalContext.setContext(GlobalContext.REQUEST, request);
+		GlobalContext.setContext(GlobalContext.RESPONSE, response);
 		if (StringUtil.isNotEmpty(((HttpServletRequest)request).getHeader(GlobalContext.TRACE_ID))) {
 			GlobalContext.setContext(GlobalContext.TRACE_ID, ((HttpServletRequest)request).getHeader(GlobalContext.TRACE_ID));
 		} else {

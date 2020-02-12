@@ -9,6 +9,7 @@ import com.polaris.core.thread.InheritablePolarisThreadLocal;
 
 public class GlobalContext {
 	public static final String REQUEST = "request";
+	public static final String RESPONSE = "response";
 	public static final String TRACE_ID = "traceId";
 	public static final String PARENT_ID = "parentId";
 	public static final String MODULE_ID = "moduleId";// 本模块ID
