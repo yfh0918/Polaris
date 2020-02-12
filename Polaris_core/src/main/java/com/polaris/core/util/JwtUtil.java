@@ -90,13 +90,15 @@ public class JwtUtil {
         return claims;
     }
 
-	//通用
-	public static String createAdditionalJWT(Map<String, Object> userMap, String id, String num, int tokenTime, String additionalKey) {
-        //额外验证信息
-        EncryptUtil en = EncryptUtil.getInstance(ConfClient.get("jwt.additional.key", EncryptUtil.getDefaultKey()));
-        String additional = id + userMap.get("username") + num;
+	//获取含有附加信息的jwt
+	public static String createAdditionalJWT(Map<String, Object> userMap, String additionalKey, String id, String num, int tokenTime) {
+        String additionalValue = id + userMap.get("username") + num;
+        return createAdditionalJWT(userMap, additionalKey, additionalValue, tokenTime);
+	}
+	public static String createAdditionalJWT(Map<String, Object> userMap, String additionalKey, String additionalValue, int tokenTime) {
+		EncryptUtil en = EncryptUtil.getInstance(ConfClient.get("jwt.additional.key", EncryptUtil.getDefaultKey()));
         try {
-			userMap.put(additionalKey, en.encrypt(additional));
+			userMap.put(additionalKey, en.encrypt(additionalValue));
 		} catch (Exception e) {
 			userMap.put(additionalKey, "");
 		}
