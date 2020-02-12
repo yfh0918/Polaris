@@ -35,7 +35,7 @@ public abstract class HttpRequestFilter extends HttpFilter  {
      * @param httpObject      http请求
      * @return true:正则匹配成功,false:正则匹配失败
      */
-    public abstract boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext);
+	protected abstract boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext);
 
     /**
      * 是否是黑名单

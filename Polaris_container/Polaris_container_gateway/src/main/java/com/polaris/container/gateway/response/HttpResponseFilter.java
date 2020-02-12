@@ -24,5 +24,5 @@ public abstract class HttpResponseFilter extends HttpFilter {
 		HttpResponseFilterChain.addFilter(this);
 	} 
 	
-	abstract boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse);
+	protected abstract boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse);
 }

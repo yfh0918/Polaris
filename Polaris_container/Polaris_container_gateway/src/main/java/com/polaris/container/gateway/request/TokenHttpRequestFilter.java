@@ -1,6 +1,7 @@
 package com.polaris.container.gateway.request;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
 
 	public volatile static Set<String> UNCHECKED_PATHS = new HashSet<>();
 	public volatile static Set<String> UNCHECKED_PATHS_PREFIX = new HashSet<>();
+	public volatile static Set<String> TOKEN_PATH = new HashSet<>();
 	private final static String FILE_NAME = "token.txt";
 	public final static String TOKEN_MESSAGE="认证失败，请先登录";
 
@@ -51,11 +53,13 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
     	if (StringUtil.isEmpty(content)) {
     		UNCHECKED_PATHS = new HashSet<>();
     		UNCHECKED_PATHS_PREFIX = new HashSet<>();
+    		TOKEN_PATH = new HashSet<>();
     		return;
     	}
     	String[] contents = content.split(Constant.LINE_SEP);
     	Set<String> UNCHECKED_PATHS_TEMP = new HashSet<>();
     	Set<String> UNCHECKED_PATHS_PREFIX_TEMP = new HashSet<>();
+    	Set<String> TOKEN_PATH_TEMP = new HashSet<>();
  
     	for (String conf : contents) {
     		if (StringUtil.isNotEmpty(conf) && !conf.startsWith("#")) {
@@ -73,23 +77,48 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
     			if (kv[0].equals("UNCHECKED_PATHS_PREFIX")) {
     				UNCHECKED_PATHS_PREFIX_TEMP.add(kv[1]);
     			}
+    			
+    			//tokenUrl
+    			if (kv[0].equals("TOKEN_PATH")) {
+    				UNCHECKED_PATHS_TEMP.add(kv[1]);
+    				TOKEN_PATH_TEMP.add(kv[1]);
+    			}
     		}
     	}
     	UNCHECKED_PATHS_PREFIX = UNCHECKED_PATHS_PREFIX_TEMP;
     	UNCHECKED_PATHS = UNCHECKED_PATHS_TEMP;
+    	TOKEN_PATH = TOKEN_PATH_TEMP;
     }
     
-    //验证url
-    public static boolean checkUrlPath(HttpRequest httpRequest) {
+    //获取url
+    public static String getUrl(HttpRequest httpRequest) {
+        return getUrl(httpRequest, null);
+    }
+    public static String getUrl(HttpRequest httpRequest, Map<String, String> parameterMap) {
     	//获取url
         String uri = httpRequest.uri();
         String url;
         int index = uri.indexOf("?");
         if (index > 0) {
             url = uri.substring(0, index);
+            if (parameterMap != null) {
+            	String strParameter = uri.substring(index + 1);
+            	String[] parameters = strParameter.split("&");
+            	for (String parameter : parameters) {
+            		String[] kv = ConfHandlerSupport.getKeyValue(parameter);
+            		parameterMap.put(kv[0], kv[1]);
+            	}
+            }
         } else {
             url = uri;
         }
+        return url;
+    }
+    
+    //验证url
+    public static boolean checkUrlPath(String url) {
+        
+        //验证是否需要放过
         for (String context : UNCHECKED_PATHS_PREFIX) {
         	if (url.startsWith(context)) {
         		return false;
@@ -100,6 +129,11 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
         }
         return true;
     }
+
+    
+    public static boolean isTokenPath(String url) {
+    	return TOKEN_PATH.contains(url);
+    }
     
 	@Override
     public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
@@ -109,7 +143,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
             HttpRequest httpRequest = (HttpRequest) httpObject;
 
             //验证url
-            boolean checkResult = checkUrlPath(httpRequest);
+            boolean checkResult = checkUrlPath(getUrl(httpRequest));
             if (!checkResult) {
             	return false;
             }
