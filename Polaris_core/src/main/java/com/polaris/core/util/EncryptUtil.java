@@ -5,6 +5,8 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.crypto.Cipher;
 
@@ -29,7 +31,7 @@ public class EncryptUtil {
 	/**
 	 * 单例
 	 */
-    private static EncryptUtil instance = null;
+    private static volatile Map<String, EncryptUtil> instanceMap = new ConcurrentHashMap<>();
 
     /**
      * 获取唯一进程限制的实例
@@ -37,11 +39,27 @@ public class EncryptUtil {
      * @return  唯一进程实例
      */
     public static EncryptUtil getInstance(){
+        return getInstance(strDefaultKey);
+    }
+    public static String getDefaultKey() {
+    	return strDefaultKey;
+    }
+    public static EncryptUtil getInstance(String strKey){
+    	if (StringUtil.isEmpty(strKey)) {
+    		strKey = strDefaultKey;
+    	}
+    	EncryptUtil instance = instanceMap.get(strKey);
         if(instance == null){
-        	try {
-                instance = new EncryptUtil();
-        	} catch (Exception ex) {
-        		logger.error("异常", ex);
+        	synchronized(strKey.intern()){
+        		instance = instanceMap.get(strKey);
+        		if(instance == null){
+        			try {
+        				instance = new EncryptUtil(strKey);
+                        instanceMap.put(strKey, instance);
+                	} catch (Exception ex) {
+                		logger.error("异常", ex);
+                	}
+        		}
         	}
         }
         return instance;

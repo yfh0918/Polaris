@@ -90,7 +90,18 @@ public class JwtUtil {
         return claims;
     }
 
-
-
-
+	//通用
+	public static String createAdditionalJWT(Map<String, Object> userMap, String id, String num, int tokenTime, String additionalKey) {
+        //额外验证信息
+        EncryptUtil en = EncryptUtil.getInstance(ConfClient.get("jwt.additional.key", EncryptUtil.getDefaultKey()));
+        String additional = id + userMap.get("username") + num;
+        try {
+			userMap.put(additionalKey, en.encrypt(additional));
+		} catch (Exception e) {
+			userMap.put(additionalKey, "");
+		}
+        String token = JwtUtil.createJWT(tokenTime, userMap);//60分钟有效
+		return token;
+	}
+	
 }
