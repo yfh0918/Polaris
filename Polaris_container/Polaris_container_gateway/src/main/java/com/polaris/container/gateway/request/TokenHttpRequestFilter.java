@@ -80,7 +80,6 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
     			
     			//tokenUrl
     			if (kv[0].equals("TOKEN_PATH")) {
-    				UNCHECKED_PATHS_TEMP.add(kv[1]);
     				TOKEN_PATH_TEMP.add(kv[1]);
     			}
     		}
