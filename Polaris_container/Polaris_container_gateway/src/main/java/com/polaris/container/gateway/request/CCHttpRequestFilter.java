@@ -350,7 +350,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         	
         	//热点参数目前只有IP维度限流，限流的场合直接加入黑名单
         	if (e instanceof ParamFlowException) {
-        		saveBlackCache(realIp,"sentinel block please check sentinel admin");//拒绝
+        		saveBlackCache(realIp,"sentinel block "+((ParamFlowException)e).getLimitParam());//拒绝
         	}
         	return true;
         } finally {
