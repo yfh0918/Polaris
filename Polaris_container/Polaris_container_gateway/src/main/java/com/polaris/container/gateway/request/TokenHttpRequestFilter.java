@@ -141,21 +141,21 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
             //获取request
             HttpRequest httpRequest = (HttpRequest) httpObject;
 
-            //验证url
-            boolean checkResult = checkUrlPath(getUrl(httpRequest));
-            if (!checkResult) {
-            	return false;
-            }
-
             //认证
             String token = httpRequest.headers().get(Constant.TOKEN_ID);
-            try {
-            	
-            	//token认证
-                if (StringUtil.isEmpty(token)) {
-                	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
-                    return true;
+
+            //没有token需要验证url是否放过
+            if (StringUtil.isEmpty(token)) {
+                boolean checkResult = checkUrlPath(getUrl(httpRequest));
+                if (!checkResult) {
+                	return false;
                 }
+            	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
+                return true;
+            }
+
+            try {
+            	//token认证
                 Claims claims = JwtUtil.parseJWT(token);
                 if (claims == null) {
                 	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
