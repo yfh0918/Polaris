@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
@@ -14,7 +15,6 @@ import com.polaris.core.config.ConfListener;
 import com.polaris.core.util.JwtUtil;
 import com.polaris.core.util.StringUtil;
 
-import cn.hutool.core.date.SystemClock;
 import cn.hutool.core.util.StrUtil;
 import io.jsonwebtoken.Claims;
 import io.netty.channel.ChannelHandlerContext;
@@ -166,14 +166,8 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
                 	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
                     return true;
                 }
-                
-                //过期时间超过不能超过5秒
-                long expiration = claims.getExpiration().getTime();
-                long now = SystemClock.now() + 1000*5;
-                if (now >= expiration) {
-                	return true;
-                }
-                
+                //设置claims信息
+                httpRequest.headers().add(JwtUtil.CLAIMS_KEY, JSON.toJSONString(claims));
                 return false;
             } catch (Exception ex) {
             	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
