@@ -42,6 +42,10 @@ public class JwtUtil {
         String key = ConfClient.get("jwt.sign.key", RANDOM_UUID);
         return createJWT(ttlMillis, user, key);
 	}
+	public static String createJWT(Map<String, Object> user, String key) {
+		long ttlMillis = Long.parseLong(user.remove(JWT_TTL_MILLIS_KEY).toString());
+		return createJWT(ttlMillis, user, key);
+	}
     public static String createJWT(long ttlMillis, Map<String, Object> user, String key) {
         //指定签名的时候使用的签名算法，也就是header那部分，jjwt已经将这部分内容封装好了。
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
