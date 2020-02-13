@@ -2,6 +2,7 @@ package com.polaris.container.gateway.request;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -288,12 +289,16 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             	@SuppressWarnings("rawtypes")
 				ResultDto<List> dto = new ResultDto<>();
             	dto.setCode(Constant.RESULT_SUCCESS);
+        		List<String> dataList = new ArrayList<>();
             	try {
                 	for (Object key : blackIpCache.getKeys()) {
-                		blackIpCache.get(key);
+                		Object obj = blackIpCache.get(key);
+                		if (obj != null) {
+                			dataList.add(key + ":" +obj.toString());
+                		}
                 	}
             	} catch (Exception ex) {}
-            	dto.setData(blackIpCache.getKeys());
+            	dto.setData(dataList);
             	this.setResultDto(dto);
             	return true;
             }
@@ -345,7 +350,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         	
         	//热点参数目前只有IP维度限流，限流的场合直接加入黑名单
         	if (e instanceof ParamFlowException) {
-        		saveBlackCache(realIp);//拒绝
+        		saveBlackCache(realIp,"sentinel block please check sentinel admin");//拒绝
         	}
         	return true;
         } finally {
@@ -375,7 +380,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 			AtomicInteger secRateLimiter = (AtomicInteger) secIploadingCache.get(realIp);
 	        int count = secRateLimiter.incrementAndGet();
 	        if (count > int_ip_rate[0]) {
-	        	saveBlackCache(realIp);//拒绝
+	        	saveBlackCache(realIp, count + " visits per second");//拒绝
 	    		return true;//拒绝
 	        } 
 		} catch (ExecutionException e) {
@@ -388,7 +393,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 	        AtomicInteger minRateLimiter = (AtomicInteger) minIploadingCache.get(realIp);
 	        int count = minRateLimiter.incrementAndGet();
 	        if (count > int_ip_rate[1]) {
-	        	saveBlackCache(realIp);//拒绝
+	        	saveBlackCache(realIp, count + " visits per minute");//拒绝
 	    		return true;//拒绝
 	        } 
 		} catch (ExecutionException e) {
@@ -409,9 +414,10 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         return false;
     }
     
-    public static void saveBlackCache(String realIp) {
+    public static void saveBlackCache(String realIp, String reason) {
     	if (isBlackIp) {
-    		blackIpCache.put(realIp, new Object(),blockSeconds);//拒绝
+    		logger.info("ip:{} is blocked ,caused by:{}",realIp, reason);
+    		blackIpCache.put(realIp, reason ,blockSeconds);//拒绝
     	}
     }
     
