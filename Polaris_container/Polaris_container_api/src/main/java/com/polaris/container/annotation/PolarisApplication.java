@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.core.annotation.AliasFor;
 
 @Target(ElementType.TYPE)
@@ -17,6 +18,7 @@ import org.springframework.core.annotation.AliasFor;
 @Inherited
 @ComponentScan
 @Configuration
+@EnableAspectJAutoProxy(proxyTargetClass=true)
 public @interface PolarisApplication {
 	@AliasFor(annotation = ComponentScan.class, attribute = "basePackages")
 	String[] scanBasePackages() default {};
