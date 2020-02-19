@@ -1,9 +1,14 @@
 package com.polaris.core.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
+import com.alibaba.fastjson.JSON;
+import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 
 import io.jsonwebtoken.Claims;
@@ -120,6 +125,21 @@ public class JwtUtil {
 	public static void createJWTMap(Map<String, Object> userMap, long tokenTime) {
 		userMap.put(JWT_TTL_MILLIS_KEY, tokenTime);
 	}
-	
-	
+	public static String encode(Map<String, Object> jwtMap) {
+		String jwtInfo = JSON.toJSONString(jwtMap);
+    	try {
+        	return URLEncoder.encode(jwtInfo,Constant.UTF_CODE);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+    	return jwtInfo;
+	}
+	public static String decode(String jwtInfo) {
+    	try {
+        	jwtInfo = URLDecoder.decode(jwtInfo,Constant.UTF_CODE);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+    	return jwtInfo;
+	}
 }

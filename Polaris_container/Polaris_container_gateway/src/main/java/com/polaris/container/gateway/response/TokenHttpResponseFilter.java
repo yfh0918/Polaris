@@ -31,8 +31,8 @@ public class TokenHttpResponseFilter extends HttpResponseFilter {
         	String url = TokenHttpRequestFilter.getUrl(originalRequest);
         	if (TokenHttpRequestFilter.isTokenPath(url)) {
         		String jwtInfo = httpResponse.headers().get(JwtUtil.JWT_KEY);
-        		if (StringUtil.isNotEmpty(jwtInfo)) {
-        			Map<String, Object> requestDto =  JSONObject.parseObject(jwtInfo);
+         		if (StringUtil.isNotEmpty(jwtInfo)) {
+        			Map<String, Object> requestDto =  JSONObject.parseObject(JwtUtil.decode(jwtInfo));
         			if (requestDto != null) {
         				String token = JwtUtil.createJWT(requestDto);
             			this.setResultDto(ResultUtil.success(token));
