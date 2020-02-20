@@ -2,6 +2,7 @@ package com.polaris.container.gateway;
 
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
+import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.littleshoot.proxy.HttpFiltersAdapter;
@@ -71,12 +72,12 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             
             //过滤不通过的直接进入response过滤器
             if (immutablePair.left) {
-                httpResponse = createResponse(immutablePair.right.getStatus(), originalRequest, immutablePair.right.getResultDto());
+                httpResponse = createResponse(immutablePair.right.getStatus(), originalRequest, immutablePair.right.getResultDto(),immutablePair.right.getHeaderMap());
             }
         } catch (Exception e) {
         	
         	//存在异常的直接进入response过滤器
-            httpResponse = createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(e));
+            httpResponse = createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(e), null);
             logger.error("client's request failed", e);
             
         } 
@@ -105,7 +106,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     public void proxyToServerResolutionSucceeded(String serverHostAndPort,
                                                  InetSocketAddress resolvedRemoteAddress) {
         if (resolvedRemoteAddress == null) {
-            ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR)));
+            ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR), null));
         } 
     }
 
@@ -117,7 +118,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	//系统异常
         	if (((HttpResponse) httpObject).status().code() == HttpResponseStatus.BAD_GATEWAY.code()) {
                 ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, 
-                		originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR)));
+                		originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR), null));
                 return httpObject;
         	}
 
@@ -126,7 +127,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	
         	//业务异常
         	if (immutablePair.left) {
-        		ctx.writeAndFlush(createResponse(immutablePair.right.getStatus(), originalRequest, immutablePair.right.getResultDto()));
+        		ctx.writeAndFlush(createResponse(immutablePair.right.getStatus(), originalRequest, immutablePair.right.getResultDto(),immutablePair.right.getHeaderMap()));
                 return httpObject;
         	}
         }
@@ -168,9 +169,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
 
     //创建resoponse(中途退出错误的场合)
     @SuppressWarnings("rawtypes")
-	private HttpResponse createResponse(HttpResponseStatus httpResponseStatus, HttpRequest originalRequest, ResultDto responseDto) {
-        HttpHeaders httpHeaders=new DefaultHttpHeaders();
-        httpHeaders.add("Transfer-Encoding","chunked");
+	private HttpResponse createResponse(HttpResponseStatus httpResponseStatus, HttpRequest originalRequest, ResultDto responseDto, Map<String, Object> headerMap) {
         HttpResponse httpResponse;
         if (responseDto != null) {
         	ByteBuf buf = io.netty.buffer.Unpooled.copiedBuffer(responseDto.toJSONString(), CharsetUtil.UTF_8); 
@@ -178,7 +177,14 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         } else {
             httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, httpResponseStatus);
         }
+        HttpHeaders httpHeaders=new DefaultHttpHeaders();
+        httpHeaders.add("Transfer-Encoding","chunked");
     	httpHeaders.set("Content-Type", "application/json");
+    	if (headerMap != null) {
+    		for (Map.Entry<String, Object> entry : headerMap.entrySet()) {
+    			httpHeaders.set(entry.getKey(), entry.getValue());
+    		}
+    	}
         httpResponse.headers().add(httpHeaders);
         return httpResponse;
     }

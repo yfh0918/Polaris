@@ -13,6 +13,7 @@ import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.config.ConfListener;
 import com.polaris.core.util.JwtUtil;
 import com.polaris.core.util.StringUtil;
+import com.polaris.core.util.SystemCallUtil;
 
 import cn.hutool.core.util.StrUtil;
 import io.jsonwebtoken.Claims;
@@ -34,6 +35,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
 	public volatile static Set<String> TOKEN_PATH = new HashSet<>();
 	private final static String FILE_NAME = "token.txt";
 	public final static String TOKEN_MESSAGE="认证失败，请先登录";
+	public final static String DEFAULT_VALUE = "1";
 
 	static {
 		//先获取
@@ -127,6 +129,12 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
         }
         return true;
     }
+    
+    //验证url
+    public static boolean isSystemCall(HttpRequest httpRequest) {
+    	String value = httpRequest.headers().get(SystemCallUtil.key());
+    	return SystemCallUtil.verify(value);
+    }
 
     
     public static boolean isTokenPath(String url) {
@@ -139,9 +147,15 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
         	
             //获取request
             HttpRequest httpRequest = (HttpRequest) httpObject;
+            
+            //检验系统调用
+            if (isSystemCall(httpRequest)) {
+                return false;
+            }
 
             //认证
             String token = httpRequest.headers().get(Constant.TOKEN_ID);
+            httpRequest.headers().set(Constant.TOKEN_ID, DEFAULT_VALUE);
 
             //没有token需要验证url是否放过
             if (StringUtil.isEmpty(token)) {
@@ -154,6 +168,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
             }
 
             try {
+            	
             	//token认证
                 Claims claims = JwtUtil.parseJWT(token);
                 if (claims == null) {
@@ -165,8 +180,10 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
                 	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
                     return true;
                 }
+                
                 //设置claims信息
                 httpRequest.headers().add(JwtUtil.CLAIMS_KEY, JwtUtil.encode(claims));
+                httpRequest.headers().add(SystemCallUtil.key(), SystemCallUtil.value());
                 return false;
             } catch (Exception ex) {
             	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));

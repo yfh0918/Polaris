@@ -19,5 +19,16 @@
         <module>Polaris_sentinel</module>
         <module>Polaris_extension</module>
     </modules>
-
+	<distributionManagement>
+	    <repository>
+	        <id>releases</id>
+	        <name>Releases</name>
+	        <url>http://58.246.77.146:7071/nexus/content/repositories/releases/</url>
+	    </repository>
+	    <snapshotRepository>
+	        <id>snapshots</id>
+	        <name>snapshots</name>
+	        <url>http://58.246.77.146:7071/nexus/content/repositories/snapshots/</url>
+	    </snapshotRepository>
+	</distributionManagement>
 </project>
