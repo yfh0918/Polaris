@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
@@ -167,7 +166,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
                     return true;
                 }
                 //设置claims信息
-                httpRequest.headers().add(JwtUtil.CLAIMS_KEY, JSON.toJSONString(claims));
+                httpRequest.headers().add(JwtUtil.CLAIMS_KEY, JwtUtil.encode(claims));
                 return false;
             } catch (Exception ex) {
             	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
