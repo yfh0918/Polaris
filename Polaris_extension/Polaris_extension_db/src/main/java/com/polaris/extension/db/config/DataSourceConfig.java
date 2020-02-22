@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -29,15 +28,26 @@ import com.zaxxer.hikari.HikariDataSource;
 @EnableTransactionManagement(proxyTargetClass=true)
 public class DataSourceConfig {
 	
-	@Primary
-	@Bean(name = "masterDataSource")    
-    public DataSource masterDataSource() { 
+	@Bean(name = "primaryDataSource")    
+    public DataSource primaryDataSource() { 
 		String jdbcUrl = ConfClient.get("jdbc.url",ConfClient.get("spring.datasource.url"));
+		if (StringUtil.isEmpty(jdbcUrl)) {
+			jdbcUrl = ConfClient.get("jdbc.primary.url",ConfClient.get("spring.datasource.primary.url"));
+		}
 		String username = ConfClient.get("jdbc.username",ConfClient.get("spring.datasource.username"));
+		if (StringUtil.isEmpty(username)) {
+			username = ConfClient.get("jdbc.primary.username",ConfClient.get("spring.datasource.primary.username"));
+		}
 		String password = ConfClient.get("jdbc.password",ConfClient.get("spring.datasource.password"));
-		String driver = ConfClient.get("jdbc.driver",ConfClient.get("spring.datasource.driver"));
+		if (StringUtil.isEmpty(password)) {
+			password = ConfClient.get("jdbc.primary.password",ConfClient.get("spring.datasource.primary.password"));
+		}
 		if (StringUtil.isEmpty(jdbcUrl) || StringUtil.isEmpty(username) || StringUtil.isEmpty(password)) {
 			return null;
+		}
+		String driver = ConfClient.get("jdbc.driver",ConfClient.get("spring.datasource.driver"));
+		if (StringUtil.isEmpty(driver)) {
+			driver = ConfClient.get("jdbc.primary.driver",ConfClient.get("spring.datasource.primary.driver"));
 		}
 		if (StringUtil.isEmpty(driver)) {
 			driver = "com.mysql.cj.jdbc.Driver";
@@ -56,16 +66,74 @@ public class DataSourceConfig {
         return dataSource;    
     }
 	
+	@Bean(name = "secondaryDataSource")    
+    public DataSource secondaryDataSource() { 
+		String jdbcUrl = ConfClient.get("jdbc.secondary.url",ConfClient.get("spring.datasource.secondary.url"));
+		String username = ConfClient.get("jdbc.secondary.username",ConfClient.get("spring.datasource.secondary.username"));
+		String password = ConfClient.get("jdbc.secondary.password",ConfClient.get("spring.datasource.secondary.password"));
+		if (StringUtil.isEmpty(jdbcUrl) || StringUtil.isEmpty(username) || StringUtil.isEmpty(password)) {
+			return null;
+		}
+		String driver = ConfClient.get("jdbc.secondary.driver",ConfClient.get("spring.datasource.secondary.driver"));
+		if (StringUtil.isEmpty(driver)) {
+			driver = "com.mysql.cj.jdbc.Driver";
+		}
+		HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setDriverClassName(driver); 
+        dataSource.setJdbcUrl(jdbcUrl);
+        dataSource.setUsername(username);    
+        dataSource.setPassword(password);   
+        dataSource.setReadOnly(false);
+        dataSource.setConnectionTimeout(30000);
+        dataSource.setIdleTimeout(600000);
+        dataSource.setMaxLifetime(1800000);
+        dataSource.setMaximumPoolSize(10);
+        dataSource.setMinimumIdle(2);
+        return dataSource;    
+    }
+	
+	@Bean(name = "thirdaryDataSource")    
+    public DataSource thirdaryDataSource() { 
+		String jdbcUrl = ConfClient.get("jdbc.thirdary.url",ConfClient.get("spring.datasource.thirdary.url"));
+		String username = ConfClient.get("jdbc.thirdary.username",ConfClient.get("spring.datasource.thirdary.username"));
+		String password = ConfClient.get("jdbc.thirdary.password",ConfClient.get("spring.datasource.thirdary.password"));
+		if (StringUtil.isEmpty(jdbcUrl) || StringUtil.isEmpty(username) || StringUtil.isEmpty(password)) {
+			return null;
+		}
+		String driver = ConfClient.get("jdbc.thirdary.driver",ConfClient.get("spring.datasource.thirdary.driver"));
+		if (StringUtil.isEmpty(driver)) {
+			driver = "com.mysql.cj.jdbc.Driver";
+		}
+		HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setDriverClassName(driver); 
+        dataSource.setJdbcUrl(jdbcUrl);
+        dataSource.setUsername(username);    
+        dataSource.setPassword(password);   
+        dataSource.setReadOnly(false);
+        dataSource.setConnectionTimeout(30000);
+        dataSource.setIdleTimeout(600000);
+        dataSource.setMaxLifetime(1800000);
+        dataSource.setMaximumPoolSize(10);
+        dataSource.setMinimumIdle(2);
+        return dataSource;    
+    }
+	
 	@Bean(name = "dataSource") 
-	public DataSource dataSource(@Autowired @Qualifier("masterDataSource") DataSource primary) {
-        if (primary == null) {
+	public DataSource dataSource() {
+        if (primaryDataSource() == null) {
         	return null;
         }
 		DynamicDataSource dataSource = new DynamicDataSource();
 		Map<Object, Object> targetDataSources = new HashMap<>();
-		targetDataSources.put("default", primary);
+		targetDataSources.put("primary", primaryDataSource());
+		if (secondaryDataSource() != null) {
+			targetDataSources.put("secondary", secondaryDataSource());
+		}
+		if (thirdaryDataSource() != null) {
+			targetDataSources.put("thirdary", thirdaryDataSource());
+		}
 		dataSource.setTargetDataSources(targetDataSources);
-		dataSource.setDefaultTargetDataSource(targetDataSources.get("default"));
+		dataSource.setDefaultTargetDataSource(targetDataSources.get("primary"));
 		return dataSource;
 	}
 	
