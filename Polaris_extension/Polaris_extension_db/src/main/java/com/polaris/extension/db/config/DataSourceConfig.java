@@ -29,46 +29,49 @@ import com.zaxxer.hikari.HikariDataSource;
 public class DataSourceConfig {
 	
 	private static final String DEAULT_DATASOUCE_KEY = "default";
-	private static final String PRIMARY_DATASOURCE_KEY = "primary";
-	private static final String SECONDARY_DATASOURCE_KEY = "secondary";
-	private static final String THIRDARY_DATASOURCE_KEY = "thirdary";
-	
-	@Bean(name = "primaryDataSource")    
-    public DataSource primaryDataSource() { 
-		DataSource dataSource = createDateSource(DEAULT_DATASOUCE_KEY);
-		if (dataSource == null) {
-			dataSource = createDateSource(PRIMARY_DATASOURCE_KEY);
-		}
-        return dataSource;    
-    }
-	
-	@Bean(name = "secondaryDataSource")    
-    public DataSource secondaryDataSource() { 
-        return createDateSource(SECONDARY_DATASOURCE_KEY);    
-    }
-	
-	@Bean(name = "thirdaryDataSource")    
-    public DataSource thirdaryDataSource() { 
-		return createDateSource(THIRDARY_DATASOURCE_KEY);   
-    }
 
-	
 	@Bean(name = "dataSource") 
 	public DataSource dataSource() {
-        if (primaryDataSource() == null) {
+		
+		//默认数据源
+		String defaultDSName = DEAULT_DATASOUCE_KEY;
+		DataSource defaultDS = createDateSource(DEAULT_DATASOUCE_KEY);
+		
+		//获取多数据源名称
+		String dsNames = ConfClient.get("jdbc.names",ConfClient.get("spring.datasource.names"));
+		String[] dsNameArray = null;
+		if (StringUtil.isNotEmpty(dsNames)) {
+			dsNameArray = dsNames.split(",");
+			
+			//重新设置默认数据源
+			if (defaultDS == null) {
+				defaultDSName = dsNameArray[0];//没有默认的获取第一个作为默认的
+				defaultDS = createDateSource(defaultDSName);
+			}
+		}
+		
+		//没有数据源直接返回
+        if (defaultDS == null) {
         	return null;
         }
-		DynamicDataSource dataSource = new DynamicDataSource();
+        
+        //设置目标数据源
 		Map<Object, Object> targetDataSources = new HashMap<>();
-		targetDataSources.put(PRIMARY_DATASOURCE_KEY, primaryDataSource());
-		if (secondaryDataSource() != null) {
-			targetDataSources.put(SECONDARY_DATASOURCE_KEY, secondaryDataSource());
+		targetDataSources.put(defaultDSName, defaultDS);//保存默认数据源
+		
+		//保存多数据源（去除重复的）
+		if (dsNameArray != null) {
+			for (String name : dsNameArray) {
+				if (!targetDataSources.containsKey(name)) {
+					targetDataSources.put(name, createDateSource(DEAULT_DATASOUCE_KEY));
+				}
+			}
 		}
-		if (thirdaryDataSource() != null) {
-			targetDataSources.put(THIRDARY_DATASOURCE_KEY, thirdaryDataSource());
-		}
+		DynamicDataSource dataSource = new DynamicDataSource();
 		dataSource.setTargetDataSources(targetDataSources);
-		dataSource.setDefaultTargetDataSource(targetDataSources.get(PRIMARY_DATASOURCE_KEY));
+		
+		//设置默认
+		dataSource.setDefaultTargetDataSource(targetDataSources.get(defaultDSName));
 		return dataSource;
 	}
 	
@@ -165,52 +168,31 @@ public class DataSourceConfig {
 		rtnMap.put("username", username);
 		rtnMap.put("password", password);
 
-		String driver = ConfClient.get("jdbc"+key+".driver",ConfClient.get("spring.datasource"+key+".driver"));
-		if (StringUtil.isEmpty(driver)) {
-			driver = "com.mysql.cj.jdbc.Driver";
-		}
+		String driver = ConfClient.get("jdbc"+key+".driver",ConfClient.get("spring.datasource"+key+".driver","com.mysql.cj.jdbc.Driver"));
 		rtnMap.put("driver", driver);
 
 		//readOnly
-		String readOnly = ConfClient.get("jdbc"+key+".readOnly",ConfClient.get("spring.datasource"+key+".readOnly"));
-		if (StringUtil.isEmpty(readOnly)) {
-			readOnly = "false";
-		}
+		String readOnly = ConfClient.get("jdbc"+key+".readOnly",ConfClient.get("spring.datasource"+key+".readOnly","false"));
 		rtnMap.put("readOnly", readOnly);
 
 		//connectionTimeout
-		String connectionTimeout = ConfClient.get("jdbc"+key+".connectionTimeout",ConfClient.get("spring.datasource"+key+".connectionTimeout"));
-		if (StringUtil.isEmpty(connectionTimeout)) {
-			connectionTimeout = "30000";
-		}
+		String connectionTimeout = ConfClient.get("jdbc"+key+".connectionTimeout",ConfClient.get("spring.datasource"+key+".connectionTimeout","30000"));
 		rtnMap.put("connectionTimeout", connectionTimeout);
 
 		//idleTimeout
-		String idleTimeout = ConfClient.get("jdbc"+key+".idleTimeout",ConfClient.get("spring.datasource"+key+".idleTimeout"));
-		if (StringUtil.isEmpty(idleTimeout)) {
-			idleTimeout = "600000";
-		}
+		String idleTimeout = ConfClient.get("jdbc"+key+".idleTimeout",ConfClient.get("spring.datasource"+key+".idleTimeout","600000"));
 		rtnMap.put("idleTimeout", idleTimeout);
 
 		//idleTimeout
-		String maxLifetime = ConfClient.get("jdbc"+key+".maxLifetime",ConfClient.get("spring.datasource"+key+".maxLifetime"));
-		if (StringUtil.isEmpty(maxLifetime)) {
-			maxLifetime = "1800000";
-		}
+		String maxLifetime = ConfClient.get("jdbc"+key+".maxLifetime",ConfClient.get("spring.datasource"+key+".maxLifetime","1800000"));
 		rtnMap.put("maxLifetime", maxLifetime);
 		
 		//maximumPoolSize
-		String maximumPoolSize = ConfClient.get("jdbc"+key+".maximumPoolSize",ConfClient.get("spring.datasource"+key+".maximumPoolSize"));
-		if (StringUtil.isEmpty(maximumPoolSize)) {
-			maximumPoolSize = "10";
-		}
+		String maximumPoolSize = ConfClient.get("jdbc"+key+".maximumPoolSize",ConfClient.get("spring.datasource"+key+".maximumPoolSize","10"));
 		rtnMap.put("maximumPoolSize", maximumPoolSize);
 		
 		//minimumIdle
-		String minimumIdle = ConfClient.get("jdbc"+key+".minimumIdle",ConfClient.get("spring.datasource"+key+".minimumIdle"));
-		if (StringUtil.isEmpty(minimumIdle)) {
-			minimumIdle = "2";
-		}
+		String minimumIdle = ConfClient.get("jdbc"+key+".minimumIdle",ConfClient.get("spring.datasource"+key+".minimumIdle","2"));
 		rtnMap.put("minimumIdle", minimumIdle);
         
 		return rtnMap;
