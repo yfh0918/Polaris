@@ -39,34 +39,22 @@ public abstract class ConfClient {
             return;
         }
 		
+		//扩展的接口
+	    for (ConfEndPoint confEndPoint : ConfHandlerProvider.endPoints()) {
+	    	confEndPoint.init();
+        }
+		
     	//初始DEFAULT_CONFIG
-		loadDefaultConfig();
+		loadDefault();
 		
 		//载入扩展文件
-		String[] extendProperties = ConfHandlerSupport.getExtensionProperties();
-		if (extendProperties != null) {
-			for (String file : extendProperties) {
-				logger.info("{} loading start",file);
-				ConfHandlerProvider.loadConfig(ConfHandlerEnum.EXTEND, file);//载入缓存
-				logger.info("{} loading end",file);
-			}
-		}
+		loadExtend();
 		
 		//载入全局文件
-		String[] globalProperties = ConfHandlerSupport.getGlobalProperties();
-		if (globalProperties != null) {
-			for (String file : globalProperties) {
-				logger.info("{} loading start",file);
-				ConfHandlerProvider.loadConfig(ConfHandlerEnum.GLOBAL, file);
-				logger.info("{} loading start",file);
-			}
-		}
-		
-		//载入Sentinel
-		loadSentinelConfig();
-		
+		loadGlobal();
 	}
-	public static void loadDefaultConfig() {
+	
+	private static void loadDefault() {
 		
     	// 启动字符集
     	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
@@ -82,7 +70,7 @@ public abstract class ConfClient {
     	logger.info("{} loading start",Constant.DEFAULT_CONFIG_NAME);
     	//获取DEFAULT_CONFIG_NAME
 		String content = PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME);
-		ConfHandlerProvider.cacheConfig(ConfHandlerEnum.DEFAULT, content, false);
+		ConfHandlerProvider.cache(ConfHandlerEnum.DEFAULT, content, false);
 		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
 			ConfHandlerEnum.DEFAULT.put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
 		} else {
@@ -107,6 +95,41 @@ public abstract class ConfClient {
 			}
 		}
 		logger.info("systemProperties loading end");
+	}
+	private static void loadExtend() {
+		
+		//扩展的文件
+		String[] extendProperties = ConfHandlerSupport.getExtensionProperties();
+		if (extendProperties != null) {
+			for (String file : extendProperties) {
+				logger.info("{} loading start",file);
+				ConfHandlerProvider.load(ConfHandlerEnum.EXTEND, file);//载入缓存
+				logger.info("{} loading end",file);
+			}
+		}
+		
+		//扩展的接口
+	    for (ConfEndPoint confEndPoint : ConfHandlerProvider.endPoints()) {
+	    	confEndPoint.loadExtend(ConfHandlerEnum.EXTEND);
+        }
+	}
+	private static void loadGlobal() {
+		
+		//扩展的文件
+		String[] globalProperties = ConfHandlerSupport.getGlobalProperties();
+		if (globalProperties != null) {
+			for (String file : globalProperties) {
+				logger.info("{} loading start",file);
+				ConfHandlerProvider.load(ConfHandlerEnum.GLOBAL, file);
+				logger.info("{} loading start",file);
+			}
+		}
+		
+		//扩展的接口
+	    for (ConfEndPoint confEndPoint : ConfHandlerProvider.endPoints()) {
+	    	confEndPoint.loadGlobal(ConfHandlerEnum.GLOBAL);
+        }
+
 	}
 	
 	/**
@@ -149,27 +172,6 @@ public abstract class ConfClient {
 		return defaultVal;
 	}
 	
-	//载入Sentinel
-	private static void loadSentinelConfig() {
-		//sentinel设置
-		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.dashboard.server"))) {
-			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.dashboard.server"))) {
-				System.setProperty("csp.sentinel.dashboard.server", ConfClient.get("csp.sentinel.dashboard.server"));
-			}
-		}
-		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.api.port"))) {
-			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.api.port"))) {
-				System.setProperty("csp.sentinel.api.port", ConfClient.get("csp.sentinel.api.port"));
-			}
-		}
-		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.heartbeat.interval.ms"))) {
-			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.heartbeat.interval.ms"))) {
-				System.setProperty("csp.sentinel.heartbeat.interval.ms", ConfClient.get("csp.sentinel.heartbeat.interval.ms"));
-			}
-		}
-		System.setProperty("project.name", ConfClient.getAppName());
-	}
-	
 	//在设置应用名称的时候启动各项参数载入
 	public static String getAppName() {
 		
@@ -182,7 +184,7 @@ public abstract class ConfClient {
 
 	//获取配置文件
 	public static String getConfigValue(String fileName) {
-		return ConfHandlerProvider.getConfig(fileName);
+		return ConfHandlerProvider.get(fileName);
 	}
 
 	//增加文件是否修改的监听

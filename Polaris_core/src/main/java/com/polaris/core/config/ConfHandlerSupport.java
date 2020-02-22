@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
+import com.polaris.core.util.EncryptUtil;
 import com.polaris.core.util.StringUtil;
 
 public class ConfHandlerSupport {
@@ -93,6 +94,17 @@ public class ConfHandlerSupport {
 			return new String[] {keyvalue[0].trim(),value};
 		}
 		return null;
+	}
+	
+	public static String getDecryptValue(String propVal) {
+		//解密操作
+		try {
+			EncryptUtil encrypt = EncryptUtil.getInstance();
+			propVal = encrypt.decrypt(EncryptUtil.START_WITH, propVal);
+		} catch (Exception ex) {
+			//nothing
+		}
+		return propVal;
 	}
 
 }

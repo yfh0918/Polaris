@@ -8,24 +8,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.polaris.core.Constant;
 import com.polaris.core.OrderWrapper;
 import com.polaris.core.config.value.AutoUpdateConfigChangeListener;
-import com.polaris.core.util.EncryptUtil;
 import com.polaris.core.util.SpringUtil;
 import com.polaris.core.util.StringUtil;
 
 @SuppressWarnings("rawtypes")
 public abstract class ConfHandlerProvider {
 
-    private static final ServiceLoader<ConfHandler> serviceLoader = ServiceLoader.load(ConfHandler.class);
+    private static final ServiceLoader<ConfHandler> handlerLoader = ServiceLoader.load(ConfHandler.class);
+	private static final ServiceLoader<ConfEndPoint> endPointLoader = ServiceLoader.load(ConfEndPoint.class);
+
 	private static List<OrderWrapper> configHandlerList = new ArrayList<OrderWrapper>();
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
-	private static ConfHandler handler = getConfHandler();
+	private static ConfHandler handler = handler();
 	
 	//初始化
-    private static ConfHandler getConfHandler() {
+    private static ConfHandler handler() {
 		if (!initialized.compareAndSet(false, true)) {
             return handler;
         }
-    	for (ConfHandler configHandler : serviceLoader) {
+    	for (ConfHandler configHandler : handlerLoader) {
     		OrderWrapper.insertSorted(configHandlerList, configHandler);
         }
     	if (configHandlerList.size() > 0) {
@@ -34,29 +35,33 @@ public abstract class ConfHandlerProvider {
     	return handler;
     }
     
+    public static ServiceLoader<ConfEndPoint> endPoints() {
+    	return endPointLoader;
+    }
+    
     //载入缓存+监听
-    public static void loadConfig(ConfHandlerEnum configEnum, String fileName) {
+    public static void load(ConfHandlerEnum configEnum, String fileName) {
     	
 		//载入配置到缓存
-    	cacheConfig(configEnum, getConfig(fileName), false);
+    	cache(configEnum, get(fileName), false);
 		
     	//增加监听
     	addListener(fileName, new ConfListener() {
 			@Override
 			public void receive(String propertyContent) {
-				cacheConfig(configEnum, propertyContent, true);
+				cache(configEnum, propertyContent, true);
 			}
 		});
     }
     
     // 载入缓存
-    public static void cacheConfig(ConfHandlerEnum configEnum, String config, boolean isListen) {
+    public static void cache(ConfHandlerEnum configEnum, String config, boolean isListen) {
     	if (StringUtil.isNotEmpty(config)) {
 			String[] contents = config.split(Constant.LINE_SEP);
 			for (String content : contents) {
 				String[] keyvalue = ConfHandlerSupport.getKeyValue(content);
 				if (keyvalue != null) {
-					configEnum.put(keyvalue[0], getDecryptValue(keyvalue[1]));
+					configEnum.put(keyvalue[0], ConfHandlerSupport.getDecryptValue(keyvalue[1]));
 				}
 			}
 	    	if (isListen) {
@@ -66,7 +71,7 @@ public abstract class ConfHandlerProvider {
     }
 	
     // 获取文件的所有内容-扩展
-	public static String getConfig(String fileName) {
+	public static String get(String fileName) {
 		
 		//扩展点
 		if (handler != null) {
@@ -93,14 +98,5 @@ public abstract class ConfHandlerProvider {
 		}
 	}
 	
-	private static String getDecryptValue(String propVal) {
-		//解密操作
-		try {
-			EncryptUtil encrypt = EncryptUtil.getInstance();
-			propVal = encrypt.decrypt(EncryptUtil.START_WITH, propVal);
-		} catch (Exception ex) {
-			//nothing
-		}
-		return propVal;
-	}
+
 }

@@ -1,6 +1,7 @@
 package com.polaris.extension.db.config;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -38,14 +39,12 @@ public class DataSourceConfig {
 		DataSource defaultDS = createDateSource(DEAULT_DATASOUCE_KEY);
 		
 		//获取多数据源名称
-		String dsNames = ConfClient.get("jdbc.names",ConfClient.get("spring.datasource.names"));
-		String[] dsNameArray = null;
-		if (StringUtil.isNotEmpty(dsNames)) {
-			dsNameArray = dsNames.split(",");
+		List<String> dsNames = DBEndPoint.getNames();
+		if (dsNames.size() > 0) {
 			
 			//重新设置默认数据源
 			if (defaultDS == null) {
-				defaultDSName = dsNameArray[0];//没有默认的获取第一个作为默认的
+				defaultDSName = dsNames.get(0);//没有默认的获取第一个作为默认的
 				defaultDS = createDateSource(defaultDSName);
 			}
 		}
@@ -60,8 +59,8 @@ public class DataSourceConfig {
 		targetDataSources.put(defaultDSName, defaultDS);//保存默认数据源
 		
 		//保存多数据源（去除重复的）
-		if (dsNameArray != null) {
-			for (String name : dsNameArray) {
+		if (dsNames.size() > 0) {
+			for (String name : dsNames) {
 				if (!targetDataSources.containsKey(name)) {
 					targetDataSources.put(name, createDateSource(DEAULT_DATASOUCE_KEY));
 				}

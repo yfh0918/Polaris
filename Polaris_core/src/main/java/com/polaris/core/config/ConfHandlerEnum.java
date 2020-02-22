@@ -26,10 +26,17 @@ public enum ConfHandlerEnum {
         return cache;
     }
     public void put(String key, String value) {
+    	
+    	//载入缓存
         cache.put(key, value);
         if (logger.isDebugEnabled()) {
 			logger.debug("type:{} key:{} value:{} is updated", type,key,value);		
 		}
+        
+        //外部扩展的filter
+        for (ConfEndPoint confEndPoint : ConfHandlerProvider.endPoints()) {
+	    	confEndPoint.filter(key, value);
+        }
     }
     public String get(String key) {
         return cache.get(key);
