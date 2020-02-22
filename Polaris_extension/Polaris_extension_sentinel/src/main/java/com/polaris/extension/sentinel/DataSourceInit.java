@@ -1,4 +1,4 @@
-package com.polaris.sentinel;
+package com.polaris.extension.sentinel;
 
 import com.alibaba.csp.sentinel.init.InitFunc;
 import com.polaris.core.config.ConfClient;

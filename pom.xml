@@ -16,7 +16,6 @@
         <module>Polaris_naming</module>
         <module>Polaris_logger</module>
         <module>Polaris_cache</module>
-        <module>Polaris_sentinel</module>
         <module>Polaris_extension</module>
     </modules>
 

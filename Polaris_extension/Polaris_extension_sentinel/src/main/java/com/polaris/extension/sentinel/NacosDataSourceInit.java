@@ -1,4 +1,4 @@
-package com.polaris.sentinel;
+package com.polaris.extension.sentinel;
 
 import java.util.List;
 

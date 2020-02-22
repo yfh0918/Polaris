@@ -190,11 +190,6 @@
 	            <artifactId>Polaris_cache</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency>   
-	        <dependency>
-	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_sentinel</artifactId>
-	            <version>${polaris-version}</version>
-	        </dependency>  
 
 	       	<dependency>
 	            <groupId>com.polaris</groupId>
@@ -232,6 +227,11 @@
 	            <artifactId>Polaris_extension_mvc_config</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency>
+	        <dependency>
+	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_extension_sentinel</artifactId>
+	            <version>${polaris-version}</version>
+	        </dependency>  
 	        	            
             <!-- common通用类 -->
             <dependency>

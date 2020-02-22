@@ -131,7 +131,7 @@
         </dependency>   
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_sentinel</artifactId>
+            <artifactId>Polaris_extension_sentinel</artifactId>
         </dependency>  
         <dependency>
             <groupId>com.polaris</groupId>
