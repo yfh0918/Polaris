@@ -39,22 +39,17 @@ public abstract class ConfClient {
             return;
         }
 		
-		//扩展的接口
-	    for (ConfEndPoint confEndPoint : ConfHandlerProvider.endPoints()) {
-	    	confEndPoint.init();
-        }
-		
     	//初始DEFAULT_CONFIG
-		loadDefault();
+		initDefault();
 		
 		//载入扩展文件
-		loadExtend();
+		initExtend();
 		
 		//载入全局文件
-		loadGlobal();
+		initGlobal();
 	}
 	
-	private static void loadDefault() {
+	private static void initDefault() {
 		
     	// 启动字符集
     	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
@@ -95,8 +90,13 @@ public abstract class ConfClient {
 			}
 		}
 		logger.info("systemProperties loading end");
+		
+		//扩展的接口
+	    for (ConfEndPoint confEndPoint : ConfHandlerProvider.endPoints()) {
+	    	confEndPoint.init();
+        }
 	}
-	private static void loadExtend() {
+	private static void initExtend() {
 		
 		//扩展的文件
 		String[] extendProperties = ConfHandlerSupport.getExtensionProperties();
@@ -113,7 +113,7 @@ public abstract class ConfClient {
 	    	confEndPoint.loadExtend(ConfHandlerEnum.EXTEND);
         }
 	}
-	private static void loadGlobal() {
+	private static void initGlobal() {
 		
 		//扩展的文件
 		String[] globalProperties = ConfHandlerSupport.getGlobalProperties();
