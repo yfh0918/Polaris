@@ -33,10 +33,8 @@ public enum ConfHandlerEnum {
 			logger.debug("type:{} key:{} value:{} is updated", type,key,value);		
 		}
         
-        //外部扩展的filter
-        for (ConfEndPoint confEndPoint : ConfHandlerProvider.endPoints()) {
-	    	confEndPoint.filter(key, value);
-        }
+        //外部模块接入点的filter
+        ConfHandlerProvider.filterEndPoint(key, value);
     }
     public String get(String key) {
         return cache.get(key);

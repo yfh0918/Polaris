@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.ConfHandlerProvider;
 import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.config.ConfListener;
 import com.polaris.core.util.StringUtil;
@@ -39,10 +39,10 @@ public class HttpStatic {
     static {
     	
     	//先获取
-    	loadUpstream(ConfClient.getConfigValue(LISTEN));
+    	loadUpstream(ConfHandlerProvider.get(LISTEN));
     	
     	//后监听
-    	ConfClient.addListener(LISTEN, new ConfListener() {
+    	ConfHandlerProvider.listen(LISTEN, new ConfListener() {
             @Override
             public void receive(String content) {
                 loadUpstream(content);

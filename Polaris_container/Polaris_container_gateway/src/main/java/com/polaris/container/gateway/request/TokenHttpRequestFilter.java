@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.ConfHandlerProvider;
 import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.config.ConfListener;
 import com.polaris.core.util.JwtUtil;
@@ -39,10 +39,10 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
 
 	static {
 		//先获取
-		loadFile(ConfClient.getConfigValue(FILE_NAME));
+		loadFile(ConfHandlerProvider.get(FILE_NAME));
 		
 		//后监听
-    	ConfClient.addListener(FILE_NAME, new ConfListener() {
+		ConfHandlerProvider.listen(FILE_NAME, new ConfListener() {
 			@Override
 			public void receive(String content) {
 				loadFile(content);
