@@ -28,95 +28,30 @@ import com.zaxxer.hikari.HikariDataSource;
 @EnableTransactionManagement(proxyTargetClass=true)
 public class DataSourceConfig {
 	
+	private static final String DEAULT_DATASOUCE_KEY = "default";
+	private static final String PRIMARY_DATASOURCE_KEY = "primary";
+	private static final String SECONDARY_DATASOURCE_KEY = "secondary";
+	private static final String THIRDARY_DATASOURCE_KEY = "thirdary";
+	
 	@Bean(name = "primaryDataSource")    
     public DataSource primaryDataSource() { 
-		String jdbcUrl = ConfClient.get("jdbc.url",ConfClient.get("spring.datasource.url"));
-		if (StringUtil.isEmpty(jdbcUrl)) {
-			jdbcUrl = ConfClient.get("jdbc.primary.url",ConfClient.get("spring.datasource.primary.url"));
+		DataSource dataSource = createDateSource(DEAULT_DATASOUCE_KEY);
+		if (dataSource == null) {
+			dataSource = createDateSource(PRIMARY_DATASOURCE_KEY);
 		}
-		String username = ConfClient.get("jdbc.username",ConfClient.get("spring.datasource.username"));
-		if (StringUtil.isEmpty(username)) {
-			username = ConfClient.get("jdbc.primary.username",ConfClient.get("spring.datasource.primary.username"));
-		}
-		String password = ConfClient.get("jdbc.password",ConfClient.get("spring.datasource.password"));
-		if (StringUtil.isEmpty(password)) {
-			password = ConfClient.get("jdbc.primary.password",ConfClient.get("spring.datasource.primary.password"));
-		}
-		if (StringUtil.isEmpty(jdbcUrl) || StringUtil.isEmpty(username) || StringUtil.isEmpty(password)) {
-			return null;
-		}
-		String driver = ConfClient.get("jdbc.driver",ConfClient.get("spring.datasource.driver"));
-		if (StringUtil.isEmpty(driver)) {
-			driver = ConfClient.get("jdbc.primary.driver",ConfClient.get("spring.datasource.primary.driver"));
-		}
-		if (StringUtil.isEmpty(driver)) {
-			driver = "com.mysql.cj.jdbc.Driver";
-		}
-		HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setDriverClassName(driver); 
-        dataSource.setJdbcUrl(jdbcUrl);
-        dataSource.setUsername(username);    
-        dataSource.setPassword(password);   
-        dataSource.setReadOnly(false);
-        dataSource.setConnectionTimeout(30000);
-        dataSource.setIdleTimeout(600000);
-        dataSource.setMaxLifetime(1800000);
-        dataSource.setMaximumPoolSize(10);
-        dataSource.setMinimumIdle(2);
         return dataSource;    
     }
 	
 	@Bean(name = "secondaryDataSource")    
     public DataSource secondaryDataSource() { 
-		String jdbcUrl = ConfClient.get("jdbc.secondary.url",ConfClient.get("spring.datasource.secondary.url"));
-		String username = ConfClient.get("jdbc.secondary.username",ConfClient.get("spring.datasource.secondary.username"));
-		String password = ConfClient.get("jdbc.secondary.password",ConfClient.get("spring.datasource.secondary.password"));
-		if (StringUtil.isEmpty(jdbcUrl) || StringUtil.isEmpty(username) || StringUtil.isEmpty(password)) {
-			return null;
-		}
-		String driver = ConfClient.get("jdbc.secondary.driver",ConfClient.get("spring.datasource.secondary.driver"));
-		if (StringUtil.isEmpty(driver)) {
-			driver = "com.mysql.cj.jdbc.Driver";
-		}
-		HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setDriverClassName(driver); 
-        dataSource.setJdbcUrl(jdbcUrl);
-        dataSource.setUsername(username);    
-        dataSource.setPassword(password);   
-        dataSource.setReadOnly(false);
-        dataSource.setConnectionTimeout(30000);
-        dataSource.setIdleTimeout(600000);
-        dataSource.setMaxLifetime(1800000);
-        dataSource.setMaximumPoolSize(10);
-        dataSource.setMinimumIdle(2);
-        return dataSource;    
+        return createDateSource(SECONDARY_DATASOURCE_KEY);    
     }
 	
 	@Bean(name = "thirdaryDataSource")    
     public DataSource thirdaryDataSource() { 
-		String jdbcUrl = ConfClient.get("jdbc.thirdary.url",ConfClient.get("spring.datasource.thirdary.url"));
-		String username = ConfClient.get("jdbc.thirdary.username",ConfClient.get("spring.datasource.thirdary.username"));
-		String password = ConfClient.get("jdbc.thirdary.password",ConfClient.get("spring.datasource.thirdary.password"));
-		if (StringUtil.isEmpty(jdbcUrl) || StringUtil.isEmpty(username) || StringUtil.isEmpty(password)) {
-			return null;
-		}
-		String driver = ConfClient.get("jdbc.thirdary.driver",ConfClient.get("spring.datasource.thirdary.driver"));
-		if (StringUtil.isEmpty(driver)) {
-			driver = "com.mysql.cj.jdbc.Driver";
-		}
-		HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setDriverClassName(driver); 
-        dataSource.setJdbcUrl(jdbcUrl);
-        dataSource.setUsername(username);    
-        dataSource.setPassword(password);   
-        dataSource.setReadOnly(false);
-        dataSource.setConnectionTimeout(30000);
-        dataSource.setIdleTimeout(600000);
-        dataSource.setMaxLifetime(1800000);
-        dataSource.setMaximumPoolSize(10);
-        dataSource.setMinimumIdle(2);
-        return dataSource;    
+		return createDateSource(THIRDARY_DATASOURCE_KEY);   
     }
+
 	
 	@Bean(name = "dataSource") 
 	public DataSource dataSource() {
@@ -125,15 +60,15 @@ public class DataSourceConfig {
         }
 		DynamicDataSource dataSource = new DynamicDataSource();
 		Map<Object, Object> targetDataSources = new HashMap<>();
-		targetDataSources.put("primary", primaryDataSource());
+		targetDataSources.put(PRIMARY_DATASOURCE_KEY, primaryDataSource());
 		if (secondaryDataSource() != null) {
-			targetDataSources.put("secondary", secondaryDataSource());
+			targetDataSources.put(SECONDARY_DATASOURCE_KEY, secondaryDataSource());
 		}
 		if (thirdaryDataSource() != null) {
-			targetDataSources.put("thirdary", thirdaryDataSource());
+			targetDataSources.put(THIRDARY_DATASOURCE_KEY, thirdaryDataSource());
 		}
 		dataSource.setTargetDataSources(targetDataSources);
-		dataSource.setDefaultTargetDataSource(targetDataSources.get("primary"));
+		dataSource.setDefaultTargetDataSource(targetDataSources.get(PRIMARY_DATASOURCE_KEY));
 		return dataSource;
 	}
 	
@@ -174,4 +109,116 @@ public class DataSourceConfig {
         factory.setMapperLocations(resolver.getResources("classpath*:/mappers/**/*.xml"));
         return factory.getObject();
     }
+	
+
+	public static DataSource createDateSource(String key) {
+		return createDateSource(createDateSourceParameter(key));
+	}
+	public static DataSource createDateSource(Map<String, String> parameterMap) {
+		if (parameterMap == null) {
+			return null;
+		}
+		return createDateSource(
+				parameterMap.get("jdbcUrl"),parameterMap.get("username"),
+				parameterMap.get("password"),parameterMap.get("driver"),
+				Boolean.parseBoolean(parameterMap.get("readOnly")),Integer.parseInt(parameterMap.get("connectionTimeout")),
+				Integer.parseInt(parameterMap.get("idleTimeout")),Integer.parseInt(parameterMap.get("maxLifetime")),
+				Integer.parseInt(parameterMap.get("maximumPoolSize")),Integer.parseInt(parameterMap.get("minimumIdle"))
+				);
+	}
+	public static DataSource createDateSource(
+			String jdbcUrl, 
+			String username, 
+			String password, 
+			String driver,
+			boolean readOnly,
+			int connectionTimeout,
+			int idleTimeout,
+			int maxLifetime,
+			int maximumPoolSize,
+			int minimumIdle
+			) {
+		HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl(jdbcUrl);
+        dataSource.setUsername(username);    
+        dataSource.setPassword(password);   
+        dataSource.setDriverClassName(driver); 
+        dataSource.setReadOnly(readOnly);
+        dataSource.setConnectionTimeout(connectionTimeout);
+        dataSource.setIdleTimeout(idleTimeout);
+        dataSource.setMaxLifetime(maxLifetime);
+        dataSource.setMaximumPoolSize(maximumPoolSize);
+        dataSource.setMinimumIdle(minimumIdle);
+        return dataSource;
+	}
+	
+	public static Map<String, String> createDateSourceParameter(String key) {
+		Map<String, String> rtnMap = new HashMap<>();
+		key = getKey(key);
+		String jdbcUrl = ConfClient.get("jdbc"+key+".url",ConfClient.get("spring.datasource"+key+".url"));
+		String username = ConfClient.get("jdbc"+key+".username",ConfClient.get("spring.datasource"+key+".username"));
+		String password = ConfClient.get("jdbc"+key+".password",ConfClient.get("spring.datasource"+key+".password"));
+		if (StringUtil.isEmpty(jdbcUrl) || StringUtil.isEmpty(username) || StringUtil.isEmpty(password)) {
+			return null;
+		}
+		rtnMap.put("jdbcUrl", jdbcUrl);
+		rtnMap.put("username", username);
+		rtnMap.put("password", password);
+
+		String driver = ConfClient.get("jdbc"+key+".driver",ConfClient.get("spring.datasource"+key+".driver"));
+		if (StringUtil.isEmpty(driver)) {
+			driver = "com.mysql.cj.jdbc.Driver";
+		}
+		rtnMap.put("driver", driver);
+
+		//readOnly
+		String readOnly = ConfClient.get("jdbc"+key+".readOnly",ConfClient.get("spring.datasource"+key+".readOnly"));
+		if (StringUtil.isEmpty(readOnly)) {
+			readOnly = "false";
+		}
+		rtnMap.put("readOnly", readOnly);
+
+		//connectionTimeout
+		String connectionTimeout = ConfClient.get("jdbc"+key+".connectionTimeout",ConfClient.get("spring.datasource"+key+".connectionTimeout"));
+		if (StringUtil.isEmpty(connectionTimeout)) {
+			connectionTimeout = "30000";
+		}
+		rtnMap.put("connectionTimeout", connectionTimeout);
+
+		//idleTimeout
+		String idleTimeout = ConfClient.get("jdbc"+key+".idleTimeout",ConfClient.get("spring.datasource"+key+".idleTimeout"));
+		if (StringUtil.isEmpty(idleTimeout)) {
+			idleTimeout = "600000";
+		}
+		rtnMap.put("idleTimeout", idleTimeout);
+
+		//idleTimeout
+		String maxLifetime = ConfClient.get("jdbc"+key+".maxLifetime",ConfClient.get("spring.datasource"+key+".maxLifetime"));
+		if (StringUtil.isEmpty(maxLifetime)) {
+			maxLifetime = "1800000";
+		}
+		rtnMap.put("maxLifetime", maxLifetime);
+		
+		//maximumPoolSize
+		String maximumPoolSize = ConfClient.get("jdbc"+key+".maximumPoolSize",ConfClient.get("spring.datasource"+key+".maximumPoolSize"));
+		if (StringUtil.isEmpty(maximumPoolSize)) {
+			maximumPoolSize = "10";
+		}
+		rtnMap.put("maximumPoolSize", maximumPoolSize);
+		
+		//minimumIdle
+		String minimumIdle = ConfClient.get("jdbc"+key+".minimumIdle",ConfClient.get("spring.datasource"+key+".minimumIdle"));
+		if (StringUtil.isEmpty(minimumIdle)) {
+			minimumIdle = "2";
+		}
+		rtnMap.put("minimumIdle", minimumIdle);
+        
+		return rtnMap;
+	}
+	private static String getKey(String key) {
+		if (StringUtil.isEmpty(key) || key.equals(DEAULT_DATASOUCE_KEY)) {
+			return "";
+		}
+		return "."+key;
+	}
 }
