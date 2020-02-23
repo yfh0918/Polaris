@@ -23,9 +23,9 @@ public class ConfHandlerSupport {
 	public static String[] getProperties(String type) {
 		String files = null;
 		if (type.equals(Config.EXTEND)) {
-			files = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get(),Constant.PROJECT_EXTENSION_PROPERTIES);
+			files = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get()[0],Constant.PROJECT_EXTENSION_PROPERTIES);
 		} else  if (type.equals(Config.GLOBAL)) {
-			files = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get(),Constant.PROJECT_GLOBAL_PROPERTIES);
+			files = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get()[0],Constant.PROJECT_GLOBAL_PROPERTIES);
 		}
 		if (StringUtil.isEmpty(files)) {
 			return null;

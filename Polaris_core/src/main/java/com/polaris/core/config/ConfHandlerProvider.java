@@ -39,11 +39,11 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
     	
     	logger.info("{} loading start",Constant.DEFAULT_CONFIG_NAME);
     	//获取DEFAULT_CONFIG_NAME
-		put(ConfigFactory.get(), PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME));
+		put(ConfigFactory.get()[0], PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME));
 		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
-			put(ConfigFactory.get(),Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
+			put(ConfigFactory.get()[0],Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
 		} else {
-			put(ConfigFactory.get(),Constant.IP_ADDRESS, NetUtils.getLocalHost());
+			put(ConfigFactory.get()[0],Constant.IP_ADDRESS, NetUtils.getLocalHost());
 		}
 		logger.info("{} loading end",Constant.DEFAULT_CONFIG_NAME);
 		
@@ -51,7 +51,7 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
     	logger.info("systemEnv loading start");
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemEnvironment().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
-				put(ConfigFactory.get(),entry.getKey(), entry.getValue());
+				put(ConfigFactory.get()[0],entry.getKey(), entry.getValue());
 			}
 		}
     	logger.info("systemEnv loading end");
@@ -60,7 +60,7 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
     	logger.info("systemProperties loading start");
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemProperties().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
-				put(ConfigFactory.get(), entry.getKey(), entry.getValue());
+				put(ConfigFactory.get()[0], entry.getKey(), entry.getValue());
 			}
 		}
 		logger.info("systemProperties loading end");

@@ -7,15 +7,14 @@ public class ConfigFactory {
 	private static Config globalConfig = ConfEnum.GLOBAL;
 	
 	public static Config get(String type) {
-		if (type.equals(ConfEnum.EXTEND.getType())) {
+		if (ConfEnum.EXTEND.getType().equals(type)) {
     		return extendConfig;
-    	}
-    	if (type.equals(ConfEnum.GLOBAL.getType())) {
+    	} else if (ConfEnum.GLOBAL.getType().equals(type)) {
     		return globalConfig;
     	}
     	return defaultConfig;
 	}
-	public static Config get() {
-    	return defaultConfig;
+	public static Config[] get() {
+    	return new Config[]{defaultConfig,extendConfig,globalConfig};//第一个必须设置为default
 	}
 }
