@@ -43,10 +43,10 @@ public class WebFilterInit {
 		
 		//先获取
 		try {
-			loadFile(ConfHandlerProvider.get(FILE_NAME));
+			loadFile(ConfHandlerProvider.INSTANCE.get(FILE_NAME));
 			
 			//后监听
-			ConfHandlerProvider.listen(FILE_NAME, new ConfListener() {
+			ConfHandlerProvider.INSTANCE.listen(FILE_NAME, new ConfListener() {
 				@Override
 				public void receive(String content) {
 					loadFile(content);

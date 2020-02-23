@@ -77,10 +77,10 @@ public class HostResolverImpl implements HostResolver {
     private HostResolverImpl() {
        
     	//先获取
-    	loadUpstream(ConfHandlerProvider.get(UPSTREAM));
+    	loadUpstream(ConfHandlerProvider.INSTANCE.get(UPSTREAM));
     	
     	//后监听
-    	ConfHandlerProvider.listen(UPSTREAM, new ConfListener() {
+    	ConfHandlerProvider.INSTANCE.listen(UPSTREAM, new ConfListener() {
             @Override
             public void receive(String content) {
                 loadUpstream(content);

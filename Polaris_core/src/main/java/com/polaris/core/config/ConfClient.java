@@ -1,7 +1,5 @@
 package com.polaris.core.config;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.polaris.core.Constant;
 import com.polaris.core.util.StringUtil;
 
@@ -19,27 +17,6 @@ import com.polaris.core.util.StringUtil;
 *
 */
 public abstract class ConfClient {
-	
-	//初始化标志
-	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
-	
-	//初始化操作
-	public static void init() {
-		
-		//初始化
-		if (!initialized.compareAndSet(false, true)) {
-            return;
-        }
-		
-    	//初始DEFAULT_CONFIG
-		ConfHandlerSupport.initDefault();
-		
-		//初始化外部模块接入点
-		ConfHandlerProvider.initEndPoint();
-		
-		//载入扩展文件
-		ConfHandlerProvider.initHandler();
-	}
 	
 	/**
 	* 设置配置信息

@@ -39,10 +39,10 @@ public class HttpStatic {
     static {
     	
     	//先获取
-    	loadUpstream(ConfHandlerProvider.get(LISTEN));
+    	loadUpstream(ConfHandlerProvider.INSTANCE.get(LISTEN));
     	
     	//后监听
-    	ConfHandlerProvider.listen(LISTEN, new ConfListener() {
+    	ConfHandlerProvider.INSTANCE.listen(LISTEN, new ConfListener() {
             @Override
             public void receive(String content) {
                 loadUpstream(content);

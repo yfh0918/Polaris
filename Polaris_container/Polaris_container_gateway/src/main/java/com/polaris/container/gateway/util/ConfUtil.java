@@ -26,10 +26,10 @@ public class ConfUtil {
     	for (FilterType filterType : FilterType.values()) {
     		
     		//先获取
-    		loadPatters(filterType.name(), ConfHandlerProvider.get(filterType.getFileName()));
+    		loadPatters(filterType.name(), ConfHandlerProvider.INSTANCE.get(filterType.getFileName()));
     		
     		//后监听
-    		ConfHandlerProvider.listen(filterType.getFileName(), new ConfListener() {
+    		ConfHandlerProvider.INSTANCE.listen(filterType.getFileName(), new ConfListener() {
     			@Override
     			public void receive(String content) {
 					loadPatters(filterType.name(), content);

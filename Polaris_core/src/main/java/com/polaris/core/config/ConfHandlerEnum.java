@@ -11,9 +11,9 @@ import com.polaris.core.util.StringUtil;
 
 public enum ConfHandlerEnum {
 	
-	DEFAULT("default"),
-    EXTEND("extend"),
-    GLOBAL("global");
+	DEFAULT(ConfHandlerProviderAbs.DEFAULT),
+    EXTEND(ConfHandlerProviderAbs.EXTEND),
+    GLOBAL(ConfHandlerProviderAbs.GLOBAL);
     private String type;
     private Map<String, String> cache = new ConcurrentHashMap<>();
 	private static final Logger logger = LoggerFactory.getLogger(ConfHandlerEnum.class);
@@ -25,7 +25,7 @@ public enum ConfHandlerEnum {
     protected String getType() {
         return type;
     }
-    protected Map<String, String> getCache() {
+    protected Map<String, String> get() {
         return cache;
     }
     protected void put(String key, String value) {
@@ -37,7 +37,7 @@ public enum ConfHandlerEnum {
 		}
         
         //外部模块接入点的filter
-        ConfHandlerProvider.filterEndPoint(key, value);
+        ConfHandlerProvider.INSTANCE.filterEndPoint(key, value);
     }
     protected String get(String key) {
         return cache.get(key);
@@ -53,6 +53,16 @@ public enum ConfHandlerEnum {
 				}
 			}
 		} 
+    }
+    
+    public static ConfHandlerEnum getConfig(String type) {
+    	if (type.equals(ConfHandlerEnum.EXTEND.type)) {
+    		return ConfHandlerEnum.EXTEND;
+    	}
+    	if (type.equals(ConfHandlerEnum.GLOBAL.type)) {
+    		return ConfHandlerEnum.GLOBAL;
+    	}
+    	return ConfHandlerEnum.DEFAULT;
     }
 
 }
