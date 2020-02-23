@@ -2,6 +2,7 @@ package com.polaris.core.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -12,10 +13,6 @@ public abstract class ConfHandlerProviderAbs {
 	
     protected final ServiceLoader<ConfHandler> handlerLoader = ServiceLoader.load(ConfHandler.class);
     protected final ServiceLoader<ConfEndPoint> endPointLoader = ServiceLoader.load(ConfEndPoint.class);
-    
-    public static final String DEFAULT = "default";
-    public static final String EXTEND = "extend";
-    public static final String GLOBAL = "global";
 
 	private volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	protected ConfHandler handler = handler();
@@ -55,15 +52,8 @@ public abstract class ConfHandlerProviderAbs {
     }
     
     protected void initHandler() {
-		initHandler(EXTEND);
-		initHandler(GLOBAL);
-    }
-
-    
-    protected void filterEndPoint(String key, String value) {
-	    for (ConfEndPoint confEndPoint : endPointLoader) {
-	    	confEndPoint.filter(key, value);
-        }
+		initHandler(Config.EXTEND);
+		initHandler(Config.GLOBAL);
     }
 
     protected abstract void initHandler(String type);
@@ -92,5 +82,21 @@ public abstract class ConfHandlerProviderAbs {
 	
 	public void listen(String fileName, ConfListener listerner) {
 		listen(fileName, ConfClient.getAppName(), listerner);
+	}
+	
+	public Map<String, String> get(Config config) {
+		return config.get();
+	}
+	public String get(Config config,String key) {
+		return config.get(key);
+	}
+	public void put(Config config, String content) {
+		config.put(content);
+	}
+	public void put(Config config, String key, String value) {
+		config.put(key, value);
+		for (ConfEndPoint confEndPoint : endPointLoader) {
+	    	confEndPoint.filter(key, value);
+        }
 	}
 }

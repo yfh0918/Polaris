@@ -39,11 +39,11 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
     	
     	logger.info("{} loading start",Constant.DEFAULT_CONFIG_NAME);
     	//获取DEFAULT_CONFIG_NAME
-		ConfHandlerEnum.DEFAULT.put(PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME));
+		put(ConfigFactory.get(), PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME));
 		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
-			ConfHandlerEnum.DEFAULT.put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
+			put(ConfigFactory.get(),Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
 		} else {
-			ConfHandlerEnum.DEFAULT.put(Constant.IP_ADDRESS, NetUtils.getLocalHost());
+			put(ConfigFactory.get(),Constant.IP_ADDRESS, NetUtils.getLocalHost());
 		}
 		logger.info("{} loading end",Constant.DEFAULT_CONFIG_NAME);
 		
@@ -51,7 +51,7 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
     	logger.info("systemEnv loading start");
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemEnvironment().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
-				ConfHandlerEnum.DEFAULT.put(entry.getKey(), entry.getValue());
+				put(ConfigFactory.get(),entry.getKey(), entry.getValue());
 			}
 		}
     	logger.info("systemEnv loading end");
@@ -60,7 +60,7 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
     	logger.info("systemProperties loading start");
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemProperties().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
-				ConfHandlerEnum.DEFAULT.put(entry.getKey(), entry.getValue());
+				put(ConfigFactory.get(), entry.getKey(), entry.getValue());
 			}
 		}
 		logger.info("systemProperties loading end");
@@ -70,7 +70,7 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
     protected void initHandler(String type) {
     	
 		//获取配置
-		ConfHandlerEnum configEnum = ConfHandlerEnum.getConfig(type);
+		Config config = ConfigFactory.get(type);
 		
 		//获取配置文件
 		String[] properties = ConfHandlerSupport.getProperties(type);
@@ -81,14 +81,14 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
 				
 				//载入配置到缓存
 				logger.info("{} loading start",file);
-		    	configEnum.put(get(file,ConfHandlerSupport.getGroup(type)));
+				put(config, get(file,ConfHandlerSupport.getGroup(type)));
 				
 		    	//增加监听
 		    	listen(file, ConfHandlerSupport.getGroup(type), new ConfListener() {
 					@Override
-					public void receive(String config) {
-						configEnum.put(config);
-				    	SpringUtil.getBean(AutoUpdateConfigChangeListener.class).onChange(configEnum.get());//监听配置
+					public void receive(String content) {
+						put(config, content);
+				    	SpringUtil.getBean(AutoUpdateConfigChangeListener.class).onChange(get(config));//监听配置
 					}
 				});
 				logger.info("{} loading end",file);

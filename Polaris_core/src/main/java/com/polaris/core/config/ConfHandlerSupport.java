@@ -7,7 +7,7 @@ import com.polaris.core.util.StringUtil;
 public class ConfHandlerSupport {
 
 	public static String getGroup(String type) {
-		if (ConfHandlerProviderAbs.GLOBAL.equals(type)) {
+		if (Config.GLOBAL.equals(type)) {
 			return type;
 		}
 		return ConfClient.getAppName();
@@ -22,10 +22,10 @@ public class ConfHandlerSupport {
 	*/
 	public static String[] getProperties(String type) {
 		String files = null;
-		if (type.equals(ConfHandlerProviderAbs.EXTEND)) {
-			files = ConfHandlerEnum.DEFAULT.get(Constant.PROJECT_EXTENSION_PROPERTIES);
-		} else  if (type.equals(ConfHandlerProviderAbs.GLOBAL)) {
-			files = ConfHandlerEnum.DEFAULT.get(Constant.PROJECT_GLOBAL_PROPERTIES);
+		if (type.equals(Config.EXTEND)) {
+			files = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get(),Constant.PROJECT_EXTENSION_PROPERTIES);
+		} else  if (type.equals(Config.GLOBAL)) {
+			files = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get(),Constant.PROJECT_GLOBAL_PROPERTIES);
 		}
 		if (StringUtil.isEmpty(files)) {
 			return null;

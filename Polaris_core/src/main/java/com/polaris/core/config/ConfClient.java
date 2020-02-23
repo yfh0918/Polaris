@@ -26,7 +26,7 @@ public abstract class ConfClient {
 	* @since 
 	*/
 	public static void set(String key, String value) {
-		ConfHandlerEnum.DEFAULT.put(key, value);
+		ConfHandlerProvider.INSTANCE.put(ConfigFactory.get(), key, value);
 	}
 	
 	/**
@@ -42,19 +42,19 @@ public abstract class ConfClient {
 	public static String get(String key, String defaultVal) {
 		
 		//application.properties
-		String value = ConfHandlerEnum.DEFAULT.get(key);
+		String value = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get(), key);
 		if (value != null) {
 			return value;
 		}
 		
 		//扩展文件
-		value = ConfHandlerEnum.EXTEND.get(key);
+		value = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get(Config.EXTEND), key);
 		if (value != null) {
 			return value;
 		}
 		
 		//全局
-		value = ConfHandlerEnum.GLOBAL.get(key);
+		value = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get(Config.GLOBAL), key);
 		if (value != null) {
 			return value;
 		}
@@ -62,7 +62,7 @@ public abstract class ConfClient {
 		
 		//默认值
 		if (StringUtil.isNotEmpty(defaultVal)) {
-			ConfHandlerEnum.DEFAULT.put(key, defaultVal);
+			ConfHandlerProvider.INSTANCE.put(ConfigFactory.get(), key, defaultVal);
 		}
 		
 		//返回默认值
@@ -72,28 +72,28 @@ public abstract class ConfClient {
 	//在设置应用名称的时候启动各项参数载入
 	public static String getAppName() {
 		
-		String appName = ConfHandlerEnum.DEFAULT.get(Constant.PROJECT_NAME);
+		String appName = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get(), Constant.PROJECT_NAME);
 		if (StringUtil.isEmpty(appName)) {
-			appName = ConfHandlerEnum.DEFAULT.get(Constant.SPRING_BOOT_NAME);
+			appName = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get(), Constant.SPRING_BOOT_NAME);
 		}
 		return appName == null ? "" :appName;
 	}
 
 	public static String getConfigRegistryAddress() {
-		String config = ConfHandlerEnum.DEFAULT.get(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
+		String config = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get(), Constant.CONFIG_REGISTRY_ADDRESS_NAME);
 		return config == null ? "" :config;
 	}
 	public static String getNameSpace() {
-		String namespace = ConfHandlerEnum.DEFAULT.get(Constant.PROJECR_NAMESPACE_NAME);
+		String namespace = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get(), Constant.PROJECR_NAMESPACE_NAME);
 		return namespace == null ? "" :namespace;
 	}
 
 	public static String getGroup() {
-		String group = ConfHandlerEnum.DEFAULT.get(Constant.PROJECR_GROUP_NAME);
+		String group = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get(), Constant.PROJECR_GROUP_NAME);
 		return group == null ? "" :group;
 	}
 	public static String getNamingRegistryAddress() {
-		String naming = ConfHandlerEnum.DEFAULT.get(Constant.NAMING_REGISTRY_ADDRESS_NAME);
+		String naming = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get(), Constant.NAMING_REGISTRY_ADDRESS_NAME);
 		return naming == null ? "" :naming;
 	}
 
