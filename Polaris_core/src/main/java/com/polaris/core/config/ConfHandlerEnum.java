@@ -19,13 +19,13 @@ public enum ConfHandlerEnum {
         this.type = type;
     }
 
-    public String getType() {
+    protected String getType() {
         return type;
     }
-    public Map<String, String> getCache() {
+    protected Map<String, String> getCache() {
         return cache;
     }
-    public void put(String key, String value) {
+    protected void put(String key, String value) {
     	
     	//载入缓存
         cache.put(key, value);
@@ -36,7 +36,7 @@ public enum ConfHandlerEnum {
         //外部模块接入点的filter
         ConfHandlerProvider.filterEndPoint(key, value);
     }
-    public String get(String key) {
+    protected String get(String key) {
         return cache.get(key);
     }
 

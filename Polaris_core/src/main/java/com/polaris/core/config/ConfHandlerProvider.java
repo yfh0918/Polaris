@@ -29,8 +29,6 @@ public abstract class ConfHandlerProvider {
 	private static List<OrderWrapper> configHandlerList = new ArrayList<OrderWrapper>();
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	private static ConfHandler handler = handler();
-	
-	//初始化
     private static ConfHandler handler() {
 		if (!initialized.compareAndSet(false, true)) {
             return handler;
@@ -59,7 +57,7 @@ public abstract class ConfHandlerProvider {
     	logger.info("{} loading start",Constant.DEFAULT_CONFIG_NAME);
     	//获取DEFAULT_CONFIG_NAME
 		String content = PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME);
-		cache(ConfHandlerEnum.DEFAULT, content, false);
+		ConfHandlerSupport.cache(ConfHandlerEnum.DEFAULT, content, false);
 		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
 			ConfHandlerEnum.DEFAULT.put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
 		} else {
@@ -125,33 +123,17 @@ public abstract class ConfHandlerProvider {
     private static void initHandler(ConfHandlerEnum configEnum, String fileName) {
     	
 		//载入配置到缓存
-    	cache(configEnum, get(fileName), false);
+    	ConfHandlerSupport.cache(configEnum, get(fileName), false);
 		
     	//增加监听
     	listen(fileName, new ConfListener() {
 			@Override
 			public void receive(String config) {
-				cache(configEnum, config, true);
+				ConfHandlerSupport.cache(configEnum, config, true);
 			}
 		});
     }
     
-    // 载入缓存
-    public static void cache(ConfHandlerEnum configEnum, String config, boolean isListen) {
-    	if (StringUtil.isNotEmpty(config)) {
-			String[] contents = config.split(Constant.LINE_SEP);
-			for (String content : contents) {
-				String[] keyvalue = ConfHandlerSupport.getKeyValue(content);
-				if (keyvalue != null) {
-					configEnum.put(keyvalue[0], ConfHandlerSupport.getDecryptValue(keyvalue[1]));
-				}
-			}
-	    	if (isListen) {
-		    	SpringUtil.getBean(AutoUpdateConfigChangeListener.class).onChange(configEnum.getCache());//监听配置
-	    	}
-		} 
-    }
-	
     // 获取文件的所有内容-扩展
 	public static String get(String fileName) {
 		

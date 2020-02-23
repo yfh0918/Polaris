@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
+import com.polaris.core.config.value.AutoUpdateConfigChangeListener;
 import com.polaris.core.util.EncryptUtil;
+import com.polaris.core.util.SpringUtil;
 import com.polaris.core.util.StringUtil;
 
 public class ConfHandlerSupport {
@@ -106,5 +108,21 @@ public class ConfHandlerSupport {
 		}
 		return propVal;
 	}
+	
+    // 载入缓存
+    public static void cache(ConfHandlerEnum configEnum, String config, boolean isListen) {
+    	if (StringUtil.isNotEmpty(config)) {
+			String[] contents = config.split(Constant.LINE_SEP);
+			for (String content : contents) {
+				String[] keyvalue = ConfHandlerSupport.getKeyValue(content);
+				if (keyvalue != null) {
+					configEnum.put(keyvalue[0], ConfHandlerSupport.getDecryptValue(keyvalue[1]));
+				}
+			}
+	    	if (isListen) {
+		    	SpringUtil.getBean(AutoUpdateConfigChangeListener.class).onChange(configEnum.getCache());//监听配置
+	    	}
+		} 
+    }
 
 }

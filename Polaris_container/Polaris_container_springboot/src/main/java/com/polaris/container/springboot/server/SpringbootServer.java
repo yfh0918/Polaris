@@ -9,7 +9,6 @@ import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.ConfHandlerEnum;
 
 public class SpringbootServer {
 	
@@ -47,12 +46,12 @@ public class SpringbootServer {
     	
     	//project
     	String projectName = ConfClient.get(Constant.SPRING_BOOT_NAME, ConfClient.get(Constant.PROJECT_NAME));
-    	ConfHandlerEnum.DEFAULT.put(Constant.SPRING_BOOT_NAME, projectName);
+    	ConfClient.set(Constant.SPRING_BOOT_NAME, projectName);
     	System.setProperty(Constant.SPRING_BOOT_NAME, projectName);
     	
     	//context
     	String serverContext = ConfClient.get(Constant.SERVER_SPRING_CONTEXT,ConfClient.get(Constant.SERVER_CONTEXT));
-    	ConfHandlerEnum.DEFAULT.put(Constant.SERVER_SPRING_CONTEXT, serverContext);
+    	ConfClient.set(Constant.SERVER_SPRING_CONTEXT, serverContext);
     	System.setProperty(Constant.SERVER_SPRING_CONTEXT, serverContext);
     	
     	//启动应用

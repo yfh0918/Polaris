@@ -42,6 +42,17 @@ public abstract class ConfClient {
 	}
 	
 	/**
+	* 设置配置信息
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
+	public static void set(String key, String value) {
+		ConfHandlerEnum.DEFAULT.put(key, value);
+	}
+	
+	/**
 	* 获取配置信息
 	* @param 
 	* @return 
