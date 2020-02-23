@@ -68,7 +68,7 @@ public abstract class ConfHandlerProviderAbs {
 
     protected abstract void initHandler(String type);
 
-	public String get(String fileName, String group) {
+    public String get(String fileName, String group) {
 		
 		//扩展点
 		if (handler != null) {
@@ -78,11 +78,19 @@ public abstract class ConfHandlerProviderAbs {
     	return null;
 	}
 	
-	public void listen(String fileName,String group, ConfListener listener) {
+    public void listen(String fileName,String group, ConfListener listener) {
 		
     	//扩展点
 		if (handler != null) {
 			handler.listen(fileName, group, listener);
 		}
+	}
+	
+	public String get(String fileName) {
+		return get(fileName, ConfClient.getAppName());
+	}
+	
+	public void listen(String fileName, ConfListener listerner) {
+		listen(fileName, ConfClient.getAppName(), listerner);
 	}
 }

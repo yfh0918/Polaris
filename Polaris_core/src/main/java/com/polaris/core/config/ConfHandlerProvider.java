@@ -96,12 +96,4 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
 		}
     }
     
-	public String get(String fileName) {
-		return get(fileName, ConfClient.getAppName());
-	}
-	
-	public void listen(String fileName, ConfListener listerner) {
-		listen(fileName, ConfClient.getAppName(), listerner);
-	}
-
 }
