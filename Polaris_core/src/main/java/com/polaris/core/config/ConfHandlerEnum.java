@@ -6,6 +6,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.core.Constant;
+import com.polaris.core.util.StringUtil;
+
 public enum ConfHandlerEnum {
 	
 	DEFAULT("default"),
@@ -38,6 +41,18 @@ public enum ConfHandlerEnum {
     }
     protected String get(String key) {
         return cache.get(key);
+    }
+    
+    protected void put(String config) {
+    	if (StringUtil.isNotEmpty(config)) {
+			String[] contents = config.split(Constant.LINE_SEP);
+			for (String content : contents) {
+				String[] keyvalue = ConfHandlerSupport.getKeyValue(content);
+				if (keyvalue != null) {
+					cache.put(keyvalue[0], ConfHandlerSupport.getDecryptValue(keyvalue[1]));
+				}
+			}
+		} 
     }
 
 }

@@ -32,7 +32,7 @@ public abstract class ConfClient {
         }
 		
     	//初始DEFAULT_CONFIG
-		ConfHandlerProvider.initDefault();
+		ConfHandlerSupport.initDefault();
 		
 		//初始化外部模块接入点
 		ConfHandlerProvider.initEndPoint();

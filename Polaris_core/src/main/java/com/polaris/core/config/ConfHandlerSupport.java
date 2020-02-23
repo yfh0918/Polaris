@@ -1,15 +1,17 @@
 package com.polaris.core.config;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.value.AutoUpdateConfigChangeListener;
 import com.polaris.core.util.EncryptUtil;
-import com.polaris.core.util.SpringUtil;
+import com.polaris.core.util.EnvironmentUtil;
+import com.polaris.core.util.NetUtils;
+import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 
 public class ConfHandlerSupport {
@@ -109,20 +111,46 @@ public class ConfHandlerSupport {
 		return propVal;
 	}
 	
-    // 载入缓存
-    public static void cache(ConfHandlerEnum configEnum, String config, boolean isListen) {
-    	if (StringUtil.isNotEmpty(config)) {
-			String[] contents = config.split(Constant.LINE_SEP);
-			for (String content : contents) {
-				String[] keyvalue = ConfHandlerSupport.getKeyValue(content);
-				if (keyvalue != null) {
-					configEnum.put(keyvalue[0], ConfHandlerSupport.getDecryptValue(keyvalue[1]));
-				}
+    //初始化default
+    protected static void initDefault() {
+    	// 启动字符集
+    	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
+
+		// 设置文件
+    	String projectConfigLocation = System.getProperty(Constant.SPRING_CONFIG_LOCACTION);
+    	if (StringUtil.isNotEmpty(projectConfigLocation)) {
+    		Constant.DEFAULT_CONFIG_NAME = projectConfigLocation;
+    	} else if (StringUtil.isNotEmpty(System.getProperty(Constant.PROJECT_CONFIG_NAME))) {
+    		Constant.DEFAULT_CONFIG_NAME = System.getProperty(Constant.PROJECT_CONFIG_NAME);
+    	}
+    	
+    	logger.info("{} loading start",Constant.DEFAULT_CONFIG_NAME);
+    	//获取DEFAULT_CONFIG_NAME
+		ConfHandlerEnum.DEFAULT.put(PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME));
+		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
+			ConfHandlerEnum.DEFAULT.put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
+		} else {
+			ConfHandlerEnum.DEFAULT.put(Constant.IP_ADDRESS, NetUtils.getLocalHost());
+		}
+		logger.info("{} loading end",Constant.DEFAULT_CONFIG_NAME);
+		
+		//查询所有systemenv
+    	logger.info("systemEnv loading start");
+		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemEnvironment().entrySet()) {
+			if (StringUtil.isNotEmpty(entry.getValue())) {
+				ConfHandlerEnum.DEFAULT.put(entry.getKey(), entry.getValue());
 			}
-	    	if (isListen) {
-		    	SpringUtil.getBean(AutoUpdateConfigChangeListener.class).onChange(configEnum.getCache());//监听配置
-	    	}
-		} 
+		}
+    	logger.info("systemEnv loading end");
+		
+		//查询所有systemProperties
+    	logger.info("systemProperties loading start");
+		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemProperties().entrySet()) {
+			if (StringUtil.isNotEmpty(entry.getValue())) {
+				ConfHandlerEnum.DEFAULT.put(entry.getKey(), entry.getValue());
+			}
+		}
+		logger.info("systemProperties loading end");
     }
 
 }
