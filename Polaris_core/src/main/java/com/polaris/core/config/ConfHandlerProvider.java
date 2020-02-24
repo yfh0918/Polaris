@@ -25,11 +25,11 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
     private ConfHandlerProvider() {}
     
     @Override
-    protected void initDefault() {
+    protected void initSystem() {
     	// 启动字符集
     	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
 
-		// 设置文件
+		// 设置application.properties文件名
     	String projectConfigLocation = System.getProperty(Constant.SPRING_CONFIG_LOCACTION);
     	if (StringUtil.isNotEmpty(projectConfigLocation)) {
     		Constant.DEFAULT_CONFIG_NAME = projectConfigLocation;
@@ -37,17 +37,19 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
     		Constant.DEFAULT_CONFIG_NAME = System.getProperty(Constant.PROJECT_CONFIG_NAME);
     	}
     	
+    	//读取application.properties
     	logger.info("{} loading start",Constant.DEFAULT_CONFIG_NAME);
-    	//获取DEFAULT_CONFIG_NAME
 		put(ConfigFactory.get()[0], PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME));
+		logger.info("{} loading end",Constant.DEFAULT_CONFIG_NAME);
+		
+		//设置IP地址
 		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
 			put(ConfigFactory.get()[0],Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
 		} else {
 			put(ConfigFactory.get()[0],Constant.IP_ADDRESS, NetUtils.getLocalHost());
 		}
-		logger.info("{} loading end",Constant.DEFAULT_CONFIG_NAME);
 		
-		//查询所有systemenv
+		//设置systemenv
     	logger.info("systemEnv loading start");
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemEnvironment().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
@@ -56,7 +58,7 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
 		}
     	logger.info("systemEnv loading end");
 		
-		//查询所有systemProperties
+		//设置systemProperties
     	logger.info("systemProperties loading start");
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemProperties().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
@@ -73,7 +75,7 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
 		Config config = ConfigFactory.get(type);
 		
 		//获取配置文件
-		String[] properties = ConfHandlerSupport.getProperties(type);
+		String[] properties = getProperties(type);
 		
 		//处理文件
 		if (properties != null) {
@@ -81,10 +83,10 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
 				
 				//载入配置到缓存
 				logger.info("{} loading start",file);
-				put(config, get(file,ConfHandlerSupport.getGroup(type)));
+				put(config, get(file,getGroup(type)));
 				
 		    	//增加监听
-		    	listen(file, ConfHandlerSupport.getGroup(type), new ConfListener() {
+		    	listen(file, getGroup(type), new ConfListener() {
 					@Override
 					public void receive(String content) {
 						put(config, content);

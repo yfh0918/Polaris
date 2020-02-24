@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
+import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 
 public enum ConfEnum implements Config{
@@ -52,9 +53,9 @@ public enum ConfEnum implements Config{
     	if (StringUtil.isNotEmpty(config)) {
 			String[] contents = config.split(Constant.LINE_SEP);
 			for (String content : contents) {
-				String[] keyvalue = ConfHandlerSupport.getKeyValue(content);
+				String[] keyvalue = PropertyUtils.getKeyValue(content);
 				if (keyvalue != null) {
-					cache.put(keyvalue[0], ConfHandlerSupport.getDecryptValue(keyvalue[1]));
+					cache.put(keyvalue[0], PropertyUtils.getDecryptValue(keyvalue[1]));
 				}
 			}
 		} 

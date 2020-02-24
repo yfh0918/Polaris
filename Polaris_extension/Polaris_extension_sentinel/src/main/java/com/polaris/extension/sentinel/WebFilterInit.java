@@ -7,8 +7,8 @@ import com.alibaba.csp.sentinel.adapter.servlet.callback.UrlCleaner;
 import com.alibaba.csp.sentinel.adapter.servlet.callback.WebCallbackManager;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerProvider;
-import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.config.ConfListener;
+import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 
 public class WebFilterInit {
@@ -27,7 +27,7 @@ public class WebFilterInit {
     		if (StringUtil.isNotEmpty(conf) && !conf.startsWith("#")) {
     			conf = conf.replace("\n", "");
     			conf = conf.replace("\r", "");
-				String[] kv = ConfHandlerSupport.getKeyValue(conf);
+				String[] kv = PropertyUtils.getKeyValue(conf);
 
     			// 以xx开头放过的URL
     			if (kv[0].equals("csp.sentinel.filter.restUri")) {

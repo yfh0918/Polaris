@@ -13,7 +13,6 @@ import java.util.Properties;
 import org.springframework.util.ClassUtils;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfHandlerSupport;
 
 public abstract class PropertyUtils {
 	
@@ -45,7 +44,7 @@ public abstract class PropertyUtils {
 		
 		String[] contents = content.split(Constant.LINE_SEP);
 		for (String line : contents) {
-			String[] keyvalue = ConfHandlerSupport.getKeyValue(line);
+			String[] keyvalue = getKeyValue(line);
 			if (keyvalue != null) {
 				if (keyvalue[0].equals(key)) {
 					return keyvalue[1];
@@ -114,5 +113,47 @@ public abstract class PropertyUtils {
 			return file;
 		}
 		return null;
+	}
+	
+	/**
+	* 获取KV对
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
+	public static String[] getKeyValue(String line) {
+		if (StringUtil.isNotEmpty(line)) {
+			String[] keyvalue = line.split("=");
+			if (keyvalue.length == 0) {
+				return new String[] {"",""};
+			}
+			if (keyvalue.length == 1) {
+				return new String[] {keyvalue[0].trim(),""};
+			}
+			String value = "";
+			for (int index = 0; index < keyvalue.length; index++) {
+				if (index != 0) {
+					if (StringUtil.isEmpty(value)) {
+						value = keyvalue[index].trim();
+					} else {
+						value = value + "=" + keyvalue[index].trim();
+					}
+				}
+			}
+			return new String[] {keyvalue[0].trim(),value};
+		}
+		return null;
+	}
+	
+	public static String getDecryptValue(String propVal) {
+		//解密操作
+		try {
+			EncryptUtil encrypt = EncryptUtil.getInstance();
+			propVal = encrypt.decrypt(EncryptUtil.START_WITH, propVal);
+		} catch (Exception ex) {
+			//nothing
+		}
+		return propVal;
 	}
 }

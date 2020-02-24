@@ -12,10 +12,10 @@ import org.littleshoot.proxy.HostResolver;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerProvider;
-import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.config.ConfListener;
 import com.polaris.core.naming.ServerHandlerProvider;
 import com.polaris.core.naming.ServerHandlerSupport;
+import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
@@ -46,7 +46,7 @@ public class HostResolverImpl implements HostResolver {
         for (String detail : contents) {
         	detail = detail.replace("\n", "");
         	detail = detail.replace("\r", "");
-            String[] contextUrl = ConfHandlerSupport.getKeyValue(detail);
+            String[] contextUrl = PropertyUtils.getKeyValue(detail);
             
             //获取context和服务名称(url)
             if (contextUrl != null) {

@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerProvider;
-import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.config.ConfListener;
 import com.polaris.core.util.JwtUtil;
+import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.SystemCallUtil;
 
@@ -67,7 +67,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
     			conf = conf.replace("\n", "");
     			conf = conf.replace("\r", "");
 
-				String[] kv = ConfHandlerSupport.getKeyValue(conf);
+				String[] kv = PropertyUtils.getKeyValue(conf);
 
 				// 不需要验证token的uri
     			if (kv[0].equals("UNCHECKED_PATHS")) {
@@ -105,7 +105,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
             	String strParameter = uri.substring(index + 1);
             	String[] parameters = strParameter.split("&");
             	for (String parameter : parameters) {
-            		String[] kv = ConfHandlerSupport.getKeyValue(parameter);
+            		String[] kv = PropertyUtils.getKeyValue(parameter);
             		parameterMap.put(kv[0], kv[1]);
             	}
             }

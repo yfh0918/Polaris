@@ -6,7 +6,9 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.polaris.core.Constant;
 import com.polaris.core.OrderWrapper;
+import com.polaris.core.util.StringUtil;
 
 @SuppressWarnings("rawtypes")
 public abstract class ConfHandlerProviderAbs {
@@ -33,8 +35,8 @@ public abstract class ConfHandlerProviderAbs {
 	//初始化操作
 	public void init() {
 		
-		//初始DEFAULT_CONFIG
-		initDefault();
+		//初始系统参数
+		initSystem();
 		
 		//初始化外部模块接入点
 		initEndPoint();
@@ -43,7 +45,7 @@ public abstract class ConfHandlerProviderAbs {
 		initHandler();
 	}
 	
-	protected abstract void initDefault();
+	protected abstract void initSystem();
     
     protected void initEndPoint() {
 	    for (ConfEndPoint confEndPoint : endPointLoader) {
@@ -59,18 +61,13 @@ public abstract class ConfHandlerProviderAbs {
     protected abstract void initHandler(String type);
 
     public String get(String fileName, String group) {
-		
-		//扩展点
 		if (handler != null) {
 			return handler.get(fileName, group);
 		}
-		
     	return null;
 	}
 	
     public void listen(String fileName,String group, ConfListener listener) {
-		
-    	//扩展点
 		if (handler != null) {
 			handler.listen(fileName, group, listener);
 		}
@@ -98,5 +95,31 @@ public abstract class ConfHandlerProviderAbs {
 		for (ConfEndPoint confEndPoint : endPointLoader) {
 	    	confEndPoint.filter(key, value);
         }
+	}
+	protected String getGroup(String type) {
+		if (Config.GLOBAL.equals(type)) {
+			return type;
+		}
+		return ConfClient.getAppName();
+	}
+	
+	/**
+	* 获取扩展配置信息
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
+	protected String[] getProperties(String type) {
+		String files = null;
+		if (type.equals(Config.EXTEND)) {
+			files = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get()[0],Constant.PROJECT_EXTENSION_PROPERTIES);
+		} else  if (type.equals(Config.GLOBAL)) {
+			files = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get()[0],Constant.PROJECT_GLOBAL_PROPERTIES);
+		}
+		if (StringUtil.isEmpty(files)) {
+			return null;
+		}
+		return files.split(",");
 	}
 }

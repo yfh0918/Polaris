@@ -33,9 +33,9 @@ import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerProvider;
-import com.polaris.core.config.ConfHandlerSupport;
 import com.polaris.core.config.ConfListener;
 import com.polaris.core.dto.ResultDto;
+import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.UuidUtil;
 
@@ -143,7 +143,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     			conf = conf.replace("\n", "");
     			conf = conf.replace("\r", "");
 
-				String[] kv = ConfHandlerSupport.getKeyValue(conf);
+				String[] kv = PropertyUtils.getKeyValue(conf);
 				// skip.ip
     			if (kv[0].equals("cc.skip.ip")) {
     				try {
