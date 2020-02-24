@@ -1,5 +1,7 @@
 package com.polaris.container.webflux.server;
 
+import java.io.File;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,7 @@ import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
+import com.polaris.core.util.StringUtil;
 
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
@@ -69,24 +72,15 @@ public class WebfluxServer {
                 		  .forwarded(Boolean.parseBoolean(ConfClient.get("server.forwarded","true")))
                 		  .compress(Boolean.parseBoolean(ConfClient.get("server.compress","true")))//压缩
                           .handle(httpHandlerAdapter);
-        boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl","false"));
-        boolean http2 = Boolean.parseBoolean(ConfClient.get("server.http2","false"));
+        
         
         //设置ssl
-        if (ssl) {
-        	try {
-            	SelfSignedCertificate cert = new SelfSignedCertificate();
-        	 	SslContextBuilder sslContextBuilder =
-        	 	SslContextBuilder.forServer(cert.certificate(), cert.privateKey());
-            	server.secure(sslContextSpec -> sslContextSpec.sslContext(sslContextBuilder));
-        	} catch (Exception ex) {
-        		logger.info("netty-webflux start error : {}",ex);
-        		return;
-        	}
+        if (!addSSL(server)) {
+        	return;
         }
         
         //设置协议
-        server.protocol(listProtocols(ssl, http2));
+        server.protocol(listProtocols());
         
         //绑定服务
         DisposableServer disposableSever = server.bindNow();
@@ -109,7 +103,9 @@ public class WebfluxServer {
         disposableSever.onDispose().block();
     }
     
-    private HttpProtocol[] listProtocols(boolean ssl, boolean http2) {
+    private HttpProtocol[] listProtocols() {
+        boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl","false"));
+        boolean http2 = Boolean.parseBoolean(ConfClient.get("server.http2","false"));
 		if (http2) {
 			if (ssl) {
 				return new HttpProtocol[] { HttpProtocol.H2, HttpProtocol.HTTP11 };
@@ -120,6 +116,45 @@ public class WebfluxServer {
 		}
 		return new HttpProtocol[] { HttpProtocol.HTTP11 };
 	}
+    
+    private boolean addSSL(HttpServer server) {
+        boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl","false"));
+    	if (!ssl) {
+    		return true;
+    	}
+    	try {
+    		String certificate = ConfClient.get("server.certificate.file");
+    		boolean isCertificate = false;
+            File certificateFile = null;
+            if (StringUtil.isNotEmpty(certificate)) {
+            	certificateFile = new File(certificate);
+            	if (certificateFile.isFile()) {
+            		isCertificate = true;
+            	}
+            }
+    		String privateKey = ConfClient.get("server.privateKey.file");
+    		boolean isPrivateKey = false;
+            File privateKeyFile = null;
+            if (StringUtil.isNotEmpty(privateKey)) {
+            	privateKeyFile = new File(privateKey);
+            	if (privateKeyFile.isFile()) {
+            		isPrivateKey = true;
+            	}
+            }
+            if (!isCertificate || !isPrivateKey) {
+            	SelfSignedCertificate cert = new SelfSignedCertificate();
+            	certificateFile = cert.certificate();
+            	privateKeyFile = cert.privateKey();
+            }
+    	 	SslContextBuilder sslContextBuilder =
+    	 	SslContextBuilder.forServer(certificateFile, privateKeyFile);
+        	server.secure(sslContextSpec -> sslContextSpec.sslContext(sslContextBuilder));
+    	} catch (Exception ex) {
+    		logger.info("netty-webflux start error : {}",ex);
+    		return false;
+    	}
+    	return true;
+    }
     
     @EnableWebFlux
     @Configuration 
