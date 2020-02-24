@@ -74,30 +74,27 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
 		//获取配置
 		Config config = ConfigFactory.get(type);
 		
-		//获取配置文件
-		String[] properties = getProperties(type);
-		
 		//group
 		String group = Config.GLOBAL.equals(type) ? type : ConfClient.getAppName();
 		
 		//处理文件
-		if (properties != null) {
-			for (String file : properties) {
-				
-				//载入配置到缓存
-				logger.info("{} loading start",file);
-				put(config, get(file,group));
-				
-		    	//增加监听
-		    	listen(file, group, new ConfListener() {
-					@Override
-					public void receive(String content) {
-						put(config, content);
-				    	SpringUtil.getBean(AutoUpdateConfigChangeListener.class).onChange(get(config));//监听配置
-					}
-				});
-				logger.info("{} loading end",file);
-			}
+		for (String file : getProperties(type)) {
+			
+			//载入配置到缓存
+			logger.info("{} load start",file);
+			put(config, get(file,group));
+			logger.info("{} load end",file);
+			
+	    	//增加监听
+			logger.info("{} listen start",file);
+	    	listen(file, group, new ConfListener() {
+				@Override
+				public void receive(String content) {
+					put(config, content);
+			    	SpringUtil.getBean(AutoUpdateConfigChangeListener.class).onChange(get(config));//监听配置
+				}
+			});
+			logger.info("{} listen end",file);
 		}
     }
     

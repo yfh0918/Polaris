@@ -112,7 +112,7 @@ public abstract class ConfHandlerProviderAbs {
 			files = ConfHandlerProvider.INSTANCE.get(ConfigFactory.get()[0],Constant.PROJECT_GLOBAL_PROPERTIES);
 		}
 		if (StringUtil.isEmpty(files)) {
-			return null;
+			return new String[]{};
 		}
 		return files.split(",");
 	}
