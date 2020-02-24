@@ -77,16 +77,19 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
 		//获取配置文件
 		String[] properties = getProperties(type);
 		
+		//group
+		String group = Config.GLOBAL.equals(type) ? type : ConfClient.getAppName();
+		
 		//处理文件
 		if (properties != null) {
 			for (String file : properties) {
 				
 				//载入配置到缓存
 				logger.info("{} loading start",file);
-				put(config, get(file,getGroup(type)));
+				put(config, get(file,group));
 				
 		    	//增加监听
-		    	listen(file, getGroup(type), new ConfListener() {
+		    	listen(file, group, new ConfListener() {
 					@Override
 					public void receive(String content) {
 						put(config, content);

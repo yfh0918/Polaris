@@ -96,12 +96,6 @@ public abstract class ConfHandlerProviderAbs {
 	    	confEndPoint.filter(key, value);
         }
 	}
-	protected String getGroup(String type) {
-		if (Config.GLOBAL.equals(type)) {
-			return type;
-		}
-		return ConfClient.getAppName();
-	}
 	
 	/**
 	* 获取扩展配置信息
