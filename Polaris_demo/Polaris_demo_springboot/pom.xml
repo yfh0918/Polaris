@@ -24,12 +24,6 @@
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_extension_db</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.polaris</groupId>
-            <artifactId>Polaris_extension_mvc_config</artifactId>
-        </dependency>
-        
-						
     </dependencies>
 
     <build>
