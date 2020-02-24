@@ -66,7 +66,7 @@ public class WebfluxServer {
         HttpServer server =
                 HttpServer.create()
                 		  .port(port)
-                		  .protocol(new HttpProtocol[] { HttpProtocol.HTTP11 })
+                		  .forwarded(Boolean.parseBoolean(ConfClient.get("server.forwarded","true")))
                 		  .compress(Boolean.parseBoolean(ConfClient.get("server.compress","true")))//压缩
                           .handle(httpHandlerAdapter);
         boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl","false"));
