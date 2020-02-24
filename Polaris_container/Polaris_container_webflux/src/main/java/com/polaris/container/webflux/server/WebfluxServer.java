@@ -75,7 +75,8 @@ public class WebfluxServer {
         
         
         //设置ssl
-        if (!addSSL(server)) {
+        server = secure(server);
+        if (server == null) {
         	return;
         }
         
@@ -117,10 +118,10 @@ public class WebfluxServer {
 		return new HttpProtocol[] { HttpProtocol.HTTP11 };
 	}
     
-    private boolean addSSL(HttpServer server) {
+    private HttpServer secure(HttpServer server) {
         boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl","false"));
     	if (!ssl) {
-    		return true;
+    		return server;
     	}
     	try {
     		String certificate = ConfClient.get("server.certificate.file");
@@ -151,9 +152,9 @@ public class WebfluxServer {
         	server.secure(sslContextSpec -> sslContextSpec.sslContext(sslContextBuilder));
     	} catch (Exception ex) {
     		logger.info("netty-webflux start error : {}",ex);
-    		return false;
+    		return null;
     	}
-    	return true;
+    	return server;
     }
     
     @EnableWebFlux
