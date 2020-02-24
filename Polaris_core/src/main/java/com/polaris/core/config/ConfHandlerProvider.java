@@ -38,9 +38,9 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
     	}
     	
     	//读取application.properties
-    	logger.info("{} loading start",Constant.DEFAULT_CONFIG_NAME);
+    	logger.info("{} load start",Constant.DEFAULT_CONFIG_NAME);
 		put(ConfigFactory.get()[0], PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME));
-		logger.info("{} loading end",Constant.DEFAULT_CONFIG_NAME);
+		logger.info("{} load end",Constant.DEFAULT_CONFIG_NAME);
 		
 		//设置IP地址
 		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
@@ -50,22 +50,22 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
 		}
 		
 		//设置systemenv
-    	logger.info("systemEnv loading start");
+    	logger.info("systemEnv load start");
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemEnvironment().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
 				put(ConfigFactory.get()[0],entry.getKey(), entry.getValue());
 			}
 		}
-    	logger.info("systemEnv loading end");
+    	logger.info("systemEnv load end");
 		
 		//设置systemProperties
-    	logger.info("systemProperties loading start");
+    	logger.info("systemProperties load start");
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemProperties().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
 				put(ConfigFactory.get()[0], entry.getKey(), entry.getValue());
 			}
 		}
-		logger.info("systemProperties loading end");
+		logger.info("systemProperties load end");
     }
     
 	@Override
@@ -74,7 +74,7 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
 		//获取配置
 		Config config = ConfigFactory.get(type);
 		
-		//group
+		//应用名称
 		String group = Config.GLOBAL.equals(type) ? type : ConfClient.getAppName();
 		
 		//处理文件

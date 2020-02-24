@@ -14,6 +14,8 @@ import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
 
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.SelfSignedCertificate;
 import reactor.netty.DisposableServer;
 import reactor.netty.http.HttpProtocol;
 import reactor.netty.http.server.HttpServer;
@@ -61,13 +63,33 @@ public class WebfluxServer {
         HttpHandler httpHandler = WebHttpHandlerBuilder.applicationContext(SpringUtil.getApplicationContext()).build();
         ReactorHttpHandlerAdapter httpHandlerAdapter = new ReactorHttpHandlerAdapter(httpHandler);
         int port = Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE));
-        DisposableServer server =
+        HttpServer server =
                 HttpServer.create()
                 		  .port(port)
                 		  .protocol(new HttpProtocol[] { HttpProtocol.HTTP11 })
-                		  .compress(true)
-                          .handle(httpHandlerAdapter) 
-                          .bindNow();
+                		  .compress(Boolean.parseBoolean(ConfClient.get("server.compress","true")))//压缩
+                          .handle(httpHandlerAdapter);
+        boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl","false"));
+        boolean http2 = Boolean.parseBoolean(ConfClient.get("server.http2","false"));
+        
+        //设置ssl
+        if (ssl) {
+        	try {
+            	SelfSignedCertificate cert = new SelfSignedCertificate();
+        	 	SslContextBuilder sslContextBuilder =
+        	 	SslContextBuilder.forServer(cert.certificate(), cert.privateKey());
+            	server.secure(sslContextSpec -> sslContextSpec.sslContext(sslContextBuilder));
+        	} catch (Exception ex) {
+        		logger.info("netty-webflux start error : {}",ex);
+        		return;
+        	}
+        }
+        
+        //设置协议
+        server.protocol(listProtocols(ssl, http2));
+        
+        //绑定服务
+        DisposableServer disposableSever = server.bindNow();
         logger.info("netty-webflux is started,port:{}",port);
         ServerListenerSupport.started();
         
@@ -76,7 +98,7 @@ public class WebfluxServer {
             public void run() {
                 try {
                 	ServerListenerSupport.stopped();
-                	server.disposeNow();
+                	disposableSever.disposeNow();
                 } catch (Exception e) {
                     logger.error("failed to stop netty-webflux.", e);
                 }
@@ -84,8 +106,20 @@ public class WebfluxServer {
         });
 
         //block
-        server.onDispose().block();
+        disposableSever.onDispose().block();
     }
+    
+    private HttpProtocol[] listProtocols(boolean ssl, boolean http2) {
+		if (http2) {
+			if (ssl) {
+				return new HttpProtocol[] { HttpProtocol.H2, HttpProtocol.HTTP11 };
+			}
+			else {
+				return new HttpProtocol[] { HttpProtocol.H2C, HttpProtocol.HTTP11 };
+			}
+		}
+		return new HttpProtocol[] { HttpProtocol.HTTP11 };
+	}
     
     @EnableWebFlux
     @Configuration 
