@@ -41,10 +41,9 @@ public abstract class ConfClient {
 	}
 	public static String get(String key, String defaultVal) {
 		
-		String value = null;
-		Config[] configs = ConfigFactory.get();
-		for (Config config : configs) {
-			value = ConfHandlerProvider.INSTANCE.get(config, key);
+		//获取配置
+		for (Config config : ConfigFactory.get()) {
+			String value = ConfHandlerProvider.INSTANCE.get(config, key);
 			if (value != null) {
 				return value;
 			}
