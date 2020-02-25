@@ -70,6 +70,7 @@ public class HttpClientUtil {
 	private static final String POOL_CONN_PERROUTE = "http.connect.perRouteCount";
 	private static final String REQUEST_TIME_OUT = "http.request.timeout";
 	private static final String UTF8 = "UTF-8";
+	private static int timeout = Integer.parseInt(ConfClient.get(REQUEST_TIME_OUT, "10000"));
 	private static Logger LOGGER = LoggerFactory.getLogger(HttpClientUtil.class);
  
     private static CloseableHttpClient defaultHttpClient = null;
@@ -217,15 +218,28 @@ public class HttpClientUtil {
      * @create 
      */
     public static String post(String orgurl, CloseableHttpClient... httpClient) {
-    	return post(orgurl,new HashMap<>(),httpClient);
+    	return post(orgurl,timeout, httpClient);
     }
+    public static String post(String orgurl, int timeout, CloseableHttpClient... httpClient) {
+    	return post(orgurl,timeout, new HashMap<>(),httpClient);
+    }
+
     public static String post(String orgurl, Map<String, Object> requestParams, CloseableHttpClient... httpClient) {
-    	return post(orgurl,requestParams,null,httpClient);
+    	return post(orgurl,timeout,requestParams,httpClient);
     }
+
+    public static String post(String orgurl, int timeout, Map<String, Object> requestParams, CloseableHttpClient... httpClient) {
+    	return post(orgurl,timeout,requestParams,null,httpClient);
+    }
+    
     public static String post(String orgurl, Map<String, Object> requestParams, Map<String, String> headParams, CloseableHttpClient... httpClient) {
+    	return post(orgurl, timeout, requestParams, headParams, httpClient);
+    }
+    public static String post(String orgurl, int timeout, Map<String, Object> requestParams, Map<String, String> headParams, CloseableHttpClient... httpClient) {
     	HTTPRequestParameter parameter = new HTTPRequestParameter();
     	parameter.setRequstType(RequstType.HTTP_POST);
     	parameter.setUrl(orgurl);
+    	parameter.setTimeout(timeout);
     	parameter.setRequestParams(requestParams);
     	parameter.setHeadParams(headParams);
     	return request(parameter,httpClient);
@@ -240,14 +254,21 @@ public class HttpClientUtil {
      * @create 
      */
     public static String post(String orgurl, String body, CloseableHttpClient... httpClient) {
-    	return post(orgurl,body,null,httpClient);
+    	return post(orgurl,body,timeout,httpClient);
+    }
+    public static String post(String orgurl, String body, int timeout, CloseableHttpClient... httpClient) {
+    	return post(orgurl,body,timeout, null,httpClient);
     }
     public static String post(String orgurl, String body, Map<String, String> headParams, CloseableHttpClient... httpClient) {
+    	return post(orgurl, body, timeout, headParams, httpClient);
+    }
+    public static String post(String orgurl, String body, int timeout, Map<String, String> headParams, CloseableHttpClient... httpClient) {
     	HTTPRequestParameter parameter = new HTTPRequestParameter();
     	parameter.setRequstType(RequstType.HTTP_POST_BODY);
     	parameter.setUrl(orgurl);
     	parameter.setBody(body);
     	parameter.setHeadParams(headParams);
+    	parameter.setTimeout(timeout);
     	return request(parameter, httpClient);
     }
 
@@ -261,14 +282,21 @@ public class HttpClientUtil {
      * @create 
      */
     public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestParam, CloseableHttpClient... httpClient) {
-    	return postFileMultiPart(orgurl, requestParam, null,httpClient);
+    	return postFileMultiPart(orgurl, timeout, requestParam,httpClient);
+    }
+    public static String postFileMultiPart(String orgurl,int timeout, Map<String,ContentBody> requestParam, CloseableHttpClient... httpClient) {
+    	return postFileMultiPart(orgurl, timeout, requestParam, null,httpClient);
     }
     public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestContentBodys, Map<String, String> headParams, CloseableHttpClient... httpClient) {
+    	return postFileMultiPart(orgurl,timeout,requestContentBodys,headParams,httpClient);
+    }
+    public static String postFileMultiPart(String orgurl,int timeout, Map<String,ContentBody> requestContentBodys, Map<String, String> headParams, CloseableHttpClient... httpClient) {
     	HTTPRequestParameter parameter = new HTTPRequestParameter();
     	parameter.setRequstType(RequstType.HTTP_POST_MULTIPART);
     	parameter.setUrl(orgurl);
     	parameter.setRequestContentBodys(requestContentBodys);
     	parameter.setHeadParams(headParams);
+    	parameter.setTimeout(timeout);
     	return request(parameter,httpClient);
     }
 
@@ -282,18 +310,28 @@ public class HttpClientUtil {
      * @create 
      */
     public static String get(String orgurl, CloseableHttpClient... httpClient) {
-    	return get(orgurl, null,httpClient);
+    	return get(orgurl, timeout,httpClient);
+    }
+    public static String get(String orgurl, int timeout, CloseableHttpClient... httpClient) {
+    	return get(orgurl, timeout, null,httpClient);
     }
     public static String get(String orgurl,  Map<String, Object> params, CloseableHttpClient... httpClient) {
-    	return get(orgurl, params, null,httpClient);
+    	return get(orgurl, timeout, params, httpClient);
+    }
+    public static String get(String orgurl, int timeout, Map<String, Object> params, CloseableHttpClient... httpClient) {
+    	return get(orgurl, timeout, params, null,httpClient);
     }
     public static String get(String orgurl,  Map<String, Object> requestParams, Map<String, String> headParams, CloseableHttpClient... httpClient) {
+    	return get(orgurl, timeout,requestParams,headParams,httpClient);
+    }
+    public static String get(String orgurl,  int timeout, Map<String, Object> requestParams, Map<String, String> headParams, CloseableHttpClient... httpClient) {
     	///构建request
     	HTTPRequestParameter parameter = new HTTPRequestParameter();
     	parameter.setRequstType(RequstType.HTTP_GET);
     	parameter.setUrl(orgurl);
     	parameter.setRequestParams(requestParams);
     	parameter.setHeadParams(headParams);
+    	parameter.setTimeout(timeout);
     	return request(parameter,httpClient);
     }
     
@@ -393,7 +431,7 @@ public class HttpClientUtil {
     	private Map<String, Object> requestParams = new HashMap<>();
     	private Map<String, String> headParams = new HashMap<>();
     	private Map<String,ContentBody> requestContentBodys = new HashMap<>();
-    	private int timeout = Integer.parseInt(ConfClient.get(REQUEST_TIME_OUT, "10000"));
+    	private int timeout;
     	public RequstType getRequstType() {
 			return requestType;
 		}
