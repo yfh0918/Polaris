@@ -9,6 +9,5 @@ public interface Config {
     
 	default Map<String, String> get() {return null;}
 	default String get(String key) {return null;}
-	default void put(String content) {}
 	default void put(String key, String value) {}
 }

@@ -1,32 +1,71 @@
 package com.polaris.core.config;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.value.AutoUpdateConfigChangeListener;
+import com.polaris.core.OrderWrapper;
 import com.polaris.core.util.EnvironmentUtil;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.PropertyUtils;
-import com.polaris.core.util.SpringUtil;
 import com.polaris.core.util.StringUtil;
 
-
-public class ConfHandlerProvider extends ConfHandlerProviderAbs {
-
+@SuppressWarnings("rawtypes")
+public class ConfHandlerProvider {
 	private static final Logger logger = LoggerFactory.getLogger(ConfHandlerProvider.class);
 	
-	/**
-     * 单实例
-     */
-    public static final ConfHandlerProvider INSTANCE = new ConfHandlerProvider();
-    private ConfHandlerProvider() {}
-    
-    @Override
-    protected void initSystem() {
-    	// 启动字符集
+    protected final ServiceLoader<ConfHandler> handlerLoader = ServiceLoader.load(ConfHandler.class);
+
+	private volatile AtomicBoolean initialized = new AtomicBoolean(false);
+	protected ConfHandler handler = handler();
+	protected ConfHandler handler() {
+		if (!initialized.compareAndSet(false, true)) {
+            return handler;
+        }
+		List<OrderWrapper> configHandlerList = new ArrayList<OrderWrapper>();
+    	for (ConfHandler configHandler : handlerLoader) {
+    		OrderWrapper.insertSorted(configHandlerList, configHandler);
+        }
+    	if (configHandlerList.size() > 0) {
+        	handler = (ConfHandler)configHandlerList.get(0).getHandler();
+    	}
+    	return handler;
+    }
+
+	
+	//初始化操作
+	public void init() {
+		initSystem();
+		init(Config.EXTEND);
+		init(Config.GLOBAL);
+	}
+	public String get(String fileName) {
+		return get(fileName, ConfClient.getAppName());
+	}
+    public String get(String fileName, String group) {
+		if (handler != null) {
+			return handler.get(fileName, group);
+		}
+    	return null;
+	}
+	public void listen(String fileName, ConfListener listerner) {
+		listen(fileName, ConfClient.getAppName(), listerner);
+	}
+    public void listen(String fileName,String group, ConfListener listener) {
+		if (handler != null) {
+			handler.listen(fileName, group, listener);
+		}
+	}
+
+    private void initSystem() {
+		// 启动字符集
     	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
 
 		// 设置application.properties文件名
@@ -39,21 +78,23 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
     	
     	//读取application.properties
     	logger.info("{} load start",Constant.DEFAULT_CONFIG_NAME);
-		put(ConfigFactory.get()[0], PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME));
+    	for (Map.Entry<String, String> entry : getConfigMap(PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME)).entrySet()) {
+			put(ConfigFactory.get()[0], entry.getKey(), entry.getValue());
+		}
 		logger.info("{} load end",Constant.DEFAULT_CONFIG_NAME);
 		
 		//设置IP地址
 		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
-			put(ConfigFactory.get()[0],Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
+			ConfigFactory.get()[0].put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
 		} else {
-			put(ConfigFactory.get()[0],Constant.IP_ADDRESS, NetUtils.getLocalHost());
+			ConfigFactory.get()[0].put(Constant.IP_ADDRESS, NetUtils.getLocalHost());
 		}
 		
 		//设置systemenv
     	logger.info("systemEnv load start");
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemEnvironment().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
-				put(ConfigFactory.get()[0],entry.getKey(), entry.getValue());
+				put(ConfigFactory.get()[0], entry.getKey(), entry.getValue());
 			}
 		}
     	logger.info("systemEnv load end");
@@ -66,10 +107,9 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
 			}
 		}
 		logger.info("systemProperties load end");
-    }
+	}
     
-	@Override
-    protected void initHandler(String type) {
+    private void init(String type) {
     	
 		//获取配置
 		Config config = ConfigFactory.get(type);
@@ -79,10 +119,11 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
 		
 		//处理文件
 		for (String file : getProperties(type)) {
-			
 			//载入配置到缓存
 			logger.info("{} load start",file);
-			put(config, get(file,group));
+			for (Map.Entry<String, String> entry : getConfigMap(get(file,group)).entrySet()) {
+				put(config, entry.getKey(), entry.getValue());
+			}
 			logger.info("{} load end",file);
 			
 	    	//增加监听
@@ -90,12 +131,74 @@ public class ConfHandlerProvider extends ConfHandlerProviderAbs {
 	    	listen(file, group, new ConfListener() {
 				@Override
 				public void receive(String content) {
-					put(config, content);
-			    	SpringUtil.getBean(AutoUpdateConfigChangeListener.class).onChange(get(config));//监听配置
+					for (Map.Entry<String, String> entry : getConfigMap(content).entrySet()) {
+						put(config, entry.getKey(), entry.getValue());
+						listenForPut(config, entry.getKey(), entry.getValue());
+					}
 				}
 			});
 			logger.info("{} listen end",file);
 		}
     }
     
+    /**
+	* 设置值
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
+    protected void put(Config config, String key, String value) {
+    	config.put(key, value);
+    }
+    /**
+	* 设置值时候的监听
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
+    protected void listenForPut(Config config, String key, String value){
+    }
+	
+	/**
+	* 获取扩展配置信息
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
+	protected String[] getProperties(String type) {
+		String files = null;
+		if (type.equals(Config.EXTEND)) {
+			files = ConfigFactory.get()[0].get(Constant.PROJECT_EXTENSION_PROPERTIES);
+		} else  if (type.equals(Config.GLOBAL)) {
+			files = ConfigFactory.get()[0].get(Constant.PROJECT_GLOBAL_PROPERTIES);
+		}
+		if (StringUtil.isEmpty(files)) {
+			return new String[]{};
+		}
+		return files.split(",");
+	}
+	
+	/**
+	* 根据内容获取Map
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
+    protected Map<String, String> getConfigMap(String config) {
+    	Map<String, String> configMap = new HashMap<>();
+    	if (StringUtil.isNotEmpty(config)) {
+			String[] contents = config.split(Constant.LINE_SEP);
+			for (String content : contents) {
+				String[] keyvalue = PropertyUtils.getKeyValue(content);
+				if (keyvalue != null) {
+					configMap.put(keyvalue[0], PropertyUtils.getDecryptValue(keyvalue[1]));
+				}
+			}
+		}
+    	return configMap;
+    }
 }

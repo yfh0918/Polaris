@@ -11,7 +11,7 @@ import org.littleshoot.proxy.HostResolver;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.ConfHandlerProvider;
+import com.polaris.core.config.ConfCompositeProvider;
 import com.polaris.core.config.ConfListener;
 import com.polaris.core.naming.ServerHandlerProvider;
 import com.polaris.core.naming.ServerHandlerSupport;
@@ -77,10 +77,10 @@ public class HostResolverImpl implements HostResolver {
     private HostResolverImpl() {
        
     	//先获取
-    	loadUpstream(ConfHandlerProvider.INSTANCE.get(UPSTREAM));
+    	loadUpstream(ConfCompositeProvider.INSTANCE.get(UPSTREAM));
     	
     	//后监听
-    	ConfHandlerProvider.INSTANCE.listen(UPSTREAM, new ConfListener() {
+    	ConfCompositeProvider.INSTANCE.listen(UPSTREAM, new ConfListener() {
             @Override
             public void receive(String content) {
                 loadUpstream(content);

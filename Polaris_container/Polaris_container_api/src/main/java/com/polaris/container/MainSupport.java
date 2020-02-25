@@ -3,7 +3,7 @@ package com.polaris.container;
 import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerSupport;
-import com.polaris.core.config.ConfHandlerProvider;
+import com.polaris.core.config.ConfCompositeProvider;
 import com.polaris.core.naming.ServerHandlerClient;
 
 /**
@@ -33,7 +33,7 @@ public abstract class MainSupport {
     public static void startServer(String[] args, Class<?>[] configClass, ServerListener... serverListeners) {
     	
     	//各类参数载入
-    	ConfHandlerProvider.INSTANCE.init();
+    	ConfCompositeProvider.INSTANCE.init();
     	
 		//载入配置类
 		ConfigurationSupport.add(args, configClass);		

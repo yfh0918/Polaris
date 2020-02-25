@@ -16,7 +16,7 @@ import org.springframework.util.StringValueResolver;
  * <bean id="confPropertyPlaceholderConfigurer" class="com.polaris_conf_core.spring.ConfPropertyPlaceholderConfigurer" />
  *
  */
-public class ConfPropertyPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer {
+public class ConfPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer {
 
 	@Override
 	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, ConfigurablePropertyResolver propertyResolver) throws BeansException {
