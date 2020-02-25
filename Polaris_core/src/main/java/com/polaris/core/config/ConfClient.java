@@ -26,7 +26,7 @@ public abstract class ConfClient {
 	* @since 
 	*/
 	public static void set(String key, String value) {
-		ConfCompositeProvider.INSTANCE.put(ConfigFactory.get()[0], key, value);
+		ConfCompositeProvider.INSTANCE.put(ConfigFactory.DEFAULT, key, value);
 	}
 	
 	/**
@@ -51,7 +51,7 @@ public abstract class ConfClient {
 		
 		//默认值
 		if (StringUtil.isNotEmpty(defaultVal)) {
-			ConfCompositeProvider.INSTANCE.put(ConfigFactory.get()[0], key, defaultVal);
+			ConfCompositeProvider.INSTANCE.put(ConfigFactory.DEFAULT, key, defaultVal);
 		}
 		
 		//返回默认值
@@ -61,28 +61,28 @@ public abstract class ConfClient {
 	//在设置应用名称的时候启动各项参数载入
 	public static String getAppName() {
 		
-		String appName = ConfCompositeProvider.INSTANCE.get(ConfigFactory.get()[0], Constant.PROJECT_NAME);
+		String appName = ConfCompositeProvider.INSTANCE.get(ConfigFactory.DEFAULT, Constant.PROJECT_NAME);
 		if (StringUtil.isEmpty(appName)) {
-			appName = ConfCompositeProvider.INSTANCE.get(ConfigFactory.get()[0], Constant.SPRING_BOOT_NAME);
+			appName = ConfCompositeProvider.INSTANCE.get(ConfigFactory.DEFAULT, Constant.SPRING_BOOT_NAME);
 		}
 		return appName == null ? "" :appName;
 	}
 
 	public static String getConfigRegistryAddress() {
-		String config = ConfCompositeProvider.INSTANCE.get(ConfigFactory.get()[0], Constant.CONFIG_REGISTRY_ADDRESS_NAME);
+		String config = ConfCompositeProvider.INSTANCE.get(ConfigFactory.DEFAULT, Constant.CONFIG_REGISTRY_ADDRESS_NAME);
 		return config == null ? "" :config;
 	}
 	public static String getNameSpace() {
-		String namespace = ConfCompositeProvider.INSTANCE.get(ConfigFactory.get()[0], Constant.PROJECR_NAMESPACE_NAME);
+		String namespace = ConfCompositeProvider.INSTANCE.get(ConfigFactory.DEFAULT, Constant.PROJECR_NAMESPACE_NAME);
 		return namespace == null ? "" :namespace;
 	}
 
 	public static String getGroup() {
-		String group = ConfCompositeProvider.INSTANCE.get(ConfigFactory.get()[0], Constant.PROJECR_GROUP_NAME);
+		String group = ConfCompositeProvider.INSTANCE.get(ConfigFactory.DEFAULT, Constant.PROJECR_GROUP_NAME);
 		return group == null ? "" :group;
 	}
 	public static String getNamingRegistryAddress() {
-		String naming = ConfCompositeProvider.INSTANCE.get(ConfigFactory.get()[0], Constant.NAMING_REGISTRY_ADDRESS_NAME);
+		String naming = ConfCompositeProvider.INSTANCE.get(ConfigFactory.DEFAULT, Constant.NAMING_REGISTRY_ADDRESS_NAME);
 		return naming == null ? "" :naming;
 	}
 

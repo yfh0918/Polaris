@@ -79,22 +79,22 @@ public class ConfHandlerProvider {
     	//读取application.properties
     	logger.info("{} load start",Constant.DEFAULT_CONFIG_NAME);
     	for (Map.Entry<String, String> entry : getConfigMap(PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME)).entrySet()) {
-			put(ConfigFactory.get()[0], entry.getKey(), entry.getValue());
+			put(ConfigFactory.DEFAULT, entry.getKey(), entry.getValue());
 		}
 		logger.info("{} load end",Constant.DEFAULT_CONFIG_NAME);
 		
 		//设置IP地址
 		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
-			ConfigFactory.get()[0].put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
+			ConfigFactory.DEFAULT.put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
 		} else {
-			ConfigFactory.get()[0].put(Constant.IP_ADDRESS, NetUtils.getLocalHost());
+			ConfigFactory.DEFAULT.put(Constant.IP_ADDRESS, NetUtils.getLocalHost());
 		}
 		
 		//设置systemenv
     	logger.info("systemEnv load start");
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemEnvironment().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
-				put(ConfigFactory.get()[0], entry.getKey(), entry.getValue());
+				put(ConfigFactory.DEFAULT, entry.getKey(), entry.getValue());
 			}
 		}
     	logger.info("systemEnv load end");
@@ -103,7 +103,7 @@ public class ConfHandlerProvider {
     	logger.info("systemProperties load start");
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemProperties().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
-				put(ConfigFactory.get()[0], entry.getKey(), entry.getValue());
+				put(ConfigFactory.DEFAULT, entry.getKey(), entry.getValue());
 			}
 		}
 		logger.info("systemProperties load end");
@@ -171,9 +171,9 @@ public class ConfHandlerProvider {
 	protected String[] getProperties(String type) {
 		String files = null;
 		if (type.equals(Config.EXTEND)) {
-			files = ConfigFactory.get()[0].get(Constant.PROJECT_EXTENSION_PROPERTIES);
+			files = ConfigFactory.DEFAULT.get(Constant.PROJECT_EXTENSION_PROPERTIES);
 		} else  if (type.equals(Config.GLOBAL)) {
-			files = ConfigFactory.get()[0].get(Constant.PROJECT_GLOBAL_PROPERTIES);
+			files = ConfigFactory.DEFAULT.get(Constant.PROJECT_GLOBAL_PROPERTIES);
 		}
 		if (StringUtil.isEmpty(files)) {
 			return new String[]{};
