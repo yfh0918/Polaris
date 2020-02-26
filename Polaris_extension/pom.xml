@@ -16,6 +16,7 @@
 	<module>Polaris_extension_db</module>
 	<module>Polaris_extension_mvc_config</module>
 	<module>Polaris_extension_sentinel</module>
+	<module>Polaris_extension_cache</module>
   </modules>
   
   <dependencies>

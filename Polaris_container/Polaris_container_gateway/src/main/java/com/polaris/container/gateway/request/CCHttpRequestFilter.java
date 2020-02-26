@@ -27,8 +27,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.RateLimiter;
-import com.polaris.cache.Cache;
-import com.polaris.cache.CacheFactory;
 import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.core.Constant;
@@ -38,6 +36,8 @@ import com.polaris.core.dto.ResultDto;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.UuidUtil;
+import com.polaris.extension.cache.Cache;
+import com.polaris.extension.cache.CacheFactory;
 
 import cn.hutool.core.io.FileUtil;
 import io.netty.channel.ChannelHandlerContext;

@@ -118,7 +118,7 @@
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_cache</artifactId>
+            <artifactId>Polaris_extension_cache</artifactId>
         </dependency>
 		<dependency>
 			<groupId>com.polaris</groupId>
