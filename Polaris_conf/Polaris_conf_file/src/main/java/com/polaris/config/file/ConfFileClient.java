@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfListener;
-import com.polaris.core.util.PropertyUtils;
+import com.polaris.core.util.FileUitl;
 import com.polaris.core.util.StringUtil;
 
 import cn.hutool.core.thread.NamedThreadFactory;
@@ -53,18 +53,12 @@ public class ConfFileClient {
 	public String getConfig(String fileName, String group) {
 		
 		//可以监听的文件有效
-		File file = PropertyUtils.getFileNotInJar(fileName);
+		File file = FileUitl.getFileNotInJar(fileName);
 		if (file != null) {
 			isModifiedByFile(fileName, file);
 		}
 
-		// propertyies
-		if (fileName.toLowerCase().endsWith(".properties")) {
-			return PropertyUtils.getPropertiesFileContent(fileName);
-		}
-		
-		// 非propertyies
-		try (InputStream inputStream = PropertyUtils.getStream(fileName)) {
+		try (InputStream inputStream = FileUitl.getStream(fileName)) {
 			if (inputStream == null) {
 				return null;
 			}
@@ -92,7 +86,7 @@ public class ConfFileClient {
 	// 监听需要关注的内容
 	public void addListener(String fileName, String group, ConfListener listener) {
 		//farjar或者配置文件放到jar包或者不存在配置文件的不用监听
-		File file = PropertyUtils.getFileNotInJar(fileName);
+		File file = FileUitl.getFileNotInJar(fileName);
 		if (file == null) {
 			return;
 		}

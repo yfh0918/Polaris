@@ -16,7 +16,7 @@ import com.polaris.container.jetty.listener.ServerHandlerLifeCycle;
 import com.polaris.container.jetty.listener.ServerHandlerListerner;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.PropertyUtils;
+import com.polaris.core.util.FileUitl;
 
 /**
  * Class Name : JettyServer
@@ -70,7 +70,7 @@ public class JettyServer {
             	contextPath = "/" + contextPath;
             }
             context.setContextPath(contextPath); // Application访问路径
-            String resourceBase = PropertyUtils.getFullPath("WebContent");
+            String resourceBase = FileUitl.getFullPath("WebContent");
             File resDir = new File(resourceBase);
             context.setResourceBase(resDir.getCanonicalPath());
             context.setMaxFormContentSize(Integer.parseInt(ConfClient.get("server.maxSavePostSize",String.valueOf(MAX_SAVE_POST_SIZE))));

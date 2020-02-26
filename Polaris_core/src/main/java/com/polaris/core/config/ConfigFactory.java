@@ -1,53 +1,60 @@
 package com.polaris.core.config;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class ConfigFactory {
 
-	private static Config defaultConfig = ConfEnum.DEFAULT;
-	private static Config extendConfig = ConfEnum.EXTEND;
-	private static Config globalConfig = ConfEnum.GLOBAL;
+	private static Map<String , Config> configMap = new HashMap<>();
+	private static List<Config> configList = new ArrayList<>();
+	static {
+		configMap.put(Config.DEFAULT, ConfEnum.DEFAULT);
+		configMap.put(Config.EXTEND, ConfEnum.EXTEND);
+		configMap.put(Config.GLOBAL, ConfEnum.GLOBAL);
+		configList.add(ConfEnum.DEFAULT);
+		configList.add(ConfEnum.EXTEND);
+		configList.add(ConfEnum.GLOBAL);
+	}
 	
 	public static Config DEFAULT = get(Config.DEFAULT);
 	
 	public static Config get(String type) {
-		if (Config.EXTEND.equals(type)) {
-    		return extendConfig != null ? extendConfig : defaultConfig;
-    	} else if (Config.GLOBAL.equals(type)) {
-    		return globalConfig != null ? globalConfig : defaultConfig;
-    	}
-    	return defaultConfig;
+		return configMap.get(type);
 	}
-	public static Config[] get() {
-		if (extendConfig == null) {
-			return new Config[]{defaultConfig};
-		} else if (globalConfig == null) {
-			return new Config[]{defaultConfig,extendConfig};
-		}
-    	return new Config[]{defaultConfig,extendConfig,globalConfig};//第一个必须设置为default
+	public static List<Config> get() {
+		return configList;
 	}
 	public static void set(Config... configs) {
 		if (configs == null || configs.length == 0) {
-			throw new RuntimeException("config's number can't 1 than smaller ");
+			return;
 		}
+		configMap.clear();
+		configList.clear();
 		if (configs.length == 1) {
-			defaultConfig = configs[0];
-			extendConfig = null;
-			globalConfig = null;
+			configMap.put(Config.DEFAULT, configs[0]);
+			configMap.put(Config.EXTEND, configs[0]);
+			configMap.put(Config.GLOBAL, configs[0]);
+			configList.add(configs[0]);
 			return;
 		}
 		if (configs.length == 2) {
-			defaultConfig = configs[0];
-			extendConfig = configs[1];
-			globalConfig = null;
+			configMap.put(Config.DEFAULT, configs[0]);
+			configMap.put(Config.EXTEND, configs[1]);
+			configMap.put(Config.GLOBAL, configs[1]);
+			configList.add(configs[0]);
+			configList.add(configs[1]);
 			return;
 		}
-		if (configs.length == 3) {
-			defaultConfig = configs[0];
-			extendConfig = configs[1];
-			globalConfig = configs[2];
+		if (configs.length >= 3) {
+			configMap.put(Config.DEFAULT, configs[0]);
+			configMap.put(Config.EXTEND, configs[1]);
+			configMap.put(Config.GLOBAL, configs[2]);
+			configList.add(configs[0]);
+			configList.add(configs[1]);
+			configList.add(configs[2]);
 			return;
-		}
-		if (configs.length > 3) {
-			throw new RuntimeException("config's number can't 3 than bigger ");
 		}
 	}
 }

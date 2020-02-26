@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.polaris.core.Constant;
 import com.polaris.core.OrderWrapper;
 import com.polaris.core.util.EnvironmentUtil;
+import com.polaris.core.util.FileUitl;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
@@ -195,7 +196,7 @@ public class ConfHandlerProvider {
 			for (String content : contents) {
 				String[] keyvalue = PropertyUtils.getKeyValue(content);
 				if (keyvalue != null) {
-					configMap.put(keyvalue[0], PropertyUtils.getDecryptValue(keyvalue[1]));
+					configMap.put(keyvalue[0], FileUitl.getDecryptValue(keyvalue[1]));
 				}
 			}
 		}
