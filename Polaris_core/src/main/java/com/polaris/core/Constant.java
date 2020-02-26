@@ -58,6 +58,7 @@ public class Constant {
 	public static String PROJECT_CONFIG_NAME = "project.config.name";
 	public static String SPRING_CONFIG_LOCACTION = "spring.config.location";
 	public static volatile String DEFAULT_CONFIG_NAME = "application.properties";
+	public static volatile String DEFAULT_CONFIG_NAME_YAML = "application.yaml";
 	
 	public static String PROJECT_EXTENSION_PROPERTIES = "project.extension.properties";
 	public static String PROJECT_GLOBAL_PROPERTIES = "project.global.properties";
@@ -91,7 +92,7 @@ public class Constant {
 	
 	// 日志
 	public static final String LOG_CONFIG="logging.config";
-	public static final String DEFAULT_LOG_FILE = "log4j2.xml";
+	public static final String DEFAULT_LOG_FILE = "classpath:config/log4j2.xml";
 	
 	//换行
 	public static final String LINE_SEP = System.getProperty("line.separator");

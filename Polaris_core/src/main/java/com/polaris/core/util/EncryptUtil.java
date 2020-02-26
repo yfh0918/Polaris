@@ -15,8 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
 
-
-
 public class EncryptUtil {
 	private static final Logger logger = LoggerFactory.getLogger(EncryptUtil.class);
 
@@ -311,6 +309,45 @@ public class EncryptUtil {
 					.byteValue();
 		}
 		return result;
+	}
+	
+	public static String getEncryptValue(String propVal, EncryptUtil... enstance) {
+		//解密操作
+		try {
+			return getEncryptValue(EncryptUtil.START_WITH, propVal, enstance);
+		} catch (Exception ex) {
+			return propVal;
+		}
+	}
+	public static String getEncryptValue(String startWith, String propVal, EncryptUtil... enstance) {
+		//解密操作
+		try {
+			if (enstance != null && enstance.length > 0) {
+				return enstance[0].encrypt(startWith, propVal);
+			}
+			return EncryptUtil.getInstance().encrypt(startWith, propVal);
+		} catch (Exception ex) {
+			return propVal;
+		}
+	}
+	public static String getDecryptValue(String propVal, EncryptUtil... enstance) {
+		//解密操作
+		try {
+			return getDecryptValue(EncryptUtil.START_WITH, propVal, enstance);
+		} catch (Exception ex) {
+			return propVal;
+		}
+	}
+	public static String getDecryptValue(String startWith, String propVal, EncryptUtil... enstance) {
+		//解密操作
+		try {
+			if (enstance != null && enstance.length > 0) {
+				return enstance[0].decrypt(startWith, propVal);
+			}
+			return EncryptUtil.getInstance().decrypt(startWith, propVal);
+		} catch (Exception ex) {
+			return propVal;
+		}
 	}
 	
 	/**

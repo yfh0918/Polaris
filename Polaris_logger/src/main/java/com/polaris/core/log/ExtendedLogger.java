@@ -16,7 +16,7 @@ import org.slf4j.spi.LocationAwareLogger;
 
 import com.polaris.core.Constant;
 import com.polaris.core.GlobalContext;
-import com.polaris.core.util.PropertyUtils;
+import com.polaris.core.config.ConfPropertyAdapt;
 import com.polaris.core.util.StringUtil;
 
 public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
@@ -32,16 +32,7 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 			
 	    	//获取日志文件logging.config=classpath:config/log4j2.xml
 			if (logFile == null || logFile.isEmpty()) {
-				//外部是否设置了project.config.name
-				String projectConfigLocation = System.getProperty(Constant.SPRING_CONFIG_LOCACTION);
-		    	if (StringUtil.isNotEmpty(projectConfigLocation)) {
-		    		Constant.DEFAULT_CONFIG_NAME = projectConfigLocation;
-		    	} else if (StringUtil.isNotEmpty(System.getProperty(Constant.PROJECT_CONFIG_NAME))) {
-		    		Constant.DEFAULT_CONFIG_NAME = System.getProperty(Constant.PROJECT_CONFIG_NAME);
-		    	}
-		    	
-		    	//获取配置内容
-		    	logFile = PropertyUtils.getProperties(Constant.DEFAULT_CONFIG_NAME).getProperty(Constant.LOG_CONFIG, Constant.DEFAULT_LOG_FILE);
+		    	logFile = ConfPropertyAdapt.getRootProperties().getProperty(Constant.LOG_CONFIG, Constant.DEFAULT_LOG_FILE);
 			}
 			
 			//设置具体的日志

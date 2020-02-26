@@ -3,6 +3,7 @@ package com.polaris.core.config;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -11,10 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
 import com.polaris.core.OrderWrapper;
+import com.polaris.core.util.EncryptUtil;
 import com.polaris.core.util.EnvironmentUtil;
-import com.polaris.core.util.FileUitl;
 import com.polaris.core.util.NetUtils;
-import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 
 @SuppressWarnings("rawtypes")
@@ -69,17 +69,10 @@ public class ConfHandlerProvider {
     	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
 
 		// 设置application.properties文件名
-    	String projectConfigLocation = System.getProperty(Constant.SPRING_CONFIG_LOCACTION);
-    	if (StringUtil.isNotEmpty(projectConfigLocation)) {
-    		Constant.DEFAULT_CONFIG_NAME = projectConfigLocation;
-    	} else if (StringUtil.isNotEmpty(System.getProperty(Constant.PROJECT_CONFIG_NAME))) {
-    		Constant.DEFAULT_CONFIG_NAME = System.getProperty(Constant.PROJECT_CONFIG_NAME);
-    	}
-    	
-    	//读取application.properties
+    	Properties propeties = ConfPropertyAdapt.getRootProperties();
     	logger.info("{} load start",Constant.DEFAULT_CONFIG_NAME);
-    	for (Map.Entry<Object, Object> entry : PropertyUtils.getProperties(Constant.DEFAULT_CONFIG_NAME).entrySet()) {
-			put(ConfigFactory.DEFAULT, entry.getKey().toString(), FileUitl.getDecryptValue(entry.getValue().toString()));
+    	for (Map.Entry<Object, Object> entry : propeties.entrySet()) {
+			put(ConfigFactory.DEFAULT, entry.getKey().toString(), EncryptUtil.getDecryptValue(entry.getValue().toString()));
 		}
 		logger.info("{} load end",Constant.DEFAULT_CONFIG_NAME);
 		
@@ -121,8 +114,8 @@ public class ConfHandlerProvider {
 		for (String file : getProperties(type)) {
 			//载入配置到缓存
 			logger.info("{} load start",file);
-			for (Map.Entry<String, String> entry : PropertyUtils.getMap(get(file,group)).entrySet()) {
-				put(config, entry.getKey(), entry.getValue());
+			for (Map.Entry<String, Object> entry : ConfPropertyAdapt.getMap(file, get(file,group)).entrySet()) {
+				put(config, entry.getKey(), entry.getValue().toString());
 			}
 			logger.info("{} load end",file);
 			
@@ -131,9 +124,9 @@ public class ConfHandlerProvider {
 	    	listen(file, group, new ConfListener() {
 				@Override
 				public void receive(String content) {
-					for (Map.Entry<String, String> entry : PropertyUtils.getMap(content).entrySet()) {
-						put(config, entry.getKey(), entry.getValue());
-						listenForPut(config, entry.getKey(), entry.getValue());
+					for (Map.Entry<String, Object> entry : ConfPropertyAdapt.getMap(file, content).entrySet()) {
+						put(config, entry.getKey(), entry.getValue().toString());
+						listenForPut(config, entry.getKey(), entry.getValue().toString());
 					}
 				}
 			});

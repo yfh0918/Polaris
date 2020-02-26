@@ -12,20 +12,27 @@ import com.polaris.core.Constant;
 
 public abstract class PropertyUtils {
 	
-	public static Properties getProperties(String fileName) {
-        Properties properties = new Properties();
-		try (InputStream in = FileUitl.getStream(fileName)) {
-			if (in == null) {
-				return null;
-			}
-          try (InputStreamReader read = new InputStreamReader(in, Charset.defaultCharset())) {
-        	  properties.load(read);
-          }
-      } catch (IOException e) {
-      	e.printStackTrace();
-      }
-	  return properties;
+	public static Properties getProperties(InputStream inputStream) throws IOException {
+  		Properties properties = new Properties();
+        try (InputStreamReader read = new InputStreamReader(inputStream, Charset.defaultCharset())) {
+	      		properties.load(read);
+        }
+	    return properties;
 	}
+	
+	public static Map<String, Object> getMap(String fileName, String lines) {
+    	Map<String, Object> propertyMap = new HashMap<>();
+    	if (StringUtil.isNotEmpty(lines)) {
+			String[] contents = lines.split(Constant.LINE_SEP);
+			for (String content : contents) {
+				String[] keyvalue = getKeyValue(content);
+				if (keyvalue != null) {
+					propertyMap.put(keyvalue[0], EncryptUtil.getDecryptValue(keyvalue[1]));
+				}
+			}
+		}
+    	return propertyMap;
+    }
 	
 	/**
 	* 获取KV对
@@ -53,22 +60,8 @@ public abstract class PropertyUtils {
 					}
 				}
 			}
-			return new String[] {keyvalue[0].trim(),FileUitl.getDecryptValue(value)};
+			return new String[] {keyvalue[0].trim(),EncryptUtil.getDecryptValue(value)};
 		}
 		return null;
 	}
-	
-	public static Map<String, String> getMap(String lines) {
-    	Map<String, String> propertyMap = new HashMap<>();
-    	if (StringUtil.isNotEmpty(lines)) {
-			String[] contents = lines.split(Constant.LINE_SEP);
-			for (String content : contents) {
-				String[] keyvalue = getKeyValue(content);
-				if (keyvalue != null) {
-					propertyMap.put(keyvalue[0], FileUitl.getDecryptValue(keyvalue[1]));
-				}
-			}
-		}
-    	return propertyMap;
-    }
 }

@@ -32,6 +32,10 @@ public class DemoController {
 
 	@Value("${test.password}")
 	private String ssss;
+	
+	@Value("${bbbb.ccc}")
+	private String dadfa;
+	
     /**
      * 用户登入
      *
@@ -46,20 +50,21 @@ public class DemoController {
     	System.out.println("ssss"+ssss);
         System.out.println("hello1234");
 
-        
+        System.out.println("hello1234"+dadfa);
+      
         return "hello1234";
     }
     
-    @GET
-    @Path("/{param}")
-    @ApiOperation(value = "Returns param", notes = "Returns param", response = DemoController.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful retrieval of param value", response = DemoController.class) })
-    public Response printMessage(@PathParam("param") String msg) {
-    	System.out.println("ssss"+ssss);
-        String result = "Hello " + msg + "!";
-        return Response.status(200).entity(result).build();
-    }
+//    @GET
+//    @Path("/{param}")
+//    @ApiOperation(value = "Returns param", notes = "Returns param", response = DemoController.class)
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "Successful retrieval of param value", response = DemoController.class) })
+//    public Response printMessage(@PathParam("param") String msg) {
+//    	System.out.println("ssss"+ssss);
+//        String result = "Hello " + msg + "!";
+//        return Response.status(200).entity(result).build();
+//    }
     
 
 }
