@@ -13,11 +13,15 @@ import com.polaris.core.Constant;
 public abstract class PropertyUtils {
 	
 	public static Properties getProperties(InputStream inputStream) throws IOException {
-  		Properties properties = new Properties();
+  		Properties inProperties = new Properties();
+  		Properties outProperties = new Properties();
         try (InputStreamReader read = new InputStreamReader(inputStream, Charset.defaultCharset())) {
-	      		properties.load(read);
+        	inProperties.load(read);
         }
-	    return properties;
+        for (Map.Entry<Object, Object> entry : inProperties.entrySet()) {
+        	outProperties.put(entry.getKey(), EncryptUtil.getDecryptValue(entry.getValue().toString()));
+        }
+	    return outProperties;
 	}
 	
 	public static Map<String, Object> getMap(String fileName, String lines) {
