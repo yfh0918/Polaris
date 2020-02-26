@@ -11,18 +11,18 @@ import com.polaris.demo.mapper.ComboBean;
 @SuppressWarnings("rawtypes")
 public interface ComboService {
 
-    /**
-     * 查询套餐列表
-     *
-     * @return
-     */
-	ResultDto findAll();
-
-    /**
-     * 查询套餐信息
-     *
-     * @return
-     */
-    ComboBean findById(Long comboId);
+//    /**
+//     * 查询套餐列表
+//     *
+//     * @return
+//     */
+//	ResultDto findAll();
+//
+//    /**
+//     * 查询套餐信息
+//     *
+//     * @return
+//     */
+//    ComboBean findById(Long comboId);
 
 }

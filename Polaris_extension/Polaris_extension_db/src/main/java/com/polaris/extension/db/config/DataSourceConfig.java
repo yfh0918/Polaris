@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.github.pagehelper.PageInterceptor;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.datasource.DynamicDataSource;
+import com.polaris.core.util.EncryptUtil;
 import com.polaris.core.util.StringUtil;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -163,6 +164,10 @@ public class DataSourceConfig {
 		if (StringUtil.isEmpty(jdbcUrl) || StringUtil.isEmpty(username) || StringUtil.isEmpty(password)) {
 			return null;
 		}
+		String cipherKey = ConfClient.get("jdbc"+key+".cipher.key",ConfClient.get("spring.datasource"+key+".cipher.key",EncryptUtil.getDefaultKey()));
+		String startWith = ConfClient.get("jdbc"+key+".cipher.startwith",ConfClient.get("spring.datasource"+key+".cipher.startwith",EncryptUtil.START_WITH));
+		username = EncryptUtil.getDecryptValue(startWith,username,EncryptUtil.getInstance(cipherKey));
+		password = EncryptUtil.getDecryptValue(startWith,password,EncryptUtil.getInstance(cipherKey));
 		rtnMap.put("jdbcUrl", jdbcUrl);
 		rtnMap.put("username", username);
 		rtnMap.put("password", password);

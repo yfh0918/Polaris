@@ -100,6 +100,7 @@ public class ConfHandlerProvider {
 			}
 		}
 		logger.info("systemProperties load end");
+		ConfPropertyAdapt.cleaRootProperties();
 	}
     
     private void init(String type) {

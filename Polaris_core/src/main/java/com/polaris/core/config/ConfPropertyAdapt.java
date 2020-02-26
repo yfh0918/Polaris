@@ -13,9 +13,12 @@ import com.polaris.core.util.YamlUtil;
 
 public abstract class ConfPropertyAdapt {
 	private static final String YAML_SUFFIX = ".yaml";
+	private static Properties rootProperties = null;
 	
 	public static Properties getRootProperties() {
-		
+		if (rootProperties != null) {
+			return rootProperties;
+		}
 		// 设置application.properties文件名
     	Properties propeties = null;
     	String rootConfigName = null;
@@ -51,7 +54,12 @@ public abstract class ConfPropertyAdapt {
     	
     	//获取返回
     	Constant.DEFAULT_CONFIG_NAME = rootConfigName;
+    	rootProperties = propeties;
     	return propeties;
+	}
+	
+	public static void cleaRootProperties() {
+		rootProperties = null;
 	}
 	
 	public static Properties getProperties(String fileName) {

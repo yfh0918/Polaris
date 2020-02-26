@@ -18,9 +18,6 @@ public abstract class PropertyUtils {
         try (InputStreamReader read = new InputStreamReader(inputStream, Charset.defaultCharset())) {
         	inProperties.load(read);
         }
-        for (Map.Entry<Object, Object> entry : inProperties.entrySet()) {
-        	outProperties.put(entry.getKey(), EncryptUtil.getDecryptValue(entry.getValue().toString()));
-        }
 	    return outProperties;
 	}
 	
@@ -31,7 +28,7 @@ public abstract class PropertyUtils {
 			for (String content : contents) {
 				String[] keyvalue = getKeyValue(content);
 				if (keyvalue != null) {
-					propertyMap.put(keyvalue[0], EncryptUtil.getDecryptValue(keyvalue[1]));
+					propertyMap.put(keyvalue[0], keyvalue[1]);
 				}
 			}
 		}
@@ -64,7 +61,7 @@ public abstract class PropertyUtils {
 					}
 				}
 			}
-			return new String[] {keyvalue[0].trim(),EncryptUtil.getDecryptValue(value)};
+			return new String[] {keyvalue[0].trim(),value};
 		}
 		return null;
 	}

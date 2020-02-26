@@ -103,7 +103,7 @@ public abstract class YamlUtil {
 			}
 			if (value instanceof String) {
 				
-				result.put(key, EncryptUtil.getDecryptValue((String)value));
+				result.put(key, value);
 			}
 			else if (value instanceof Map) {
 				// Need a compound key
@@ -127,7 +127,7 @@ public abstract class YamlUtil {
 				}
 			}
 			else {
-				result.put(key, (value != null ? EncryptUtil.getDecryptValue(value.toString()) : ""));
+				result.put(key, (value != null ? value.toString() : ""));
 			}
 		});
 	}

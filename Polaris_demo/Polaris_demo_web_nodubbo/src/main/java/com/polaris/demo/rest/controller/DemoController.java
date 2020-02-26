@@ -39,8 +39,8 @@ public class DemoController {
 	@Value("${bbbb.ccc}")
 	private String dadfa;
 	
-	@Autowired
-	private ComboService comboService;
+//	@Autowired
+//	private ComboService comboService;
     /**
      * 用户登入
      *
@@ -56,7 +56,7 @@ public class DemoController {
         System.out.println("hello1234");
 
         System.out.println("hello1234"+dadfa);
-        comboService.findAll();
+//        comboService.findAll();
         return "hello1234";
     }
     
