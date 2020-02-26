@@ -10,8 +10,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.polaris.demo.service.ComboService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,6 +39,8 @@ public class DemoController {
 	@Value("${bbbb.ccc}")
 	private String dadfa;
 	
+	@Autowired
+	private ComboService comboService;
     /**
      * 用户登入
      *
@@ -51,7 +56,7 @@ public class DemoController {
         System.out.println("hello1234");
 
         System.out.println("hello1234"+dadfa);
-      
+        comboService.findAll();
         return "hello1234";
     }
     
