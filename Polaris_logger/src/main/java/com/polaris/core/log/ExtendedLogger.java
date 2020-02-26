@@ -41,8 +41,7 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 		    	}
 		    	
 		    	//获取配置内容
-		    	String content = PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME);
-				logFile = PropertyUtils.readData(content,Constant.LOG_CONFIG, Constant.DEFAULT_LOG_FILE);
+		    	logFile = PropertyUtils.getProperties(Constant.DEFAULT_CONFIG_NAME).getProperty(Constant.LOG_CONFIG, Constant.DEFAULT_LOG_FILE);
 			}
 			
 			//设置具体的日志

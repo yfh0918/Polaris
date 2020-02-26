@@ -1,7 +1,6 @@
 package com.polaris.core.config;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -79,8 +78,8 @@ public class ConfHandlerProvider {
     	
     	//读取application.properties
     	logger.info("{} load start",Constant.DEFAULT_CONFIG_NAME);
-    	for (Map.Entry<String, String> entry : getConfigMap(PropertyUtils.getPropertiesFileContent(Constant.DEFAULT_CONFIG_NAME)).entrySet()) {
-			put(ConfigFactory.DEFAULT, entry.getKey(), entry.getValue());
+    	for (Map.Entry<Object, Object> entry : PropertyUtils.getProperties(Constant.DEFAULT_CONFIG_NAME).entrySet()) {
+			put(ConfigFactory.DEFAULT, entry.getKey().toString(), FileUitl.getDecryptValue(entry.getValue().toString()));
 		}
 		logger.info("{} load end",Constant.DEFAULT_CONFIG_NAME);
 		
@@ -122,7 +121,7 @@ public class ConfHandlerProvider {
 		for (String file : getProperties(type)) {
 			//载入配置到缓存
 			logger.info("{} load start",file);
-			for (Map.Entry<String, String> entry : getConfigMap(get(file,group)).entrySet()) {
+			for (Map.Entry<String, String> entry : PropertyUtils.getMap(get(file,group)).entrySet()) {
 				put(config, entry.getKey(), entry.getValue());
 			}
 			logger.info("{} load end",file);
@@ -132,7 +131,7 @@ public class ConfHandlerProvider {
 	    	listen(file, group, new ConfListener() {
 				@Override
 				public void receive(String content) {
-					for (Map.Entry<String, String> entry : getConfigMap(content).entrySet()) {
+					for (Map.Entry<String, String> entry : PropertyUtils.getMap(content).entrySet()) {
 						put(config, entry.getKey(), entry.getValue());
 						listenForPut(config, entry.getKey(), entry.getValue());
 					}
@@ -182,24 +181,5 @@ public class ConfHandlerProvider {
 		return files.split(",");
 	}
 	
-	/**
-	* 根据内容获取Map
-	* @param 
-	* @return 
-	* @Exception 
-	* @since 
-	*/
-    protected Map<String, String> getConfigMap(String config) {
-    	Map<String, String> configMap = new HashMap<>();
-    	if (StringUtil.isNotEmpty(config)) {
-			String[] contents = config.split(Constant.LINE_SEP);
-			for (String content : contents) {
-				String[] keyvalue = PropertyUtils.getKeyValue(content);
-				if (keyvalue != null) {
-					configMap.put(keyvalue[0], FileUitl.getDecryptValue(keyvalue[1]));
-				}
-			}
-		}
-    	return configMap;
-    }
+
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -11,46 +12,20 @@ import com.polaris.core.Constant;
 
 public abstract class PropertyUtils {
 	
-    
-    
-	
-	public static String readData(String content, String key, String defaultValue) throws IOException{
-		
-		String[] contents = content.split(Constant.LINE_SEP);
-		for (String line : contents) {
-			String[] keyvalue = getKeyValue(line);
-			if (keyvalue != null) {
-				if (keyvalue[0].equals(key)) {
-					return keyvalue[1];
-				}
-			}
-		}
-		return defaultValue;
-}
-
-	@SuppressWarnings("rawtypes")
-	public static String getPropertiesFileContent(String fileName) {
-		StringBuffer buffer = new StringBuffer();
+	public static Properties getProperties(String fileName) {
+        Properties properties = new Properties();
 		try (InputStream in = FileUitl.getStream(fileName)) {
 			if (in == null) {
 				return null;
 			}
-          Properties p = new Properties();
           try (InputStreamReader read = new InputStreamReader(in, Charset.defaultCharset())) {
-              p.load(read);
-              for (Map.Entry entry : p.entrySet()) {
-                  String key = (String) entry.getKey();
-                  buffer.append(key + "=" + entry.getValue());
-                  buffer.append(Constant.LINE_SEP);
-              }
+        	  properties.load(read);
           }
       } catch (IOException e) {
       	e.printStackTrace();
       }
-	  return buffer.toString();
+	  return properties;
 	}
-	
-	
 	
 	/**
 	* 获取KV对
@@ -78,10 +53,22 @@ public abstract class PropertyUtils {
 					}
 				}
 			}
-			return new String[] {keyvalue[0].trim(),value};
+			return new String[] {keyvalue[0].trim(),FileUitl.getDecryptValue(value)};
 		}
 		return null;
 	}
 	
-
+	public static Map<String, String> getMap(String lines) {
+    	Map<String, String> propertyMap = new HashMap<>();
+    	if (StringUtil.isNotEmpty(lines)) {
+			String[] contents = lines.split(Constant.LINE_SEP);
+			for (String content : contents) {
+				String[] keyvalue = getKeyValue(content);
+				if (keyvalue != null) {
+					propertyMap.put(keyvalue[0], FileUitl.getDecryptValue(keyvalue[1]));
+				}
+			}
+		}
+    	return propertyMap;
+    }
 }

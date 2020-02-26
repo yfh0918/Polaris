@@ -12,6 +12,7 @@ import org.springframework.util.ClassUtils;
 import com.polaris.core.Constant;
 
 public abstract class FileUitl {
+	
 	/** 
      * classpath下的路径 
      * @param fileDir  文件路径 
@@ -35,7 +36,7 @@ public abstract class FileUitl {
         return path + File.separator + fileDir;
     }
     
-public static InputStream getStream(String fileName) throws IOException {
+    public static InputStream getStream(String fileName) throws IOException {
 		
 		//先判断目录下的文件夹
 		String path = getFullPath("");
@@ -57,10 +58,8 @@ public static InputStream getStream(String fileName) throws IOException {
 		}
 		
 		//classpath:filename
-		return PropertyUtils.class.getClassLoader().getResourceAsStream(fileName);
+		return FileUitl.class.getClassLoader().getResourceAsStream(fileName);
 	}
-	
-	
 	
 	public static File getFileNotInJar(String fileName)  {
 		File file = new File(Constant.CONFIG + File.separator + fileName);
