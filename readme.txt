@@ -67,7 +67,11 @@
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_container_servlet_springmvc</artifactId> ->可修改成Polaris_container_resteasy
         </dependency>
-  参考Polaris_demo_web_springmvc和Polaris_demo_web_nodubbo
+	<dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_extension_mvc_config</artifactId> ->帮助你完成了mvc的配置无需自己写代码，如果有扩展请自行写config
+        </dependency>
+  详情参考Polaris_demo_web_springmvc
   
 9，支持整体调用链路的跟踪，比如traceId, moduleId, parentId, 
     日志采用slf4j的 Logger xLogger = LoggerFactory.getLogger(xxx.class);只需引入Polaris_core包
@@ -86,6 +90,11 @@
    可以采用注解com.polaris.cache.Cacheable
    目前支持的方法参考com.polaris.cache.Cache接口
    缓存 序列化可以自己配置，默认KryoSerializer
+11，数据库模块Polaris_extension_db
+  默认采用mybatis+hikari,支持多数据源
+  如果是多数据源请采用
+  jdbc.xx.url=xxx 或者 spring.datasource.xx.url=sss 详细请参考Polaris_demo_web_nodubbo
+  多数据源如果采用注解切换的请自行添加aop,详情请参考DataBaseAop和serviceImpl中各方法的@DataSource注解
    
 12，和Springboot的融合
  详细请参考Polaris_demo_springboot
