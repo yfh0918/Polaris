@@ -8,7 +8,7 @@ import com.ctrip.framework.apollo.ConfigFileChangeListener;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.core.enums.ConfigFileFormat;
 import com.ctrip.framework.apollo.model.ConfigFileChangeEvent;
-import com.polaris.core.config.ConfListener;
+import com.polaris.core.config.ConfHandlerListener;
 
 public class ConfApolloClient { 
 	
@@ -48,7 +48,7 @@ public class ConfApolloClient {
 	}
 	
 	// 监听需要关注的内容
-	public void addListener(String fileName, String group, ConfListener listener) {
+	public void addListener(String fileName, String group, ConfHandlerListener listener) {
 		String fileFormart = null;
 		if (fileName != null && fileName.lastIndexOf(".") > 0) {
 			fileFormart = fileName.substring(fileName.lastIndexOf(".") + 1);

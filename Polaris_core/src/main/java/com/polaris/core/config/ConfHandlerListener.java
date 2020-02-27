@@ -1,6 +1,6 @@
 package com.polaris.core.config;
 
-public interface ConfListener {
+public interface ConfHandlerListener {
 
 	/**
      * 接受监听

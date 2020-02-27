@@ -54,10 +54,10 @@ public class ConfHandlerProvider {
 		}
     	return null;
 	}
-	public void listen(String fileName, ConfListener listerner) {
+	public void listen(String fileName, ConfHandlerListener listerner) {
 		listen(fileName, ConfClient.getAppName(), listerner);
 	}
-    public void listen(String fileName,String group, ConfListener listener) {
+    public void listen(String fileName,String group, ConfHandlerListener listener) {
 		if (handler != null) {
 			handler.listen(fileName, group, listener);
 		}
@@ -123,7 +123,7 @@ public class ConfHandlerProvider {
 			
 	    	//增加监听
 			logger.info("{} listen start",file);
-	    	listen(file, group, new ConfListener() {
+	    	listen(file, group, new ConfHandlerListener() {
 				@Override
 				public void receive(String content) {
 					for (Map.Entry<String, Object> entry : ConfPropertyAdapt.getMap(file, content).entrySet()) {

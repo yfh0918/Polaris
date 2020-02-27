@@ -26,7 +26,7 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 	@Override
 	protected void put(Config config, String key, String value) {
 		super.put(config, key, value);
-		INSTANCE_ENDPOINT.filter(key, value);//接入点的过滤
+		INSTANCE_ENDPOINT.filter(key, value);
 	}
 	
 	@Override

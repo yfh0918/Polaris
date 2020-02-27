@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import com.polaris.container.gateway.request.FilterType;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfCompositeProvider;
-import com.polaris.core.config.ConfListener;
+import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.util.StringUtil;
 
 /**
@@ -29,7 +29,7 @@ public class ConfUtil {
     		loadPatters(filterType.name(), ConfCompositeProvider.INSTANCE.get(filterType.getFileName()));
     		
     		//后监听
-    		ConfCompositeProvider.INSTANCE.listen(filterType.getFileName(), new ConfListener() {
+    		ConfCompositeProvider.INSTANCE.listen(filterType.getFileName(), new ConfHandlerListener() {
     			@Override
     			public void receive(String content) {
 					loadPatters(filterType.name(), content);

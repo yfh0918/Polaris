@@ -1,6 +1,6 @@
 package com.polaris.config.file;
 
-import com.polaris.core.config.ConfListener;
+import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.ConfHandlerOrder;
 
 import org.springframework.core.annotation.Order;
@@ -16,7 +16,7 @@ public class ConfFileHandler implements ConfHandler {
 	}
 
 	@Override
-	public void listen(String fileName, String group, ConfListener listener) {
+	public void listen(String fileName, String group, ConfHandlerListener listener) {
 		ConfFileClient.getInstance().addListener(fileName, group, listener);
 	}
 }

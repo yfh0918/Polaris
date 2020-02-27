@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfListener;
+import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.util.FileUitl;
 import com.polaris.core.util.StringUtil;
 
@@ -84,7 +84,7 @@ public class ConfFileClient {
 	}
 	
 	// 监听需要关注的内容
-	public void addListener(String fileName, String group, ConfListener listener) {
+	public void addListener(String fileName, String group, ConfHandlerListener listener) {
 		//farjar或者配置文件放到jar包或者不存在配置文件的不用监听
 		File file = FileUitl.getFileNotInJar(fileName);
 		if (file == null) {

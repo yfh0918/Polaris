@@ -31,7 +31,7 @@ import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfCompositeProvider;
-import com.polaris.core.config.ConfListener;
+import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.dto.ResultDto;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
@@ -113,7 +113,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 		loadFile(ConfCompositeProvider.INSTANCE.get(FILE_NAME));
 		
 		//后监听
-		ConfCompositeProvider.INSTANCE.listen(FILE_NAME, new ConfListener() {
+		ConfCompositeProvider.INSTANCE.listen(FILE_NAME, new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
 				loadFile(content);

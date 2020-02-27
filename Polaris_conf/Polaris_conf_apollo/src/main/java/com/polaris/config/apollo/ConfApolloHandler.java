@@ -2,7 +2,7 @@ package com.polaris.config.apollo;
 
 import org.springframework.core.annotation.Order;
 
-import com.polaris.core.config.ConfListener;
+import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.ConfHandlerOrder;
 import com.polaris.core.config.ConfHandler;
 
@@ -15,7 +15,7 @@ public class ConfApolloHandler implements ConfHandler {
 	}
 
 	@Override
-	public void listen(String fileName, String group, ConfListener listener) {
+	public void listen(String fileName, String group, ConfHandlerListener listener) {
 		ConfApolloClient.getInstance().addListener(fileName, group, listener);
 	}
 }

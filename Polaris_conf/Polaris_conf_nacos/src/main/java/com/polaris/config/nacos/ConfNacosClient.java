@@ -13,7 +13,7 @@ import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.ConfListener;
+import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.util.StringUtil;
 
 public class ConfNacosClient { 
@@ -82,7 +82,7 @@ public class ConfNacosClient {
 	}
 	
 	// 监听需要关注的内容
-	public void addListener(String fileName, String group, ConfListener listener) {
+	public void addListener(String fileName, String group, ConfHandlerListener listener) {
 		//配置文件
     	if (StringUtil.isEmpty(ConfClient.getConfigRegistryAddress())) {
     		return;

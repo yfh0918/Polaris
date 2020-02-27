@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.ConfListener;
+import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.util.StringUtil;
 
 
@@ -56,7 +56,7 @@ public class ConfZkClient implements Watcher {
 	private static ZooKeeper zooKeeper;
 	private static ReentrantLock INSTANCE_INIT_LOCK = new ReentrantLock(true);
 	
-	private static Map<String, ConfListener> confListenerMap = new HashMap<>();
+	private static Map<String, ConfHandlerListener> confListenerMap = new HashMap<>();
 	public static ZooKeeper getInstance(){
 		return getInstance(false);
 	}
@@ -98,7 +98,7 @@ public class ConfZkClient implements Watcher {
 									zooKeeper.exists(path, true);
 									
 									//获取监听者
-									ConfListener confListener = confListenerMap.get(path);
+									ConfHandlerListener confListener = confListenerMap.get(path);
 									if (confListener == null) {
 										return;
 									}
@@ -241,7 +241,7 @@ public class ConfZkClient implements Watcher {
 		createWithParent(path);//创建路径
 		return getPathData(path);//获取数据
 	}
-	public static void addListener(String fileName, String group, ConfListener listener) {
+	public static void addListener(String fileName, String group, ConfHandlerListener listener) {
 		String path = getPath(fileName,group);
 		setWatchForPath(path);
 		confListenerMap.put(path, listener);

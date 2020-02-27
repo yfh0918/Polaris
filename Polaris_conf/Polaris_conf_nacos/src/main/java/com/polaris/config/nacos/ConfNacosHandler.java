@@ -2,7 +2,7 @@ package com.polaris.config.nacos;
 
 import org.springframework.core.annotation.Order;
 
-import com.polaris.core.config.ConfListener;
+import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.ConfHandlerOrder;
 import com.polaris.core.config.ConfHandler;
 
@@ -15,7 +15,7 @@ public class ConfNacosHandler implements ConfHandler {
 	}
 
 	@Override
-	public void listen(String fileName, String group, ConfListener listener) {
+	public void listen(String fileName, String group, ConfHandlerListener listener) {
 		ConfNacosClient.getInstance().addListener(fileName, group, listener);
 	}
 }
