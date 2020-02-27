@@ -21,13 +21,15 @@
   #config.registry.address=127.0.0.1:8848
   
   需要在自己的服务pom.xml中引入 Polaris_conf_nacos
-  引入配置中心后，所有的properties文件都可以放入nacos（除了application.properties 和 log4j.properties）
+  引入配置中心后，所有的properties文件都可以放入nacos（除了application.properties或者application.yaml 和 log4j2.xml）
   并且在application.properties中引入需要放入配置中心的配置文件
   #extension files
   #project.extension.properties=main.properties,redis.properties
+  #project.extension.properties=main.yaml,redis.yaml
   可以引入全局配置,比如关于redis集群配置，数据库的整体配置等等
   #global files
   #project.global.properties=redis.properties,database.properties
+  #project.global.properties=redis.yaml,database.yaml
   
   默认支持Spring注解@Value的自动更新-（nacos,zookeeper的推送更新会同步到@Value注解）
   可以用value.auto.update=false来关闭，频繁更新配置会影响性能（配置更新采用文件形式）
@@ -35,16 +37,17 @@
 5:Polaris_workflow是现有的服务（工作流activity内核）
   提供dubbo接口和http接口两种方式，没有画面，具体请参考模块的配置
 
-6:Polaris_gateway是现有的api网管，提供api的统一入口服务(基于netty http实现)
+6:Polaris_container_gateway是现有的api网管，提供api的统一入口服务(基于netty http实现)
   具体的api代理请参考config\upstream.txt,其中static:开头的代理的存静态文件会跳过所有的filter
   另外支持静态文件配置，可以在config\static.txt增增加静态文件路径
+  至此扩展，详细请参考Polaris_demo_gateway
 
 7:支持Sentinel（流量监控类），需要在自己的配置文件中设置如下
   #sentinel
   #csp.sentinel.dashboard.server=127.0.0.1:8858
   #csp.sentinel.heartbeat.interval.ms=5000
   #csp.sentinel.api.port=9008
-  需要在自己的服务pom.xml中引入 Polaris_sentinel
+  需要在自己的服务pom.xml中引入 Polaris_extension_sentinel
   该接口主要用于提供api的servlet
 
 8,如何启动，打开eclipse后启动xxxApplication.java文件（注解@PolarisApplication） 
@@ -66,17 +69,13 @@
         </dependency>
   参考Polaris_demo_web_springmvc和Polaris_demo_web_nodubbo
   
-
-9,新增了基于netty的静态文件服务器（不支持jsp和servlet）
-   具体context配置参照config\static.txt
-   
-10，支持整体调用链路的跟踪，比如traceId, moduleId, parentId, 
+9，支持整体调用链路的跟踪，比如traceId, moduleId, parentId, 
     日志采用slf4j的 Logger xLogger = LoggerFactory.getLogger(xxx.class);只需引入Polaris_core包
 	另外如果采用线程池的方式，需要InheritableThreadLocalExecutor和InheritablePolarisThreadLocal搭配方式使用，线程池中的traceId信息也会进行传递
 	采用dubbo方式 需要映入polaris_container_dubbo模块，帮你做了traceID的传递，
 	http方式 采用HttpClientUtil方式，帮你做了traceID的传递
 	
-11,缓存模块Polaris_cache,
+10,缓存模块Polaris_extension_cache,
    CacheFactory.getCache(cachename);获取缓存，默认采用EHCache, 
    根据缓存配置参数可以动态切换 RedisSingle和RedisCluster
    参数配置如下(xxx为缓存的名称cachename)
