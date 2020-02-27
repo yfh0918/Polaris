@@ -25,12 +25,14 @@ public class PasswordChecker {
     /**
      * 密码符合规则，返回true
      */
-    public boolean check(String password,boolean upperCase, boolean lowerCase, boolean letter, boolean digit, boolean special){
+    public boolean check(String password,boolean upperCase, boolean lowerCase, boolean letter, boolean digit, boolean special, int minLength, int maxLength){
     	this.upperCase = upperCase;
     	this.lowerCase = lowerCase;
     	this.letter = letter;
     	this.digit = digit;
     	this.special = special;
+    	this.minLength = minLength;
+    	this.maxLength = maxLength;
     	return check(password);
     }
     public boolean check(String password, boolean letter, boolean digit, boolean special){
