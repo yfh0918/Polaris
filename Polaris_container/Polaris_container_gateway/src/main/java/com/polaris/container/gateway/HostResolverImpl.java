@@ -13,8 +13,8 @@ import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.provider.ConfCompositeProvider;
-import com.polaris.core.naming.ServerHandlerProvider;
-import com.polaris.core.naming.ServerHandlerSupport;
+import com.polaris.core.naming.provider.ServerHandlerProvider;
+import com.polaris.core.naming.provider.ServerHandlerSupport;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 

@@ -1,4 +1,4 @@
-package com.polaris.core.naming;
+package com.polaris.core.naming.provider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,7 @@ import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.polaris.core.OrderWrapper;
+import com.polaris.core.naming.ServerHandler;
 import com.polaris.core.util.StringUtil;
 
 @SuppressWarnings("rawtypes")

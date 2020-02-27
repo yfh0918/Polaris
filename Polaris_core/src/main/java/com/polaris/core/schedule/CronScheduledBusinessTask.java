@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.ServerHandlerProvider;
+import com.polaris.core.naming.provider.ServerHandlerProvider;
 import com.polaris.core.util.NetUtils;
 
 abstract public class CronScheduledBusinessTask implements Runnable {

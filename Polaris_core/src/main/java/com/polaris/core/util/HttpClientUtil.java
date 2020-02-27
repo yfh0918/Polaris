@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.GlobalContext;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.ServerHandlerProvider;
+import com.polaris.core.naming.provider.ServerHandlerProvider;
  
 /**
  * HttpClient工具类

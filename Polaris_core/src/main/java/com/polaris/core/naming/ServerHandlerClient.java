@@ -2,6 +2,7 @@ package com.polaris.core.naming;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.naming.provider.ServerHandlerProvider;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 

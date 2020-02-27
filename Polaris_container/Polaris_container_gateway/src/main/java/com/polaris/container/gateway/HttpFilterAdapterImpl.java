@@ -20,7 +20,7 @@ import com.polaris.container.gateway.util.RequestUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.GlobalContext;
 import com.polaris.core.dto.ResultDto;
-import com.polaris.core.naming.ServerHandlerProvider;
+import com.polaris.core.naming.provider.ServerHandlerProvider;
 import com.polaris.core.util.UuidUtil;
 
 import io.netty.buffer.ByteBuf;
