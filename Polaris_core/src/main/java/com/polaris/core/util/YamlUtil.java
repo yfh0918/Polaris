@@ -21,7 +21,18 @@ import org.yaml.snakeyaml.reader.UnicodeReader;
 
 public abstract class YamlUtil {
 
-	public static Properties yaml2Properties (InputStream inputStream) throws IOException {
+	public static Properties getProperties (String fileName,boolean includeClassPath) {
+		try (InputStream in = FileUitl.getStream(fileName,includeClassPath)) {
+			if (in != null) {
+	      		return getProperties(in);
+		    }
+	    } catch (IOException e) {
+		   e.printStackTrace();
+	    }
+	    return null;
+	}
+	
+	public static Properties getProperties (InputStream inputStream) throws IOException {
 		Yaml yaml = createYaml();
 		Resource resource = new InputStreamResource(inputStream);
 		Properties properties = CollectionFactory.createStringAdaptingProperties();
@@ -36,7 +47,7 @@ public abstract class YamlUtil {
 		return properties;
 	}
 	
-	public static Map<String, Object> yaml2Map(String lines) {
+	public static Map<String, Object> getMap(String lines) {
 		Yaml yaml = createYaml();
 		Map<String, Object> yamlMap = new HashMap<>();
 		for (Object object : yaml.loadAll(lines)) {
@@ -45,6 +56,17 @@ public abstract class YamlUtil {
 			}
 		}
 		return yamlMap;
+	}
+	
+	public static Properties getProperties(String lines) {
+		Yaml yaml = createYaml();
+		Properties properties = CollectionFactory.createStringAdaptingProperties();
+		for (Object object : yaml.loadAll(lines)) {
+			if (object != null) {
+				properties.putAll(process(asMap(object)));
+			}
+		}
+		return properties;
 	}
 	
 	private static Properties process(Map<String, Object> map) {

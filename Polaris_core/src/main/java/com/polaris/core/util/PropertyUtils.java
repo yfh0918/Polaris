@@ -12,14 +12,38 @@ import com.polaris.core.Constant;
 
 public abstract class PropertyUtils {
 	
-	public static Properties getProperties(InputStream inputStream) throws IOException {
-  		Properties inProperties = new Properties();
-        try (InputStreamReader read = new InputStreamReader(inputStream, Charset.defaultCharset())) {
-        	inProperties.load(read);
-        }
-	    return inProperties;
+	public static Properties getProperties (String fileName,boolean includeClassPath) {
+		try (InputStream in = FileUitl.getStream(fileName,includeClassPath)) {
+			if (in != null) {
+	      		return getProperties(in);
+		    }
+	    } catch (IOException e) {
+		   e.printStackTrace();
+	    }
+	    return null;
 	}
 	
+	public static Properties getProperties(InputStream inputStream) throws IOException {
+  		Properties properties = new Properties();
+        try (InputStreamReader read = new InputStreamReader(inputStream, Charset.defaultCharset())) {
+        	properties.load(read);
+        }
+	    return properties;
+	}
+	
+	public static Properties getProperties(String fileName, String lines) {
+		Properties properties = new Properties();
+    	if (StringUtil.isNotEmpty(lines)) {
+			String[] contents = lines.split(Constant.LINE_SEP);
+			for (String content : contents) {
+				String[] keyvalue = getKeyValue(content);
+				if (keyvalue != null) {
+					properties.put(keyvalue[0], keyvalue[1]);
+				}
+			}
+		}
+    	return properties;
+    }
 	public static Map<String, Object> getMap(String fileName, String lines) {
     	Map<String, Object> propertyMap = new HashMap<>();
     	if (StringUtil.isNotEmpty(lines)) {

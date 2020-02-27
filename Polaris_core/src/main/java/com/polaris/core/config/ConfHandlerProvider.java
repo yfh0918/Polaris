@@ -105,8 +105,8 @@ public class ConfHandlerProvider {
 		for (String file : getProperties(type)) {
 			//载入配置到缓存
 			logger.info("{} load start",file);
-			for (Map.Entry<String, Object> entry : ConfPropertyAdapt.getMap(file, get(file,group)).entrySet()) {
-				put(config, entry.getKey(), entry.getValue().toString());
+			for (Map.Entry<Object, Object> entry : ConfPropertyAdapt.getProperties(file, get(file,group)).entrySet()) {
+				put(config, entry.getKey().toString(), entry.getValue().toString());
 			}
 			logger.info("{} load end",file);
 			
@@ -115,9 +115,9 @@ public class ConfHandlerProvider {
 	    	listen(file, group, new ConfHandlerListener() {
 				@Override
 				public void receive(String content) {
-					for (Map.Entry<String, Object> entry : ConfPropertyAdapt.getMap(file, content).entrySet()) {
-						put(config, entry.getKey(), entry.getValue().toString());
-						listenForPut(config, entry.getKey(), entry.getValue().toString());
+					for (Map.Entry<Object, Object> entry : ConfPropertyAdapt.getProperties(file, content).entrySet()) {
+						put(config, entry.getKey().toString(), entry.getValue().toString());
+						listenForPut(config, entry.getKey().toString(), entry.getValue().toString());
 					}
 				}
 			});

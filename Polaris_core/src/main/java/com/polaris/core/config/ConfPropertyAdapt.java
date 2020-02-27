@@ -1,12 +1,8 @@
 package com.polaris.core.config;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
 import java.util.Properties;
 
 import com.polaris.core.Constant;
-import com.polaris.core.util.FileUitl;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
@@ -77,32 +73,16 @@ public abstract class ConfPropertyAdapt {
 		return getProperties(fileName, true);
 	}
 	public static Properties getProperties(String fileName, boolean includeClassPath) {
-        
-		try (InputStream in = FileUitl.getStream(fileName,includeClassPath)) {
-			if (in == null) {
-				return null;
-		    }
-        	//yaml文件适配
-      		if (fileName.toLowerCase().endsWith(YAML_SUFFIX)) {
-      			return YamlUtil.yaml2Properties(in);
-      		} 
-      		//property文件
-      		return PropertyUtils.getProperties(in);
-            
-	    } catch (IOException e) {
-		   e.printStackTrace();
-	    }
-	    return null;
+		if (fileName.toLowerCase().endsWith(YAML_SUFFIX)) {
+			return YamlUtil.getProperties(fileName, includeClassPath);
+		}
+		return PropertyUtils.getProperties(fileName, includeClassPath);
 	}
 	
-	public static Map<String, Object> getMap(String fileName, String lines) {
-		
-		//yaml文件适配
+	public static Properties getProperties(String fileName, String lines) {
 		if (fileName.toLowerCase().endsWith(YAML_SUFFIX)) {
-	        return YamlUtil.yaml2Map(lines); 
+	        return YamlUtil.getProperties(lines); 
 		}
-		
-		//properties
-		return PropertyUtils.getMap(fileName, lines);
+		return PropertyUtils.getProperties(fileName, lines);
     }
 }
