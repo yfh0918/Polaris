@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.web.reactive.config.EnableWebFlux;
@@ -23,6 +22,7 @@ import reactor.netty.DisposableServer;
 import reactor.netty.http.HttpProtocol;
 import reactor.netty.http.server.HttpServer;
 
+@EnableWebFlux
 public class WebfluxServer {
 	
 	private static Logger logger = LoggerFactory.getLogger(WebfluxServer.class);
@@ -60,7 +60,7 @@ public class WebfluxServer {
     public void start() {
 
     	//创建context
-    	SpringUtil.refresh(ConfigurationSupport.getConfiguration(WebFluxConfiguration.class));
+    	SpringUtil.refresh(ConfigurationSupport.getConfiguration(WebfluxServer.class));
     	
     	//通过ApplicationContext创建HttpHandler
         HttpHandler httpHandler = WebHttpHandlerBuilder.applicationContext(SpringUtil.getApplicationContext()).build();
@@ -156,9 +156,5 @@ public class WebfluxServer {
     	}
     	return server;
     }
-    
-    @EnableWebFlux
-    @Configuration 
-    protected static class WebFluxConfiguration {
-	}
+
 }
