@@ -10,23 +10,15 @@ public abstract class SystemCallUtil {
 
 	private static Map<String, String> encryptMap = new ConcurrentHashMap<>();
 	public static String value() {
-    	String key = ConfClient.get(Constant.SYSTEM_CALL_ENCRYPT_KEY,Constant.SYSTEM_CALL_ENCRYPT_KEY_DEFAULT);
+		String key = ConfClient.get(Constant.SYSTEM_CALL_ENCRYPT_KEY,Constant.SYSTEM_CALL_ENCRYPT_KEY_DEFAULT);
     	String startwith = ConfClient.get(Constant.SYSTEM_CALL_START_WITH,Constant.SYSTEM_CALL_START_WITH_DEFAULT);
     	String strChars = ConfClient.get(Constant.SYSTEM_CALL_ENCRYPT_VALUE,Constant.SYSTEM_CALL_ENCRYPT_VALUE_DEFAULT);
     	String systemKey = key + startwith + strChars;
-    	String value = encryptMap.get(systemKey);
+    	String value = getValue(systemKey);
     	if (StringUtil.isNotEmpty(value)) {
     		return value;
     	}
-        EncryptUtil en = EncryptUtil.getInstance(key);
-        try {
-			value = en.encrypt(startwith, strChars);
-			encryptMap.put(systemKey, value);
-			return value;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-        return null;
+		return putValue(systemKey, startwith, strChars, key);
 	}
 	
 	public static String key() {
@@ -41,10 +33,21 @@ public abstract class SystemCallUtil {
     	String startwith = ConfClient.get(Constant.SYSTEM_CALL_START_WITH,Constant.SYSTEM_CALL_START_WITH_DEFAULT);
     	String strChars = ConfClient.get(Constant.SYSTEM_CALL_ENCRYPT_VALUE,Constant.SYSTEM_CALL_ENCRYPT_VALUE_DEFAULT);
     	String systemKey = key + startwith + strChars;
-    	String value = encryptMap.get(systemKey);
+    	String value = getValue(systemKey);
     	if (StringUtil.isEmpty(value)) {
-    		return sourceValue.equals(value());
+    		value = putValue(systemKey, startwith, strChars, key);
     	}
 		return sourceValue.equals(value);
+	}
+	
+	private synchronized static String putValue(String systemKey, String startwith, String strChars, String encryptKey) {
+		encryptMap.clear();
+		String value = EncryptUtil.getEncryptValue(startwith, strChars, EncryptUtil.getInstance(encryptKey));
+    	encryptMap.put(systemKey, value);
+    	return value;
+	}
+	
+	private static String getValue(String systemKey) {
+		return encryptMap.get(systemKey);
 	}
 }
