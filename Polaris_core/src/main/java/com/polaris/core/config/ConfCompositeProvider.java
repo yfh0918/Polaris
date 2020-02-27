@@ -19,10 +19,6 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
     	INSTANCE_ENDPOINT.init();
     }
 
-	public String get(Config config,String key) {
-		return config.get(key);
-	}
-    
 	@Override
 	protected void put(Config config, String key, String value) {
 		super.put(config, key, value);

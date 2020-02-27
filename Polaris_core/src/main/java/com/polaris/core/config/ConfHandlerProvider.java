@@ -101,8 +101,17 @@ public class ConfHandlerProvider {
 		//应用名称
 		String group = Config.GLOBAL.equals(type) ? type : ConfClient.getAppName();
 		
+		//获取文件
+		String files = type.equals(Config.EXTEND) ? 
+				ConfigFactory.DEFAULT.get(Constant.PROJECT_EXTENSION_PROPERTIES) : 
+					ConfigFactory.DEFAULT.get(Constant.PROJECT_GLOBAL_PROPERTIES);
+		if (StringUtil.isEmpty(files)) {
+			return;
+		}
+		String[] fileArray = files.split(",");
+		
 		//处理文件
-		for (String file : getProperties(type)) {
+		for (String file : fileArray) {
 			//载入配置到缓存
 			logger.info("{} load start",file);
 			for (Map.Entry<Object, Object> entry : ConfPropertyAdapt.getProperties(file, get(file,group)).entrySet()) {
@@ -126,7 +135,18 @@ public class ConfHandlerProvider {
     }
     
     /**
-	* 设置值
+	* 获取配置
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
+	public String get(Config config,String key) {
+		return config.get(key);
+	}
+	
+    /**
+	* 设置配置
 	* @param 
 	* @return 
 	* @Exception 
@@ -135,8 +155,9 @@ public class ConfHandlerProvider {
     protected void put(Config config, String key, String value) {
     	config.put(key, value);
     }
+    
     /**
-	* 设置值时候的监听
+	* 设置配置节点的监听
 	* @param 
 	* @return 
 	* @Exception 
@@ -145,25 +166,4 @@ public class ConfHandlerProvider {
     protected void listenForPut(Config config, String key, String value){
     }
 	
-	/**
-	* 获取扩展配置信息
-	* @param 
-	* @return 
-	* @Exception 
-	* @since 
-	*/
-	protected String[] getProperties(String type) {
-		String files = null;
-		if (type.equals(Config.EXTEND)) {
-			files = ConfigFactory.DEFAULT.get(Constant.PROJECT_EXTENSION_PROPERTIES);
-		} else  if (type.equals(Config.GLOBAL)) {
-			files = ConfigFactory.DEFAULT.get(Constant.PROJECT_GLOBAL_PROPERTIES);
-		}
-		if (StringUtil.isEmpty(files)) {
-			return new String[]{};
-		}
-		return files.split(",");
-	}
-	
-
 }
