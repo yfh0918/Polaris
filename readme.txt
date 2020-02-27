@@ -40,7 +40,7 @@
 6:Polaris_container_gateway是现有的api网管，提供api的统一入口服务(基于netty http实现)
   具体的api代理请参考config\upstream.txt,其中static:开头的代理的存静态文件会跳过所有的filter
   另外支持静态文件配置，可以在config\static.txt增增加静态文件路径
-  至此扩展，详细请参考Polaris_demo_gateway
+  支持之定义过滤器扩展，详细请参考Polaris_demo_gateway
 
 7:支持Sentinel（流量监控类），需要在自己的配置文件中设置如下
   #sentinel
