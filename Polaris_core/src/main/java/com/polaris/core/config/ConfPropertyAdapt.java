@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import com.polaris.core.Constant;
 import com.polaris.core.util.FileUitl;
+import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.YamlUtil;
@@ -52,6 +53,15 @@ public abstract class ConfPropertyAdapt {
     		rootConfigName = Constant.DEFAULT_CONFIG_NAME;
     	}
     	
+    	//IP地址
+		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
+			propeties.put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
+		} else {
+			if (StringUtil.isEmpty(propeties.getProperty(Constant.IP_ADDRESS))) {
+				propeties.put(Constant.IP_ADDRESS, NetUtils.getLocalHost());
+			}
+		}
+		
     	//获取返回
     	Constant.DEFAULT_CONFIG_NAME = rootConfigName;
     	rootProperties = propeties;

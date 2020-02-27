@@ -3,7 +3,6 @@ package com.polaris.core.config;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import com.polaris.core.Constant;
 import com.polaris.core.OrderWrapper;
 import com.polaris.core.util.EnvironmentUtil;
-import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
 @SuppressWarnings("rawtypes")
@@ -68,19 +66,12 @@ public class ConfHandlerProvider {
     	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
 
 		// 设置application.properties文件名
-    	Properties propeties = ConfPropertyAdapt.getRootProperties();
     	logger.info("{} load start",Constant.DEFAULT_CONFIG_NAME);
-    	for (Map.Entry<Object, Object> entry : propeties.entrySet()) {
+    	for (Map.Entry<Object, Object> entry : ConfPropertyAdapt.getRootProperties().entrySet()) {
 			put(ConfigFactory.DEFAULT, entry.getKey().toString(), entry.getValue().toString());
 		}
+		ConfPropertyAdapt.cleaRootProperties();
 		logger.info("{} load end",Constant.DEFAULT_CONFIG_NAME);
-		
-		//设置IP地址
-		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
-			ConfigFactory.DEFAULT.put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
-		} else {
-			ConfigFactory.DEFAULT.put(Constant.IP_ADDRESS, NetUtils.getLocalHost());
-		}
 		
 		//设置systemenv
     	logger.info("systemEnv load start");
@@ -100,8 +91,6 @@ public class ConfHandlerProvider {
 		}
 		logger.info("systemProperties load end");
 		
-		//clear
-		ConfPropertyAdapt.cleaRootProperties();
 	}
     
     private void init(String type) {
