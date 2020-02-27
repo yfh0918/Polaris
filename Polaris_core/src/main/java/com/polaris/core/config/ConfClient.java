@@ -51,7 +51,7 @@ public abstract class ConfClient {
 		
 		//默认值
 		if (StringUtil.isNotEmpty(defaultVal)) {
-			ConfCompositeProvider.INSTANCE.put(ConfigFactory.DEFAULT, key, defaultVal);
+			set(key, defaultVal);
 		}
 		
 		//返回默认值

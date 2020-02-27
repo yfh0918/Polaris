@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
 import com.polaris.core.OrderWrapper;
-import com.polaris.core.util.EncryptUtil;
 import com.polaris.core.util.EnvironmentUtil;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
@@ -72,7 +71,7 @@ public class ConfHandlerProvider {
     	Properties propeties = ConfPropertyAdapt.getRootProperties();
     	logger.info("{} load start",Constant.DEFAULT_CONFIG_NAME);
     	for (Map.Entry<Object, Object> entry : propeties.entrySet()) {
-			put(ConfigFactory.DEFAULT, entry.getKey().toString(), EncryptUtil.getDecryptValue(entry.getValue().toString()));
+			put(ConfigFactory.DEFAULT, entry.getKey().toString(), entry.getValue().toString());
 		}
 		logger.info("{} load end",Constant.DEFAULT_CONFIG_NAME);
 		
@@ -100,6 +99,8 @@ public class ConfHandlerProvider {
 			}
 		}
 		logger.info("systemProperties load end");
+		
+		//clear
 		ConfPropertyAdapt.cleaRootProperties();
 	}
     
