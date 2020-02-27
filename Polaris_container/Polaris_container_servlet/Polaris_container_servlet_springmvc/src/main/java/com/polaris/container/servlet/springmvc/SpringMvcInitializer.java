@@ -7,7 +7,6 @@ import javax.servlet.ServletException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -22,11 +21,11 @@ import com.polaris.core.util.SpringUtil;
 @Order(ServletOrder.SPRINGMVC)
 public class SpringMvcInitializer extends  ExtensionInitializerAbs { 
 	final static Logger logger = LoggerFactory.getLogger(SpringMvcInitializer.class);
-	InnerInitializer initializer = null;
+	SpringMvcInnerInitializer initializer = null;
 
 	@Override
 	public void loadContext() {
-		initializer = new InnerInitializer(); 
+		initializer = new SpringMvcInnerInitializer(); 
 		try {
 			initializer.onStartup(this.servletContext);
 		} catch (ServletException e) {
@@ -49,7 +48,8 @@ public class SpringMvcInitializer extends  ExtensionInitializerAbs {
 		super.addFilter();
 	} 
 	
-	protected static class InnerInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+	@EnableWebMvc
+	protected static class SpringMvcInnerInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 		private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 
 		@Override
@@ -72,7 +72,7 @@ public class SpringMvcInitializer extends  ExtensionInitializerAbs {
 		
 		@Override
 		protected Class<?>[] getRootConfigClasses() {
-			return ConfigurationSupport.getConfiguration(PolarisWebMvcEnable.class);
+			return ConfigurationSupport.getConfiguration(SpringMvcInnerInitializer.class);
 		}
 
 		@Override
@@ -90,10 +90,5 @@ public class SpringMvcInitializer extends  ExtensionInitializerAbs {
 		}
 		
 
-	}
-	
-	@Configuration
-	@EnableWebMvc
-	protected static class PolarisWebMvcEnable {
 	}
 }
