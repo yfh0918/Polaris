@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfCompositeProvider;
 import com.polaris.core.config.ConfHandlerListener;
+import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.util.JwtUtil;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;

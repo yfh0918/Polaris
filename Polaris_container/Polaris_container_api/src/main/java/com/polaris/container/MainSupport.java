@@ -3,7 +3,7 @@ package com.polaris.container;
 import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerSupport;
-import com.polaris.core.config.ConfCompositeProvider;
+import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.naming.ServerHandlerClient;
 
 /**

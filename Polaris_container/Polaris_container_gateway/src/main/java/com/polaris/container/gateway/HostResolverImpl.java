@@ -11,8 +11,8 @@ import org.littleshoot.proxy.HostResolver;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.ConfCompositeProvider;
 import com.polaris.core.config.ConfHandlerListener;
+import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.naming.ServerHandlerProvider;
 import com.polaris.core.naming.ServerHandlerSupport;
 import com.polaris.core.util.PropertyUtils;

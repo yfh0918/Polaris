@@ -1,6 +1,7 @@
 package com.polaris.core.config;
 
 import com.polaris.core.Constant;
+import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.util.StringUtil;
 
 /**

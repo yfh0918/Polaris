@@ -6,8 +6,8 @@ import java.util.Set;
 import com.alibaba.csp.sentinel.adapter.servlet.callback.UrlCleaner;
 import com.alibaba.csp.sentinel.adapter.servlet.callback.WebCallbackManager;
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfCompositeProvider;
 import com.polaris.core.config.ConfHandlerListener;
+import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.util.PropertyUtils;
 import com.polaris.core.util.StringUtil;
 

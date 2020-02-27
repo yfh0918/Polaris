@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 
 import com.polaris.container.gateway.request.FilterType;
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfCompositeProvider;
 import com.polaris.core.config.ConfHandlerListener;
+import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.util.StringUtil;
 
 /**

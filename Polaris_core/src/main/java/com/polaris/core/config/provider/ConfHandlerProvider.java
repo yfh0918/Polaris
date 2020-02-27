@@ -1,4 +1,4 @@
-package com.polaris.core.config;
+package com.polaris.core.config.provider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,12 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
 import com.polaris.core.OrderWrapper;
-import com.polaris.core.util.EnvironmentUtil;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.ConfHandler;
+import com.polaris.core.config.ConfHandlerListener;
+import com.polaris.core.config.Config;
+import com.polaris.core.config.ConfigFactory;
+import com.polaris.core.config.reader.CofReaderFactory;
 import com.polaris.core.util.StringUtil;
 
 @SuppressWarnings("rawtypes")
@@ -39,7 +44,6 @@ public class ConfHandlerProvider {
 	
 	//初始化操作
 	public void init() {
-		initSystem();
 		init(Config.EXTEND);
 		init(Config.GLOBAL);
 	}
@@ -61,38 +65,6 @@ public class ConfHandlerProvider {
 		}
 	}
 
-    private void initSystem() {
-		// 启动字符集
-    	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
-
-		// 设置application.properties文件名
-    	logger.info("{} load start",Constant.DEFAULT_CONFIG_NAME);
-    	for (Map.Entry<Object, Object> entry : ConfPropertyAdapt.getRootProperties().entrySet()) {
-			put(ConfigFactory.DEFAULT, entry.getKey().toString(), entry.getValue().toString());
-		}
-		ConfPropertyAdapt.cleaRootProperties();
-		logger.info("{} load end",Constant.DEFAULT_CONFIG_NAME);
-		
-		//设置systemenv
-    	logger.info("systemEnv load start");
-		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemEnvironment().entrySet()) {
-			if (StringUtil.isNotEmpty(entry.getValue())) {
-				put(ConfigFactory.DEFAULT, entry.getKey(), entry.getValue());
-			}
-		}
-    	logger.info("systemEnv load end");
-		
-		//设置systemProperties
-    	logger.info("systemProperties load start");
-		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemProperties().entrySet()) {
-			if (StringUtil.isNotEmpty(entry.getValue())) {
-				put(ConfigFactory.DEFAULT, entry.getKey(), entry.getValue());
-			}
-		}
-		logger.info("systemProperties load end");
-		
-	}
-    
     private void init(String type) {
     	
 		//获取配置
@@ -114,7 +86,7 @@ public class ConfHandlerProvider {
 		for (String file : fileArray) {
 			//载入配置到缓存
 			logger.info("{} load start",file);
-			for (Map.Entry<Object, Object> entry : ConfPropertyAdapt.getProperties(file, get(file,group)).entrySet()) {
+			for (Map.Entry<Object, Object> entry : CofReaderFactory.get(file).getProperties(file, get(file,group)).entrySet()) {
 				put(config, entry.getKey().toString(), entry.getValue().toString());
 			}
 			logger.info("{} load end",file);
@@ -124,7 +96,7 @@ public class ConfHandlerProvider {
 	    	listen(file, group, new ConfHandlerListener() {
 				@Override
 				public void receive(String content) {
-					for (Map.Entry<Object, Object> entry : ConfPropertyAdapt.getProperties(file, content).entrySet()) {
+					for (Map.Entry<Object, Object> entry : CofReaderFactory.get(file).getProperties(file, content).entrySet()) {
 						put(config, entry.getKey().toString(), entry.getValue().toString());
 						listenForPut(config, entry.getKey().toString(), entry.getValue().toString());
 					}
