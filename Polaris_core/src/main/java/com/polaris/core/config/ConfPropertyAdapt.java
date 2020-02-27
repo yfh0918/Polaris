@@ -59,6 +59,7 @@ public abstract class ConfPropertyAdapt {
 	}
 	
 	public static void cleaRootProperties() {
+		rootProperties.clear();
 		rootProperties = null;
 	}
 	

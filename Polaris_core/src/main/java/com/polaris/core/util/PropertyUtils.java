@@ -14,11 +14,10 @@ public abstract class PropertyUtils {
 	
 	public static Properties getProperties(InputStream inputStream) throws IOException {
   		Properties inProperties = new Properties();
-  		Properties outProperties = new Properties();
         try (InputStreamReader read = new InputStreamReader(inputStream, Charset.defaultCharset())) {
         	inProperties.load(read);
         }
-	    return outProperties;
+	    return inProperties;
 	}
 	
 	public static Map<String, Object> getMap(String fileName, String lines) {
