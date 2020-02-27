@@ -10,12 +10,12 @@ public class ConfigFactory {
 	private static Map<String , Config> configMap = new HashMap<>();
 	private static List<Config> configList = new ArrayList<>();
 	static {
-		configMap.put(Config.DEFAULT, ConfEnum.DEFAULT);
-		configMap.put(Config.EXTEND, ConfEnum.EXTEND);
-		configMap.put(Config.GLOBAL, ConfEnum.GLOBAL);
-		configList.add(ConfEnum.DEFAULT);
-		configList.add(ConfEnum.EXTEND);
-		configList.add(ConfEnum.GLOBAL);
+		configMap.put(Config.DEFAULT, ConfigDefaultImpl.DEFAULT);
+		configMap.put(Config.EXTEND, ConfigDefaultImpl.EXTEND);
+		configMap.put(Config.GLOBAL, ConfigDefaultImpl.GLOBAL);
+		configList.add(ConfigDefaultImpl.DEFAULT);
+		configList.add(ConfigDefaultImpl.EXTEND);
+		configList.add(ConfigDefaultImpl.GLOBAL);
 	}
 	
 	public static Config DEFAULT = get(Config.DEFAULT);
