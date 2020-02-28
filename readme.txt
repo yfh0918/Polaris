@@ -5,7 +5,7 @@
 
 2:提供两种类型的 demo（调用dubbo应用 和 无dubbo应用）
   主要参数可以参考Polaris_demo_web_nodubbo的application.properties
-  mvn clean package -Dmaven.test.skip=true,可以在target目录下生成zip文件，解压缩后运行 java -jar Polaris_demo_web_nodubbo.jar
+  mvn clean package -Dmaven.test.skip=true,可以在target目录下生成zip文件，解压缩后运行 java -jar Polaris_demo_web_resteasy.jar
 
 3:集群部署服务的时候需要注册中心，
   支持nacos（需要自行下载nacos的server）,
@@ -95,7 +95,7 @@
 11，数据库模块Polaris_extension_db
   默认采用mybatis+hikari,支持多数据源
   如果是多数据源请采用
-  jdbc.xx.url=xxx 或者 spring.datasource.xx.url=sss 详细请参考Polaris_demo_web_nodubbo
+  jdbc.xx.url=xxx 或者 spring.datasource.xx.url=sss 详细请参考Polaris_demo_web_resteasy
   多数据源如果采用注解切换的请自行添加aop,详情请参考DataBaseAop和serviceImpl中各方法的@DataSource注解
    
 12，和Springboot的融合
