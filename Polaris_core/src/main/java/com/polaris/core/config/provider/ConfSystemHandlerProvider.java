@@ -1,4 +1,4 @@
-package com.polaris.core.config;
+package com.polaris.core.config.provider;
 
 import java.util.Map;
 import java.util.Properties;
@@ -7,21 +7,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.provider.ConfCompositeProvider;
+import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.reader.CofReaderFactory;
 import com.polaris.core.util.EnvironmentUtil;
 import com.polaris.core.util.FileUitl;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
-public class ConfSystemHandler {
-	private static final Logger logger = LoggerFactory.getLogger(ConfSystemHandler.class);
+public class ConfSystemHandlerProvider {
+	private static final Logger logger = LoggerFactory.getLogger(ConfSystemHandlerProvider.class);
 
 	private static volatile String CONFIG_NAME = "application";
 
-	private ConfSystemHandler() {}
+	private ConfSystemHandlerProvider() {}
 	
-	public static ConfSystemHandler INSTANCE = new ConfSystemHandler();
+	public static ConfSystemHandlerProvider INSTANCE = new ConfSystemHandlerProvider();
 	
 	private Properties properties = null;
 

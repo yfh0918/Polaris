@@ -16,7 +16,7 @@ import org.slf4j.spi.LocationAwareLogger;
 
 import com.polaris.core.Constant;
 import com.polaris.core.GlobalContext;
-import com.polaris.core.config.ConfSystemHandler;
+import com.polaris.core.config.provider.ConfSystemHandlerProvider;
 import com.polaris.core.util.StringUtil;
 
 public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
@@ -36,7 +36,7 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 				
 		    	//获取日志文件logging.config=classpath:config/log4j2.xml
 				if (logFile == null || logFile.isEmpty()) {
-			    	logFile = ConfSystemHandler.INSTANCE.getProperties().getProperty(Constant.LOG_CONFIG, Constant.DEFAULT_LOG_FILE);
+			    	logFile = ConfSystemHandlerProvider.INSTANCE.getProperties().getProperty(Constant.LOG_CONFIG, Constant.DEFAULT_LOG_FILE);
 				}
 				
 				//设置具体的日志

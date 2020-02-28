@@ -17,18 +17,17 @@ import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.ConfPlaceholderHelper;
 
 
 @Component
-public class AutoUpdateConfigChangeListener implements BeanFactoryAware{
-  private static final Logger logger = LoggerFactory.getLogger(AutoUpdateConfigChangeListener.class);
+public class SpringAutoUpdateConfigChangeListener implements BeanFactoryAware{
+  private static final Logger logger = LoggerFactory.getLogger(SpringAutoUpdateConfigChangeListener.class);
 
   private final boolean typeConverterHasConvertIfNecessaryWithFieldParameter;
   private ConfigurableBeanFactory beanFactory = null;
   private TypeConverter typeConverter = null;
 
-  public AutoUpdateConfigChangeListener(){
+  public SpringAutoUpdateConfigChangeListener(){
     this.typeConverterHasConvertIfNecessaryWithFieldParameter = testTypeConverterHasConvertIfNecessaryWithFieldParameter();
   }
 
@@ -80,7 +79,7 @@ public class AutoUpdateConfigChangeListener implements BeanFactoryAware{
    */
   private Object resolvePropertyValue(SpringValue springValue) {
     // value will never be null, as @Value and @ApolloJsonValue will not allow that
-    Object value = ConfPlaceholderHelper
+    Object value = SpringPlaceholderHelper
         .resolvePropertyValue(beanFactory, springValue.getBeanName(), springValue.getPlaceholder());
 
     if (springValue.isJson()) {

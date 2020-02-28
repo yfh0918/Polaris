@@ -1,4 +1,4 @@
-package com.polaris.core.config;
+package com.polaris.core.config.value;
 
 import java.util.Set;
 import java.util.Stack;
@@ -13,12 +13,13 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.StringUtil;
 
 /**
  * Placeholder helper functions.
  */
-public class ConfPlaceholderHelper {
+public class SpringPlaceholderHelper {
 
   private static final String PLACEHOLDER_PREFIX = "${";
   private static final String PLACEHOLDER_SUFFIX = "}";
@@ -27,7 +28,7 @@ public class ConfPlaceholderHelper {
   private static final String EXPRESSION_PREFIX = "#{";
   private static final String EXPRESSION_SUFFIX = "}";
   private static boolean ignoreUnresolvablePlaceholders = true;
-  private static final Logger logger = LoggerFactory.getLogger(ConfPlaceholderHelper.class);
+  private static final Logger logger = LoggerFactory.getLogger(SpringPlaceholderHelper.class);
 
   /**
    * Resolve placeholder property values, e.g.

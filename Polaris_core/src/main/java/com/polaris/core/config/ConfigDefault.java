@@ -6,16 +6,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public enum ConfigDefaultImpl implements Config{
+public enum ConfigDefault implements Config{
 	
 	DEFAULT(Config.DEFAULT),
     EXTEND(Config.EXTEND),
     GLOBAL(Config.GLOBAL);
     private String type;
     private Map<String, String> cache = new ConcurrentHashMap<>();
-	private static final Logger logger = LoggerFactory.getLogger(ConfigDefaultImpl.class);
+	private static final Logger logger = LoggerFactory.getLogger(ConfigDefault.class);
 
-    ConfigDefaultImpl(String type) {
+    ConfigDefault(String type) {
         this.type = type;
     }
 

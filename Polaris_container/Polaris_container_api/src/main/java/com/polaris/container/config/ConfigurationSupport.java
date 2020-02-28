@@ -7,7 +7,7 @@ import java.util.ServiceLoader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.polaris.core.config.ConfPlaceholderConfigurer;
+import com.polaris.core.config.value.SpringPlaceholderConfigurer;
 
 abstract public class ConfigurationSupport {
 
@@ -60,8 +60,8 @@ abstract public class ConfigurationSupport {
 	@Configuration
 	protected static class ConfPropertyConfiguration {
 		@Bean
-		public static ConfPlaceholderConfigurer propertyPlaceholderConfigurer() {
-			return new ConfPlaceholderConfigurer();
+		public static SpringPlaceholderConfigurer propertyPlaceholderConfigurer() {
+			return new SpringPlaceholderConfigurer();
 		}
 	}
 }

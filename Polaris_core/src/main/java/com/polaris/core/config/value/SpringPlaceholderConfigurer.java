@@ -1,4 +1,4 @@
-package com.polaris.core.config;
+package com.polaris.core.config.value;
 
 import java.util.HashSet;
 
@@ -16,7 +16,7 @@ import org.springframework.util.StringValueResolver;
  * <bean id="confPropertyPlaceholderConfigurer" class="com.polaris_conf_core.spring.ConfPropertyPlaceholderConfigurer" />
  *
  */
-public class ConfPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer {
+public class SpringPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer {
 
 	@Override
 	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, ConfigurablePropertyResolver propertyResolver) throws BeansException {
@@ -26,7 +26,7 @@ public class ConfPlaceholderConfigurer extends PropertySourcesPlaceholderConfigu
 		StringValueResolver valueResolver = new StringValueResolver() {
 			@Override
 			public String resolveStringValue(String strVal) {
-				return ConfPlaceholderHelper.parseStringValue(strVal, new HashSet<String>()).trim();
+				return SpringPlaceholderHelper.parseStringValue(strVal, new HashSet<String>()).trim();
 			}
 		};
 		super.doProcessProperties(beanFactoryToProcess, valueResolver);
