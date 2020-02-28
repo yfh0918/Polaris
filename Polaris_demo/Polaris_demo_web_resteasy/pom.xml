@@ -7,9 +7,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.polaris_demo</groupId>
-    <artifactId>Polaris_demo_web_nodubbo</artifactId>
+    <artifactId>Polaris_demo_web_resteasy</artifactId>
     <packaging>jar</packaging>
-    <name>Polaris_demo_web_nodubbo</name>
+    <name>Polaris_demo_web_resteasy</name>
 
     <dependencies>
         <dependency>
@@ -47,6 +47,6 @@
                 <artifactId>maven-assembly-plugin</artifactId>
             </plugin>
         </plugins>
-        <finalName>Polaris_demo_web_nodubbo</finalName>
+        <finalName>Polaris_demo_web_resteasy</finalName>
     </build>
 </project>
