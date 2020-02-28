@@ -12,29 +12,32 @@ import com.polaris.core.Constant;
 
 public abstract class PropertyUtils {
 	
-	public static Properties getProperties (String fileName,boolean includeClassPath) {
-		try (InputStream in = FileUitl.getStream(fileName,includeClassPath)) {
-			if (in != null) {
-	      		return getProperties(in);
-		    }
-	    } catch (IOException e) {
-		   e.printStackTrace();
-	    }
-	    return null;
+	public static Properties getProperties (String fileName,boolean includePath, boolean includeClassPath) {
+		Properties properties = null;
+		if (includePath) {
+			try (InputStream in = FileUitl.getStreamFromPath(fileName)) {
+				if (in != null) {
+					properties = getProperties(in);
+			    }
+		    } catch (IOException e) {}
+		}
+		if (properties != null) {
+			return properties;
+		}
+		if (includeClassPath) {
+			try (InputStream in = FileUitl.getStreamFromClassPath(fileName)) {
+				if (in != null) {
+					properties = getProperties(in);
+			    }
+		    } catch (IOException e) {}
+		}
+		return properties;
 	}
 	
-	public static Properties getProperties(InputStream inputStream) throws IOException {
-  		Properties properties = new Properties();
-        try (InputStreamReader read = new InputStreamReader(inputStream, Charset.defaultCharset())) {
-        	properties.load(read);
-        }
-	    return properties;
-	}
-	
-	public static Properties getProperties(String fileName, String lines) {
+	public static Properties getProperties(String contentLines) {
 		Properties properties = new Properties();
-    	if (StringUtil.isNotEmpty(lines)) {
-			String[] contents = lines.split(Constant.LINE_SEP);
+    	if (StringUtil.isNotEmpty(contentLines)) {
+			String[] contents = contentLines.split(Constant.LINE_SEP);
 			for (String content : contents) {
 				String[] keyvalue = getKeyValue(content);
 				if (keyvalue != null) {
@@ -44,10 +47,20 @@ public abstract class PropertyUtils {
 		}
     	return properties;
     }
-	public static Map<String, Object> getMap(String fileName, String lines) {
+	
+	public static Properties getProperties(InputStream inputStream) throws IOException {
+  		Properties properties = new Properties();
+        try (InputStreamReader read = new InputStreamReader(inputStream, Charset.defaultCharset())) {
+        	properties.load(read);
+        }
+	    return properties;
+	}
+	
+
+	public static Map<String, Object> getMap(String contentLines) {
     	Map<String, Object> propertyMap = new HashMap<>();
-    	if (StringUtil.isNotEmpty(lines)) {
-			String[] contents = lines.split(Constant.LINE_SEP);
+    	if (StringUtil.isNotEmpty(contentLines)) {
+			String[] contents = contentLines.split(Constant.LINE_SEP);
 			for (String content : contents) {
 				String[] keyvalue = getKeyValue(content);
 				if (keyvalue != null) {

@@ -3,25 +3,26 @@ package com.polaris.core.config.reader;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.polaris.core.util.FileUitl;
+
 public class CofReaderFactory {
 
 	private static Map<String , ConfReader> confReaderMap = new ConcurrentHashMap<>();
+    public static final String[] SUPPORT_TYPE = {"properties","yaml"};
 	static {
-		confReaderMap.put(ConfReader.PROPERTIES, new ConfPropertiesReader());
-		confReaderMap.put(ConfReader.YAML, new ConfYamlReader());
+		confReaderMap.put(SUPPORT_TYPE[0], new ConfPropertiesReader());
+		confReaderMap.put(SUPPORT_TYPE[1], new ConfYamlReader());
 	}
 	
 	public static ConfReader get(String fileName) {
-		if (fileName.endsWith(ConfReader.DOT+ConfReader.PROPERTIES)) {
-			return confReaderMap.get(ConfReader.PROPERTIES);
+		ConfReader confReader = confReaderMap.get(FileUitl.getSuffix(fileName));
+		if (confReader == null) {
+			throw new RuntimeException("file:"+fileName+" is not supported ");
 		}
-		if (fileName.endsWith(ConfReader.DOT+ConfReader.YAML)) {
-			return confReaderMap.get(ConfReader.YAML);
-		}
-		return confReaderMap.get(ConfReader.PROPERTIES);
+		return confReader;
 	}
 	
-	public static void set(String key, ConfReader confReader) {
-		confReaderMap.put(key, confReader);
+	public static void set(String suffix, ConfReader confReader) {
+		confReaderMap.put(suffix, confReader);
 	}
 }

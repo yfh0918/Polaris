@@ -13,6 +13,8 @@ import com.polaris.core.Constant;
 
 public abstract class FileUitl {
 	
+	public static final String DOT = ".";
+	
 	/** 
      * classpath下的路径 
      * @param fileDir  文件路径 
@@ -35,16 +37,14 @@ public abstract class FileUitl {
         }
         return path + File.separator + fileDir;
     }
+
     public static InputStream getStream(String fileName) throws IOException {
-    	return getStream(fileName, true);
-    }
-    public static InputStream getStream(String fileName, boolean includeClassPath) throws IOException {
 		
 		//先判断目录下的文件夹
     	InputStream inputStream = getStreamFromPath(fileName);
 		
 		//是否包含classpath
-		if (inputStream == null && includeClassPath) {
+		if (inputStream == null) {
 			return getStreamFromClassPath(fileName);
 		}
 		
@@ -70,6 +70,7 @@ public abstract class FileUitl {
 	}
     
     public static InputStream getStreamFromClassPath(String fileName) throws IOException {
+    	
     	//classpath:config/filename
 		InputStream inputStream = FileUitl.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + fileName);
 		if (inputStream != null) {
@@ -90,6 +91,10 @@ public abstract class FileUitl {
 			return file;
 		}
 		return null;
+	}
+	
+	public static String getSuffix(String fileName) {
+		return fileName.substring(fileName.lastIndexOf(DOT) + 1);
 	}
 	
 }

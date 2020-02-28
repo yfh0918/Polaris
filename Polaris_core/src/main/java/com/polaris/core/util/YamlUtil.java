@@ -21,15 +21,26 @@ import org.yaml.snakeyaml.reader.UnicodeReader;
 
 public abstract class YamlUtil {
 
-	public static Properties getProperties (String fileName,boolean includeClassPath) {
-		try (InputStream in = FileUitl.getStream(fileName,includeClassPath)) {
-			if (in != null) {
-	      		return getProperties(in);
-		    }
-	    } catch (IOException e) {
-		   e.printStackTrace();
-	    }
-	    return null;
+	public static Properties getProperties (String fileName,boolean includePath, boolean includeClassPath) {
+		Properties properties = null;
+		if (includePath) {
+			try (InputStream in = FileUitl.getStreamFromPath(fileName)) {
+				if (in != null) {
+					properties = getProperties(in);
+			    }
+		    } catch (IOException e) {}
+		}
+		if (properties != null) {
+			return properties;
+		}
+		if (includeClassPath) {
+			try (InputStream in = FileUitl.getStreamFromClassPath(fileName)) {
+				if (in != null) {
+					properties = getProperties(in);
+			    }
+		    } catch (IOException e) {}
+		}
+		return properties;
 	}
 	
 	public static Properties getProperties (InputStream inputStream) throws IOException {

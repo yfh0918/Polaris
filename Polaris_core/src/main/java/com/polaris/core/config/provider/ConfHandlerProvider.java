@@ -86,7 +86,7 @@ public class ConfHandlerProvider {
 		for (String file : fileArray) {
 			//载入配置到缓存
 			logger.info("{} load start",file);
-			for (Map.Entry<Object, Object> entry : CofReaderFactory.get(file).getProperties(file, get(file,group)).entrySet()) {
+			for (Map.Entry<Object, Object> entry : CofReaderFactory.get(file).getProperties(get(file,group)).entrySet()) {
 				put(config, entry.getKey().toString(), entry.getValue().toString());
 			}
 			logger.info("{} load end",file);
@@ -96,7 +96,7 @@ public class ConfHandlerProvider {
 	    	listen(file, group, new ConfHandlerListener() {
 				@Override
 				public void receive(String content) {
-					for (Map.Entry<Object, Object> entry : CofReaderFactory.get(file).getProperties(file, content).entrySet()) {
+					for (Map.Entry<Object, Object> entry : CofReaderFactory.get(file).getProperties(content).entrySet()) {
 						put(config, entry.getKey().toString(), entry.getValue().toString());
 						listenForPut(config, entry.getKey().toString(), entry.getValue().toString());
 					}

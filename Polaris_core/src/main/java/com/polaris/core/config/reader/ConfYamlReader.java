@@ -7,18 +7,13 @@ import com.polaris.core.util.YamlUtil;
 public class ConfYamlReader implements ConfReader{
 
 	@Override
-	public Properties getProperties(String fileName) {
-		return getProperties(fileName, true);
+	public Properties getProperties(String fileName, boolean includePath, boolean includeClassPath) {
+		return YamlUtil.getProperties(fileName, includePath, includeClassPath);
 	}
 
 	@Override
-	public Properties getProperties(String fileName, boolean includeClassPath) {
-		return YamlUtil.getProperties(fileName, includeClassPath);
-	}
-
-	@Override
-	public Properties getProperties(String fileName, String lines) {
-		return YamlUtil.getProperties(lines); 
+	public Properties getProperties(String contentLines) {
+		return YamlUtil.getProperties(contentLines); 
 	}
 
 }

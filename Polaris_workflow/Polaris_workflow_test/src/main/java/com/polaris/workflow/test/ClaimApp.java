@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSONObject;
 import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfCompositeProvider;
+import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.util.SpringUtil;
 import com.polaris.workflow.api.dto.WorkflowDto;
 import com.polaris.workflow.api.service.WorkflowService;

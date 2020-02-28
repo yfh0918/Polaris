@@ -3,15 +3,22 @@ package com.polaris.core.config;
 import java.util.Map;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.polaris.core.Constant;
 import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.config.reader.CofReaderFactory;
 import com.polaris.core.util.EnvironmentUtil;
+import com.polaris.core.util.FileUitl;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
 public class ConfSystemHandler {
-	
+	private static final Logger logger = LoggerFactory.getLogger(ConfSystemHandler.class);
+
+	private static volatile String CONFIG_NAME = "application";
+
 	private ConfSystemHandler() {}
 	
 	public static ConfSystemHandler INSTANCE = new ConfSystemHandler();
@@ -19,6 +26,7 @@ public class ConfSystemHandler {
 	private Properties properties = null;
 
 	public void init(ConfCompositeProvider provider) {
+		logger.info("application load start...");
 		// 启动字符集
     	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
 
@@ -73,30 +81,32 @@ public class ConfSystemHandler {
     	
     	//外部指定直接读取
     	if (StringUtil.isNotEmpty(file)) {
-    		propeties = CofReaderFactory.get(file).getProperties(file,true);
-    		Constant.DEFAULT_CONFIG_NAME = file;
-        	return propeties;
+    		propeties = CofReaderFactory.get(file).getProperties(file,true,true);
     	} 
     	
-    	//读取application.properties-不包括classpath
-    	propeties = CofReaderFactory.get(Constant.DEFAULT_CONFIG_NAME).getProperties(Constant.DEFAULT_CONFIG_NAME, false);
-    	file = Constant.DEFAULT_CONFIG_NAME;
-		
-		//读取application.yaml-包括classpath
+		//先搜索-path
     	if (propeties == null) {
-    		propeties = CofReaderFactory.get(Constant.DEFAULT_CONFIG_NAME_YAML).getProperties(Constant.DEFAULT_CONFIG_NAME_YAML, true);
-    		file = Constant.DEFAULT_CONFIG_NAME;
+    		for (String suffix : CofReaderFactory.SUPPORT_TYPE) {
+        		file =  CONFIG_NAME + FileUitl.DOT + suffix;
+        		propeties = CofReaderFactory.get(file).getProperties(file,true,false);
+        		if (propeties != null) {
+        			break;
+        		}
+        	}
+        	
+			//在搜索-classpath
+    		if (propeties == null) {
+    			for (String suffix : CofReaderFactory.SUPPORT_TYPE) {
+            		file =  CONFIG_NAME + FileUitl.DOT + suffix;
+            		propeties = CofReaderFactory.get(file).getProperties(file,false,true);
+            		if (propeties != null) {
+            			break;
+            		}
+            	}
+    		}
     	}
     	
-    	//读取application.properties-包括classpath
-    	if (propeties == null) {
-    		propeties = CofReaderFactory.get(Constant.DEFAULT_CONFIG_NAME).getProperties(Constant.DEFAULT_CONFIG_NAME, true);
-    		file = Constant.DEFAULT_CONFIG_NAME;
-    	}
-    	
-    	//获取返回
-    	Constant.DEFAULT_CONFIG_NAME = file;
-    	this.properties = propeties;
+     	this.properties = propeties;
     	return propeties;
 	}
 	
