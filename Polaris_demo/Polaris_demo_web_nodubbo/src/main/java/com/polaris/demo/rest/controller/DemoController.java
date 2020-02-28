@@ -39,6 +39,20 @@ public class DemoController {
 	@Value("${bbbb.ccc}")
 	private String dadfa;
 	
+	@Value("${test0.test2}")
+	private String test02;
+	
+	@Value("${test0.test3}")
+	private String test03;
+	
+	@Value("${test1.test2}")
+	private String test12;
+	
+	@Value("${test1.test3}")
+	private String test13;
+	
+
+	
 //	@Autowired
 //	private ComboService comboService;
     /**
@@ -55,7 +69,9 @@ public class DemoController {
     	System.out.println("ssss"+ssss);
         System.out.println("hello1234");
 
-        System.out.println("hello1234"+dadfa);
+        System.out.println("hello1234"+test02 +test03+test12+test13);
+        
+        System.out.println("test"+dadfa);
 //        comboService.findAll();
         return "hello1234";
     }

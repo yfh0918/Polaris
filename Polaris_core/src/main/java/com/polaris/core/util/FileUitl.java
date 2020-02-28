@@ -94,7 +94,7 @@ public abstract class FileUitl {
 	}
 	
 	public static String getSuffix(String fileName) {
-		return fileName.substring(fileName.lastIndexOf(DOT) + 1);
+		return fileName.toLowerCase().substring(fileName.lastIndexOf(DOT) + 1);
 	}
 	
 }
