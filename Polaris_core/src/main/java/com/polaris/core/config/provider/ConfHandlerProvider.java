@@ -41,8 +41,6 @@ public class ConfHandlerProvider {
     	return handler;
     }
 
-	
-	//初始化操作
 	public void init() {
 		init(Config.EXTEND);
 		init(Config.GLOBAL);
@@ -67,13 +65,13 @@ public class ConfHandlerProvider {
 
     private void init(String type) {
     	
-		//获取配置
+		//get config
 		Config config = ConfigFactory.get(type);
 		
-		//应用名称
+		//get config-center-group
 		String group = Config.GLOBAL.equals(type) ? type : ConfClient.getAppName();
 		
-		//获取文件
+		//get target files
 		String files = type.equals(Config.EXTEND) ? 
 				ConfigFactory.DEFAULT.get(Constant.PROJECT_EXTENSION_PROPERTIES) : 
 					ConfigFactory.DEFAULT.get(Constant.PROJECT_GLOBAL_PROPERTIES);
@@ -82,16 +80,15 @@ public class ConfHandlerProvider {
 		}
 		String[] fileArray = files.split(",");
 		
-		//处理文件
+		//target files loop
 		for (String file : fileArray) {
-			//载入配置到缓存
+			//load to config container
 			logger.info("{} load start",file);
 			for (Map.Entry<Object, Object> entry : CofReaderFactory.get(file).getProperties(get(file,group)).entrySet()) {
 				put(config, entry.getKey().toString(), entry.getValue().toString());
 			}
 			logger.info("{} load end",file);
 			
-	    	//增加监听
 			logger.info("{} listen start",file);
 	    	listen(file, group, new ConfHandlerListener() {
 				@Override
@@ -107,7 +104,7 @@ public class ConfHandlerProvider {
     }
     
     /**
-	* 获取配置
+	* config-get
 	* @param 
 	* @return 
 	* @Exception 
@@ -118,7 +115,7 @@ public class ConfHandlerProvider {
 	}
 	
     /**
-	* 设置配置
+	* config-put
 	* @param 
 	* @return 
 	* @Exception 
@@ -129,7 +126,7 @@ public class ConfHandlerProvider {
     }
     
     /**
-	* 设置配置节点的监听
+	* listen-put
 	* @param 
 	* @return 
 	* @Exception 

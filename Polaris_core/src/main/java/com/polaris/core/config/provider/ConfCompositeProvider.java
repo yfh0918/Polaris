@@ -7,9 +7,6 @@ import com.polaris.core.util.SpringUtil;
 
 public class ConfCompositeProvider extends ConfHandlerProvider {
 
-	/**
-     * 单实例
-     */
     public static final ConfCompositeProvider INSTANCE = new ConfCompositeProvider();
     private static final ConfSystemHandlerProvider INSTANCE_SYSTEM = ConfSystemHandlerProvider.INSTANCE;
     private static final ConfEndPointProvider INSTANCE_ENDPOINT = ConfEndPointProvider.INSTANCE;
@@ -17,8 +14,8 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
     
     @Override
     public void init() {
-    	INSTANCE_SYSTEM.init(this);
-    	INSTANCE_ENDPOINT.init(this);
+    	INSTANCE_SYSTEM.init();
+    	INSTANCE_ENDPOINT.init();
     	super.init();
     }
 
