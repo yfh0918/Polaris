@@ -4,7 +4,7 @@
  需要本地Polaris_assembly包手动copy到jekins的maven仓库
 
 2:提供两种类型的 demo（调用dubbo应用 和 无dubbo应用）
-  主要参数可以参考Polaris_demo_web_nodubbo的application.properties
+  主要参数可以参考Polaris_demo_web_resteasy的application.properties
   mvn clean package -Dmaven.test.skip=true,可以在target目录下生成zip文件，解压缩后运行 java -jar Polaris_demo_web_resteasy.jar
 
 3:集群部署服务的时候需要注册中心，
