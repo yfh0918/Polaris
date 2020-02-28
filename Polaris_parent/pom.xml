@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <resteasy-version>3.0.13.Final</resteasy-version>
         <spring_version>5.2.3.RELEASE</spring_version>
-        <tomcat-version>9.0.30</tomcat-version>
+        <tomcat-version>9.0.31</tomcat-version>
         <jetty-version>9.4.24.v20191120</jetty-version>
         <activiti-version>5.17.0</activiti-version>
         <hibernate-version>5.4.10.Final</hibernate-version>
