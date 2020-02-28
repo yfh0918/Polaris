@@ -10,6 +10,11 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.provider.ServerHandlerProvider;
 import com.polaris.core.util.NetUtils;
 
+/**
+ * 配合注册中心实现集群定时器
+ *
+ * @author Tom yu
+ */
 abstract public class CronScheduledBusinessTask implements Runnable {
     private Logger logger = LoggerFactory.getLogger(CronScheduledBusinessTask.class);
 
@@ -17,23 +22,23 @@ abstract public class CronScheduledBusinessTask implements Runnable {
 	public void run() {
 		try {
 			
-			//获取IP列表
+			//get cluster ip list
             List<String> list = ServerHandlerProvider.getInstance().getAllUrl(ConfClient.getAppName(), false);
             if (list == null || list.size() == 0) {
             	taskExecute();
             	return;
             }
             
-            //获取第一个IP
+            //get first ip for tast execute
             String scheduleIpAndPort = list.get(0);
             String localHost = NetUtils.getLocalHost();
             String localPort = ConfClient.get(Constant.SERVER_PORT_NAME);
             String registerIpAndPort = ConfClient.get(Constant.IP_ADDRESS, localHost) + ":" + localPort;
             
-            //符合要求的IP
+            //ip is ok
             if (registerIpAndPort.equals(scheduleIpAndPort)) {
             	
-            	//执行业务代码
+            	//task execute
             	taskExecute();
             }
         } catch (Exception e) {
