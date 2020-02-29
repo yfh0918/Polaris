@@ -12,8 +12,8 @@ public class ConfYamlReader implements ConfReader{
 	}
 
 	@Override
-	public Properties getProperties(String contentLines) {
-		return YamlUtil.getProperties(contentLines); 
+	public Properties getProperties(String fileContent) {
+		return YamlUtil.getProperties(fileContent); 
 	}
 
 }

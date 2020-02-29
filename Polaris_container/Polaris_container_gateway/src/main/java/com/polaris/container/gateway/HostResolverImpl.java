@@ -15,7 +15,7 @@ import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.naming.provider.ServerHandlerProvider;
 import com.polaris.core.naming.provider.ServerHandlerSupport;
-import com.polaris.core.util.PropertyUtils;
+import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
@@ -46,7 +46,7 @@ public class HostResolverImpl implements HostResolver {
         for (String detail : contents) {
         	detail = detail.replace("\n", "");
         	detail = detail.replace("\r", "");
-            String[] contextUrl = PropertyUtils.getKeyValue(detail);
+            String[] contextUrl = PropertyUtil.getKeyValue(detail);
             
             //获取context和服务名称(url)
             if (contextUrl != null) {

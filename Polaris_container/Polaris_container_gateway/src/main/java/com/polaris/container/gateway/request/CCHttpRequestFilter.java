@@ -33,7 +33,7 @@ import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.dto.ResultDto;
-import com.polaris.core.util.PropertyUtils;
+import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.UuidUtil;
 import com.polaris.extension.cache.Cache;
@@ -143,7 +143,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     			conf = conf.replace("\n", "");
     			conf = conf.replace("\r", "");
 
-				String[] kv = PropertyUtils.getKeyValue(conf);
+				String[] kv = PropertyUtil.getKeyValue(conf);
 				// skip.ip
     			if (kv[0].equals("cc.skip.ip")) {
     				try {

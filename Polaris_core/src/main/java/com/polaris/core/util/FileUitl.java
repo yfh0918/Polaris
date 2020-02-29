@@ -1,9 +1,11 @@
 package com.polaris.core.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
 
@@ -79,6 +81,27 @@ public abstract class FileUitl {
 		
 		//classpath:filename
 		return FileUitl.class.getClassLoader().getResourceAsStream(fileName);
+    }
+    
+    public static String read(InputStream in) throws IOException {
+    	try {
+    		InputStreamReader reader = new InputStreamReader(in, Charset.defaultCharset());
+			BufferedReader bf= new BufferedReader(reader);
+			StringBuffer buffer = new StringBuffer();
+			String line = bf.readLine();
+	        while (line != null) {
+	        	buffer.append(line);
+	            line = bf.readLine();
+	        	buffer.append(Constant.LINE_SEP);
+	        }
+	        String content = buffer.toString();
+	        if (StringUtil.isNotEmpty(content)) {
+	        	return content;
+	        }
+    	} finally {
+			in.close();
+    	}
+    	return null;
     }
 	
 	public static File getFileNotInJar(String fileName)  {

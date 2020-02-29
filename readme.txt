@@ -27,8 +27,6 @@
   #project.extension.properties=main.properties,redis.properties
   #project.extension.properties=main.yaml,redis.yaml
   #project.extension.properties=main.xml,redis.xml
-  #xml类型目前仅支持<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"> 自己可以通过CofReaderFactory.set(SUPPORT_TYPE[2],自定义的xml解析器)
-  可以引入全局配置,比如关于redis集群配置，数据库的整体配置等等
   #global files
   #project.global.properties=redis.properties,database.properties
   #project.global.properties=redis.yaml,database.yaml

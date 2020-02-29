@@ -6,5 +6,5 @@ public interface ConfReader {
 	
 	Properties getProperties(String fileName, boolean includePath, boolean includeClassPath);
 	
-	Properties getProperties(String contentLines);
+	Properties getProperties(String fileContent);
 }

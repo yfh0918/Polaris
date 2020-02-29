@@ -9,7 +9,7 @@ import java.util.Map;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.provider.ConfCompositeProvider;
-import com.polaris.core.util.PropertyUtils;
+import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;
 
 import io.netty.channel.ChannelFuture;
@@ -63,7 +63,7 @@ public class HttpStatic {
         for (String detail : contents) {
         	detail = detail.replace("\n", "");
         	detail = detail.replace("\r", "");
-            String[] keyvalue = PropertyUtils.getKeyValue(detail);
+            String[] keyvalue = PropertyUtil.getKeyValue(detail);
             Map<String, String> contentMap = new HashMap<>();
             if (keyvalue != null) {
             	String[] parameters = keyvalue[1].split(";");
@@ -73,13 +73,13 @@ public class HttpStatic {
             	
             	//第二个
             	if (parameters.length > 1) {
-            		String[] parameterKV = PropertyUtils.getKeyValue(parameters[1]);
+            		String[] parameterKV = PropertyUtil.getKeyValue(parameters[1]);
             		contentMap.put(parameterKV[0], parameterKV[1]);
             	}
             	
             	//第三个
             	if (parameters.length > 2) {
-            		String[] parameterKV = PropertyUtils.getKeyValue(parameters[2]);
+            		String[] parameterKV = PropertyUtil.getKeyValue(parameters[2]);
             		contentMap.put(parameterKV[0], parameterKV[1]);
             	}
             	

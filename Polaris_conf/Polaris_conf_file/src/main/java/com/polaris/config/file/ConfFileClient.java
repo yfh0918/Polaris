@@ -1,11 +1,7 @@
 package com.polaris.config.file;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -15,10 +11,8 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.util.FileUitl;
-import com.polaris.core.util.StringUtil;
 
 import cn.hutool.core.thread.NamedThreadFactory;
 
@@ -58,28 +52,12 @@ public class ConfFileClient {
 			isModifiedByFile(fileName, file);
 		}
 
-		try (InputStream inputStream = FileUitl.getStream(fileName)) {
-			if (inputStream == null) {
-				return null;
-			}
-			InputStreamReader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
-			BufferedReader bf= new BufferedReader(reader);
-			StringBuffer buffer = new StringBuffer();
-			String line = bf.readLine();
-	        while (line != null) {
-	        	buffer.append(line);
-	            line = bf.readLine();
-	        	buffer.append(Constant.LINE_SEP);
-	        }
-	        String content = buffer.toString();
-	        if (StringUtil.isNotEmpty(content)) {
-	        	return content;
-	        }
+		try {
+			return FileUitl.read(FileUitl.getStream(fileName));
         } catch (IOException e) {
         	logger.error("ConfigFile load error,ConfigFile is null");
         	e.printStackTrace();
         }
-		
 		return null;
 	}
 	

@@ -3,8 +3,6 @@ package com.polaris.core.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,8 +11,6 @@ import java.util.Properties;
 import org.springframework.core.CollectionFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.lang.Nullable;
-import org.springframework.util.StringUtils;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.reader.UnicodeReader;
@@ -50,7 +46,7 @@ public abstract class YamlUtil {
 		try (Reader reader = new UnicodeReader(resource.getInputStream())) {
 			for (Object object : yaml.loadAll(reader)) {
 				if (object != null) {
-					properties.putAll(process(asMap(object)));
+					properties.putAll(PropertyUtil.process(asMap(object)));
 				}
 			}
 			
@@ -58,35 +54,29 @@ public abstract class YamlUtil {
 		return properties;
 	}
 	
-	public static Map<String, Object> getMap(String lines) {
+	public static Map<String, Object> getMap(String fileContent) {
 		Yaml yaml = createYaml();
 		Map<String, Object> yamlMap = new HashMap<>();
-		for (Object object : yaml.loadAll(lines)) {
+		for (Object object : yaml.loadAll(fileContent)) {
 			if (object != null) {
-				yamlMap.putAll(getFlattenedMap(asMap(object)));
+				yamlMap.putAll(PropertyUtil.getFlattenedMap(asMap(object)));
 			}
 		}
 		return yamlMap;
 	}
 	
-	public static Properties getProperties(String lines) {
+	public static Properties getProperties(String fileContent) {
 		Yaml yaml = createYaml();
 		Properties properties = CollectionFactory.createStringAdaptingProperties();
-		for (Object object : yaml.loadAll(lines)) {
+		for (Object object : yaml.loadAll(fileContent)) {
 			if (object != null) {
-				properties.putAll(process(asMap(object)));
+				properties.putAll(PropertyUtil.process(asMap(object)));
 			}
 		}
 		return properties;
 	}
 	
-	private static Properties process(Map<String, Object> map) {
-		Properties properties = CollectionFactory.createStringAdaptingProperties();
-		properties.putAll(getFlattenedMap(map));
-		return properties;
-	}
-	
-	protected static Yaml createYaml() {
+	private static Yaml createYaml() {
 		LoaderOptions options = new LoaderOptions();
 		options.setAllowDuplicateKeys(false);
 		return new Yaml(options);
@@ -118,50 +108,5 @@ public abstract class YamlUtil {
 		return result;
 	}
 	
-	protected static final Map<String, Object> getFlattenedMap(Map<String, Object> source) {
-		Map<String, Object> result = new LinkedHashMap<>();
-		buildFlattenedMap(result, source, null);
-		return result;
-	}
 
-	private static void buildFlattenedMap(Map<String, Object> result, Map<String, Object> source, @Nullable String path) {
-		source.forEach((key, value) -> {
-			if (StringUtils.hasText(path)) {
-				if (key.startsWith("[")) {
-					key = path + key;
-				}
-				else {
-					key = path + '.' + key;
-				}
-			}
-			if (value instanceof String) {
-				
-				result.put(key, value);
-			}
-			else if (value instanceof Map) {
-				// Need a compound key
-				@SuppressWarnings("unchecked")
-				Map<String, Object> map = (Map<String, Object>) value;
-				buildFlattenedMap(result, map, key);
-			}
-			else if (value instanceof Collection) {
-				// Need a compound key
-				@SuppressWarnings("unchecked")
-				Collection<Object> collection = (Collection<Object>) value;
-				if (collection.isEmpty()) {
-					result.put(key, "");
-				}
-				else {
-					int count = 0;
-					for (Object object : collection) {
-						buildFlattenedMap(result, Collections.singletonMap(
-								"[" + (count++) + "]", object), key);
-					}
-				}
-			}
-			else {
-				result.put(key, (value != null ? value.toString() : ""));
-			}
-		});
-	}
 }
