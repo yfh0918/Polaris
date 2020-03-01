@@ -84,6 +84,9 @@ public abstract class FileUitl {
     }
     
     public static String read(InputStream in) throws IOException {
+    	if (in == null) {
+    		return null;
+    	}
     	try {
     		InputStreamReader reader = new InputStreamReader(in, Charset.defaultCharset());
 			BufferedReader bf= new BufferedReader(reader);
@@ -99,7 +102,9 @@ public abstract class FileUitl {
 	        	return content;
 	        }
     	} finally {
-			in.close();
+    		if (in != null) {
+    			in.close();
+    		}
     	}
     	return null;
     }

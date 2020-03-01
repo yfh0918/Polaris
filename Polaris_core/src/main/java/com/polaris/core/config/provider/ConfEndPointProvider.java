@@ -13,9 +13,9 @@ public class ConfEndPointProvider {
 	    	confEndPoint.init();
         }
     }
-    public void filter (String key, String value) {
+    public void filter (String file, String key, String value) {
     	for (ConfEndPoint confEndPoint : endPointLoader) {
-	    	confEndPoint.filter(key, value);
+	    	confEndPoint.filter(file, key, value);
         }
     }
 }

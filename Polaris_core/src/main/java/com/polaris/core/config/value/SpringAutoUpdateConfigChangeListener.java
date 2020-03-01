@@ -3,7 +3,7 @@ package com.polaris.core.config.value;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.Map;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class SpringAutoUpdateConfigChangeListener implements BeanFactoryAware{
     this.typeConverterHasConvertIfNecessaryWithFieldParameter = testTypeConverterHasConvertIfNecessaryWithFieldParameter();
   }
 
-  public void onChange(Map<String, String> cache) {
+  public void onChange(Properties cache) {
 	
 	 //是否关闭@Value的自动更新
 	String isAutoUpdate = ConfClient.get("value.auto.update", "true");
@@ -42,9 +42,9 @@ public class SpringAutoUpdateConfigChangeListener implements BeanFactoryAware{
     if (cache == null || CollectionUtils.isEmpty(cache.keySet())) {
       return;
     }
-    for (String key : cache.keySet()) {
+    for (Object key : cache.keySet()) {
       // 1. check whether the changed key is relevant
-      onChange(key);
+      onChange(key.toString());
     }
   }
   

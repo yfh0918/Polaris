@@ -13,6 +13,7 @@ import com.polaris.core.util.StringUtil;
 
 public class ConfSystemHandlerProvider {
 	private static volatile String CONFIG_NAME = "application";
+	public static String FILE = null;
 	private ConfSystemHandlerProvider() {}
 	public static ConfSystemHandlerProvider INSTANCE = new ConfSystemHandlerProvider();
 	private Properties properties = null;
@@ -20,26 +21,26 @@ public class ConfSystemHandlerProvider {
 	public void init() {
     	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
     	for (Map.Entry<Object, Object> entry : getProperties().entrySet()) {
-    		ConfCompositeProvider.INSTANCE.put(ConfigFactory.DEFAULT, entry.getKey().toString(), entry.getValue().toString());
+    		ConfCompositeProvider.INSTANCE.put(ConfigFactory.DEFAULT, FILE, entry.getKey().toString(), entry.getValue().toString());
 		}
 		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
-			ConfCompositeProvider.INSTANCE.put(ConfigFactory.DEFAULT, Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
+			ConfCompositeProvider.INSTANCE.put(ConfigFactory.DEFAULT, FILE, Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
 		} else {
-			if (StringUtil.isEmpty(ConfCompositeProvider.INSTANCE.get(ConfigFactory.DEFAULT, Constant.IP_ADDRESS))) {
-				ConfCompositeProvider.INSTANCE.put(ConfigFactory.DEFAULT, Constant.IP_ADDRESS, NetUtils.getLocalHost());
+			if (StringUtil.isEmpty(ConfCompositeProvider.INSTANCE.get(ConfigFactory.DEFAULT, FILE, Constant.IP_ADDRESS))) {
+				ConfCompositeProvider.INSTANCE.put(ConfigFactory.DEFAULT, FILE, Constant.IP_ADDRESS, NetUtils.getLocalHost());
 			}
 		}
 		cleaProperties();
 		
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemEnvironment().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
-				ConfCompositeProvider.INSTANCE.put(ConfigFactory.DEFAULT, entry.getKey(), entry.getValue());
+				ConfCompositeProvider.INSTANCE.put(ConfigFactory.DEFAULT, FILE, entry.getKey(), entry.getValue());
 			}
 		}
 		
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemProperties().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
-				ConfCompositeProvider.INSTANCE.put(ConfigFactory.DEFAULT, entry.getKey(), entry.getValue());
+				ConfCompositeProvider.INSTANCE.put(ConfigFactory.DEFAULT, FILE, entry.getKey(), entry.getValue());
 			}
 		}
 		
@@ -89,7 +90,7 @@ public class ConfSystemHandlerProvider {
             	}
     		}
     	}
-    	
+    	FILE = file;
      	this.properties = propeties;
     	return propeties;
 	}

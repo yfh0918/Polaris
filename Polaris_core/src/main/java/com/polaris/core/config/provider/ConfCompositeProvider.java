@@ -1,5 +1,7 @@
 package com.polaris.core.config.provider;
 
+import java.util.Properties;
+
 import com.polaris.core.config.Config;
 import com.polaris.core.config.value.SpringAutoUpdateConfigChangeListener;
 import com.polaris.core.util.SpringUtil;
@@ -20,14 +22,14 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
     }
 
 	@Override
-	public void put(Config config, String key, String value) {
-		INSTANCE_ENDPOINT.filter(key, value);
-		super.put(config, key, value);
+	public void put(Config config, String file, String key, String value) {
+		INSTANCE_ENDPOINT.filter(file, key, value);
+		super.put(config, file, key, value);
 	}
 	
 	@Override
-	public void listenForPut(Config config, String key, String value) {
+	public void listenForPut(Config config, String file,Properties properties) {
 		SpringUtil.getBean(SpringAutoUpdateConfigChangeListener.class).onChange(config.get());//监听配置
-		super.listenForPut(config, key, value);
+		super.listenForPut(config, file, properties);
 	}
 }

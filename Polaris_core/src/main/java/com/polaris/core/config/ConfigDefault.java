@@ -1,18 +1,20 @@
 package com.polaris.core.config;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public enum ConfigDefault implements Config{
+public enum ConfigDefault implements Config {
 	
 	DEFAULT(Config.DEFAULT),
     EXTEND(Config.EXTEND),
     GLOBAL(Config.GLOBAL);
     private String type;
-    private Map<String, String> cache = new ConcurrentHashMap<>();
+    private Properties cacheAll = new Properties();
+    private Map<String, Properties> cacheFile = new HashMap<>();
 	private static final Logger logger = LoggerFactory.getLogger(ConfigDefault.class);
 
     ConfigDefault(String type) {
@@ -22,27 +24,50 @@ public enum ConfigDefault implements Config{
     protected String getType() {
         return type;
     }
+
     
-    @Override
-    public Map<String, String> get() {
-        return cache;
+	@Override
+    public void put(String file, Properties properties) {
+		cacheAll.putAll(properties);
+		cacheFile.put(file, properties);
     }
     
+    
     @Override
-    public void put(String key, String value) {
+    public void put(String file, String key, String value) {
     	
     	//载入缓存
-        cache.put(key, value);
+    	cacheAll.put(key, value);
+    	Properties cache = cacheFile.get(file);
+    	if (cache == null) {
+    		synchronized(file.intern()) {
+    			cache = cacheFile.get(file);
+    			if (cache == null) {
+    				cache = new Properties();
+    				cacheFile.put(file, cache);
+    			}
+    		}
+    	}
+    	cache.put(key, value);
         if (logger.isDebugEnabled()) {
-			logger.debug("type:{} key:{} value:{} is updated", type,key,value);		
+			logger.debug("type:{} file:{}, key:{} value:{} is updated", type,file,key,value);		
 		}
         
     }
     
     @Override
-    public String get(String key) {
-        return cache.get(key);
+    public Properties get() {
+        return cacheAll;
     }
     
+    @Override
+    public Properties get(String file) {
+        return cacheFile.get(file);
+    }
+    
+    @Override
+    public String get(String file, String key) {
+        return cacheFile.get(file).getProperty(key);
+    }  
     
 }

@@ -2,7 +2,7 @@ package com.polaris.core.config.provider;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -73,8 +73,8 @@ public class ConfHandlerProvider {
 		
 		//get target files
 		String files = type.equals(Config.EXTEND) ? 
-				ConfigFactory.DEFAULT.get(Constant.PROJECT_EXTENSION_PROPERTIES) : 
-					ConfigFactory.DEFAULT.get(Constant.PROJECT_GLOBAL_PROPERTIES);
+				ConfigFactory.DEFAULT.get(ConfSystemHandlerProvider.FILE, Constant.PROJECT_EXTENSION_PROPERTIES) : 
+					ConfigFactory.DEFAULT.get(ConfSystemHandlerProvider.FILE, Constant.PROJECT_GLOBAL_PROPERTIES);
 		if (StringUtil.isEmpty(files)) {
 			return;
 		}
@@ -84,19 +84,17 @@ public class ConfHandlerProvider {
 		for (String file : fileArray) {
 			//load to config container
 			logger.info("{} load start",file);
-			for (Map.Entry<Object, Object> entry : CofReaderFactory.get(file).getProperties(get(file,group)).entrySet()) {
-				put(config, entry.getKey().toString(), entry.getValue().toString());
-			}
+			put(config, file, CofReaderFactory.get(file).getProperties(get(file,group)));
 			logger.info("{} load end",file);
 			
 			logger.info("{} listen start",file);
 	    	listen(file, group, new ConfHandlerListener() {
 				@Override
 				public void receive(String content) {
-					for (Map.Entry<Object, Object> entry : CofReaderFactory.get(file).getProperties(content).entrySet()) {
-						put(config, entry.getKey().toString(), entry.getValue().toString());
-						listenForPut(config, entry.getKey().toString(), entry.getValue().toString());
-					}
+					Properties properties = CofReaderFactory.get(file).getProperties(content);
+					put(config, file, properties);
+					listenForPut(config, file, properties);
+					
 				}
 			});
 			logger.info("{} listen end",file);
@@ -110,8 +108,14 @@ public class ConfHandlerProvider {
 	* @Exception 
 	* @since 
 	*/
-	public String get(Config config,String key) {
-		return config.get(key);
+	public String get(Config config,String file, String key) {
+		return config.get(file, key);
+	}
+	public Properties get(Config config,String file) {
+		return config.get(file);
+	}
+	public Properties get(Config config) {
+		return config.get();
 	}
 	
     /**
@@ -121,8 +125,11 @@ public class ConfHandlerProvider {
 	* @Exception 
 	* @since 
 	*/
-    protected void put(Config config, String key, String value) {
-    	config.put(key, value);
+    protected void put(Config config, String file, String key, String value) {
+    	config.put(file, key, value);
+    }
+    protected void put(Config config, String file, Properties properties) {
+    	config.put(file, properties);
     }
     
     /**
@@ -132,7 +139,7 @@ public class ConfHandlerProvider {
 	* @Exception 
 	* @since 
 	*/
-    protected void listenForPut(Config config, String key, String value){
+    protected void listenForPut(Config config, String file, Properties properties){
     }
 	
 }
