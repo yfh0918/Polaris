@@ -8,11 +8,12 @@ import com.polaris.core.util.FileUitl;
 public class CofReaderFactory {
 
 	private static Map<String , ConfReader> confReaderMap = new ConcurrentHashMap<>();
-    public static final String[] SUPPORT_TYPE = {"properties","yaml","xml"};
+    public static final String[] SUPPORT_TYPE = {"properties","yaml","yml","xml"};
 	static {
-		confReaderMap.put(SUPPORT_TYPE[0], new ConfPropertiesReader());
-		confReaderMap.put(SUPPORT_TYPE[1], new ConfYamlReader());
-		confReaderMap.put(SUPPORT_TYPE[2], new ConfXmlReader());
+		confReaderMap.put(SUPPORT_TYPE[0], ConfPropertiesReader.INSTANCE);
+		confReaderMap.put(SUPPORT_TYPE[1], ConfYamlReader.INSTANCE);
+		confReaderMap.put(SUPPORT_TYPE[2], ConfYamlReader.INSTANCE);
+		confReaderMap.put(SUPPORT_TYPE[3], ConfXmlReader.INSTANCE);
 	}
 	
 	public static ConfReader get(String fileName) {

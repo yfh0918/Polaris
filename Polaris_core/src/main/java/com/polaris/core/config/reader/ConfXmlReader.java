@@ -6,6 +6,10 @@ import com.polaris.core.util.XmlUtil;
 
 public class ConfXmlReader implements ConfReader{
 
+	public static ConfXmlReader INSTANCE = new ConfXmlReader();
+	
+	private ConfXmlReader() {}
+	
 	@Override
 	public Properties getProperties(String fileName, boolean includePath, boolean includeClassPath) {
 		return XmlUtil.getProperties(fileName, includePath, includeClassPath);
