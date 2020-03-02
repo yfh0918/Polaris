@@ -1,8 +1,8 @@
 package com.polaris.core.config;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,7 @@ public enum ConfigDefault implements Config {
     GLOBAL(Config.GLOBAL);
     private String type;
     private Properties cacheAll = new Properties();
-    private Map<String, Properties> cacheFile = new HashMap<>();
+    private Map<String, Properties> cacheFile = new ConcurrentHashMap<>();
 	private static final Logger logger = LoggerFactory.getLogger(ConfigDefault.class);
 
     ConfigDefault(String type) {
