@@ -27,17 +27,31 @@ public enum ConfigDefault implements Config {
 	@Override
     public void put(Properties properties) {
 		cacheAll.putAll(properties);
+        if (logger.isDebugEnabled()) {
+        	for (Map.Entry<Object,Object> entry : properties.entrySet()) {
+        		logger.debug("type:{} key:{} value:{} is updated", type,entry.getKey(),entry.getValue());
+        	}
+		}
     }
 	
 	@Override
     public void put(String key, String value) {
 		cacheAll.put(key, value);
+        if (logger.isDebugEnabled()) {
+			logger.debug("type:{} key:{} value:{} is updated", type,key,value);		
+		}
     }
 
 	@Override
     public void put(String file, Properties properties) {
 		cacheAll.putAll(properties);
 		cacheFile.put(file, properties);
+        if (logger.isDebugEnabled()) {
+        	for (Map.Entry<Object,Object> entry : properties.entrySet()) {
+        		logger.debug("type:{} file:{}, key:{} value:{} is updated", type,file,entry.getKey(),entry.getValue());
+        	}
+		}
+
     }
     
     

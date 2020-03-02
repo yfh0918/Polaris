@@ -27,14 +27,8 @@ public class ConfEndPointProvider {
     	filter(null, properties);
     }
     public void filter (String file, Properties properties) {
-    	for (ConfEndPoint confEndPoint : endPointLoader) {
-    		for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-    			if (entry.getValue() == null) {
-        			confEndPoint.filter(file, entry.getKey().toString(), "");
-    			} else {
-        			confEndPoint.filter(file, entry.getKey().toString(), entry.getValue().toString());
-    			}
-    		}
-        }
+    	for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+    		filter(file, entry.getKey().toString(), entry.getValue() == null ? "":entry.getValue().toString());
+		}
     }
 }
