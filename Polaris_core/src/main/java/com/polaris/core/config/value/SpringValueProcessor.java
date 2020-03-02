@@ -16,10 +16,8 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
-@Component
 public class SpringValueProcessor implements BeanFactoryAware, BeanPostProcessor, PriorityOrdered{
 	private static final Logger logger = LoggerFactory.getLogger(SpringValueProcessor.class);
 	private BeanFactory beanFactory;

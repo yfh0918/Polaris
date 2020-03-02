@@ -109,14 +109,19 @@ public abstract class FileUitl {
     	return null;
     }
 	
-	public static File getFileNotInJar(String fileName)  {
-		File file = new File(Constant.CONFIG + File.separator + fileName);
-		if (file.exists()) {
-			return file;
-		}
-		file = new File(fileName);
-		if (file.exists()) {
-			return file;
+	public static File getFileNotInJar(String fileName) {
+		try {
+			String path = getFullPath("");
+			File file = new File(path + File.separator + Constant.CONFIG + File.separator + fileName);
+			if (file.exists()) {
+				return file;
+			}
+			file = new File(path + File.separator + fileName);
+			if (file.exists()) {
+				return file;
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 		return null;
 	}

@@ -12,14 +12,11 @@ import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.polaris.core.config.ConfClient;
 
-
-@Component
 public class SpringAutoUpdateConfigChangeListener implements BeanFactoryAware{
   private static final Logger logger = LoggerFactory.getLogger(SpringAutoUpdateConfigChangeListener.class);
 

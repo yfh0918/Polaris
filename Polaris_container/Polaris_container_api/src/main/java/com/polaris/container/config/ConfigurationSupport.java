@@ -7,7 +7,9 @@ import java.util.ServiceLoader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.polaris.core.config.value.SpringAutoUpdateConfigChangeListener;
 import com.polaris.core.config.value.SpringPlaceholderConfigurer;
+import com.polaris.core.config.value.SpringValueProcessor;
 
 abstract public class ConfigurationSupport {
 
@@ -62,6 +64,14 @@ abstract public class ConfigurationSupport {
 		@Bean
 		public static SpringPlaceholderConfigurer propertyPlaceholderConfigurer() {
 			return new SpringPlaceholderConfigurer();
+		}
+		@Bean
+		public static SpringAutoUpdateConfigChangeListener springAutoUpdateConfigChangeListener() {
+			return new SpringAutoUpdateConfigChangeListener();
+		}
+		@Bean
+		public SpringValueProcessor springValueProcessor() {
+			return new SpringValueProcessor();
 		}
 	}
 }
