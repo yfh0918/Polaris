@@ -10,7 +10,7 @@ public class ConfEndPointProvider {
     protected final ServiceLoader<ConfEndPoint> endPointLoader = ServiceLoader.load(ConfEndPoint.class);
     private ConfEndPointProvider() {}
     public static ConfEndPointProvider INSTANCE = new ConfEndPointProvider();
-    public void init() {
+    public void init(ConfCompositeProvider composite) {
     	for (ConfEndPoint confEndPoint : endPointLoader) {
 	    	confEndPoint.init();
         }

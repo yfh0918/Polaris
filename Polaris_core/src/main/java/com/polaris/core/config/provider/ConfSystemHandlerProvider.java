@@ -17,35 +17,34 @@ public class ConfSystemHandlerProvider {
 	public static ConfSystemHandlerProvider INSTANCE = new ConfSystemHandlerProvider();
 	private Properties properties = null;
 
-	public void init() {
+	public void init(ConfCompositeProvider composite) {
 		
 		//application-properties
     	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
-    	ConfCompositeProvider.INSTANCE.put(ConfigFactory.SYSTEM, getProperties());
-		cleaProperties();
+    	composite.put(ConfigFactory.SYSTEM, getProperties());
 		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
-			ConfCompositeProvider.INSTANCE.put(ConfigFactory.SYSTEM, Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
+			composite.put(ConfigFactory.SYSTEM, Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
 		} else {
-			if (StringUtil.isEmpty(ConfCompositeProvider.INSTANCE.getProperty(ConfigFactory.SYSTEM, Constant.IP_ADDRESS))) {
-				ConfCompositeProvider.INSTANCE.put(ConfigFactory.SYSTEM, Constant.IP_ADDRESS, NetUtils.getLocalHost());
+			if (StringUtil.isEmpty(composite.getProperty(Constant.IP_ADDRESS))) {
+				composite.put(ConfigFactory.SYSTEM, Constant.IP_ADDRESS, NetUtils.getLocalHost());
 			}
 		}
 		
 		//system-environment
 		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemEnvironment().entrySet()) {
 			if (StringUtil.isNotEmpty(entry.getValue())) {
-				ConfCompositeProvider.INSTANCE.put(ConfigFactory.SYSTEM, entry.getKey(), entry.getValue());
+				composite.put(ConfigFactory.SYSTEM, entry.getKey(), entry.getValue());
 			}
 		}
 		
 		//system-properties
-		ConfCompositeProvider.INSTANCE.put(ConfigFactory.SYSTEM, EnvironmentUtil.getSystemProperties());
+		for (Map.Entry<Object, Object> entry : EnvironmentUtil.getSystemProperties().entrySet()) {
+			if (entry.getValue() != null) {
+				composite.put(ConfigFactory.SYSTEM, entry.getKey().toString(),entry.getValue().toString());
+			}
+		}
 		
-	}
-    
-    private void cleaProperties() {
-		this.properties.clear();
-		this.properties = null;
+		
 	}
 	
 	public Properties getProperties() {

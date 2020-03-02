@@ -8,4 +8,8 @@
 		<test2>11234</test2>
 		<test3>0456w</test3>
 	</test1>
+	<test3>
+		<test2>11234778</test2>
+		<test3>0456w</test3>
+	</test3>
 </properties>

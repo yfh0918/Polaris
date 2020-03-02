@@ -73,8 +73,8 @@ public class ConfHandlerProvider {
 		
 		//get target files
 		String files = type.equals(Config.EXT) ? 
-				ConfigFactory.SYSTEM.getProperty(Constant.PROJECT_EXTENSION_PROPERTIES) : 
-					ConfigFactory.SYSTEM.getProperty(Constant.PROJECT_GLOBAL_PROPERTIES);
+				ConfigFactory.SYSTEM.getProperty(Config.DEFAULT,Constant.PROJECT_EXTENSION_PROPERTIES) : 
+					ConfigFactory.SYSTEM.getProperty(Config.DEFAULT,Constant.PROJECT_GLOBAL_PROPERTIES);
 		if (StringUtil.isEmpty(files)) {
 			return;
 		}
@@ -101,38 +101,12 @@ public class ConfHandlerProvider {
     }
     
     /**
-	* config-get
-	* @param 
-	* @return 
-	* @Exception 
-	* @since 
-	*/
-	public String getProperty(Config config, String key) {
-		return config.getProperty(key);
-	}
-	public String getProperty(Config config,String file, String key) {
-		return config.getProperty(file, key);
-	}
-	public Properties getProperties(Config config,String file) {
-		return config.getProperties(file);
-	}
-	public Properties getProperties(Config config) {
-		return config.getProperties();
-	}
-	
-    /**
 	* config-put
 	* @param 
 	* @return 
 	* @Exception 
 	* @since 
 	*/
-    protected void put(Config config, String key, String value) {
-    	config.put(key, value);
-    }
-    protected void put(Config config, Properties properties) {
-    	config.put(properties);
-    }
     protected void put(Config config, String file, String key, String value) {
     	config.put(file, key, value);
     }
