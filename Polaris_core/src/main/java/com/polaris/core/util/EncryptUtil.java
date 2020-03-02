@@ -358,8 +358,14 @@ public class EncryptUtil {
 	 */
 	public static void main(String[] args) throws Exception { 
 		
-		EncryptUtil en = EncryptUtil.getInstance();
-		String result = en.encrypt(EncryptUtil.START_WITH, "testaddas");
+		EncryptUtil en = EncryptUtil.getInstance("product-001");
+		String result = en.encrypt("d", "polaris-system-call-001");
+		System.out.println(result);
+		en = EncryptUtil.getInstance("product-002");
+		result = en.encrypt("d", "polaris-system-call-002");
+		System.out.println(result);
+		en = EncryptUtil.getInstance("product-003");
+		result = en.encrypt("d", "polaris-system-call-003");
 		System.out.println(result);
     }
 }

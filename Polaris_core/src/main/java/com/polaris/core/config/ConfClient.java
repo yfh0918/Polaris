@@ -43,57 +43,30 @@ public abstract class ConfClient {
 		return get(key, "");
 	}
 	public static String get(String key, String defaultVal) {
-		
-		//获取配置
 		for (Config config : ConfigFactory.get()) {
 			String value = ConfCompositeProvider.INSTANCE.getProperty(config, key);
 			if (value != null) {
 				return value;
 			}
 		}
-		
-		//默认值
-		if (StringUtil.isNotEmpty(defaultVal)) {
-			set(key, defaultVal);
-		}
-		
-		//返回默认值
 		return defaultVal;
 	}
 	public static String get(String file, String key, String defaultVal) {
-		
-		//获取配置
 		for (Config config : ConfigFactory.get()) {
 			String value = ConfCompositeProvider.INSTANCE.getProperty(config, file, key);
 			if (value != null) {
 				return value;
 			}
 		}
-		
-		//默认值
-		if (StringUtil.isNotEmpty(defaultVal)) {
-			set(key, defaultVal);
-		}
-		
-		//返回默认值
 		return defaultVal;
 	}
 	
 	public static String get(String type ,String file, String key, String defaultVal) {
-		
-		//获取配置
 		Config config = ConfigFactory.get(type);
 		String value = ConfCompositeProvider.INSTANCE.getProperty(config, file, key);
 		if (value != null) {
 			return value;
 		}
-		
-		//默认值
-		if (StringUtil.isNotEmpty(defaultVal)) {
-			set(key, defaultVal);
-		}
-		
-		//返回默认值
 		return defaultVal;
 	}
 	
