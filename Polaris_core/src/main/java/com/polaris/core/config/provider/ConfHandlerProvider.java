@@ -16,7 +16,7 @@ import com.polaris.core.config.ConfHandler;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config;
 import com.polaris.core.config.ConfigFactory;
-import com.polaris.core.config.reader.CofReaderFactory;
+import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.util.StringUtil;
 
 @SuppressWarnings("rawtypes")
@@ -84,14 +84,14 @@ public class ConfHandlerProvider {
 		for (String file : fileArray) {
 			//load to config container
 			logger.info("{} load start",file);
-			put(config, file, CofReaderFactory.get(file).getProperties(get(file,group)));
+			put(config, file, ConfReaderFactory.get(file).getProperties(get(file,group)));
 			logger.info("{} load end",file);
 			
 			logger.info("{} listen start",file);
 	    	listen(file, group, new ConfHandlerListener() {
 				@Override
 				public void receive(String content) {
-					Properties properties = CofReaderFactory.get(file).getProperties(content);
+					Properties properties = ConfReaderFactory.get(file).getProperties(content);
 					put(config, file, properties);
 					listenReceive(config, file, properties);
 				}

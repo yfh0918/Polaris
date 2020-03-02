@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.polaris.core.util.FileUitl;
 
-public class CofReaderFactory {
+public class ConfReaderFactory {
 
 	private static Map<String , ConfReader> confReaderMap = new ConcurrentHashMap<>();
     public static final String[] SUPPORT_TYPE = {"properties","yaml","yml","xml"};

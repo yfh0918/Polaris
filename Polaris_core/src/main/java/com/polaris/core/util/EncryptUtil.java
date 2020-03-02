@@ -22,9 +22,14 @@ public class EncryptUtil {
 	private Cipher encryptCipher = null;
 
 	private Cipher decryptCipher = null;
-	private static final String transformation = "DES";
-	
-	public static final String START_WITH = "{DES}";
+	//private static final String transformation = "DES";
+	//private static final String transformationKey = "DES";
+	//private int len = 8;
+	//public static final String START_WITH = "{DES}";
+	private static final String transformation = "AES/ECB/PKCS5Padding";
+	private static final String transformationKey = "AES";
+	private int len = 16;
+	public static final String START_WITH = "{AES}";
 
 	/**
 	 * 单例
@@ -242,7 +247,7 @@ public class EncryptUtil {
 	 */
 	private Key getKey(byte[] arrBTmp) {
 		// 创建一个空的8位字节数组（默认值为0）
-		byte[] arrB = new byte[8];
+		byte[] arrB = new byte[len];
 
 		// 将原始字节数组转换为8位
 		for (int i = 0; i < arrBTmp.length && i < arrB.length; i++) {
@@ -250,7 +255,7 @@ public class EncryptUtil {
 		}
 
 		// 生成密钥
-		Key key = new javax.crypto.spec.SecretKeySpec(arrB, transformation);
+		Key key = new javax.crypto.spec.SecretKeySpec(arrB, transformationKey);
 
 		return key;
 	}
@@ -358,14 +363,20 @@ public class EncryptUtil {
 	 */
 	public static void main(String[] args) throws Exception { 
 		
-		EncryptUtil en = EncryptUtil.getInstance("gaoprd01");
-		String result = en.encrypt("d", "polaris-adf-asystem-call-001");
+		EncryptUtil en = EncryptUtil.getInstance("gaoprd0201abcdddaa");
+		String result = en.encrypt(START_WITH, "polaris-adf-asystem-call-001");
 		System.out.println(result);
-		en = EncryptUtil.getInstance("gaoprd02");
-		result = en.encrypt("d", "polaris-adf-asystem-call-001");
+		result = en.decrypt(START_WITH, result);
 		System.out.println(result);
-		en = EncryptUtil.getInstance("gaoprd04");
-		result = en.encrypt("d", "polaris-adf-asystem-call-001");
+		en = EncryptUtil.getInstance("gaoprd0201abcdddbb");
+		result = en.encrypt(START_WITH, "polaris-adf-asystem-call-001");
+		System.out.println(result);
+		result = en.decrypt(START_WITH, result);
+		System.out.println(result);
+		en = EncryptUtil.getInstance("gaoprd0201abcdddcc");
+		result = en.encrypt(START_WITH, "polaris-adf-asystem-call-001");
+		System.out.println(result);
+		result = en.decrypt(START_WITH, result);
 		System.out.println(result);
     }
 }

@@ -5,7 +5,7 @@ import java.util.Properties;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfigFactory;
-import com.polaris.core.config.reader.CofReaderFactory;
+import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.util.EnvironmentUtil;
 import com.polaris.core.util.FileUitl;
 import com.polaris.core.util.NetUtils;
@@ -62,14 +62,14 @@ public class ConfSystemHandlerProvider {
     		file = System.getProperty(Constant.PROJECT_CONFIG_NAME);
     	}
     	if (StringUtil.isNotEmpty(file)) {
-    		propeties = CofReaderFactory.get(file).getProperties(file,true,true);
+    		propeties = ConfReaderFactory.get(file).getProperties(file,true,true);
     	} 
     	
 		//folder-scan
     	if (propeties == null) {
-    		for (String suffix : CofReaderFactory.SUPPORT_TYPE) {
+    		for (String suffix : ConfReaderFactory.SUPPORT_TYPE) {
         		file =  CONFIG_NAME + FileUitl.DOT + suffix;
-        		propeties = CofReaderFactory.get(file).getProperties(file,true,false);
+        		propeties = ConfReaderFactory.get(file).getProperties(file,true,false);
         		if (propeties != null) {
         			break;
         		}
@@ -77,9 +77,9 @@ public class ConfSystemHandlerProvider {
         	
 			//classpath-scan
     		if (propeties == null) {
-    			for (String suffix : CofReaderFactory.SUPPORT_TYPE) {
+    			for (String suffix : ConfReaderFactory.SUPPORT_TYPE) {
             		file =  CONFIG_NAME + FileUitl.DOT + suffix;
-            		propeties = CofReaderFactory.get(file).getProperties(file,false,true);
+            		propeties = ConfReaderFactory.get(file).getProperties(file,false,true);
             		if (propeties != null) {
             			break;
             		}
