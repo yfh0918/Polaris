@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -62,23 +61,8 @@ public abstract class PropertyUtil {
         }
 	    return properties;
 	}
-	
 
-	public static Map<String, Object> getMap(String contentLines) {
-    	Map<String, Object> propertyMap = new HashMap<>();
-    	if (StringUtil.isNotEmpty(contentLines)) {
-			String[] contents = contentLines.split(Constant.LINE_SEP);
-			for (String content : contents) {
-				String[] keyvalue = getKeyValue(content);
-				if (keyvalue != null) {
-					propertyMap.put(keyvalue[0], keyvalue[1]);
-				}
-			}
-		}
-    	return propertyMap;
-    }
-	
-	public static Properties process(Map<String, Object> map) {
+	public static Properties getProperties(Map<String, Object> map) {
 		Properties properties = CollectionFactory.createStringAdaptingProperties();
 		properties.putAll(getFlattenedMap(map));
 		return properties;

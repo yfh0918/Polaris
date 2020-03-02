@@ -3,7 +3,6 @@ package com.polaris.core.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -46,7 +45,7 @@ public abstract class YamlUtil {
 		try (Reader reader = new UnicodeReader(resource.getInputStream())) {
 			for (Object object : yaml.loadAll(reader)) {
 				if (object != null) {
-					properties.putAll(PropertyUtil.process(asMap(object)));
+					properties.putAll(PropertyUtil.getProperties(asMap(object)));
 				}
 			}
 			
@@ -54,23 +53,12 @@ public abstract class YamlUtil {
 		return properties;
 	}
 	
-	public static Map<String, Object> getMap(String fileContent) {
-		Yaml yaml = createYaml();
-		Map<String, Object> yamlMap = new HashMap<>();
-		for (Object object : yaml.loadAll(fileContent)) {
-			if (object != null) {
-				yamlMap.putAll(PropertyUtil.getFlattenedMap(asMap(object)));
-			}
-		}
-		return yamlMap;
-	}
-	
 	public static Properties getProperties(String fileContent) {
 		Yaml yaml = createYaml();
 		Properties properties = CollectionFactory.createStringAdaptingProperties();
 		for (Object object : yaml.loadAll(fileContent)) {
 			if (object != null) {
-				properties.putAll(PropertyUtil.process(asMap(object)));
+				properties.putAll(PropertyUtil.getProperties(asMap(object)));
 			}
 		}
 		return properties;
