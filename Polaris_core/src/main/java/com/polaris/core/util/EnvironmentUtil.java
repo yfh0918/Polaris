@@ -3,16 +3,16 @@ package com.polaris.core.util;
 import java.security.AccessControlException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class EnvironmentUtil {
 	
-	@SuppressWarnings({"rawtypes", "unchecked"})
-	public static Map<String, String> getSystemProperties() {
+	public static Properties getSystemProperties() {
 		try {
-			return (Map) System.getProperties();
+			return System.getProperties();
 		}
 		catch (AccessControlException ex) {
-			return new HashMap<>();
+			return new Properties();
 		}
 	}
 	

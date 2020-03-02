@@ -42,7 +42,7 @@ public class ConfHandlerProvider {
     }
 
 	public void init() {
-		init(Config.EXTEND);
+		init(Config.SYSTEM);
 		init(Config.GLOBAL);
 	}
 	public String get(String fileName) {
@@ -72,9 +72,9 @@ public class ConfHandlerProvider {
 		String group = Config.GLOBAL.equals(type) ? type : ConfClient.getAppName();
 		
 		//get target files
-		String files = type.equals(Config.EXTEND) ? 
-				ConfigFactory.DEFAULT.get(ConfSystemHandlerProvider.FILE, Constant.PROJECT_EXTENSION_PROPERTIES) : 
-					ConfigFactory.DEFAULT.get(ConfSystemHandlerProvider.FILE, Constant.PROJECT_GLOBAL_PROPERTIES);
+		String files = type.equals(Config.SYSTEM) ? 
+				ConfigFactory.SYSTEM.getProperty(Constant.PROJECT_EXTENSION_PROPERTIES) : 
+					ConfigFactory.SYSTEM.getProperty(Constant.PROJECT_GLOBAL_PROPERTIES);
 		if (StringUtil.isEmpty(files)) {
 			return;
 		}
@@ -93,8 +93,7 @@ public class ConfHandlerProvider {
 				public void receive(String content) {
 					Properties properties = CofReaderFactory.get(file).getProperties(content);
 					put(config, file, properties);
-					listenForPut(config, file, properties);
-					
+					listenReceive(config, file, properties);
 				}
 			});
 			logger.info("{} listen end",file);
@@ -108,14 +107,17 @@ public class ConfHandlerProvider {
 	* @Exception 
 	* @since 
 	*/
-	public String get(Config config,String file, String key) {
-		return config.get(file, key);
+	public String getProperty(Config config, String key) {
+		return config.getProperty(key);
 	}
-	public Properties get(Config config,String file) {
-		return config.get(file);
+	public String getProperty(Config config,String file, String key) {
+		return config.getProperty(file, key);
 	}
-	public Properties get(Config config) {
-		return config.get();
+	public Properties getProperties(Config config,String file) {
+		return config.getProperties(file);
+	}
+	public Properties getProperties(Config config) {
+		return config.getProperties();
 	}
 	
     /**
@@ -125,6 +127,12 @@ public class ConfHandlerProvider {
 	* @Exception 
 	* @since 
 	*/
+    protected void put(Config config, String key, String value) {
+    	config.put(key, value);
+    }
+    protected void put(Config config, Properties properties) {
+    	config.put(properties);
+    }
     protected void put(Config config, String file, String key, String value) {
     	config.put(file, key, value);
     }
@@ -133,13 +141,13 @@ public class ConfHandlerProvider {
     }
     
     /**
-	* listen-put
+	* listen-from config-center
 	* @param 
 	* @return 
 	* @Exception 
 	* @since 
 	*/
-    protected void listenForPut(Config config, String file, Properties properties){
+    protected void listenReceive(Config config, String file, Properties properties){
     }
 	
 }

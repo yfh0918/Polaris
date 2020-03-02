@@ -10,15 +10,13 @@ public class ConfigFactory {
 	private static Map<String , Config> configMap = new HashMap<>();
 	private static List<Config> configList = new ArrayList<>();
 	static {
-		configMap.put(Config.DEFAULT, ConfigDefault.DEFAULT);
-		configMap.put(Config.EXTEND, ConfigDefault.EXTEND);
+		configMap.put(Config.SYSTEM, ConfigDefault.SYSTEM);////system plus extent
 		configMap.put(Config.GLOBAL, ConfigDefault.GLOBAL);
-		configList.add(ConfigDefault.DEFAULT);
-		configList.add(ConfigDefault.EXTEND);
+		configList.add(ConfigDefault.SYSTEM);////system plus extent
 		configList.add(ConfigDefault.GLOBAL);
 	}
 	
-	public static Config DEFAULT = get(Config.DEFAULT);
+	public static Config SYSTEM = get(Config.SYSTEM);
 	
 	public static Config get(String type) {
 		return configMap.get(type);
@@ -33,27 +31,16 @@ public class ConfigFactory {
 		configMap.clear();
 		configList.clear();
 		if (configs.length == 1) {
-			configMap.put(Config.DEFAULT, configs[0]);
-			configMap.put(Config.EXTEND, configs[0]);
+			configMap.put(Config.SYSTEM, configs[0]);
 			configMap.put(Config.GLOBAL, configs[0]);
 			configList.add(configs[0]);
 			return;
 		}
-		if (configs.length == 2) {
-			configMap.put(Config.DEFAULT, configs[0]);
-			configMap.put(Config.EXTEND, configs[1]);
+		if (configs.length >= 2) {
+			configMap.put(Config.SYSTEM, configs[0]);
 			configMap.put(Config.GLOBAL, configs[1]);
 			configList.add(configs[0]);
 			configList.add(configs[1]);
-			return;
-		}
-		if (configs.length >= 3) {
-			configMap.put(Config.DEFAULT, configs[0]);
-			configMap.put(Config.EXTEND, configs[1]);
-			configMap.put(Config.GLOBAL, configs[2]);
-			configList.add(configs[0]);
-			configList.add(configs[1]);
-			configList.add(configs[2]);
 			return;
 		}
 	}

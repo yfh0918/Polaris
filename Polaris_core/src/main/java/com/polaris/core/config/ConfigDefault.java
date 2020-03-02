@@ -9,8 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public enum ConfigDefault implements Config {
 	
-	DEFAULT(Config.DEFAULT),
-    EXTEND(Config.EXTEND),
+	SYSTEM(Config.SYSTEM),//system plus extent
     GLOBAL(Config.GLOBAL);
     private String type;
     private Properties cacheAll = new Properties();
@@ -25,7 +24,16 @@ public enum ConfigDefault implements Config {
         return type;
     }
 
-    
+	@Override
+    public void put(Properties properties) {
+		cacheAll.putAll(properties);
+    }
+	
+	@Override
+    public void put(String key, String value) {
+		cacheAll.put(key, value);
+    }
+
 	@Override
     public void put(String file, Properties properties) {
 		cacheAll.putAll(properties);
@@ -56,18 +64,23 @@ public enum ConfigDefault implements Config {
     }
     
     @Override
-    public Properties get() {
+    public Properties getProperties() {
         return cacheAll;
     }
     
     @Override
-    public Properties get(String file) {
+    public Properties getProperties(String file) {
         return cacheFile.get(file);
     }
     
     @Override
-    public String get(String file, String key) {
-        return cacheFile.get(file).getProperty(key);
+    public String getProperty(String key) {
+        return cacheAll.getProperty(key);
     }  
+    
+    @Override
+    public String getProperty(String file, String key) {
+        return cacheFile.get(file).getProperty(key);
+    }
     
 }

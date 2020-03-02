@@ -26,10 +26,25 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 		INSTANCE_ENDPOINT.filter(file, key, value);
 		super.put(config, file, key, value);
 	}
+	@Override
+	public void put(Config config, String key, String value) {
+		INSTANCE_ENDPOINT.filter(key, value);
+		super.put(config, key, value);
+	}
+	@Override
+    protected void put(Config config, Properties properties) {
+		INSTANCE_ENDPOINT.filter(properties);
+    	config.put(properties);
+    }
+	@Override
+    protected void put(Config config, String file, Properties properties) {
+		INSTANCE_ENDPOINT.filter(file, properties);
+    	config.put(file, properties);
+    }
 	
 	@Override
-	public void listenForPut(Config config, String file,Properties properties) {
-		SpringUtil.getBean(SpringAutoUpdateConfigChangeListener.class).onChange(config.get());//监听配置
-		super.listenForPut(config, file, properties);
+	public void listenReceive(Config config, String file,Properties properties) {
+		SpringUtil.getBean(SpringAutoUpdateConfigChangeListener.class).onChange(properties);
+		super.listenReceive(config, file, properties);
 	}
 }
