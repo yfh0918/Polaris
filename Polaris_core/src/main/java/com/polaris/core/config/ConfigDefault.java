@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
 
 public enum ConfigDefault implements Config {
 	
-	SYSTEM(Config.SYSTEM),//system plus extent
+	SYSTEM(Config.SYSTEM),
+	EXT(Config.EXT),
     GLOBAL(Config.GLOBAL);
     private String type;
     private Properties cacheAll = new Properties();

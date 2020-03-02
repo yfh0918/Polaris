@@ -42,7 +42,7 @@ public class ConfHandlerProvider {
     }
 
 	public void init() {
-		init(Config.SYSTEM);
+		init(Config.EXT);
 		init(Config.GLOBAL);
 	}
 	public String get(String fileName) {
@@ -72,7 +72,7 @@ public class ConfHandlerProvider {
 		String group = Config.GLOBAL.equals(type) ? type : ConfClient.getAppName();
 		
 		//get target files
-		String files = type.equals(Config.SYSTEM) ? 
+		String files = type.equals(Config.EXT) ? 
 				ConfigFactory.SYSTEM.getProperty(Constant.PROJECT_EXTENSION_PROPERTIES) : 
 					ConfigFactory.SYSTEM.getProperty(Constant.PROJECT_GLOBAL_PROPERTIES);
 		if (StringUtil.isEmpty(files)) {

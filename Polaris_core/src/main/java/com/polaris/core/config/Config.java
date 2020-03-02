@@ -4,6 +4,7 @@ import java.util.Properties;
 
 public interface Config {
     public static final String SYSTEM = "system";
+    public static final String EXT = "ext";
     public static final String GLOBAL = "global";
     
 	default Properties getProperties() {return null;}
