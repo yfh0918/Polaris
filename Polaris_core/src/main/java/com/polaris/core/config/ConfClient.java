@@ -27,7 +27,7 @@ public abstract class ConfClient {
 	* @since 
 	*/
 	public static void set(String key, String value) {
-		ConfCompositeProvider.INSTANCE.put(key, value);
+		ConfCompositeProvider.INSTANCE.putProperty(key, value);
 	}
 	
 	/**

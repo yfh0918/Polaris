@@ -1,5 +1,6 @@
 package com.polaris.core.config;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,39 +38,18 @@ public enum ConfigDefault implements Config {
     }
     
     @Override
-    public void put(String file, Object key, Object value) {
-    	
-    	//载入缓存
-    	Properties cache = cacheFile.get(file);
-    	if (cache == null) {
-    		synchronized(file.intern()) {
-    			cache = cacheFile.get(file);
-    			if (cache == null) {
-    				cache = new Properties();
-    				cacheFile.put(file, cache);
-    			}
-    		}
-    	}
-    	cache.put(key, value);
-        if (logger.isDebugEnabled()) {
-			logger.debug("type:{} file:{}, key:{} value:{} is updated", type,file,key,value);		
-		}
-        
-    }
-    
-    @Override
     public Properties getProperties(String file) {
         return cacheFile.get(file);
     }
     
     @Override
-    public String getProperty(String file, String key) {
-        return cacheFile.get(file).getProperty(key);
+    public Collection<Properties> getProperties() {
+    	return cacheFile.values();
     }
     
     @Override
     public boolean contain(Object key) {
-        for (Properties properties : cacheFile.values()) {
+        for (Properties properties : getProperties()) {
         	if (properties.containsKey(key)) {
         		return true;
         	}

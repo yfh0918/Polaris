@@ -27,7 +27,7 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 	public String getProperty(String key) {
 		return cache.getProperty(key);
 	}
-	public void put(String key, String value) {
+	public void putProperty(String key, String value) {
 		cache.put(key, value);
 	}
 	

@@ -18,11 +18,7 @@ public class ConfSystemHandlerProvider {
 	private Properties properties = null;
 
 	public void init(ConfCompositeProvider composite) {
-		
-		//application-properties
-    	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
     	composite.put(ConfigFactory.SYSTEM, Config.DEFAULT, getProperties());
-		
 	}
 	
 	public Properties getProperties() {
@@ -30,7 +26,10 @@ public class ConfSystemHandlerProvider {
 			return this.properties;
 		}
 		
-		//spring.config.location or project.config.name
+		//encode
+    	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
+
+    	//spring.config.location or project.config.name
     	Properties propeties = null;
     	String file = null;
     	String projectConfigLocation = System.getProperty(Constant.SPRING_CONFIG_LOCACTION);
