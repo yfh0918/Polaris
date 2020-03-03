@@ -70,8 +70,9 @@ abstract public class ConfigurationSupport {
 			return new SpringAutoUpdateConfigChangeListener();
 		}
 		@Bean
-		public SpringValueProcessor springValueProcessor() {
+		public static SpringValueProcessor springValueProcessor() {
 			return new SpringValueProcessor();
 		}
 	}
+	
 }
