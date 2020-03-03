@@ -31,19 +31,6 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 		cache.put(key, value);
 	}
 	
-	public void put(Config config, String key, String value) {
-		put(config, Config.DEFAULT, key, value);
-	}
-	@Override
-	public void put(Config config, String file, String key, String value) {
-		super.put(config, file, key, value);
-		cache(config, key, value);
-		INSTANCE_ENDPOINT.filter(file, key, value);
-	}
-
-    protected void put(Config config, Properties properties) {
-		put(config, Config.DEFAULT, properties);
-	}
 	@Override
     protected void put(Config config, String file, Properties properties) {
 		super.put(config, file, properties);
@@ -86,34 +73,4 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 			return;
 		}
 	}
-	private void cache(Config config, Object key, Object value) {
-		
-		//优先级-system最高
-		if (config == ConfigFactory.SYSTEM) {
-			cache.put(key, value);
-			return;
-		}
-		
-		//优先级-ext
-		if (config == ConfigFactory.get(Config.EXT)) {
-			if (ConfigFactory.SYSTEM.contain(key)) {
-				return;
-			}
-			cache.put(key, value);
-			return;
-		}
-		
-		//优先级-global
-		if (config == ConfigFactory.GLOBAL) {
-			if (ConfigFactory.SYSTEM.contain(key)) {
-				return;
-			}
-			if (ConfigFactory.EXT.contain(key)) {
-				return;
-			}
-			cache.put(key, value);
-			return;
-		}
-	}
-	
 }

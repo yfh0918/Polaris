@@ -107,9 +107,6 @@ public class ConfHandlerProvider {
 	* @Exception 
 	* @since 
 	*/
-    protected void put(Config config, String file, String key, String value) {
-    	config.put(file, key, value);
-    }
     protected void put(Config config, String file, Properties properties) {
     	config.put(file, properties);
     }

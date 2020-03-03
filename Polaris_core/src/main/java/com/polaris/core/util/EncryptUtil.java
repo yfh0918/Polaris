@@ -22,14 +22,14 @@ public class EncryptUtil {
 	private Cipher encryptCipher = null;
 
 	private Cipher decryptCipher = null;
-	//private static final String transformation = "DES";
-	//private static final String transformationKey = "DES";
-	//private int len = 8;
-	//public static final String START_WITH = "{DES}";
-	private static final String transformation = "AES/ECB/PKCS5Padding";
-	private static final String transformationKey = "AES";
-	private int len = 16;
-	public static final String START_WITH = "{AES}";
+	private static final String transformation = "DES";
+	private static final String transformationKey = "DES";
+	private int len = 8;
+	public static final String START_WITH = "{DES}";
+//	private static final String transformation = "AES/ECB/PKCS5Padding";
+//	private static final String transformationKey = "AES";
+//	private int len = 16;
+//	public static final String START_WITH = "{AES}";
 
 	/**
 	 * 单例

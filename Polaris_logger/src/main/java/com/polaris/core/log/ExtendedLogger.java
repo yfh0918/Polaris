@@ -32,12 +32,7 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 			try {
 
 				//从系统目录获取logging.config 
-				String logFile = System.getProperty(Constant.LOG_CONFIG);
-				
-		    	//获取日志文件logging.config=classpath:config/log4j2.xml
-				if (logFile == null || logFile.isEmpty()) {
-			    	logFile = ConfSystemHandlerProvider.INSTANCE.getProperties().getProperty(Constant.LOG_CONFIG, Constant.DEFAULT_LOG_FILE);
-				}
+				String logFile = ConfSystemHandlerProvider.INSTANCE.getProperties().getProperty(Constant.LOG_CONFIG, Constant.DEFAULT_LOG_FILE);
 				
 				//设置具体的日志
 				if (logFile != null && !logFile.isEmpty()) {
@@ -49,7 +44,6 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 					initialized = true;
 					return initialized;
 				}
-
 			} catch (Exception e) {
 			}
 		}

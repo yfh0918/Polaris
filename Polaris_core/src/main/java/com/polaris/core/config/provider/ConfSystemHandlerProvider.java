@@ -1,9 +1,9 @@
 package com.polaris.core.config.provider;
 
-import java.util.Map;
 import java.util.Properties;
 
 import com.polaris.core.Constant;
+import com.polaris.core.config.Config;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.util.EnvironmentUtil;
@@ -21,29 +21,7 @@ public class ConfSystemHandlerProvider {
 		
 		//application-properties
     	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
-    	composite.put(ConfigFactory.SYSTEM, getProperties());
-		if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
-			composite.put(ConfigFactory.SYSTEM, Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
-		} else {
-			if (StringUtil.isEmpty(composite.getProperty(Constant.IP_ADDRESS))) {
-				composite.put(ConfigFactory.SYSTEM, Constant.IP_ADDRESS, NetUtils.getLocalHost());
-			}
-		}
-		
-		//system-environment
-		for (Map.Entry<String, String> entry : EnvironmentUtil.getSystemEnvironment().entrySet()) {
-			if (StringUtil.isNotEmpty(entry.getValue())) {
-				composite.put(ConfigFactory.SYSTEM, entry.getKey(), entry.getValue());
-			}
-		}
-		
-		//system-properties
-		for (Map.Entry<Object, Object> entry : EnvironmentUtil.getSystemProperties().entrySet()) {
-			if (entry.getValue() != null) {
-				composite.put(ConfigFactory.SYSTEM, entry.getKey().toString(),entry.getValue().toString());
-			}
-		}
-		
+    	composite.put(ConfigFactory.SYSTEM, Config.DEFAULT, getProperties());
 		
 	}
 	
@@ -86,6 +64,20 @@ public class ConfSystemHandlerProvider {
             	}
     		}
     	}
+    	
+    	if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
+    		propeties.put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
+		} else {
+			if (StringUtil.isEmpty(propeties.getProperty(Constant.IP_ADDRESS))) {
+				propeties.put(Constant.IP_ADDRESS, NetUtils.getLocalHost());
+			}
+		}
+		
+		//system-environment
+    	propeties.putAll(EnvironmentUtil.getSystemEnvironment());
+		
+		//system-properties
+		propeties.putAll(EnvironmentUtil.getSystemProperties());
      	this.properties = propeties;
     	return propeties;
 	}
