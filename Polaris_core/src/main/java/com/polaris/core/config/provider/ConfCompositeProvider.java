@@ -28,26 +28,29 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 		return cache.getProperty(key);
 	}
 	public void putProperty(String key, String value) {
-		cache.put(key, value);
+		ConfigFactory.SYSTEM.getProperties(Config.DEFAULT).put(key, value);
+		cache(Config.DEFAULT, key, value);
 	}
 	
 	@Override
-    protected void put(Config config, String file, Properties properties) {
-		super.put(config, file, properties);
-		cache(config, properties);
-		INSTANCE_ENDPOINT.filter(file, properties);
+    protected void putProperties(Config config, String file, Properties properties) {
+		super.putProperties(config, file, properties);
+		cacheByPriority(config, file, properties);
     }
 	
 	@Override
-	public void listenReceive(Config config, String file,Properties properties) {
-		super.listenReceive(config, file, properties);
+	public void putPropertiesFromListen(Config config, String file,Properties properties) {
+		super.putPropertiesFromListen(config, file, properties);
+		cacheByPriority(config, file, properties);
 		SpringUtil.getBean(SpringAutoUpdateConfigChangeListener.class).onChange(properties);
 	}
 	
-	private void cache(Config config, Properties properties) {
+	private void cacheByPriority(Config config, String file, Properties properties) {
 		//优先级-system最高
 		if (config == ConfigFactory.SYSTEM) {
-			cache.putAll(properties);
+			for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+				cache(file, entry.getKey(), entry.getValue());
+			}
 			return;
 		}
 		
@@ -57,7 +60,7 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 				if (ConfigFactory.SYSTEM.contain(entry.getKey())) {
 					continue;
 				}
-				cache.put(entry.getKey(), entry.getValue());
+				cache(file, entry.getKey(), entry.getValue());
 			}
 			return;
 		}
@@ -68,9 +71,14 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 				if (ConfigFactory.SYSTEM.contain(entry.getKey()) || ConfigFactory.EXT.contain(entry.getKey())) {
 					continue;
 				}
-				cache.put(entry.getKey(), entry.getValue());
+				cache(file, entry.getKey(), entry.getValue());
 			}
 			return;
 		}
+	}
+	
+	private void cache(String file, Object key, Object value) {
+		cache.put(key, value);
+		INSTANCE_ENDPOINT.filter(file, key.toString(), value == null ? "":value.toString());
 	}
 }
