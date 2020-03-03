@@ -1,4 +1,4 @@
-package com.polaris.workflow.config;
+package com.polaris.workflow;
 
 import java.util.HashMap;
 import java.util.Map;
