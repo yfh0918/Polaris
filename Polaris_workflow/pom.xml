@@ -12,11 +12,8 @@
   <name>Polaris_workflow_parent</name>
   
   <modules>
-	<module>Polaris_workflow</module>
 	<module>Polaris_workflow_api</module>
 	<module>Polaris_workflow_core</module>
-	<module>Polaris_workflow_web</module>
-	<module>Polaris_workflow_test</module>
   </modules>
   
   <dependencies>
