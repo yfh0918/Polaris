@@ -165,6 +165,28 @@ public class DataSourceConfig {
 		if (StringUtil.isEmpty(jdbcUrl) || StringUtil.isEmpty(username) || StringUtil.isEmpty(password)) {
 			return null;
 		}
+		//nullCatalogMeansCurrent=true（mysql8.0以上版本，没有此属性无法自动生成DDL等）
+		if (!jdbcUrl.contains("?")) {
+			jdbcUrl=jdbcUrl+"?nullCatalogMeansCurrent=true";
+		}
+		if (!jdbcUrl.contains("nullCatalogMeansCurrent")) {
+			jdbcUrl = jdbcUrl + "&nullCatalogMeansCurrent=true";
+		}
+		if (!jdbcUrl.contains("useUnicode")) {
+			jdbcUrl = jdbcUrl + "&useUnicode=true";
+		}
+		if (!jdbcUrl.contains("characterEncoding")) {
+			jdbcUrl = jdbcUrl + "&characterEncoding=utf-8";
+		}
+		if (!jdbcUrl.contains("zeroDateTimeBehavior")) {
+			jdbcUrl = jdbcUrl + "&zeroDateTimeBehavior=convertToNull";
+		}
+		if (!jdbcUrl.contains("autoReconnect")) {
+			jdbcUrl = jdbcUrl + "&autoReconnect=true";
+		}
+		if (!jdbcUrl.contains("failOverReadOnly")) {
+			jdbcUrl = jdbcUrl + "&failOverReadOnly=false";
+		}
 		String cipherKey = ConfClient.get("jdbc"+key+".cipher.key",ConfClient.get("spring.datasource"+key+".cipher.key",EncryptUtil.getDefaultKey()));
 		String startWith = ConfClient.get("jdbc"+key+".cipher.startwith",ConfClient.get("spring.datasource"+key+".cipher.startwith",EncryptUtil.START_WITH));
 		username = EncryptUtil.getDecryptValue(startWith,username,EncryptUtil.getInstance(cipherKey,Type.DES));

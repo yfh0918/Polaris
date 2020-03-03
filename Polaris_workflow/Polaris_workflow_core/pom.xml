@@ -17,10 +17,23 @@
 		<artifactId>Polaris_workflow_api</artifactId>
 	  </dependency>
   
-  	  <dependency>
-		<groupId>com.polaris</groupId>
-		<artifactId>Polaris_core</artifactId>
-	  </dependency>
+       <dependency>
+          <groupId>com.polaris</groupId>
+          <artifactId>Polaris_extension_db</artifactId>
+          <exclusions>
+          	<exclusion>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis</artifactId>
+          	</exclusion>
+          </exclusions>
+       </dependency>	
+       	<!-- activit5.17.0 和mybatis3.3.0有版本冲突，故降低mybatis的版本为3.2.5 -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>3.2.5</version>
+		</dependency>
+         
 	  <!-- activiti -->
 	  <dependency>
 		<groupId>org.activiti</groupId>
@@ -112,19 +125,6 @@
         <artifactId>java-uuid-generator</artifactId>
     </dependency>
 	<!-- GENERAL UTILS end -->
-	
-	<!-- activit5.17.0 和mybatis3.3.0有版本冲突，故降低mybatis的版本为3.2.5 -->
-	<dependency>
-		<groupId>org.mybatis</groupId>
-		<artifactId>mybatis</artifactId>
-		<version>3.2.5</version>
-	</dependency>
-	
-	<dependency>
-	    <groupId>com.zaxxer</groupId>
-	    <artifactId>HikariCP</artifactId>
-	</dependency>
-	
 	
   </dependencies>
   
