@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.EncryptUtil.Type;
 
 public abstract class SystemCallUtil {
 
@@ -42,7 +43,7 @@ public abstract class SystemCallUtil {
 	
 	private synchronized static String putValue(String systemKey, String startwith, String strChars, String encryptKey) {
 		encryptMap.clear();
-		String value = EncryptUtil.getEncryptValue(startwith, strChars, EncryptUtil.getInstance(encryptKey));
+		String value = EncryptUtil.getEncryptValue(startwith, strChars, EncryptUtil.getInstance(encryptKey,Type.AES));
     	encryptMap.put(systemKey, value);
     	return value;
 	}

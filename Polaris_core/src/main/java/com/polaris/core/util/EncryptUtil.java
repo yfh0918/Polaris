@@ -21,21 +21,18 @@ public class EncryptUtil {
 	private static String strDefaultKey = "Tom.Yu";
 	private Cipher encryptCipher = null;
 
-	private Cipher decryptCipher = null;
-	private static final String transformation = "DES";
-	private static final String transformationKey = "DES";
-	private int len = 8;
 	public static final String START_WITH = "{DES}";
-//	private static final String transformation = "AES/ECB/PKCS5Padding";
-//	private static final String transformationKey = "AES";
-//	private int len = 16;
-//	public static final String START_WITH = "{AES}";
-
+	private Cipher decryptCipher = null;
+	
 	/**
 	 * 单例
 	 */
     private static volatile Map<String, EncryptUtil> instanceMap = new ConcurrentHashMap<>();
 
+    public static String getDefaultKey() {
+    	return strDefaultKey;
+    }
+    
     /**
      * 获取唯一进程限制的实例
      * @Title: getInstance
@@ -44,21 +41,22 @@ public class EncryptUtil {
     public static EncryptUtil getInstance(){
         return getInstance(strDefaultKey);
     }
-    public static String getDefaultKey() {
-    	return strDefaultKey;
-    }
     public static EncryptUtil getInstance(String strKey){
+    	return getInstance(strKey, Type.DES);
+    }
+    public static EncryptUtil getInstance(String strKey, Type type){
     	if (StringUtil.isEmpty(strKey)) {
     		strKey = strDefaultKey;
     	}
-    	EncryptUtil instance = instanceMap.get(strKey);
+    	String key = type.name() + strKey;
+    	EncryptUtil instance = instanceMap.get(key);
         if(instance == null){
         	synchronized(strKey.intern()){
-        		instance = instanceMap.get(strKey);
+        		instance = instanceMap.get(key);
         		if(instance == null){
         			try {
-        				instance = new EncryptUtil(strKey);
-                        instanceMap.put(strKey, instance);
+        				instance = new EncryptUtil(strKey, type);
+                        instanceMap.put(key, instance);
                 	} catch (Exception ex) {
                 		logger.error("异常", ex);
                 	}
@@ -72,9 +70,14 @@ public class EncryptUtil {
 		SHA,//SHA算法
 		MD5;//MD5算法
 		
-		public String getPrefix() {
+		public String getName() {
 			return "{" + name() + "}";
 		}
+	}
+	
+	public enum Type {
+		DES,
+		AES;
 	}
 	
 	/**
@@ -137,7 +140,7 @@ public class EncryptUtil {
 	 * @throws Exception
 	 */
 	public EncryptUtil() throws NoSuchAlgorithmException, InvalidKeyException, Exception {
-		this(strDefaultKey);
+		this(strDefaultKey,Type.DES);
 	}
 
 	/**
@@ -147,14 +150,30 @@ public class EncryptUtil {
 	 *            指定的密钥
 	 * @throws Exception
 	 */
-	public EncryptUtil(String strKey) throws NoSuchAlgorithmException, InvalidKeyException, Exception{
-		Key key = getKey(strKey.getBytes(Constant.UTF_CODE));
+	public EncryptUtil(String strKey, Type type) 
+			throws NoSuchAlgorithmException, InvalidKeyException, Exception{
+		if (type == Type.DES) {
+			String transformation = "DES";
+			String transformationKey = "DES";
+			int len = 8;
+			Key key = getKey(strKey.getBytes(Constant.UTF_CODE),transformationKey, len);
 
-		encryptCipher = Cipher.getInstance(transformation);
-		encryptCipher.init(Cipher.ENCRYPT_MODE, key);
+			encryptCipher = Cipher.getInstance(transformation);
+			encryptCipher.init(Cipher.ENCRYPT_MODE, key);
 
-		decryptCipher = Cipher.getInstance(transformation);
-		decryptCipher.init(Cipher.DECRYPT_MODE, key);
+			decryptCipher = Cipher.getInstance(transformation);
+			decryptCipher.init(Cipher.DECRYPT_MODE, key);
+		} else {
+			String transformation = "AES/ECB/PKCS5Padding";
+			String transformationKey = "AES";
+			int len = 16;
+			Key key = getKey(strKey.getBytes(Constant.UTF_CODE),transformationKey, len);
+			encryptCipher = Cipher.getInstance(transformation);
+			encryptCipher.init(Cipher.ENCRYPT_MODE, key);
+			decryptCipher = Cipher.getInstance(transformation);
+			decryptCipher.init(Cipher.DECRYPT_MODE, key);
+		}
+		
 	}
 
 	/**
@@ -245,7 +264,7 @@ public class EncryptUtil {
 	 * @return 生成的密钥
 	 * @throws java.lang.Exception
 	 */
-	private Key getKey(byte[] arrBTmp) {
+	private Key getKey(byte[] arrBTmp, String transformationKey, int len) {
 		// 创建一个空的8位字节数组（默认值为0）
 		byte[] arrB = new byte[len];
 
@@ -363,17 +382,17 @@ public class EncryptUtil {
 	 */
 	public static void main(String[] args) throws Exception { 
 		
-		EncryptUtil en = EncryptUtil.getInstance("gaoprd0201abcdddaa");
+		EncryptUtil en = EncryptUtil.getInstance("gaoprd0201abcdaa",Type.AES);
 		String result = en.encrypt(START_WITH, "polaris-adf-asystem-call-001");
 		System.out.println(result);
 		result = en.decrypt(START_WITH, result);
 		System.out.println(result);
-		en = EncryptUtil.getInstance("gaoprd0201abcdddbb");
+		en = EncryptUtil.getInstance("gaoprd0201abcdbb",Type.AES);
 		result = en.encrypt(START_WITH, "polaris-adf-asystem-call-001");
 		System.out.println(result);
 		result = en.decrypt(START_WITH, result);
 		System.out.println(result);
-		en = EncryptUtil.getInstance("gaoprd0201abcdddcc");
+		en = EncryptUtil.getInstance("gaoprd0201abcdcc",Type.AES);
 		result = en.encrypt(START_WITH, "polaris-adf-asystem-call-001");
 		System.out.println(result);
 		result = en.decrypt(START_WITH, result);

@@ -10,6 +10,7 @@ import java.util.UUID;
 import com.alibaba.fastjson.JSON;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.EncryptUtil.Type;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
@@ -113,7 +114,7 @@ public class JwtUtil {
         return createAdditionalJWTMap(userMap, additionalKey, additionalValue, tokenTime);
 	}
 	public static Map<String, Object> createAdditionalJWTMap(Map<String, Object> userMap, String additionalKey, String additionalValue, long tokenTime) {
-		EncryptUtil en = EncryptUtil.getInstance(ConfClient.get("jwt.additional.key", EncryptUtil.getDefaultKey()));
+		EncryptUtil en = EncryptUtil.getInstance(ConfClient.get("jwt.additional.key", EncryptUtil.getDefaultKey()), Type.DES);
         try {
 			userMap.put(additionalKey, en.encrypt(additionalValue));
 		} catch (Exception e) {

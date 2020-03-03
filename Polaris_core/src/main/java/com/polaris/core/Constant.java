@@ -114,7 +114,7 @@ public class Constant {
 	public static final String SYSTEM_CALL_START_WITH = "system.call.start";
 	public static final String SYSTEM_CALL_START_WITH_DEFAULT = "X18KgcXJMRq8NO7ikrVfXNGMSKso=zUYRzNFdz2Z";
 	public static final String SYSTEM_CALL_ENCRYPT_KEY = "system.call.encrypt.key";
-	public static final String SYSTEM_CALL_ENCRYPT_KEY_DEFAULT = "sys@cl01";
+	public static final String SYSTEM_CALL_ENCRYPT_KEY_DEFAULT = "polaris-sys@cl01";
 	public static final String SYSTEM_CALL_ENCRYPT_VALUE = "system.call.encrypt.value";
 	public static final String SYSTEM_CALL_ENCRYPT_VALUE_DEFAULT = "polaris-system-call-001";
 	
