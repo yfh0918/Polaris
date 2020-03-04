@@ -3,14 +3,12 @@ package com.polaris.workflow.test;
 import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ConsumerConfig;
 import org.apache.dubbo.config.RegistryConfig;
-import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.polaris.core.config.ConfClient;
 
 @Configuration
-@EnableDubbo(scanBasePackages = "com.polaris")
 public class ConsumerConfiguration {
 	
     @Bean

@@ -31,6 +31,10 @@ public class WorkFlowController {
 	@Autowired
 	WorkflowService workflowService;
 	
+    /**
+     * 动态生成流程图
+     *
+     */
     @GET
     @POST
     @Path("/createDiagram")
@@ -44,9 +48,6 @@ public class WorkFlowController {
     /**
      * 部署单个流程定义
      *
-     * @param resourceLoader {@link ResourceLoader}
-     * @param processKey     模块名称
-     * @throws IOException 找不到zip文件时
      */
     @GET
     @POST
@@ -89,6 +90,21 @@ public class WorkFlowController {
     	return JSON.toJSONString(result);
     }
 
+    /**
+     * 获取图片流
+     *
+     * @return
+     */
+    @GET
+    @POST
+    @Path("/getProcessDiagram")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getProcessDiagram(@Context HttpServletRequest request) {
+    	WorkflowDto dto = RequestUtil.convertParameterToObject(request, WorkflowDto.class);
+    	WorkflowDto result = workflowService.getProcessDiagram(dto);
+    	return JSON.toJSONString(result);
+    }
+    
     /**
      * 查询待办任务
      *

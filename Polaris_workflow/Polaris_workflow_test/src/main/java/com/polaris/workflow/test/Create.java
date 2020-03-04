@@ -1,16 +1,9 @@
-package com.polaris.workflow.controller;
+package com.polaris.workflow.test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.EndEvent;
@@ -22,37 +15,18 @@ import org.activiti.bpmn.model.UserTask;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.polaris.core.util.FileUtil;
 import com.polaris.workflow.api.dto.WorkflowDto;
 import com.polaris.workflow.api.service.WorkflowService;
 
-@Component
-@Path("/create")
-public class WorkFlowCreateBpmnController {
+@Service
+public class Create {
 	
 	@Autowired
 	WorkflowService workflowService;
 	
-	/**
-     * 部署单个流程定义
-     *
-     */
-    @POST
-    @Path("/bpmn")
-    @Produces(MediaType.APPLICATION_JSON)
-    public String bpmn(@Context HttpServletRequest request) {
-    	
-    	try {
-        	test01();
-    	} catch (Exception ex) {
-    		
-    	}
-    	  
-    	return "";
-    }
-    
     public void test01() throws IOException {  
         System.out.println(".........start...");  
         //ProcessEngine processEngine=getProcessEngine();  
@@ -162,5 +136,5 @@ public class WorkFlowCreateBpmnController {
         EndEvent endEvent = new EndEvent();  
         endEvent.setId("endEvent");  
         return endEvent;  
-    }  
+    }
 }
