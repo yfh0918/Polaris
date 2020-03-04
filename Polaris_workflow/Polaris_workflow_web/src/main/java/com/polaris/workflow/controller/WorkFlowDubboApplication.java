@@ -1,4 +1,4 @@
-package com.polaris.workflow;
+package com.polaris.workflow.controller;
 
 import com.polaris.container.MainSupport;
 import com.polaris.container.annotation.PolarisApplication;

@@ -20,7 +20,7 @@ public abstract class PropertyUtil {
 	
 	public static Properties getProperties (String fileName,boolean includePath, boolean includeClassPath) {
 		if (includePath) {
-			try (InputStream in = FileUitl.getStreamFromPath(fileName)) {
+			try (InputStream in = FileUtil.getStreamFromPath(fileName)) {
 				if (in != null) {
 					return getProperties(in);
 			    }
@@ -29,7 +29,7 @@ public abstract class PropertyUtil {
 		    }
 		}
 		if (includeClassPath) {
-			try (InputStream in = FileUitl.getStreamFromClassPath(fileName)) {
+			try (InputStream in = FileUtil.getStreamFromClassPath(fileName)) {
 				if (in != null) {
 					return getProperties(in);
 			    }

@@ -31,6 +31,16 @@ public class WorkFlowController {
 	@Autowired
 	WorkflowService workflowService;
 	
+    @GET
+    @POST
+    @Path("/createDiagram")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String createDiagram(@Context HttpServletRequest request) {
+    	WorkflowDto dto = RequestUtil.convertParameterToObject(request, WorkflowDto.class);
+    	WorkflowDto result = workflowService.createDiagram(dto);
+    	return JSON.toJSONString(result);
+    }
+    
     /**
      * 部署单个流程定义
      *

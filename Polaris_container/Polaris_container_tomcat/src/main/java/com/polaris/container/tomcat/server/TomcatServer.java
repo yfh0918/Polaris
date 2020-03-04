@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import com.polaris.container.tomcat.listener.ServerHandlerListerner;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.FileUitl;
+import com.polaris.core.util.FileUtil;
 
 /**
  * Class Name : TomcatServer
@@ -64,7 +64,7 @@ public class TomcatServer {
             String serverPort = ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE);
 
             //工作路径
-            String resourceBase = FileUitl.getFullPath("WebContent");
+            String resourceBase = FileUtil.getFullPath("WebContent");
             File resDir = new File(resourceBase);
             if (!resDir.exists()) {
             	resDir.mkdirs();

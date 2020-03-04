@@ -7,7 +7,7 @@ import com.polaris.core.config.Config;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.util.EnvironmentUtil;
-import com.polaris.core.util.FileUitl;
+import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
@@ -45,7 +45,7 @@ public class ConfSystemHandlerProvider {
 		//folder-scan
     	if (propeties == null) {
     		for (String suffix : ConfReaderFactory.SUPPORT_TYPE) {
-        		file =  CONFIG_NAME + FileUitl.DOT + suffix;
+        		file =  CONFIG_NAME + FileUtil.DOT + suffix;
         		propeties = ConfReaderFactory.get(file).getProperties(file,true,false);
         		if (propeties != null) {
         			break;
@@ -55,7 +55,7 @@ public class ConfSystemHandlerProvider {
 			//classpath-scan
     		if (propeties == null) {
     			for (String suffix : ConfReaderFactory.SUPPORT_TYPE) {
-            		file =  CONFIG_NAME + FileUitl.DOT + suffix;
+            		file =  CONFIG_NAME + FileUtil.DOT + suffix;
             		propeties = ConfReaderFactory.get(file).getProperties(file,false,true);
             		if (propeties != null) {
             			break;

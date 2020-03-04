@@ -13,7 +13,7 @@ import org.springframework.util.ClassUtils;
 
 import com.polaris.core.Constant;
 
-public abstract class FileUitl {
+public abstract class FileUtil {
 	
 	public static final String DOT = ".";
 	
@@ -74,13 +74,13 @@ public abstract class FileUitl {
     public static InputStream getStreamFromClassPath(String fileName) throws IOException {
     	
     	//classpath:config/filename
-		InputStream inputStream = FileUitl.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + fileName);
+		InputStream inputStream = FileUtil.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + fileName);
 		if (inputStream != null) {
 			return inputStream;
 		}
 		
 		//classpath:filename
-		return FileUitl.class.getClassLoader().getResourceAsStream(fileName);
+		return FileUtil.class.getClassLoader().getResourceAsStream(fileName);
     }
     
     public static String read(InputStream in) throws IOException {

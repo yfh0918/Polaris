@@ -3,7 +3,7 @@ package com.polaris.core.config.reader;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.polaris.core.util.FileUitl;
+import com.polaris.core.util.FileUtil;
 
 public class ConfReaderFactory {
 
@@ -17,7 +17,7 @@ public class ConfReaderFactory {
 	}
 	
 	public static ConfReader get(String fileName) {
-		ConfReader confReader = confReaderMap.get(FileUitl.getSuffix(fileName));
+		ConfReader confReader = confReaderMap.get(FileUtil.getSuffix(fileName));
 		if (confReader == null) {
 			throw new RuntimeException("file:"+fileName+" is not supported ");
 		}

@@ -9,7 +9,14 @@
   <artifactId>Polaris_workflow_api</artifactId>
   <packaging>jar</packaging>
   <name>Polaris_workflow_api</name>
-  
+  <!-- activiti -->
+  <dependencies>
+  	  <dependency>
+		<groupId>org.activiti</groupId>
+		<artifactId>activiti-engine</artifactId>
+	  </dependency>
+  </dependencies>
+	  
   <build>
 	  <plugins>
 		<!-- Source attach plugin -->

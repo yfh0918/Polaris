@@ -1,9 +1,6 @@
 package com.polaris.workflow.entry;
 
-import java.io.IOException;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import com.polaris.workflow.api.dto.WorkflowDto;
@@ -20,12 +17,20 @@ public class WorkflowEntry implements WorkflowService {
     @Autowired
     private WorkflowTraceService workflowTraceService;
 
+	/**
+     * 动态创建流程
+     *
+     * @param WorkflowDto
+     */
+	@Override
+	public WorkflowDto createDiagram(WorkflowDto dto) {
+		return workflowProcessService.createDiagram(dto);
+	}
+	
     /**
      * 部署单个流程定义
      *
-     * @param resourceLoader {@link ResourceLoader}
-     * @param processKey     模块名称
-     * @throws IOException 找不到zip文件时
+     * @param WorkflowDto
      */
     public WorkflowDto deployDiagram(WorkflowDto dto) {
         return workflowProcessService.deployDiagram(dto);
@@ -49,6 +54,15 @@ public class WorkflowEntry implements WorkflowService {
         return workflowProcessService.startWorkflow(dto);
     }
 
+    /**
+     * 获取流程图
+     *
+     * @param entity
+     */
+    public WorkflowDto getProcessDiagram(WorkflowDto dto) {
+    	return workflowProcessService.getProcessDiagram(dto);
+    }
+    
     /**
      * 查询待办任务
      *
@@ -169,4 +183,5 @@ public class WorkflowEntry implements WorkflowService {
     public WorkflowDto deleteRuntimeProcessInstance(WorkflowDto dto) {
         return workflowProcessService.deleteRuntimeProcessInstance(dto);
     }
+
 }

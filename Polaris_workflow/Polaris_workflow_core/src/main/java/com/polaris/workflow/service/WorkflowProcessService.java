@@ -1,6 +1,6 @@
 package com.polaris.workflow.service;
 
-import java.io.IOException;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -21,6 +21,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.activiti.bpmn.BpmnAutoLayout;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowElement;
@@ -53,6 +54,7 @@ import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +71,7 @@ import com.polaris.core.dto.PageUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.workflow.api.dto.WorkflowDto;
 import com.polaris.workflow.util.WorkflowUtils;
-
+import com.polaris.core.util.FileUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 
@@ -98,12 +100,53 @@ public class WorkflowProcessService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    
+    /**
+     * 动态创建流程
+     *
+     * @param WorkflowDto dto
+     */
+    @Transactional
+    public WorkflowDto createDiagram(WorkflowDto dto) {
+    	if (dto == null) {
+            dto = new WorkflowDto();
+        }
+        if (dto.getBpmnModel() == null) {
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[12]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
+            return dto;
+        }
+        if (StringUtil.isEmpty(dto.getProcessDefinitionKey())) {
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[1]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
+            return dto;
+        }
+        // 2. Generate graphical information    
+        new BpmnAutoLayout(dto.getBpmnModel()).execute();  
+          
+        // 3. Deploy the process to the engine    
+        Deployment deployment = repositoryService.createDeployment().addBpmnModel(
+        		dto.getProcessDefinitionKey()+".bpmn", dto.getBpmnModel()).name(dto.getProcessDefinitionKey()+"_deployment").deploy(); 
+        dto.setDeploymentId(deployment.getId());
+        
+        // save bpmn
+        try {
+            InputStream processBpmn = repositoryService.getResourceAsStream(deployment.getId(), dto.getProcessDefinitionKey()+".bpmn");
+            String fileName = FileUtil.getFullPath("deployments/"+dto.getProcessDefinitionKey()+".bpmn");
+            FileUtils.copyInputStreamToFile(processBpmn,new File(fileName));  
+        } catch (Exception ex) {
+        	logger.error("create BPMN file error：{}",ex);
+        }
+        
+        dto.setCode(Constant.RESULT_SUCCESS);
+        return dto;
+
+    }
+    
     /**
      * 部署单个流程定义
      *
-     * @param resourceLoader {@link ResourceLoader}
-     * @param processKey     模块名称
-     * @throws IOException 找不到zip文件时
+     * @param WorkflowDto dto
      */
     @Transactional
     public WorkflowDto deployDiagram(WorkflowDto dto) {
@@ -117,6 +160,7 @@ public class WorkflowProcessService {
             dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
+        
 
         try {
             //载入流程
@@ -236,6 +280,7 @@ public class WorkflowProcessService {
             dto.setProcessInstanceId(processInstanceId);
             logger.debug("start process of {key={}, bkey={}, pid={}, variables={}}",
                     new Object[]{dto.getProcessDefinitionKey(), dto.getBusinessKey(), processInstanceId, dto.getVariables()});
+            dto.setProcessDefinitionId(processInstance.getProcessDefinitionId());
             dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
@@ -246,6 +291,30 @@ public class WorkflowProcessService {
         }
         return dto;
     }
+    /**
+     * 启动流程
+     *
+     * @param entity
+     */
+    public WorkflowDto getProcessDiagram(WorkflowDto dto) {
+
+        //参数检查
+        if (dto == null) {
+            dto = new WorkflowDto();
+        }
+        if (StringUtil.isEmpty(dto.getProcessDefinitionId())) {
+            dto.setMessage(WorkflowDto.MESSAGE_INFO[13]);
+            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
+            return dto;
+        }
+        
+
+        InputStream processDiagram = repositoryService.getProcessDiagram(dto.getProcessDefinitionId()); 
+        dto.setProcessDiagram(processDiagram);
+        dto.setCode(Constant.RESULT_SUCCESS);
+        return dto;
+    }
+    
 
     /**
      * 查询待办任务

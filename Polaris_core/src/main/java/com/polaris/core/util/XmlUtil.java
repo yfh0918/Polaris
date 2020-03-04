@@ -15,7 +15,7 @@ public abstract class XmlUtil {
 	public static Properties getProperties (String fileName,boolean includePath, boolean includeClassPath) {
 		if (includePath) {
 			try {
-				String content = FileUitl.read(FileUitl.getStreamFromPath(fileName));
+				String content = FileUtil.read(FileUtil.getStreamFromPath(fileName));
 				return PropertyUtil.getProperties(xml2Json(content));
 		    } catch (Exception e) {
 		    	e.printStackTrace();
@@ -23,7 +23,7 @@ public abstract class XmlUtil {
 		}
 		if (includeClassPath) {
 			try {
-				String content = FileUitl.read(FileUitl.getStreamFromClassPath(fileName));
+				String content = FileUtil.read(FileUtil.getStreamFromClassPath(fileName));
 				return PropertyUtil.getProperties(xml2Json(content));
 		    } catch (Exception e) {
 		    	e.printStackTrace();

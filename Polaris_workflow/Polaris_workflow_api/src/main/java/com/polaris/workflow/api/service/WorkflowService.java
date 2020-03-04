@@ -1,19 +1,20 @@
 package com.polaris.workflow.api.service;
 
-import java.io.IOException;
-
-import org.springframework.core.io.ResourceLoader;
-
 import com.polaris.workflow.api.dto.WorkflowDto;
 
 public interface WorkflowService {
 
+	/**
+     * 动态创建流程
+     *
+     * @param WorkflowDto
+     */
+    public WorkflowDto createDiagram(WorkflowDto dto);
+    
     /**
      * 部署单个流程定义
      *
-     * @param resourceLoader {@link ResourceLoader}
-     * @param processKey     模块名称
-     * @throws IOException 找不到zip文件时
+     * @param WorkflowDto
      */
     public WorkflowDto deployDiagram(WorkflowDto dto);
 
@@ -30,6 +31,13 @@ public interface WorkflowService {
      * @param entity
      */
     public WorkflowDto startWorkflow(WorkflowDto dto);
+    
+    /**
+     * 获取流程图
+     *
+     * @param entity
+     */
+    public WorkflowDto getProcessDiagram(WorkflowDto dto);
 
     /**
      * 查询待办任务

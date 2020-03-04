@@ -1,10 +1,12 @@
 package com.polaris.workflow.api.dto;
 
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.activiti.bpmn.model.BpmnModel;
 import org.apache.commons.collections.CollectionUtils;
 
 import com.polaris.core.dto.PageDto;
@@ -30,7 +32,9 @@ public class WorkflowDto extends PageDto implements Serializable {
     										"businessKey已经使用完成",
     										"使用中的businessKey数量超过",
     										"已经完成的businessKey数量超过",
-			                                 "网关条件不合法"
+			                                 "网关条件不合法",
+			                                 "没有BpmnModel对象",
+			                                 "没有processDefinitionId"
     										};
     
     public static final int DEFAULT_MAX_SIZE_BUSINESS_KEY = 1000;//返回的最大businessKey数量
@@ -51,6 +55,15 @@ public class WorkflowDto extends PageDto implements Serializable {
 		variables.put(OK, null);
 		variables.put(TYPE, null);
 		maxSizeBusinessKey = DEFAULT_MAX_SIZE_BUSINESS_KEY;
+    }
+    
+    //设置BpmnModel
+    private BpmnModel bpmnModel = null;
+    public void setBpmnModel(BpmnModel bpmnModel) {
+    	this.bpmnModel = bpmnModel;
+    }
+    public BpmnModel getBpmnModel() {
+    	return this.bpmnModel;
     }
     
 	//设定分支节点
@@ -121,6 +134,14 @@ public class WorkflowDto extends PageDto implements Serializable {
 	private List<String> usingBusinessKeyList;
 	private int maxSizeBusinessKey;//能查询的最大案件数量
 	private String deleteReason; // 流程实例删除原因
+	
+	private InputStream processDiagram;//流程图Stream
+	public InputStream getProcessDiagram() {
+		return processDiagram;
+	}
+	public void setProcessDiagram(InputStream processDiagram) {
+		this.processDiagram = processDiagram;
+	}
 	
 	public String getUserId() {
 		return userId;
