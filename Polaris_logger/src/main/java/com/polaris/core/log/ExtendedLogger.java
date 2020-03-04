@@ -631,6 +631,6 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 			return Level.ALL;
 		}		
         
-		return Level.OFF;
+		return Level.INFO;
 	}
 }
