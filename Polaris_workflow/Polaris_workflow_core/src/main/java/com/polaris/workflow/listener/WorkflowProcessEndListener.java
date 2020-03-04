@@ -30,7 +30,7 @@ public class WorkflowProcessEndListener {
     private EntityManager entityManager;
 
     //JpaTransactionManager事务管理 .
-    @Resource(name = "transactionManager")
+    @Resource(name = "jpaTransactionManager")
     JpaTransactionManager tm;
 
     public void onEvent(ActivitiEvent event) {

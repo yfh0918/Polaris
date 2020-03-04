@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -78,8 +79,9 @@ public class WorkflowConfiguration implements ConfigurationExtension{
 		public EntityManager entityManager() {
 			return entityManagerFactory().getObject().createEntityManager();
 		}
-				
-		@Bean(name = "transactionManager")
+		
+		@Primary
+		@Bean(name = "jpaTransactionManager")
 		public JpaTransactionManager transactionManager() {
 			JpaTransactionManager transactionManager = new JpaTransactionManager();
 			transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
@@ -95,7 +97,7 @@ public class WorkflowConfiguration implements ConfigurationExtension{
 		public SpringProcessEngineConfiguration processEngineConfiguration(
 				WorkflowListener workflowListener,
 				@Autowired @Qualifier("entityManagerFactory")EntityManagerFactory entityManagerFactory,
-				@Autowired @Qualifier("transactionManager") JpaTransactionManager transactionManager,
+				@Autowired @Qualifier("jpaTransactionManager") JpaTransactionManager transactionManager,
 				@Autowired @Qualifier("uuidGenerator") StrongUuidGenerator uuidGenerator) {
 			SpringProcessEngineConfiguration processEngineConfiguration = 
 					new SpringProcessEngineConfiguration();

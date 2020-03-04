@@ -22,17 +22,11 @@
           <artifactId>Polaris_extension_db</artifactId>
           <exclusions>
           	<exclusion>
-				<groupId>org.mybatis</groupId>
-				<artifactId>mybatis</artifactId>
+          		<groupId>javax.persistence</groupId>
+          		<artifactId>persistence-api</artifactId>
           	</exclusion>
           </exclusions>
        </dependency>	
-       	<!-- activit5.17.0 和mybatis3.3.0有版本冲突，故降低mybatis的版本为3.2.5 -->
-		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis</artifactId>
-			<version>3.2.5</version>
-		</dependency>
          
 	  <!-- activiti -->
 	  <dependency>
