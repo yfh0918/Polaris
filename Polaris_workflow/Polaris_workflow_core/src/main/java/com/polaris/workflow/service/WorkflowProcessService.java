@@ -351,6 +351,9 @@ public class WorkflowProcessService {
 
             // 根据当前人的ID查询
             TaskQuery taskQuery = taskService.createTaskQuery().processDefinitionKey(dto.getProcessDefinitionKey()).taskCandidateOrAssigned(dto.getUserId());
+            if (StringUtil.isNotEmpty(dto.getProcessInstanceId())) {
+            	taskQuery = taskQuery.processInstanceId(dto.getProcessInstanceId());
+            }
             List<Task> tasks = taskQuery.orderByTaskCreateTime().asc().listPage(pageParams[0], pageParams[1]);
 
             // 根据流程的业务ID查询实体并关联
