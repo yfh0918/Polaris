@@ -10,10 +10,11 @@ public abstract class ServerListenerSupport {
 	
 	private static List<ServerListener> serverListenerList = new ArrayList<>();
 	
-	public static void add(String[] arg, ServerListener... serverListeners) {
+	public static void init(String[] arg, ServerListener... serverListeners) {
 		addServerListener(serverListeners);
 		addServerListenerExtension();
 		addServerListener(new ServerRegisterServerListener());
+		starting();
 	}
 	
 	public static void addServerListener(ServerListener... serverListeners) {

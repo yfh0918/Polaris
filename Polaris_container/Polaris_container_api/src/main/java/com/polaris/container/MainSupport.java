@@ -35,13 +35,10 @@ public abstract class MainSupport {
     	ConfCompositeProvider.INSTANCE.init();
     	
 		//载入配置类
-		ConfigurationSupport.add(args, configClass);		
+		ConfigurationSupport.init(args, configClass);		
     	
     	//载入监听器
-    	ServerListenerSupport.add(args, serverListeners);
-    	
-    	//开始
-    	ServerListenerSupport.starting();
+    	ServerListenerSupport.init(args, serverListeners);
     	
     	//启动
     	ServerFactory.getServer().start();

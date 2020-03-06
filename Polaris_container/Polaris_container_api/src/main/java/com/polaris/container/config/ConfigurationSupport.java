@@ -17,7 +17,7 @@ abstract public class ConfigurationSupport {
 	private static String[] args;
 	private static Class<?>[] classes;
 	
-	public static void add(String[] arg, Class<?>... clazz) {
+	public static void init(String[] arg, Class<?>... clazz) {
 		//设置
 		args = arg;
 		classes = clazz;
