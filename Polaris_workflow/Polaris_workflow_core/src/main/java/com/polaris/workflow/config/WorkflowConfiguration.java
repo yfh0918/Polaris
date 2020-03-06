@@ -38,7 +38,7 @@ import com.polaris.workflow.listener.WorkflowListener;
 public class WorkflowConfiguration implements ConfigurationExtension{
 
 	@Override
-	public Class<?>[] getExtensionConfigurations() {
+	public Class<?>[] getConfigurations() {
 		return new Class<?>[]{WorkflowConfig.class};
 	}
 	

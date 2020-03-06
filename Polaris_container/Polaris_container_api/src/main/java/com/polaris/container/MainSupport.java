@@ -4,7 +4,6 @@ import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.core.config.provider.ConfCompositeProvider;
-import com.polaris.core.naming.ServerHandlerClient;
 
 /**
 *
@@ -39,22 +38,7 @@ public abstract class MainSupport {
 		ConfigurationSupport.add(args, configClass);		
     	
     	//载入监听器
-    	ServerListenerSupport.add(serverListeners, new ServerListener() {//载入自定义的监听
-
-			@Override
-			public void started() {
-				//注册服务
-		    	ServerHandlerClient.register();
-				
-			}
-			
-			@Override
-			public void stopped() {
-				//注销服务
-		    	ServerHandlerClient.unRegister();
-			}
-    		
-    	});
+    	ServerListenerSupport.add(args, serverListeners);
     	
     	//开始
     	ServerListenerSupport.starting();

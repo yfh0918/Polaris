@@ -29,7 +29,7 @@ import com.polaris.core.util.ReflectionUtil;
 public class MVCConfigurer implements ConfigurationExtension {
 
 	@Override
-	public Class<?>[] getExtensionConfigurations() {
+	public Class<?>[] getConfigurations() {
 		return new Class<?>[]{SpringMvcConfigurer.class};
 	}
 	

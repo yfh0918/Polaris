@@ -2,21 +2,37 @@ package com.polaris.container.listener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
+
+import com.polaris.core.naming.ServerHandlerClient;
 
 public abstract class ServerListenerSupport {
 	
 	private static List<ServerListener> serverListenerList = new ArrayList<>();
 	
-	public static void add(ServerListener... serverListeners) {
+	public static void add(String[] arg, ServerListener... serverListeners) {
+		addServerListener(serverListeners);
+		addServerListenerExtension();
+		addServerListener(new ServerRegisterServerListener());
+	}
+	
+	public static void addServerListener(ServerListener... serverListeners) {
 		if (serverListeners != null && serverListeners.length > 0) {
     		for (ServerListener serverListener : serverListeners) {
     			serverListenerList.add(serverListener);
     		}
     	}
 	}
-	public static void add(ServerListener[] serverListeners, ServerListener serverListener) {
-		ServerListenerSupport.add(serverListeners);
-		serverListenerList.add(serverListener);
+	public static void addServerListenerExtension() {
+		ServiceLoader<ServerListenerExtension> serverListenerExtensions = ServiceLoader.load(ServerListenerExtension.class);
+		for (ServerListenerExtension serverListenerExtension : serverListenerExtensions) {
+			ServerListener[] serverListeners = serverListenerExtension.getServerListeners();
+			if (serverListeners != null && serverListeners.length > 0) {
+				for (ServerListener serverListener : serverListeners) {
+					serverListenerList.add(serverListener);
+				}
+			}
+        }
 	}
 
 	public static void starting() {
@@ -44,4 +60,17 @@ public abstract class ServerListenerSupport {
 			serverListener.stopped();
 		}
 	}
+	
+	protected static class ServerRegisterServerListener implements ServerListener {
+		@Override
+		public void started() {
+			ServerHandlerClient.register();
+			
+		}
+		@Override
+		public void stopped() {
+	    	ServerHandlerClient.unRegister();
+		}
+	}
+
 }

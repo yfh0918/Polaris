@@ -5,7 +5,7 @@ import com.polaris.container.config.ConfigurationExtension;
 public class DBConfigurer implements ConfigurationExtension{
 
 	@Override
-	public Class<?>[] getExtensionConfigurations() {
+	public Class<?>[] getConfigurations() {
 		return new Class<?>[]{DataSourceConfig.class,MybatisConfigurer.class};
 	}
 

@@ -27,7 +27,7 @@ public class DubboConfigurer implements ConfigurationExtension{
 	private static final Logger logger = LoggerFactory.getLogger(DubboConfigurer.class);
 	
 	@Override
-	public Class<?>[] getExtensionConfigurations() {
+	public Class<?>[] getConfigurations() {
 		Class<?> clazz = DefaultDubboConfig.class;
 		
 		try {

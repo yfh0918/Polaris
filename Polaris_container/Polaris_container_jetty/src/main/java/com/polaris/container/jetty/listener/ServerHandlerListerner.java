@@ -5,9 +5,7 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerSupport;
-import com.polaris.container.servlet.listener.WebsocketListerner;
 
 /**
  * Class Name : ServerHandler
@@ -23,7 +21,6 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	/**
 	 * 服务器监听器集合
 	 */
-	private ServerListener websocketListerner = new WebsocketListerner();
 
 	public ServerHandlerListerner() {
 	}
@@ -33,7 +30,6 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 启动中
 	 */
 	public void lifeCycleStarting(LifeCycle event) {
-		websocketListerner.starting();
 		ServerListenerSupport.starting();
     	logger.info("JettyServer启动中！");
 	}
@@ -43,7 +39,6 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 启动结束
 	 */
     public void lifeCycleStarted(LifeCycle event) {
-    	websocketListerner.started();
 		ServerListenerSupport.started();
     	//日志
     	logger.info("JettyServer启动成功！");
@@ -54,7 +49,6 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 异常
 	 */
     public void lifeCycleFailure(LifeCycle event,Throwable cause) {
-    	websocketListerner.failure();
 		ServerListenerSupport.failure();
     	logger.info("JettyServer启动失败！");
     }
@@ -64,7 +58,6 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 结束中
 	 */
    public void lifeCycleStopping(LifeCycle event) {
-	   websocketListerner.stopping();
        ServerListenerSupport.stopping();
 	   logger.info("JettyServer已经中！");
    }
@@ -74,7 +67,6 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 结束
 	 */
     public void lifeCycleStopped(LifeCycle event) {
-    	websocketListerner.stopped();
 		ServerListenerSupport.stopped();
     	logger.info("JettyServer已经停止！");
     }
