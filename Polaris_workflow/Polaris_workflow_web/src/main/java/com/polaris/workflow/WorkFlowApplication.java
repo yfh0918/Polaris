@@ -1,6 +1,6 @@
 package com.polaris.workflow;
 
-import com.polaris.container.MainSupport;
+import com.polaris.container.ServerRunner;
 import com.polaris.container.annotation.PolarisApplication;
 
 /**
@@ -15,6 +15,6 @@ public class WorkFlowApplication
     {
 
 		//启动WEB
-    	MainSupport.startServer(args,WorkFlowApplication.class);
+    	ServerRunner.startServer(args,WorkFlowApplication.class);
     }
 }

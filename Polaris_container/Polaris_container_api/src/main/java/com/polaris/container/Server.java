@@ -1,6 +1,7 @@
 package com.polaris.container;
 
 public interface Server {
-	public void start();
-	public default Object getContext() {return null;}
+	void start();
+	default Object getContext() {return null;}
+	default void stop() {}
 }

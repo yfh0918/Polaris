@@ -1,7 +1,7 @@
 package com.polaris.demo;
 
 
-import com.polaris.container.MainSupport;
+import com.polaris.container.ServerRunner;
 import com.polaris.container.annotation.PolarisApplication;
 
 /**
@@ -17,6 +17,6 @@ public class DemoApplication
     {
 
 		//启动WEB
-    	MainSupport.startServer(args,DemoApplication.class);
+    	ServerRunner.run(args,DemoApplication.class);
     }
 }

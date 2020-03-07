@@ -17,7 +17,7 @@ import com.polaris.core.config.provider.ConfCompositeProvider;
 * @version
 *
 */
-public abstract class MainSupport {
+public abstract class ServerRunner {
 	
     /**
     * startServer
@@ -26,10 +26,10 @@ public abstract class MainSupport {
     * @Exception 
     * @since 
     */
-	public static void startServer(String[] args, Class<?> configClass, ServerListener... serverListeners) {
-		startServer(args, new Class<?>[]{configClass}, serverListeners);
+	public static void run(String[] args, Class<?> configClass, ServerListener... serverListeners) {
+		run(args, new Class<?>[]{configClass}, serverListeners);
 	}
-    public static void startServer(String[] args, Class<?>[] configClass, ServerListener... serverListeners) {
+    public static void run(String[] args, Class<?>[] configClass, ServerListener... serverListeners) {
     	
     	//各类参数载入
     	ConfCompositeProvider.INSTANCE.init();

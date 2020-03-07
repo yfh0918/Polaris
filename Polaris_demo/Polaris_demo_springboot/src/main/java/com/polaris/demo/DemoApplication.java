@@ -3,7 +3,7 @@ package com.polaris.demo;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.polaris.container.MainSupport;
+import com.polaris.container.ServerRunner;
 
 /**
  * 入口启动类
@@ -16,6 +16,6 @@ public class DemoApplication
     public static void main( String[] args ) throws Exception
     {
 		//启动WEB
-    	MainSupport.startServer(args,DemoApplication.class);
+    	ServerRunner.run(args,DemoApplication.class);
     }
 }
