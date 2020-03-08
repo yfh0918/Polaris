@@ -10,11 +10,8 @@ import org.springframework.core.env.ConfigurablePropertyResolver;
 import org.springframework.util.StringValueResolver;
 
 /**
- * rewrite PropertyPlaceholderConfigurer
+ * rewrite PropertySourcesPlaceholderConfigurer
  * @version 1.0
- *
- * <bean id="confPropertyPlaceholderConfigurer" class="com.polaris_conf_core.spring.ConfPropertyPlaceholderConfigurer" />
- *
  */
 public class SpringPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer {
 
