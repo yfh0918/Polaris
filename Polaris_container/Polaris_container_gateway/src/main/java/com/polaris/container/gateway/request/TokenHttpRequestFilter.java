@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
@@ -30,6 +31,9 @@ import io.netty.handler.codec.http.HttpRequest;
 @Service
 public class TokenHttpRequestFilter extends HttpRequestFilter {
 
+	@Value("${gateway.token.policy}")
+	private String tokenPolicy;//#request存在token 并且属于UNCHECKED_PATHS的url,如果policy=check就检查token的有效性，如果uncheck就不检查
+	
 	public volatile static Set<String> UNCHECKED_PATHS = new HashSet<>();
 	public volatile static Set<String> UNCHECKED_PATHS_PREFIX = new HashSet<>();
 	public volatile static Set<String> TOKEN_PATH = new HashSet<>();
@@ -153,14 +157,22 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
                 return false;
             }
 
+            //是否为不验证的url
+            boolean uncheckUrl = !checkUrlPath(TokenHttpRequestFilter.getUrl(httpRequest));
+            if (uncheckUrl) {
+            	//token验证策略:uncheck
+            	if ("uncheck".equals(tokenPolicy)) {
+            		return false;
+            	}
+            }
+            
             //认证
             String token = httpRequest.headers().get(Constant.TOKEN_ID);
             httpRequest.headers().set(Constant.TOKEN_ID, DEFAULT_VALUE);
 
             //没有token需要验证url是否放过
             if (StringUtil.isEmpty(token)) {
-                boolean checkResult = checkUrlPath(getUrl(httpRequest));
-                if (!checkResult) {
+                if (uncheckUrl) {
                 	return false;
                 }
             	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
