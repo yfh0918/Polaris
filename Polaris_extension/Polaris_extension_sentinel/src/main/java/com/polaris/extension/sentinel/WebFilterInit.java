@@ -28,8 +28,6 @@ public class WebFilterInit {
     			conf = conf.replace("\n", "");
     			conf = conf.replace("\r", "");
 				String[] kv = PropertyUtil.getKeyValue(conf);
-
-    			// 以xx开头放过的URL
     			if (kv[0].equals("csp.sentinel.filter.restUri")) {
     				TEMP_REST_URI.add(kv[1]);
     			}
