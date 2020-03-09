@@ -24,8 +24,11 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
     	super.init();
     }
 
-	public String getProperty(String key) {
-		return cache.getProperty(key);
+	public String getProperty(String key, String... defaultValue) {
+		if (defaultValue == null || defaultValue.length == 0) {
+			return cache.getProperty(key);
+		}
+		return cache.getProperty(key,defaultValue[0]);
 	}
 	public void putProperty(String key, String value) {
 		ConfigFactory.SYSTEM.getProperties(Config.DEFAULT).put(key, value);

@@ -2,7 +2,6 @@ package com.polaris.core.config;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.provider.ConfCompositeProvider;
-import com.polaris.core.util.StringUtil;
 
 /**
 *
@@ -37,44 +36,24 @@ public abstract class ConfClient {
 	* @Exception 
 	* @since 
 	*/
-	public static String get(String key) {
-		return get(key, "");
+	public static String get(String key, String... defaultVal) {
+		return ConfCompositeProvider.INSTANCE.getProperty(key,defaultVal);
 	}
-	public static String get(String key, String defaultVal) {
-		String value = ConfCompositeProvider.INSTANCE.getProperty(key);
-		if (value != null) {
-			return value;
-		}
-		return defaultVal;
-	}
-
 	
-	//在设置应用名称的时候启动各项参数载入
 	public static String getAppName() {
-		
-		String appName = get(Constant.PROJECT_NAME);
-		if (StringUtil.isEmpty(appName)) {
-			appName = get(Constant.SPRING_BOOT_NAME);
-		}
-		return appName == null ? "" :appName;
+		return get(Constant.PROJECT_NAME,get(Constant.SPRING_BOOT_NAME));
 	}
-
 	public static String getConfigRegistryAddress() {
-		String config = get(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
-		return config == null ? "" :config;
+		return get(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
 	}
 	public static String getNameSpace() {
-		String namespace = get(Constant.PROJECR_NAMESPACE_NAME);
-		return namespace == null ? "" :namespace;
+		return get(Constant.PROJECR_NAMESPACE_NAME);
 	}
-
 	public static String getGroup() {
-		String group = get(Constant.PROJECR_GROUP_NAME);
-		return group == null ? "" :group;
+		return get(Constant.PROJECR_GROUP_NAME);
 	}
 	public static String getNamingRegistryAddress() {
-		String naming = get(Constant.NAMING_REGISTRY_ADDRESS_NAME);
-		return naming == null ? "" :naming;
+		return get(Constant.NAMING_REGISTRY_ADDRESS_NAME);
 	}
 
 }
