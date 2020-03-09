@@ -15,6 +15,6 @@ public class WorkFlowApplication
     {
 
 		//启动WEB
-    	ServerRunner.startServer(args,WorkFlowApplication.class);
+    	ServerRunner.run(args,WorkFlowApplication.class);
     }
 }

@@ -28,7 +28,7 @@ public class WebsocketListerner implements ServerListenerExtension{
 		return new ServerListener[] {new Websocket()};
 	}
 	
-	protected static class Websocket implements  ServerListener {
+	public static class Websocket implements  ServerListener {
 		
 		@Override
 		public void started() {

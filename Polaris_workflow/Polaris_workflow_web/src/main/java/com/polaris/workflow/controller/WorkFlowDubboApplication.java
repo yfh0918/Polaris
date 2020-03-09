@@ -6,6 +6,6 @@ import com.polaris.container.annotation.PolarisApplication;
 @PolarisApplication
 public class WorkFlowDubboApplication {
 	public static void main(String[] args) throws Exception { 
-		ServerRunner.startServer(args,WorkFlowDubboApplication.class);
+		ServerRunner.run(args,WorkFlowDubboApplication.class);
     } 
 }
