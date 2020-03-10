@@ -2,8 +2,10 @@ package com.polaris.config.file;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -21,12 +23,14 @@ public class ConfFileClient {
 	private static final Logger logger = LoggerFactory.getLogger(ConfFileClient.class);
 	private volatile static ConfFileClient INSTANCE;
 	//记录文件的最后的更新日期
-	private static volatile Map<String, File> lastModifiedFileMap = new HashMap<>();
-	private static volatile Map<String, Long> lastModifiedTimeMap = new HashMap<>();
+	private static volatile Map<String, File> lastModifiedFileMap = new ConcurrentHashMap<>();
+	private static volatile Map<String, Long> lastModifiedTimeMap = new ConcurrentHashMap<>();
+	private static volatile Map<String, Set<ConfHandlerListener>> fileListeners = new ConcurrentHashMap<>();
 	
 	//定时器-守护线程
 	private static ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
             new NamedThreadFactory("polaris-localfile-auto-refresh-task", true));
+
 	
 	public static ConfFileClient getInstance(){
 		if (INSTANCE == null) {
@@ -39,6 +43,30 @@ public class ConfFileClient {
 		return INSTANCE;
 	}
 	private ConfFileClient() {
+		//配置文件存在的监听
+		service.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                try {
+            		
+            		//是否修改过
+                	for (Map.Entry<String, Set<ConfHandlerListener>> entry : fileListeners.entrySet()) {
+                		if (isModifiedByFile(entry.getKey(),lastModifiedFileMap.get(entry.getKey()))) {
+                			if (entry.getValue() != null) {
+                				for (ConfHandlerListener listener : entry.getValue()) {
+                					listener.receive(getConfig(entry.getKey(), null));
+                				}
+                			}
+                			
+                		}
+                	}
+            		
+                } catch (Throwable e) {
+                	logger.error("addListener error:{}",e.getMessage());
+                	e.printStackTrace();
+                }
+            }
+        }, 10000, 10000, TimeUnit.MILLISECONDS);
 	}
 	
 	
@@ -63,32 +91,16 @@ public class ConfFileClient {
 	
 	// 监听需要关注的内容
 	public void addListener(String fileName, String group, ConfHandlerListener listener) {
-		//farjar或者配置文件放到jar包或者不存在配置文件的不用监听
-		File file = FileUtil.getFileNotInJar(fileName);
-		if (file == null) {
-			return;
+		Set<ConfHandlerListener> set = fileListeners.get(fileName);
+		if (set == null) {
+			set = new LinkedHashSet<>();
+			fileListeners.put(fileName, set);
 		}
-		
-		//配置文件存在的监听
-		service.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                try {
-            		
-            		//是否修改过
-            		if (isModifiedByFile(fileName,file)) {
-            			listener.receive(getConfig(fileName, group));
-            		}
-                } catch (Throwable e) {
-                	logger.error("addListener error:{}",e.getMessage());
-                	e.printStackTrace();
-                }
-            }
-        }, 10000, 10000, TimeUnit.MILLISECONDS);
+		set.add(listener);
 	}
 
 	//文件是否发生修改
-	private static boolean isModifiedByFile(String fileName, File file) {
+	private boolean isModifiedByFile(String fileName, File file) {
 		boolean isModified = true;
 		if (lastModifiedFileMap.containsKey(fileName)) {
 			file = lastModifiedFileMap.get(fileName);
