@@ -81,6 +81,6 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 	
 	private void cache(String type, String file, Object key, Object value) {
 		cache.put(key, value);
-		INSTANCE_ENDPOINT.put(type, file, key.toString(), value == null ? "":value.toString());
+		INSTANCE_ENDPOINT.put(type, file, key.toString(), value == null ? null:value.toString());
 	}
 }
