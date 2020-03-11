@@ -5,6 +5,8 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -24,7 +26,7 @@ import com.polaris.core.util.ReflectionUtil;
 import com.polaris.core.util.StringUtil;
 
 public class ConfigurationProperties implements BeanPostProcessor, PriorityOrdered, ApplicationContextAware, InitializingBean,ConfEndPoint{
-	
+	private static final Logger logger = LoggerFactory.getLogger(ConfigurationProperties.class);
 	private Map<Object, PolarisConfigurationProperties> annotationMap = new ConcurrentHashMap<>();
 	public static final String BEAN_NAME = ConfigurationProperties.class.getName();
 	
@@ -87,6 +89,7 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 					if (!annotation.ignoreInvalidFields()) {
 						throw ex;
 					}
+					logger.warn("class:{} fileName:{} value:{} is incorrect",bean.getClass().getName(), fileName,value);
 				}
 				
 			}
@@ -110,6 +113,7 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 						if (!annotation.ignoreInvalidFields()) {
 							throw ex;
 						}
+						logger.warn("class:{} fileName:{} value:{} is incorrect",bean.getClass().getName(), fileName,value);
 					}
 				}
 			}
@@ -119,4 +123,5 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 	protected Map<Object,PolarisConfigurationProperties> getAnnotationMap() {
 		return annotationMap;
 	}
+
 }

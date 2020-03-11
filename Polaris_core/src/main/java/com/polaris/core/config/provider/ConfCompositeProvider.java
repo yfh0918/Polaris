@@ -23,9 +23,6 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
     	INSTANCE_ENDPOINT.init(this);
     	super.init();
     }
-    public Properties getProperties() {
-    	return cache;
-    }
 	public String getProperty(String key, String... defaultValue) {
 		if (defaultValue == null || defaultValue.length == 0) {
 			return cache.getProperty(key);
