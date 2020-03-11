@@ -21,8 +21,9 @@ public enum ConfigDefault implements Config {
     ConfigDefault(String type) {
         this.type = type;
     }
-
-    protected String getType() {
+    
+    @Override
+    public String getType() {
         return type;
     }
 

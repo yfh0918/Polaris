@@ -25,6 +25,7 @@ import com.polaris.container.config.ConfigurationExtension;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.event.EventDispatcher;
 import com.polaris.core.util.ReflectionUtil;
+import com.polaris.core.util.StringUtil;
 
 public class MVCConfigurer implements ConfigurationExtension {
 
@@ -48,7 +49,16 @@ public class MVCConfigurer implements ConfigurationExtension {
 			ReflectionUtils.doWithMethods(CommonsMultipartResolver.class, new MethodCallback() {
 				@Override
 				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					ReflectionUtil.setMethodValueForSet(method, multipartResolver, "multipartResolver.");
+					String fileName = ReflectionUtil.getFieldNameForSet(method);
+					if (StringUtil.isEmpty(fileName)) {
+						return;
+					}
+					fileName = "multipartResolver." + fileName;
+					String value = ConfClient.get(fileName);
+					if (StringUtil.isEmpty(value)) {
+						return;
+					}
+					ReflectionUtil.setMethodValue(method, multipartResolver, value);
 				}
 			});
 			
@@ -76,7 +86,16 @@ public class MVCConfigurer implements ConfigurationExtension {
 			ReflectionUtils.doWithMethods(FreeMarkerConfigurer.class, new MethodCallback() {
 				@Override
 				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					ReflectionUtil.setMethodValueForSet(method, freeMarkerConfigurer, "freeMarkerConfigurer.");
+					String fileName = ReflectionUtil.getFieldNameForSet(method);
+					if (StringUtil.isEmpty(fileName)) {
+						return;
+					}
+					fileName = "freeMarkerConfigurer." + fileName;
+					String value = ConfClient.get(fileName);
+					if (StringUtil.isEmpty(value)) {
+						return;
+					}
+					ReflectionUtil.setMethodValue(method, freeMarkerConfigurer, value);
 				}
 			});
 
@@ -98,7 +117,16 @@ public class MVCConfigurer implements ConfigurationExtension {
 			ReflectionUtils.doWithMethods(FreeMarkerViewResolver.class, new MethodCallback() {
 				@Override
 				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					ReflectionUtil.setMethodValueForSet(method, viewResolver, "viewResolver.");
+					String fileName = ReflectionUtil.getFieldNameForSet(method);
+					if (StringUtil.isEmpty(fileName)) {
+						return;
+					}
+					fileName = "viewResolver." + fileName;
+					String value = ConfClient.get(fileName);
+					if (StringUtil.isEmpty(value)) {
+						return;
+					}
+					ReflectionUtil.setMethodValue(method, viewResolver, value);
 				}
 			});
 			

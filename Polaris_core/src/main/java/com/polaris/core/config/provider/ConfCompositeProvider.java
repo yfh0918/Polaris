@@ -23,7 +23,9 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
     	INSTANCE_ENDPOINT.init(this);
     	super.init();
     }
-
+    public Properties getProperties() {
+    	return cache;
+    }
 	public String getProperty(String key, String... defaultValue) {
 		if (defaultValue == null || defaultValue.length == 0) {
 			return cache.getProperty(key);
@@ -31,8 +33,8 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 		return cache.getProperty(key,defaultValue[0]);
 	}
 	public void putProperty(String key, String value) {
-		ConfigFactory.SYSTEM.getProperties(Config.DEFAULT).put(key, value);
-		cache(Config.DEFAULT, key, value);
+		ConfigFactory.SYSTEM.getProperties(Config.SYSTEM).put(key, value);
+		cache(Config.SYSTEM, Config.SYSTEM, key, value);
 	}
 	
 	@Override
@@ -52,7 +54,7 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 		//优先级-system最高
 		if (config == ConfigFactory.SYSTEM) {
 			for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-				cache(file, entry.getKey(), entry.getValue());
+				cache(config.getType(), file, entry.getKey(), entry.getValue());
 			}
 			return;
 		}
@@ -63,7 +65,7 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 				if (ConfigFactory.SYSTEM.contain(entry.getKey())) {
 					continue;
 				}
-				cache(file, entry.getKey(), entry.getValue());
+				cache(config.getType(), file, entry.getKey(), entry.getValue());
 			}
 			return;
 		}
@@ -74,14 +76,14 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 				if (ConfigFactory.SYSTEM.contain(entry.getKey()) || ConfigFactory.EXT.contain(entry.getKey())) {
 					continue;
 				}
-				cache(file, entry.getKey(), entry.getValue());
+				cache(config.getType(), file, entry.getKey(), entry.getValue());
 			}
 			return;
 		}
 	}
 	
-	private void cache(String file, Object key, Object value) {
+	private void cache(String type, String file, Object key, Object value) {
 		cache.put(key, value);
-		INSTANCE_ENDPOINT.filter(file, key.toString(), value == null ? "":value.toString());
+		INSTANCE_ENDPOINT.put(type, file, key.toString(), value == null ? "":value.toString());
 	}
 }

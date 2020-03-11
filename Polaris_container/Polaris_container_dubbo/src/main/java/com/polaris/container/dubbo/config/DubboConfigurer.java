@@ -80,7 +80,16 @@ public class DubboConfigurer implements ConfigurationExtension{
 	        ReflectionUtils.doWithMethods(ApplicationConfig.class, new MethodCallback() {
 				@Override
 				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					ReflectionUtil.setMethodValueForSet(method, applicationConfig, "dubbo.application.");
+					String fileName = ReflectionUtil.getFieldNameForSet(method);
+					if (StringUtil.isEmpty(fileName)) {
+						return;
+					}
+					fileName = "dubbo.application." + fileName;
+					String value = ConfClient.get(fileName);
+					if (StringUtil.isEmpty(value)) {
+						return;
+					}
+					ReflectionUtil.setMethodValue(method, applicationConfig, value);
 				}
 			});
 	        applicationConfig.setName(ConfClient.getAppName());
@@ -94,7 +103,16 @@ public class DubboConfigurer implements ConfigurationExtension{
 	        ReflectionUtils.doWithMethods(RegistryConfig.class, new MethodCallback() {
 				@Override
 				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					ReflectionUtil.setMethodValueForSet(method, registryConfig, "dubbo.registry.");
+					String fileName = ReflectionUtil.getFieldNameForSet(method);
+					if (StringUtil.isEmpty(fileName)) {
+						return;
+					}
+					fileName = "dubbo.registry." + fileName;
+					String value = ConfClient.get(fileName);
+					if (StringUtil.isEmpty(value)) {
+						return;
+					}
+					ReflectionUtil.setMethodValue(method, registryConfig, value);
 				}
 			});
 	        return registryConfig;
@@ -106,7 +124,16 @@ public class DubboConfigurer implements ConfigurationExtension{
 	        ReflectionUtils.doWithMethods(ProtocolConfig.class, new MethodCallback() {
 				@Override
 				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					ReflectionUtil.setMethodValueForSet(method, protocolConfig, "dubbo.protocol.");
+					String fileName = ReflectionUtil.getFieldNameForSet(method);
+					if (StringUtil.isEmpty(fileName)) {
+						return;
+					}
+					fileName = "dubbo.protocol." + fileName;
+					String value = ConfClient.get(fileName);
+					if (StringUtil.isEmpty(value)) {
+						return;
+					}
+					ReflectionUtil.setMethodValue(method, protocolConfig, value);
 				}
 			});
 	        return protocolConfig;
@@ -118,7 +145,16 @@ public class DubboConfigurer implements ConfigurationExtension{
 	        ReflectionUtils.doWithMethods(ProviderConfig.class, new MethodCallback() {
 				@Override
 				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					ReflectionUtil.setMethodValueForSet(method, providerConfig, "dubbo.provider.");
+					String fileName = ReflectionUtil.getFieldNameForSet(method);
+					if (StringUtil.isEmpty(fileName)) {
+						return;
+					}
+					fileName = "dubbo.provider." + fileName;
+					String value = ConfClient.get(fileName);
+					if (StringUtil.isEmpty(value)) {
+						return;
+					}
+					ReflectionUtil.setMethodValue(method, providerConfig, value);
 				}
 			});
 	    	return providerConfig;

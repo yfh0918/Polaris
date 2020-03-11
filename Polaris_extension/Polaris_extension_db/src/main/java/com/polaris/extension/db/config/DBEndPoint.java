@@ -14,7 +14,7 @@ public class DBEndPoint implements ConfEndPoint {
 	private static String prefix2 = "spring.datasource.";
 	
 	@Override
-	public void filter(String file, String key, String value) {
+	public void put(String type, String file, String key, String value) {
 		if (StringUtil.isNotEmpty(key) && key.endsWith(endfix)) {
 			if (key.startsWith(prefix1) && key.length() > 8) {
 				nameList.add(key.substring(5,key.length() - 4));

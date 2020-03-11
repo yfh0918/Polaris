@@ -63,7 +63,24 @@ public class ConfHandlerProvider {
 		}
 	}
 
-    private void init(String type) {
+    public void init(String type) {
+    	
+		//get target files
+		String files = type.equals(Config.EXT) ? 
+				ConfigFactory.SYSTEM.getProperties(Config.SYSTEM).getProperty(Constant.PROJECT_EXTENSION_PROPERTIES) : 
+					ConfigFactory.SYSTEM.getProperties(Config.SYSTEM).getProperty(Constant.PROJECT_GLOBAL_PROPERTIES);
+		if (StringUtil.isEmpty(files)) {
+			return;
+		}
+		String[] fileArray = files.split(",");
+		
+		//target files loop
+		for (String file : fileArray) {
+			init(type, file);
+		}
+    }
+    
+    public void init(String type, String file) {
     	
 		//get config
 		Config config = ConfigFactory.get(type);
@@ -72,30 +89,19 @@ public class ConfHandlerProvider {
 		String group = Config.GLOBAL.equals(type) ? type : ConfClient.getAppName();
 		
 		//get target files
-		String files = type.equals(Config.EXT) ? 
-				ConfigFactory.SYSTEM.getProperties(Config.DEFAULT).getProperty(Constant.PROJECT_EXTENSION_PROPERTIES) : 
-					ConfigFactory.SYSTEM.getProperties(Config.DEFAULT).getProperty(Constant.PROJECT_GLOBAL_PROPERTIES);
-		if (StringUtil.isEmpty(files)) {
-			return;
-		}
-		String[] fileArray = files.split(",");
+		//load to config container
+		logger.info("{} load start",file);
+		putProperties(config, file, ConfReaderFactory.get(file).getProperties(get(file,group)));
+		logger.info("{} load end",file);
 		
-		//target files loop
-		for (String file : fileArray) {
-			//load to config container
-			logger.info("{} load start",file);
-			putProperties(config, file, ConfReaderFactory.get(file).getProperties(get(file,group)));
-			logger.info("{} load end",file);
-			
-			logger.info("{} listen start",file);
-	    	listen(file, group, new ConfHandlerListener() {
-				@Override
-				public void receive(String content) {
-					putPropertiesFromListen(config, file, ConfReaderFactory.get(file).getProperties(content));
-				}
-			});
-			logger.info("{} listen end",file);
-		}
+		logger.info("{} listen start",file);
+    	listen(file, group, new ConfHandlerListener() {
+			@Override
+			public void receive(String content) {
+				putPropertiesFromListen(config, file, ConfReaderFactory.get(file).getProperties(content));
+			}
+		});
+		logger.info("{} listen end",file);
     }
     
     /**

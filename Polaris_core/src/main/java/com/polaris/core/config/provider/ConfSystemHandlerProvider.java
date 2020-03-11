@@ -18,7 +18,7 @@ public class ConfSystemHandlerProvider {
 	private Properties properties = null;
 
 	public void init(ConfCompositeProvider composite) {
-    	composite.putProperties(ConfigFactory.SYSTEM, Config.DEFAULT, getProperties());
+    	composite.putProperties(ConfigFactory.SYSTEM, Config.SYSTEM, getProperties());
 	}
 	
 	public Properties getProperties() {
