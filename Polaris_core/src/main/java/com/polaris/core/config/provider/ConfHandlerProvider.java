@@ -91,14 +91,14 @@ public class ConfHandlerProvider {
 		//get target files
 		//load to config container
 		logger.info("{} load start",file);
-		putProperties(config, file, ConfReaderFactory.get(file).getProperties(get(file,group)));
+		putProperties(config, file, ConfReaderFactory.get(file).getProperties(get(file,group)), false);
 		logger.info("{} load end",file);
 		
 		logger.info("{} listen start",file);
     	listen(file, group, new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
-				putPropertiesFromListen(config, file, ConfReaderFactory.get(file).getProperties(content));
+				putProperties(config, file, ConfReaderFactory.get(file).getProperties(content), true);
 			}
 		});
 		logger.info("{} listen end",file);
@@ -111,19 +111,7 @@ public class ConfHandlerProvider {
 	* @Exception 
 	* @since 
 	*/
-    protected void putProperties(Config config, String file, Properties properties) {
+    protected void putProperties(Config config, String file, Properties properties,boolean fromListen) {
     	config.put(file, properties);
     }
-    
-    /**
-	* listen-from config-center
-	* @param 
-	* @return 
-	* @Exception 
-	* @since 
-	*/
-    protected void putPropertiesFromListen(Config config, String file, Properties properties){
-    	config.put(file, properties);
-    }
-	
 }

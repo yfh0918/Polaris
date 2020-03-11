@@ -64,37 +64,12 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 		if (StringUtil.isNotEmpty(file)) {
 			if (null == ConfigFactory.get(type).getProperties(file)) {
 				ConfCompositeProvider.INSTANCE.init(type, file);
+			} else {
+				fieldSet(bean, annotation,null,null);
 			}
 		} 
-		fieldSet(bean, annotation);
 	}
-	protected void fieldSet(Object bean, PolarisConfigurationProperties annotation) {
-		ReflectionUtils.doWithMethods(bean.getClass(), new MethodCallback() {
-			@Override
-			public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-				String fileName = ReflectionUtil.getFieldNameForSet(method);
-				if (StringUtil.isEmpty(fileName)) {
-					return;
-				}
-				if (StringUtil.isNotEmpty(annotation.value())) {
-					fileName = annotation.value()+ "." + fileName;
-				}
-				String value = ConfClient.get(fileName);
-				if (value == null) {
-					return;
-				}
-				try {
-					ReflectionUtil.setMethodValue(method, bean, value);
-				} catch (RuntimeException ex) {
-					if (!annotation.ignoreInvalidFields()) {
-						throw ex;
-					}
-					logger.warn("class:{} fileName:{} value:{} is incorrect",bean.getClass().getName(), fileName,value);
-				}
-				
-			}
-		});
-	}
+
 	protected void fieldSet(Object bean, PolarisConfigurationProperties annotation, String key, String value) {
 		ReflectionUtils.doWithMethods(bean.getClass(), new MethodCallback() {
 			@Override
@@ -106,15 +81,23 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 				if (StringUtil.isNotEmpty(annotation.value())) {
 					fileName = annotation.value()+ "." + fileName;
 				}
-				if (fileName.equals(key)) {
-					try {
-						ReflectionUtil.setMethodValue(method, bean, value);
-					} catch (RuntimeException ex) {
-						if (!annotation.ignoreInvalidFields()) {
-							throw ex;
-						}
-						logger.warn("class:{} fileName:{} value:{} is incorrect",bean.getClass().getName(), fileName,value);
+				if (StringUtil.isNotEmpty(key) && !fileName.equals(key)) {
+					return;
+				}
+				String  configValue = null;
+				if (StringUtil.isEmpty(key)) {
+					configValue = ConfClient.get(fileName);
+					if (configValue == null) {
+						return;
 					}
+				}
+				try {
+					ReflectionUtil.setMethodValue(method, bean, value != null? value : configValue);
+				} catch (RuntimeException ex) {
+					if (!annotation.ignoreInvalidFields()) {
+						throw ex;
+					}
+					logger.warn("class:{} fileName:{} value:{} is incorrect",bean.getClass().getName(), fileName,value != null? value : configValue);
 				}
 			}
 		});
