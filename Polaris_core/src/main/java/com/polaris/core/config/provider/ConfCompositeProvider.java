@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.ConfigFactory;
-import com.polaris.core.config.value.SpringAutoUpdateConfigChangeListener;
-import com.polaris.core.util.SpringUtil;
 
 
 public class ConfCompositeProvider extends ConfHandlerProvider {
@@ -78,9 +76,5 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 			cache.remove(key);
 		}
 		INSTANCE_ENDPOINT.onChange(key.toString(), value == null ? null: value.toString(),opt);
-		SpringAutoUpdateConfigChangeListener listener = SpringUtil.getBean(SpringAutoUpdateConfigChangeListener.class);
-		if (listener != null) {
-			listener.onChange(key.toString());
-		}
 	}
 }

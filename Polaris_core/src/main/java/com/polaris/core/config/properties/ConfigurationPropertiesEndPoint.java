@@ -9,6 +9,9 @@ import com.polaris.core.util.SpringUtil;
 public class ConfigurationPropertiesEndPoint implements ConfEndPoint{
 	@Override
 	public void onChange(String key, String value, Opt opt) {
+		if (opt == Opt.DELETE) {
+			return;
+		}
 		ConfigurationProperties configurationProperties = SpringUtil.getBean(ConfigurationProperties.class);
 		if (configurationProperties == null) {
 			return;
