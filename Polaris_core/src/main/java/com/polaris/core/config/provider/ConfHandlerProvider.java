@@ -29,8 +29,14 @@ public class ConfHandlerProvider {
     protected final ServiceLoader<ConfHandler> handlerLoader = ServiceLoader.load(ConfHandler.class);
 
 	private volatile AtomicBoolean initialized = new AtomicBoolean(false);
-	protected ConfHandler handler = handler();
-	protected ConfHandler handler() {
+	protected ConfHandler handler;
+	
+	public void init() {
+		initHandler();
+		init(Config.EXT);
+		init(Config.GLOBAL);
+	}
+	protected ConfHandler initHandler() {
 		if (!initialized.compareAndSet(false, true)) {
             return handler;
         }
@@ -44,27 +50,6 @@ public class ConfHandlerProvider {
     	return handler;
     }
 
-	public void init() {
-		init(Config.EXT);
-		init(Config.GLOBAL);
-	}
-	public String get(String fileName) {
-		return get(fileName, ConfClient.getAppName());
-	}
-    public String get(String fileName, String group) {
-		if (handler != null) {
-			return handler.get(fileName, group);
-		}
-    	return null;
-	}
-	public void listen(String fileName, ConfHandlerListener listerner) {
-		listen(fileName, ConfClient.getAppName(), listerner);
-	}
-    public void listen(String fileName,String group, ConfHandlerListener listener) {
-		if (handler != null) {
-			handler.listen(fileName, group, listener);
-		}
-	}
 
     public void init(String type) {
     	
@@ -118,6 +103,24 @@ public class ConfHandlerProvider {
 		});
     }
     
+	public String get(String fileName) {
+		return get(fileName, ConfClient.getAppName());
+	}
+    public String get(String fileName, String group) {
+		if (handler != null) {
+			return handler.get(fileName, group);
+		}
+    	return null;
+	}
+	public void listen(String fileName, ConfHandlerListener listerner) {
+		listen(fileName, ConfClient.getAppName(), listerner);
+	}
+    public void listen(String fileName,String group, ConfHandlerListener listener) {
+		if (handler != null) {
+			handler.listen(fileName, group, listener);
+		}
+	}
+
 	public void putProperty(Config config, String file, Object key, Object value, Opt opt) {
 		if (config != ConfigFactory.SYSTEM) {
 			logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,key,value,opt.name());
