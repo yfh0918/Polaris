@@ -19,11 +19,10 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.ConfEndPoint;
 import com.polaris.core.util.ReflectionUtil;
 import com.polaris.core.util.StringUtil;
 
-public class ConfigurationProperties implements BeanPostProcessor, PriorityOrdered, ApplicationContextAware, InitializingBean,ConfEndPoint{
+public class ConfigurationProperties implements BeanPostProcessor, PriorityOrdered, ApplicationContextAware, InitializingBean{
 	private static final Logger logger = LoggerFactory.getLogger(ConfigurationProperties.class);
 	private Map<Object, PolarisConfigurationProperties> annotationMap = new ConcurrentHashMap<>();
 	public static final String BEAN_NAME = ConfigurationProperties.class.getName();

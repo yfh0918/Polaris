@@ -6,7 +6,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class SpringUtil {
 	private static ApplicationContext context = null;
 	
-    public static ApplicationContext getApplicationContext(Class<?>... clazz) {
+    public static ApplicationContext getApplicationContext() {
+    	return context;
+    }
+    
+    public static ApplicationContext createApplicationContext(Class<?>... clazz) {
     	if (context == null) {
     		synchronized(SpringUtil.class) {
     			if (context == null) {
@@ -21,6 +25,9 @@ public class SpringUtil {
     
     public static Object getBean(String serviceName){
     	try {
+    		if (context == null) {
+    			return null;
+    		}
             return getApplicationContext().getBean(serviceName);
     	} catch (Exception ex) {
     		return null;
@@ -29,6 +36,9 @@ public class SpringUtil {
 
     public static <T> T getBean(Class<T> requiredType){
     	try {
+    		if (context == null) {
+    			return null;
+    		}
         	return getApplicationContext().getBean(requiredType);
     	} catch (Exception ex) {
     		return null;
@@ -40,7 +50,7 @@ public class SpringUtil {
     }
     
     public static void refresh(Class<?>... clazz) {
-		context = getApplicationContext(clazz);
+		context = createApplicationContext(clazz);
 		if (context instanceof AnnotationConfigApplicationContext) {
 			((AnnotationConfigApplicationContext)context).refresh();
 			((AnnotationConfigApplicationContext)context).registerShutdownHook();
