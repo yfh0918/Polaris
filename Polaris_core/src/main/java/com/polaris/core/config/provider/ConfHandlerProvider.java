@@ -122,8 +122,10 @@ public class ConfHandlerProvider {
 	}
 
 	public void putProperty(Config config, String file, Object key, Object value, Opt opt) {
-		if (config != ConfigFactory.SYSTEM) {
+		if (config != ConfigFactory.SYSTEM && opt != Opt.ADD) {
 			logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,key,value,opt.name());
+		} else {
+			logger.debug("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,key,value,opt.name());
 		}
 	}
 }

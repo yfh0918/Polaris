@@ -44,8 +44,9 @@ public abstract class PropertyUtil {
 		if (StringUtil.isEmpty(fileContent)) {
 			return properties;
 		}
-		try (InputStream inStream = new ByteArrayInputStream(fileContent.getBytes(Charset.defaultCharset()))) {
-			properties.load(inStream);
+		
+		try (InputStream inStream = new ByteArrayInputStream(fileContent.getBytes())) {
+			properties = getProperties(inStream);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
