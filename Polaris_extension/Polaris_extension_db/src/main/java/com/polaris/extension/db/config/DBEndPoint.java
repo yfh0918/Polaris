@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.polaris.core.config.ConfEndPoint;
+import com.polaris.core.config.Config.Opt;
 import com.polaris.core.util.StringUtil;
 
 public class DBEndPoint implements ConfEndPoint {
@@ -14,7 +15,7 @@ public class DBEndPoint implements ConfEndPoint {
 	private static String prefix2 = "spring.datasource.";
 	
 	@Override
-	public void put(String type, String file, String key, String value) {
+	public void onChange(String key, String value, Opt opt) {
 		if (StringUtil.isNotEmpty(key) && key.endsWith(endfix)) {
 			if (key.startsWith(prefix1) && key.length() > 8) {
 				nameList.add(key.substring(5,key.length() - 4));

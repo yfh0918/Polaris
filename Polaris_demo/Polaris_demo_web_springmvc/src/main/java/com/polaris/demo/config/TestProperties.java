@@ -2,7 +2,7 @@ package com.polaris.demo.config;
 
 import com.polaris.core.config.properties.PolarisConfigurationProperties;
 
-@PolarisConfigurationProperties(value="test.test1",file="testP.properties",ignoreInvalidFields=true)
+@PolarisConfigurationProperties(value="test.test1",ignoreInvalidFields=true)
 public class TestProperties {
 	private String address1;
     private String password;

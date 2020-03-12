@@ -5,9 +5,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public enum ConfigDefault implements Config {
 	
 	SYSTEM(Config.SYSTEM),
@@ -16,7 +13,6 @@ public enum ConfigDefault implements Config {
 
 	private String type;
     private Map<String, Properties> cacheFile = new ConcurrentHashMap<>();
-	private static final Logger logger = LoggerFactory.getLogger(ConfigDefault.class);
 
     ConfigDefault(String type) {
         this.type = type;
@@ -30,12 +26,18 @@ public enum ConfigDefault implements Config {
 	@Override
     public void put(String file, Properties properties) {
 		cacheFile.put(file, properties);
-        if (logger.isDebugEnabled()) {
-        	for (Map.Entry<Object,Object> entry : properties.entrySet()) {
-        		logger.debug("type:{} file:{}, key:{} value:{} is updated", type,file,entry.getKey(),entry.getValue());
-        	}
+    }
+	
+	@Override
+    public void put(String file, Object key, Object value) {
+		Properties properties = cacheFile.get(file);
+		if (properties == null) {
+			synchronized(file.intern()) {
+				properties = new Properties();
+				cacheFile.put(file, properties);
+			}
 		}
-
+		properties.put(key, value);
     }
     
     @Override
@@ -56,6 +58,15 @@ public enum ConfigDefault implements Config {
         	}
         }
         return false;
+    }
+    
+    @Override
+    public boolean contain(String file, Object key) {
+    	Properties properties = getProperties(file);
+    	if (properties == null) {
+    		return false;
+    	}
+    	return properties.containsKey(key);
     }
     
 }

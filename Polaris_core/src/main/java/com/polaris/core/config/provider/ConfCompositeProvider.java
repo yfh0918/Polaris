@@ -1,17 +1,19 @@
 package com.polaris.core.config.provider;
 
-import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.polaris.core.config.Config;
+import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.value.SpringAutoUpdateConfigChangeListener;
 import com.polaris.core.util.SpringUtil;
 
 
 public class ConfCompositeProvider extends ConfHandlerProvider {
-
+	private static final Logger logger = LoggerFactory.getLogger(ConfCompositeProvider.class);
     public static final ConfCompositeProvider INSTANCE = new ConfCompositeProvider();
     private static final ConfSystemHandlerProvider INSTANCE_SYSTEM = ConfSystemHandlerProvider.INSTANCE;
     private static final ConfEndPointProvider INSTANCE_ENDPOINT = ConfEndPointProvider.INSTANCE;
@@ -30,60 +32,55 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 		}
 		return cache.getProperty(key,defaultValue[0]);
 	}
-	public void putProperty(String key, String value) {
-		ConfigFactory.SYSTEM.getProperties(Config.SYSTEM).put(key, value);
-		cache(Config.SYSTEM, Config.SYSTEM, key, value, true);
+	public void putProperty(Object key, Object value) {
+		ConfigFactory.SYSTEM.put(Config.SYSTEM, key, value);
+		putProperty(ConfigFactory.SYSTEM, Config.SYSTEM, key, value, Opt.ADD);
 	}
 	
 	@Override
-    protected void putProperties(Config config, String file, Properties properties, boolean fromListen) {
-		super.putProperties(config, file, properties,fromListen);
-		cacheByPriority(config, file, properties, fromListen);
-    }
-	
-	private void cacheByPriority(Config config, String file, Properties properties, boolean fromListen) {
+	public void putProperty(Config config, String file, Object key, Object value, Opt opt) {
+		super.putProperty(config, file, key, value, opt);
 		//优先级-system最高
 		if (config == ConfigFactory.SYSTEM) {
-			for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-				cache(config.getType(), file, entry.getKey(), entry.getValue(),fromListen);
-			}
-			return;
+			onChange(key, value, opt);
 		}
 		
 		//优先级-ext
 		if (config == ConfigFactory.EXT) {
-			for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-				if (ConfigFactory.SYSTEM.contain(entry.getKey())) {
-					continue;
-				}
-				cache(config.getType(), file, entry.getKey(), entry.getValue(),fromListen);
+			if (ConfigFactory.SYSTEM.contain(key)) {
+				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
+						+ "caused by conflicted with system properties ", config.getType(),file,key,value,opt.name());
+				return;
 			}
-			return;
+			onChange(key, value, opt);
 		}
 		
 		//优先级-global
 		if (config == ConfigFactory.GLOBAL) {
-			for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-				if (ConfigFactory.SYSTEM.contain(entry.getKey()) || ConfigFactory.EXT.contain(entry.getKey())) {
-					continue;
-				}
-				cache(config.getType(), file, entry.getKey(), entry.getValue(),fromListen);
+			if (ConfigFactory.SYSTEM.contain(key)) {
+				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
+						+ "caused by conflicted with system properties", config.getType(),file,key,value,opt.name());
+				return;
 			}
-			return;
+			if (ConfigFactory.EXT.contain(key)) {
+				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
+						+ "caused by conflicted with ext properties", config.getType(),file,key,value,opt.name());
+				return;
+			}
+			onChange(key, value, opt);
 		}
 	}
 	
-	private void cache(String type, String file, Object key, Object value, boolean fromListen) {
-		if (!fromListen) {
+	private void onChange(Object key, Object value, Opt opt) {
+		if (opt != Opt.DELETE) {
 			cache.put(key, value);
-			INSTANCE_ENDPOINT.put(type, file, key.toString(), value == null ? null:value.toString());
 		} else {
-			String orgValue = cache.getProperty(key.toString());
-			if (!Objects.equals(orgValue, value)) {
-				cache.put(key, value);
-				INSTANCE_ENDPOINT.put(type, file, key.toString(), value == null ? null:value.toString());
-				SpringUtil.getBean(SpringAutoUpdateConfigChangeListener.class).onChange(key.toString());
-			}
+			cache.remove(key);
+		}
+		INSTANCE_ENDPOINT.onChange(key.toString(), value == null ? null: value.toString(),opt);
+		SpringAutoUpdateConfigChangeListener listener = SpringUtil.getBean(SpringAutoUpdateConfigChangeListener.class);
+		if (listener != null) {
+			listener.onChange(key.toString());
 		}
 	}
 }

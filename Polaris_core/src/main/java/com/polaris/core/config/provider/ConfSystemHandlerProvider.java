@@ -1,10 +1,9 @@
 package com.polaris.core.config.provider;
 
+import java.util.Map;
 import java.util.Properties;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.Config;
-import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.util.EnvironmentUtil;
 import com.polaris.core.util.FileUtil;
@@ -18,7 +17,9 @@ public class ConfSystemHandlerProvider {
 	private Properties properties = null;
 
 	public void init(ConfCompositeProvider composite) {
-    	composite.putProperties(ConfigFactory.SYSTEM, Config.SYSTEM, getProperties(), false);
+		for (Map.Entry<Object, Object> entry : getProperties().entrySet()) {
+			composite.putProperty(entry.getKey(), entry.getValue());
+		}
 	}
 	
 	public Properties getProperties() {

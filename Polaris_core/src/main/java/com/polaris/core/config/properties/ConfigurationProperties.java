@@ -20,8 +20,6 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
 
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfEndPoint;
-import com.polaris.core.config.ConfigFactory;
-import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.util.ReflectionUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -59,15 +57,7 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 	}
 	
 	private void bind(Object bean, PolarisConfigurationProperties annotation) {
-		String type = annotation.type();
-		String file = annotation.file();
-		if (StringUtil.isNotEmpty(file)) {
-			if (null == ConfigFactory.get(type).getProperties(file)) {
-				ConfCompositeProvider.INSTANCE.init(type, file);
-			} else {
-				fieldSet(bean, annotation,null,null);
-			}
-		} 
+		fieldSet(bean, annotation,null,null);
 	}
 
 	protected void fieldSet(Object bean, PolarisConfigurationProperties annotation, String key, String value) {

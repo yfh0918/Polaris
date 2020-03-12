@@ -2,6 +2,8 @@ package com.polaris.core.config.provider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -15,6 +17,7 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandler;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config;
+import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.util.StringUtil;
@@ -88,30 +91,36 @@ public class ConfHandlerProvider {
 		//get config-center-group
 		String group = Config.GLOBAL.equals(type) ? type : ConfClient.getAppName();
 		
-		//get target files
-		//load to config container
-		logger.info("{} load start",file);
-		putProperties(config, file, ConfReaderFactory.get(file).getProperties(get(file,group)), false);
-		logger.info("{} load end",file);
-		
-		logger.info("{} listen start",file);
+		//get and listen
+		Properties properties = ConfReaderFactory.get(file).getProperties(get(file,group));
+		config.put(file, properties);
+		for (Map.Entry entry : properties.entrySet()) {
+			putProperty(config, file, entry.getKey(), entry.getValue(), Opt.ADD);
+		}
     	listen(file, group, new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
-				putProperties(config, file, ConfReaderFactory.get(file).getProperties(content), true);
+				Properties oldProperties = config.getProperties(file);
+				Properties newProperties = ConfReaderFactory.get(file).getProperties(get(file,group));
+				for (Map.Entry entry : newProperties.entrySet()) {
+					if (!oldProperties.containsKey(entry.getKey())) {
+						putProperty(config, file, entry.getKey(), entry.getValue(), Opt.ADD);
+					} else if (!Objects.equals(oldProperties.get(entry.getKey()), newProperties.get(entry.getKey()))) {
+						putProperty(config, file, entry.getKey(), entry.getValue(), Opt.UPDATE);
+					}
+					oldProperties.remove(entry.getKey());
+				}
+				for (Object key : oldProperties.keySet()) {
+					putProperty(config, file, key, null, Opt.DELETE);
+				}
+				config.put(file, newProperties);
 			}
 		});
-		logger.info("{} listen end",file);
     }
     
-    /**
-	* config-put
-	* @param 
-	* @return 
-	* @Exception 
-	* @since 
-	*/
-    protected void putProperties(Config config, String file, Properties properties,boolean fromListen) {
-    	config.put(file, properties);
-    }
+	public void putProperty(Config config, String file, Object key, Object value, Opt opt) {
+		if (config != ConfigFactory.SYSTEM) {
+			logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,key,value,opt.name());
+		}
+	}
 }

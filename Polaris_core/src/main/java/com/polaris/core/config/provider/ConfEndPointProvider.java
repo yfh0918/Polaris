@@ -3,6 +3,7 @@ package com.polaris.core.config.provider;
 import java.util.ServiceLoader;
 
 import com.polaris.core.config.ConfEndPoint;
+import com.polaris.core.config.Config.Opt;
 
 public class ConfEndPointProvider {
     protected final ServiceLoader<ConfEndPoint> endPointLoader = ServiceLoader.load(ConfEndPoint.class);
@@ -13,9 +14,9 @@ public class ConfEndPointProvider {
 	    	confEndPoint.init();
         }
     }
-    public void put (String type, String file, String key, String value) {
+    public void onChange (String key, String value, Opt opt) {
     	for (ConfEndPoint confEndPoint : endPointLoader) {
-	    	confEndPoint.put(type, file, key, value);
+	    	confEndPoint.onChange(key, value, opt);
         }
     }
 }

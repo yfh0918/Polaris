@@ -10,8 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 
-import com.polaris.core.config.Config;
-
 /**
  * An annotation for Polaris configuration Properties for binding POJO as Properties Object.
  *
@@ -40,19 +38,6 @@ public @interface PolarisConfigurationProperties {
 	 */
 	@AliasFor("value")
 	String prefix() default "";
-
-    /**
-     * file's name for bind
-     *
-     */
-    String file() default "";
-    
-    /**
-     * global scope
-     * see Config
-     * @return default value Config.EXT;
-     */
-    String type() default Config.EXT;
     
 	/**
 	 * Flag to indicate that when binding to this object invalid fields should be ignored.

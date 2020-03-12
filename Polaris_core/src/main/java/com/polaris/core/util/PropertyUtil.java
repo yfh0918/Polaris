@@ -1,5 +1,6 @@
 package com.polaris.core.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,8 +14,6 @@ import java.util.Properties;
 import org.springframework.core.CollectionFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
-
-import com.polaris.core.Constant;
 
 public abstract class PropertyUtil {
 	
@@ -42,14 +41,13 @@ public abstract class PropertyUtil {
 	
 	public static Properties getProperties(String fileContent) {
 		Properties properties = new Properties();
-    	if (StringUtil.isNotEmpty(fileContent)) {
-			String[] contents = fileContent.split(Constant.LINE_SEP);
-			for (String content : contents) {
-				String[] keyvalue = getKeyValue(content);
-				if (keyvalue != null) {
-					properties.put(keyvalue[0], keyvalue[1]);
-				}
-			}
+		if (StringUtil.isEmpty(fileContent)) {
+			return properties;
+		}
+		try (InputStream inStream = new ByteArrayInputStream(fileContent.getBytes(Charset.defaultCharset()))) {
+			properties.load(inStream);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
     	return properties;
     }
