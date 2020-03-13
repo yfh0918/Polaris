@@ -75,7 +75,7 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 			}
 		}
 		try {
-			JsonUtil.toBean(bean, bindMap, annotation.ignoreInvalidFields());
+			JsonUtil.toBean(bean, bindMap, false);
 		} catch (RuntimeException ex) {
 			logger.error("ERROR:",ex);
 		}
