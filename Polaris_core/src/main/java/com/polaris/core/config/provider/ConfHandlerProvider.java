@@ -79,8 +79,12 @@ public class ConfHandlerProvider {
 		//get and listen
 		Properties properties = ConfReaderFactory.get(file).getProperties(get(file,group));
 		config.put(file, properties);
+		boolean isOk = false;
 		for (Map.Entry entry : properties.entrySet()) {
-			onChange(config, file, entry.getKey(), entry.getValue(), Opt.ADD);
+			isOk = onChange(config, file, entry.getKey(), entry.getValue(), Opt.ADD);
+		}
+		if (isOk) {
+			onComplete();
 		}
 		
     	listen(file, group, new ConfHandlerListener() {
