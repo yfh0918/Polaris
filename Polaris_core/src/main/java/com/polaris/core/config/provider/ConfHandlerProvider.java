@@ -66,7 +66,7 @@ public class ConfHandlerProvider {
 		//target files loop
 		for (String file : fileArray) {
 			if (!init(type, file)) {
-				logger.error("type:{} file:{} is not exsit", type, file);
+				throw new RuntimeException("type:"+type+ "file:"+file+" is not exsit");
 			}
 		}
     }
