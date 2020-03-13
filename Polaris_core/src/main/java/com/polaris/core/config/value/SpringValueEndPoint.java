@@ -6,7 +6,7 @@ import com.polaris.core.util.SpringUtil;
 
 public class SpringValueEndPoint implements ConfEndPoint{
 	@Override
-	public void onChange(String key, String value, Opt opt) {
+	public void onChange(String sequence, String key, String value, Opt opt) {
 		SpringAutoUpdateConfigChangeListener listener = SpringUtil.getBean(SpringAutoUpdateConfigChangeListener.class);
 		if (listener != null) {
 			listener.onChange(key.toString());

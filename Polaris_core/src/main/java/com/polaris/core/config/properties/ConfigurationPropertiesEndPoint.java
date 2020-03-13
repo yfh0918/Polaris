@@ -1,24 +1,60 @@
 package com.polaris.core.config.properties;
 
-import com.google.common.collect.Multimap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.polaris.core.config.ConfEndPoint;
+import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.properties.ConfigurationProperties.ConfigurationPropertiesBean;
 import com.polaris.core.util.SpringUtil;
+import com.polaris.core.util.StringUtil;
+
+import cn.hutool.core.collection.ConcurrentHashSet;
 
 public class ConfigurationPropertiesEndPoint implements ConfEndPoint{
+	private Map<String, Set<ConfigurationPropertiesBean>> benMap = new ConcurrentHashMap<>();
 	
 	@Override
-	public void onComplete() {
+	public void onChange(String sequence, String key, String value, Opt opt) {
 		ConfigurationProperties configurationProperties = SpringUtil.getBean(ConfigurationProperties.class);
 		if (configurationProperties == null) {
 			return;
 		}
-		Multimap<String, ConfigurationPropertiesBean> annotationMap = configurationProperties.getAnnotationMap();
-		for (ConfigurationPropertiesBean bean : annotationMap.values()) {
-			if (bean.getAnnotation().autoRefreshed()) {
-				configurationProperties.fieldSet(bean.getObject(), bean.getAnnotation());
+		Set<ConfigurationPropertiesBean> beanSet = benMap.get(sequence);
+		if (beanSet == null) {
+			synchronized(sequence.intern()) {
+				if (beanSet == null) {
+					beanSet = new ConcurrentHashSet<>();
+					benMap.put(sequence, beanSet);
+				}
 			}
 		}
+		for (ConfigurationPropertiesBean bean : configurationProperties.getConfigBeanSet()) {
+			if (StringUtil.isEmpty(bean.annotation.prefix())) {
+				beanSet.add(bean);
+			} else {
+				if (key.startsWith(bean.annotation.prefix()+".")) {
+					beanSet.add(bean);
+				}
+			}
+		}
+	}
+	
+	public void onComplete(String sequence) {
+		ConfigurationProperties configurationProperties = SpringUtil.getBean(ConfigurationProperties.class);
+		if (configurationProperties == null) {
+			return;
+		}
+		Set<ConfigurationPropertiesBean> beanSet = benMap.remove(sequence);
+		if (beanSet != null) {
+			for (ConfigurationPropertiesBean bean : beanSet) {
+				if (bean.getAnnotation().autoRefreshed()) {
+					configurationProperties.fieldSet(bean.getObject(), bean.getAnnotation());
+				}
+			}
+		}
+		
 	}
 	
 }

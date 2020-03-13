@@ -35,14 +35,14 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 	}
 	public void putProperty(Object key, Object value) {
 		ConfigFactory.SYSTEM.put(Config.SYSTEM, key, value);
-		onChange(ConfigFactory.SYSTEM, Config.SYSTEM, key, value, Opt.ADD);
+		onChange(ConfSystemHandlerProvider.SYSTEM_SEQUENCE, ConfigFactory.SYSTEM, Config.SYSTEM, key, value, Opt.ADD);
 	}
 	
 	@Override
-	public boolean onChange(Config config, String file, Object key, Object value, Opt opt) {
+	public boolean onChange(String sequence, Config config, String file, Object key, Object value, Opt opt) {
 		//优先级-system最高
 		if (config == ConfigFactory.SYSTEM) {
-			onChange(key, value, opt);
+			onChange(sequence,key, value, opt);
 		}
 		
 		//优先级-ext
@@ -52,7 +52,7 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 						+ "caused by conflicted with system properties ", config.getType(),file,key,value,opt.name());
 				return false;
 			}
-			onChange(key, value, opt);
+			onChange(sequence,key, value, opt);
 		}
 		
 		//优先级-global
@@ -67,22 +67,22 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 						+ "caused by conflicted with ext properties", config.getType(),file,key,value,opt.name());
 				return false;
 			}
-			onChange(key, value, opt);
+			onChange(sequence,key, value, opt);
 		}
 		return true;
 	}
 	
-	private void onChange(Object key, Object value, Opt opt) {
+	private void onChange(String sequence, Object key, Object value, Opt opt) {
 		if (opt != Opt.DELETE) {
 			cache.put(key, value);
 		} else {
 			cache.remove(key);
 		}
-		INSTANCE_ENDPOINT.onChange(key.toString(), value == null ? null: value.toString(),opt);
+		INSTANCE_ENDPOINT.onChange(sequence, key.toString(), value == null ? null: value.toString(),opt);
 	}
 	
 	@Override
-	public void onComplete() {
-		INSTANCE_ENDPOINT.onComplete();
+	public void onComplete(String sequence) {
+		INSTANCE_ENDPOINT.onComplete(sequence);
 	}
 }

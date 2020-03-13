@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 
+import com.polaris.core.config.Config;
+
 /**
  * An annotation for Polaris configuration Properties for binding POJO as Properties Object.
  *
@@ -45,6 +47,20 @@ public @interface PolarisConfigurationProperties {
      *
      * @return default value is <code>false</code>
      */
-    boolean autoRefreshed() default false;
+    boolean autoRefreshed() default true;
+    
+    /**
+     * from local file or registry center
+     *
+     * @return default value is <code>""</code>
+     */
+    String file() default "";
+    
+    /**
+     * type ext or global
+     *
+     * @return default value is <code>ext</code>
+     */
+    String type() default Config.EXT;
 
 }

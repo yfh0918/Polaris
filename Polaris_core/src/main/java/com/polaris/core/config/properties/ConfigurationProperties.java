@@ -1,9 +1,11 @@
 package com.polaris.core.config.properties;
 
 import java.lang.annotation.Annotation;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,15 +18,14 @@ import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationUtils;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
+import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.util.JsonUtil;
 import com.polaris.core.util.StringUtil;
 
 public class ConfigurationProperties implements BeanPostProcessor, PriorityOrdered, ApplicationContextAware, InitializingBean{
 	private static final Logger logger = LoggerFactory.getLogger(ConfigurationProperties.class);
-	private Multimap<String, ConfigurationPropertiesBean> annotationMap = ArrayListMultimap.create();
+	private Set<ConfigurationPropertiesBean> configBeanSet = new HashSet<>();
 	public static final String BEAN_NAME = ConfigurationProperties.class.getName();
 	
 	@Override
@@ -44,7 +45,7 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		PolarisConfigurationProperties annotation = getAnnotation(bean, beanName, PolarisConfigurationProperties.class);
 		if (annotation != null) {
-			annotationMap.put(annotation.prefix(), new ConfigurationPropertiesBean(bean,annotation));
+			configBeanSet.add(new ConfigurationPropertiesBean(bean,annotation));
 			bind(bean,annotation);
 		}
 		return bean;
@@ -56,6 +57,15 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 	}
 	
 	private void bind(Object bean, PolarisConfigurationProperties annotation) {
+		String file = annotation.file();
+		if (StringUtil.isNotEmpty(file)) {
+			if (ConfigFactory.get(annotation.type()).getProperties(file) == null ) {
+				ConfCompositeProvider.INSTANCE.init(annotation.type(), file);
+				if (annotation.autoRefreshed()) {
+					return;
+				}
+			} 
+		} 
 		fieldSet(bean, annotation);
 	}
 
@@ -81,8 +91,8 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 		}
 	}
 
-	protected Multimap<String, ConfigurationPropertiesBean> getAnnotationMap() {
-		return annotationMap;
+	protected Set<ConfigurationPropertiesBean> getConfigBeanSet() {
+		return configBeanSet;
 	}
 	
 	static class ConfigurationPropertiesBean {

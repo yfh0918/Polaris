@@ -21,6 +21,7 @@ import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.util.StringUtil;
+import com.polaris.core.util.UuidUtil;
 
 @SuppressWarnings("rawtypes")
 public class ConfHandlerProvider {
@@ -79,43 +80,47 @@ public class ConfHandlerProvider {
 		//get and listen
 		Properties properties = ConfReaderFactory.get(file).getProperties(get(file,group));
 		config.put(file, properties);
-		boolean isOk = false;
+		boolean isUpdate = false;
+		String sequence = UuidUtil.generateUuid();
 		for (Map.Entry entry : properties.entrySet()) {
-			isOk = onChange(config, file, entry.getKey(), entry.getValue(), Opt.ADD);
+			if (onChange(sequence, config, file, entry.getKey(), entry.getValue(), Opt.ADD)) {
+				isUpdate = true;
+			}
 		}
-		if (isOk) {
-			onComplete();
+		if (isUpdate) {
+			onComplete(sequence);
 		}
 		
     	listen(file, group, new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
-				boolean isOk = false;
+				boolean isUpdate = false;
 				Properties oldProperties = config.getProperties(file);
 				Properties newProperties = ConfReaderFactory.get(file).getProperties(get(file,group));
+				String sequence = UuidUtil.generateUuid();
 				for (Map.Entry entry : newProperties.entrySet()) {
 					if (!oldProperties.containsKey(entry.getKey())) {
-						logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.ADD.name());
-						if (onChange(config, file, entry.getKey(), entry.getValue(), Opt.ADD)) {
-							isOk = true;
+						if (onChange(sequence,config, file, entry.getKey(), entry.getValue(), Opt.ADD)) {
+							logger.info("type:{} file:{} key:{} newValue:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.ADD.name());
+							isUpdate = true;
 						}
 					} else if (!Objects.equals(oldProperties.get(entry.getKey()), newProperties.get(entry.getKey()))) {
-						logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.UPDATE.name());
-						if (onChange(config, file, entry.getKey(), entry.getValue(), Opt.UPDATE)) {
-							isOk = true;
+						if (onChange(sequence,config, file, entry.getKey(), entry.getValue(), Opt.UPDATE)) {
+							logger.info("type:{} file:{} key:{} oldValue:{} newvalue:{} opt:{}", config.getType(),file,entry.getKey(),oldProperties.get(entry.getKey()), entry.getValue(),Opt.UPDATE.name());
+							isUpdate = true;
 						}
 					}
 					oldProperties.remove(entry.getKey());
 				}
-				for (Object key : oldProperties.keySet()) {
-					logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,key,null,Opt.DELETE.name());
-					if (onChange(config, file, key, null, Opt.DELETE)) {
-						isOk = true;
+				for (Map.Entry entry : oldProperties.entrySet()) {
+					if (onChange(sequence,config, file, entry.getKey(), entry.getValue(), Opt.DELETE)) {
+						logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.DELETE.name());
+						isUpdate = true;
 					}
 				}
 				config.put(file, newProperties);
-				if (isOk) {
-					onComplete();
+				if (isUpdate) {
+					onComplete(sequence);
 				}
 			}
 		});
@@ -139,9 +144,9 @@ public class ConfHandlerProvider {
 		}
 	}
 
-	public boolean onChange(Config config, String file, Object key, Object value, Opt opt) {
+	public boolean onChange(String sequence, Config config, String file, Object key, Object value, Opt opt) {
 		return true;
 	}
-	public void onComplete() {
+	public void onComplete(String sequence) {
 	}
 }

@@ -12,6 +12,7 @@ import com.polaris.core.util.StringUtil;
 
 public class ConfSystemHandlerProvider {
 	private static volatile String CONFIG_NAME = "application";
+	public static String SYSTEM_SEQUENCE = "system";
 	private ConfSystemHandlerProvider() {}
 	public static ConfSystemHandlerProvider INSTANCE = new ConfSystemHandlerProvider();
 	private Properties properties = null;

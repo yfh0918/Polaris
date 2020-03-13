@@ -14,14 +14,14 @@ public class ConfEndPointProvider {
 	    	confEndPoint.init();
         }
     }
-    public void onChange (String key, String value, Opt opt) {
+    public void onChange (String sequence, String key, String value, Opt opt) {
     	for (ConfEndPoint confEndPoint : endPointLoader) {
-	    	confEndPoint.onChange(key, value, opt);
+	    	confEndPoint.onChange(sequence, key, value, opt);
         }
     }
-    public void onComplete() {
+    public void onComplete(String sequence) {
     	for (ConfEndPoint confEndPoint : endPointLoader) {
-	    	confEndPoint.onComplete();
+	    	confEndPoint.onComplete(sequence);
         }
     }
 }
