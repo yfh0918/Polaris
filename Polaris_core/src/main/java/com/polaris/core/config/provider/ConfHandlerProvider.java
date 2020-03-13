@@ -86,25 +86,31 @@ public class ConfHandlerProvider {
     	listen(file, group, new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
-				boolean isUpdate = false;
+				boolean isOk = false;
 				Properties oldProperties = config.getProperties(file);
 				Properties newProperties = ConfReaderFactory.get(file).getProperties(get(file,group));
 				for (Map.Entry entry : newProperties.entrySet()) {
 					if (!oldProperties.containsKey(entry.getKey())) {
 						logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.ADD.name());
-						isUpdate = onChange(config, file, entry.getKey(), entry.getValue(), Opt.ADD);
+						if (onChange(config, file, entry.getKey(), entry.getValue(), Opt.ADD)) {
+							isOk = true;
+						}
 					} else if (!Objects.equals(oldProperties.get(entry.getKey()), newProperties.get(entry.getKey()))) {
 						logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.UPDATE.name());
-						isUpdate = onChange(config, file, entry.getKey(), entry.getValue(), Opt.UPDATE);
+						if (onChange(config, file, entry.getKey(), entry.getValue(), Opt.UPDATE)) {
+							isOk = true;
+						}
 					}
 					oldProperties.remove(entry.getKey());
 				}
 				for (Object key : oldProperties.keySet()) {
 					logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,key,null,Opt.DELETE.name());
-					isUpdate = onChange(config, file, key, null, Opt.DELETE);
+					if (onChange(config, file, key, null, Opt.DELETE)) {
+						isOk = true;
+					}
 				}
 				config.put(file, newProperties);
-				if (isUpdate) {
+				if (isOk) {
 					onComplete();
 				}
 			}
