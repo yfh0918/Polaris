@@ -65,11 +65,13 @@ public class ConfHandlerProvider {
 		
 		//target files loop
 		for (String file : fileArray) {
-			init(type, file);
+			if (!init(type, file)) {
+				logger.error("type:{} file:{} is not exsit", type, file);
+			}
 		}
     }
     
-    public void init(String type, String file) {
+    public boolean init(String type, String file) {
     	
 		//get config
 		Config config = ConfigFactory.get(type);
@@ -77,9 +79,14 @@ public class ConfHandlerProvider {
 		//get config-center-group
 		String group = Config.GLOBAL.equals(type) ? type : ConfClient.getAppName();
 		
-		//get and listen
-		Properties properties = ConfReaderFactory.get(file).getProperties(get(file,group));
-		config.put(file, properties);
+		//get
+		String contents = get(file,group);
+		if (StringUtil.isEmpty(contents)) {
+			return false;
+		}
+		
+		//config -set
+		Properties properties = ConfReaderFactory.get(file).getProperties(contents);
 		boolean isUpdate = false;
 		String sequence = UuidUtil.generateUuid();
 		for (Map.Entry entry : properties.entrySet()) {
@@ -87,10 +94,12 @@ public class ConfHandlerProvider {
 				isUpdate = true;
 			}
 		}
+		config.put(file, properties);
 		if (isUpdate) {
 			onComplete(sequence);
 		}
 		
+		//listen
     	listen(file, group, new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
@@ -124,6 +133,7 @@ public class ConfHandlerProvider {
 				}
 			}
 		});
+    	return true;
     }
     
 	public String get(String fileName) {

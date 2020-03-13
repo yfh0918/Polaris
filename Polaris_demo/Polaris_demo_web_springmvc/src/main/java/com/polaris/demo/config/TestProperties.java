@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.polaris.core.config.properties.PolarisConfigurationProperties;
 
-@PolarisConfigurationProperties(file="main.properties")
+@PolarisConfigurationProperties(importFiles="testP.properties")
 public class TestProperties {
 	private String address1;
     private String password;
