@@ -30,14 +30,16 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 		}
 		return cache.getProperty(key,defaultValue[0]);
 	}
+	public Properties getProperties() {
+		return cache;
+	}
 	public void putProperty(Object key, Object value) {
 		ConfigFactory.SYSTEM.put(Config.SYSTEM, key, value);
-		putProperty(ConfigFactory.SYSTEM, Config.SYSTEM, key, value, Opt.ADD);
+		onChange(ConfigFactory.SYSTEM, Config.SYSTEM, key, value, Opt.ADD);
 	}
 	
 	@Override
-	public void putProperty(Config config, String file, Object key, Object value, Opt opt) {
-		super.putProperty(config, file, key, value, opt);
+	public boolean onChange(Config config, String file, Object key, Object value, Opt opt) {
 		//优先级-system最高
 		if (config == ConfigFactory.SYSTEM) {
 			onChange(key, value, opt);
@@ -48,7 +50,7 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 			if (ConfigFactory.SYSTEM.contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with system properties ", config.getType(),file,key,value,opt.name());
-				return;
+				return false;
 			}
 			onChange(key, value, opt);
 		}
@@ -58,15 +60,16 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 			if (ConfigFactory.SYSTEM.contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with system properties", config.getType(),file,key,value,opt.name());
-				return;
+				return false;
 			}
 			if (ConfigFactory.EXT.contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with ext properties", config.getType(),file,key,value,opt.name());
-				return;
+				return false;
 			}
 			onChange(key, value, opt);
 		}
+		return true;
 	}
 	
 	private void onChange(Object key, Object value, Opt opt) {
@@ -76,5 +79,10 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 			cache.remove(key);
 		}
 		INSTANCE_ENDPOINT.onChange(key.toString(), value == null ? null: value.toString(),opt);
+	}
+	
+	@Override
+	public void onComplete() {
+		INSTANCE_ENDPOINT.onComplete();
 	}
 }

@@ -16,7 +16,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 public abstract class PropertyUtil {
-	
 	public static Properties getProperties (String fileName,boolean includePath, boolean includeClassPath) {
 		if (includePath) {
 			try (InputStream in = FileUtil.getStreamFromPath(fileName)) {
@@ -144,4 +143,5 @@ public abstract class PropertyUtil {
 		}
 		return null;
 	}
+	
 }

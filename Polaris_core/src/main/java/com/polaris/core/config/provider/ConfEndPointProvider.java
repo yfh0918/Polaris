@@ -19,4 +19,9 @@ public class ConfEndPointProvider {
 	    	confEndPoint.onChange(key, value, opt);
         }
     }
+    public void onComplete() {
+    	for (ConfEndPoint confEndPoint : endPointLoader) {
+	    	confEndPoint.onComplete();
+        }
+    }
 }

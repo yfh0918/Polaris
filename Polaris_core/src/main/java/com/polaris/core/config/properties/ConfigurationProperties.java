@@ -1,9 +1,9 @@
 package com.polaris.core.config.properties;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,16 +15,16 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.util.ReflectionUtils;
-import org.springframework.util.ReflectionUtils.MethodCallback;
 
-import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.ReflectionUtil;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import com.polaris.core.config.provider.ConfCompositeProvider;
+import com.polaris.core.util.JsonUtil;
 import com.polaris.core.util.StringUtil;
 
 public class ConfigurationProperties implements BeanPostProcessor, PriorityOrdered, ApplicationContextAware, InitializingBean{
 	private static final Logger logger = LoggerFactory.getLogger(ConfigurationProperties.class);
-	private Map<Object, PolarisConfigurationProperties> annotationMap = new ConcurrentHashMap<>();
+	private Multimap<String, ConfigurationPropertiesBean> annotationMap = ArrayListMultimap.create();
 	public static final String BEAN_NAME = ConfigurationProperties.class.getName();
 	
 	@Override
@@ -44,7 +44,7 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
 		PolarisConfigurationProperties annotation = getAnnotation(bean, beanName, PolarisConfigurationProperties.class);
 		if (annotation != null) {
-			annotationMap.put(bean,annotation);
+			annotationMap.put(annotation.prefix(), new ConfigurationPropertiesBean(bean,annotation));
 			bind(bean,annotation);
 		}
 		return bean;
@@ -56,44 +56,48 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 	}
 	
 	private void bind(Object bean, PolarisConfigurationProperties annotation) {
-		fieldSet(bean, annotation,null,null);
+		fieldSet(bean, annotation);
 	}
 
-	protected void fieldSet(Object bean, PolarisConfigurationProperties annotation, String key, String value) {
-		ReflectionUtils.doWithMethods(bean.getClass(), new MethodCallback() {
-			@Override
-			public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-				String fileName = ReflectionUtil.getFieldNameForSet(method);
-				if (StringUtil.isEmpty(fileName)) {
-					return;
-				}
-				if (StringUtil.isNotEmpty(annotation.value())) {
-					fileName = annotation.value()+ "." + fileName;
-				}
-				if (StringUtil.isNotEmpty(key) && !fileName.equals(key)) {
-					return;
-				}
-				String  configValue = null;
-				if (StringUtil.isEmpty(key)) {
-					configValue = ConfClient.get(fileName);
-					if (configValue == null) {
-						return;
-					}
-				}
-				try {
-					ReflectionUtil.setMethodValue(method, bean, value != null? value : configValue);
-				} catch (RuntimeException ex) {
-					if (!annotation.ignoreInvalidFields()) {
-						throw ex;
-					}
-					logger.warn("class:{} fileName:{} value:{} is incorrect",bean.getClass().getName(), fileName,value != null? value : configValue);
+	protected void fieldSet(Object bean, PolarisConfigurationProperties annotation) {
+		Properties properties = ConfCompositeProvider.INSTANCE.getProperties();
+		Map<String, String> bindMap = new LinkedHashMap<>();
+		if (StringUtil.isNotEmpty(annotation.prefix())) {
+			for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+				if (entry.getKey().toString().startsWith(annotation.prefix() + ".")) {
+					bindMap.put(entry.getKey().toString().substring(annotation.prefix().length() + 1), entry.getValue().toString());
 				}
 			}
-		});
+			
+		} else {
+			for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+				bindMap.put(entry.getKey().toString(), entry.getValue().toString());
+			}
+		}
+		try {
+			JsonUtil.toBean(bean, bindMap, annotation.ignoreInvalidFields());
+		} catch (RuntimeException ex) {
+			logger.error("ERROR:",ex);
+		}
 	}
 
-	protected Map<Object,PolarisConfigurationProperties> getAnnotationMap() {
+	protected Multimap<String, ConfigurationPropertiesBean> getAnnotationMap() {
 		return annotationMap;
+	}
+	
+	static class ConfigurationPropertiesBean {
+		Object object;
+		PolarisConfigurationProperties annotation;
+		ConfigurationPropertiesBean(Object object,PolarisConfigurationProperties annotation) {
+			this.object = object;
+			this.annotation = annotation;
+		}
+		public Object getObject() {
+			return object;
+		}
+		public PolarisConfigurationProperties getAnnotation() {
+			return annotation;
+		}
 	}
 
 }

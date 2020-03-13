@@ -80,25 +80,33 @@ public class ConfHandlerProvider {
 		Properties properties = ConfReaderFactory.get(file).getProperties(get(file,group));
 		config.put(file, properties);
 		for (Map.Entry entry : properties.entrySet()) {
-			putProperty(config, file, entry.getKey(), entry.getValue(), Opt.ADD);
+			onChange(config, file, entry.getKey(), entry.getValue(), Opt.ADD);
 		}
+		
     	listen(file, group, new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
+				boolean isUpdate = false;
 				Properties oldProperties = config.getProperties(file);
 				Properties newProperties = ConfReaderFactory.get(file).getProperties(get(file,group));
 				for (Map.Entry entry : newProperties.entrySet()) {
 					if (!oldProperties.containsKey(entry.getKey())) {
-						putProperty(config, file, entry.getKey(), entry.getValue(), Opt.ADD);
+						logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.ADD.name());
+						isUpdate = onChange(config, file, entry.getKey(), entry.getValue(), Opt.ADD);
 					} else if (!Objects.equals(oldProperties.get(entry.getKey()), newProperties.get(entry.getKey()))) {
-						putProperty(config, file, entry.getKey(), entry.getValue(), Opt.UPDATE);
+						logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.UPDATE.name());
+						isUpdate = onChange(config, file, entry.getKey(), entry.getValue(), Opt.UPDATE);
 					}
 					oldProperties.remove(entry.getKey());
 				}
 				for (Object key : oldProperties.keySet()) {
-					putProperty(config, file, key, null, Opt.DELETE);
+					logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,key,null,Opt.DELETE.name());
+					isUpdate = onChange(config, file, key, null, Opt.DELETE);
 				}
 				config.put(file, newProperties);
+				if (isUpdate) {
+					onComplete();
+				}
 			}
 		});
     }
@@ -121,11 +129,9 @@ public class ConfHandlerProvider {
 		}
 	}
 
-	public void putProperty(Config config, String file, Object key, Object value, Opt opt) {
-		if (config != ConfigFactory.SYSTEM && opt != Opt.ADD) {
-			logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,key,value,opt.name());
-		} else {
-			logger.debug("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,key,value,opt.name());
-		}
+	public boolean onChange(Config config, String file, Object key, Object value, Opt opt) {
+		return true;
+	}
+	public void onComplete() {
 	}
 }

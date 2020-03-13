@@ -43,8 +43,15 @@ public @interface PolarisConfigurationProperties {
 	 * Flag to indicate that when binding to this object invalid fields should be ignored.
 	 * Invalid means invalid according to the binder that is used, and usually this means
 	 * fields of the wrong type (or that cannot be coerced into the correct type).
-	 * @return the flag value (default false)
+	 * @return the flag value (default true)
 	 */
-	boolean ignoreInvalidFields() default false;
+	boolean ignoreInvalidFields() default true;
+	
+    /**
+     * It indicates the properties of current doBind bean is auto-refreshed when Nacos configuration is changed.
+     *
+     * @return default value is <code>false</code>
+     */
+    boolean autoRefreshed() default false;
 
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.polaris.demo.config.TestProperties;
+import com.polaris.demo.config.TestProperties.InnerA;
 /**
  * 
  * @author yufenghua
@@ -28,6 +29,10 @@ public class DemoController {
 		System.out.println(testProperties.getPassword());
 		System.out.println(testProperties.getDigit());
 		System.out.println(testProperties.isOk());
+		for (InnerA linnera : testProperties.getList()) {
+			System.out.println(linnera.getAddress1());
+		}
+		System.out.println(testProperties.getInnerA().getAddress1());
 		return "aa";
     }
 	
