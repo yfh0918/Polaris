@@ -23,7 +23,7 @@ public class ConfCompositeProvider implements ConfigListener {
     public void init() {
     	INSTANCE_SYSTEM.init(this);
     	INSTANCE_EXT.init(this);
-    	INSTANCE_ENDPOINT.init(this);
+    	INSTANCE_ENDPOINT.init();
     }
 	public String getProperty(String key, String... defaultValue) {
 		if (defaultValue == null || defaultValue.length == 0) {
