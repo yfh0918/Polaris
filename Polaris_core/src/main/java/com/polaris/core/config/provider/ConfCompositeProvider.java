@@ -8,21 +8,22 @@ import org.slf4j.LoggerFactory;
 import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.ConfigFactory;
+import com.polaris.core.config.ConfigListener;
 
 
-public class ConfCompositeProvider extends ConfHandlerProvider {
+public class ConfCompositeProvider implements ConfigListener {
 	private static final Logger logger = LoggerFactory.getLogger(ConfCompositeProvider.class);
     public static final ConfCompositeProvider INSTANCE = new ConfCompositeProvider();
     private static final ConfSystemHandlerProvider INSTANCE_SYSTEM = ConfSystemHandlerProvider.INSTANCE;
+    private static final ConfHandlerProvider INSTANCE_EXT = ConfHandlerProvider.INSTANCE;
     private static final ConfEndPointProvider INSTANCE_ENDPOINT = ConfEndPointProvider.INSTANCE;
     private Properties cache = new Properties();
     private ConfCompositeProvider() {}
     
-    @Override
     public void init() {
     	INSTANCE_SYSTEM.init(this);
+    	INSTANCE_EXT.init(this);
     	INSTANCE_ENDPOINT.init(this);
-    	super.init();
     }
 	public String getProperty(String key, String... defaultValue) {
 		if (defaultValue == null || defaultValue.length == 0) {
@@ -34,8 +35,7 @@ public class ConfCompositeProvider extends ConfHandlerProvider {
 		return cache;
 	}
 	public void putProperty(Object key, Object value) {
-		ConfigFactory.SYSTEM.put(Config.SYSTEM, key, value);
-		onChange(ConfSystemHandlerProvider.SYSTEM_SEQUENCE, ConfigFactory.SYSTEM, Config.SYSTEM, key, value, Opt.ADD);
+		cache.put(key, value);
 	}
 	
 	@Override

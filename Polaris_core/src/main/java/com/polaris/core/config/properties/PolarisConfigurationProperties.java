@@ -47,11 +47,4 @@ public @interface PolarisConfigurationProperties {
      */
     boolean autoRefreshed() default true;
     
-    /**
-     * from local file or config center
-     *
-     * @return default value is <code>""</code>
-     */
-    String[] importFiles() default {};
-
 }

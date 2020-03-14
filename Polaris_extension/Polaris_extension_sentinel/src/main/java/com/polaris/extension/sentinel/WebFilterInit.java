@@ -7,7 +7,7 @@ import com.alibaba.csp.sentinel.adapter.servlet.callback.UrlCleaner;
 import com.alibaba.csp.sentinel.adapter.servlet.callback.WebCallbackManager;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
-import com.polaris.core.config.provider.ConfCompositeProvider;
+import com.polaris.core.config.provider.ConfHandlerProvider;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -41,10 +41,10 @@ public class WebFilterInit {
 		
 		//先获取
 		try {
-			loadFile(ConfCompositeProvider.INSTANCE.get(FILE_NAME));
+			loadFile(ConfHandlerProvider.INSTANCE.get(FILE_NAME));
 			
 			//后监听
-			ConfCompositeProvider.INSTANCE.listen(FILE_NAME, new ConfHandlerListener() {
+			ConfHandlerProvider.INSTANCE.listen(FILE_NAME, new ConfHandlerListener() {
 				@Override
 				public void receive(String content) {
 					loadFile(content);

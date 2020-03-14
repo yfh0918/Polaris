@@ -18,8 +18,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationUtils;
 
-import com.polaris.core.config.Config;
-import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.util.JsonUtil;
 import com.polaris.core.util.StringUtil;
@@ -31,7 +29,7 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 	
 	@Override
 	public int getOrder() {
-		return Ordered.HIGHEST_PRECEDENCE + 1;
+		return Ordered.HIGHEST_PRECEDENCE + 3;
 	}
 
 	@Override
@@ -57,29 +55,7 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 		return AnnotationUtils.findAnnotation(bean.getClass(), type);
 	}
 	
-	private void bind(Object bean, PolarisConfigurationProperties annotation) {
-		String[] files = annotation.importFiles();
-		for (String file : files) {
-			if (StringUtil.isNotEmpty(file)) {
-				if (ConfigFactory.EXT.getProperties(file) == null && 
-					ConfigFactory.GLOBAL.getProperties(file) == null) {
-					boolean result = ConfCompositeProvider.INSTANCE.init(Config.EXT, file);
-					if (!result) {
-						result = ConfCompositeProvider.INSTANCE.init(Config.GLOBAL, file);
-					}
-					if (!result) {
-						throw new RuntimeException("importFile is not exsit");
-					}
-					if (annotation.autoRefreshed()) {
-						return;
-					}
-				} 
-			} 
-		}
-		fieldSet(bean, annotation);
-	}
-
-	protected void fieldSet(Object bean, PolarisConfigurationProperties annotation) {
+	protected void bind(Object bean, PolarisConfigurationProperties annotation) {
 		Properties properties = ConfCompositeProvider.INSTANCE.getProperties();
 		Map<String, String> bindMap = new LinkedHashMap<>();
 		if (StringUtil.isNotEmpty(annotation.prefix())) {

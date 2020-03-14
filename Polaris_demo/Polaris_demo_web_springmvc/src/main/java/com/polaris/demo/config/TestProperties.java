@@ -2,9 +2,11 @@ package com.polaris.demo.config;
 
 import java.util.List;
 
+import com.polaris.core.config.properties.PolarisConfigurationExt;
 import com.polaris.core.config.properties.PolarisConfigurationProperties;
 
-@PolarisConfigurationProperties(importFiles="testP.properties")
+@PolarisConfigurationExt("testP.properties")
+@PolarisConfigurationProperties("test")
 public class TestProperties {
 	private String address1;
     private String password;

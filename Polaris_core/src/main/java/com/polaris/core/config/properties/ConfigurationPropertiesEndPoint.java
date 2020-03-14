@@ -21,6 +21,10 @@ public class ConfigurationPropertiesEndPoint implements ConfEndPoint{
 		if (configurationProperties == null) {
 			return;
 		}
+		Set<ConfigurationPropertiesBean> configBeans = configurationProperties.getConfigBeanSet();
+		if (configBeans.size() == 0) {
+			return;
+		}
 		Set<ConfigurationPropertiesBean> beanSet = benMap.get(sequence);
 		if (beanSet == null) {
 			synchronized(sequence.intern()) {
@@ -30,7 +34,7 @@ public class ConfigurationPropertiesEndPoint implements ConfEndPoint{
 				}
 			}
 		}
-		for (ConfigurationPropertiesBean bean : configurationProperties.getConfigBeanSet()) {
+		for (ConfigurationPropertiesBean bean : configBeans) {
 			if (StringUtil.isEmpty(bean.annotation.prefix())) {
 				beanSet.add(bean);
 			} else {
@@ -41,6 +45,7 @@ public class ConfigurationPropertiesEndPoint implements ConfEndPoint{
 		}
 	}
 	
+	@Override
 	public void onComplete(String sequence) {
 		ConfigurationProperties configurationProperties = SpringUtil.getBean(ConfigurationProperties.class);
 		if (configurationProperties == null) {
@@ -50,7 +55,7 @@ public class ConfigurationPropertiesEndPoint implements ConfEndPoint{
 		if (beanSet != null) {
 			for (ConfigurationPropertiesBean bean : beanSet) {
 				if (bean.getAnnotation().autoRefreshed()) {
-					configurationProperties.fieldSet(bean.getObject(), bean.getAnnotation());
+					configurationProperties.bind(bean.getObject(), bean.getAnnotation());
 				}
 			}
 		}

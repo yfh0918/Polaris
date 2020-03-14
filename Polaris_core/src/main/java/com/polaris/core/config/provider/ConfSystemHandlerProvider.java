@@ -4,6 +4,10 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.polaris.core.Constant;
+import com.polaris.core.config.Config;
+import com.polaris.core.config.Config.Opt;
+import com.polaris.core.config.ConfigFactory;
+import com.polaris.core.config.ConfigListener;
 import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.util.EnvironmentUtil;
 import com.polaris.core.util.FileUtil;
@@ -12,14 +16,21 @@ import com.polaris.core.util.StringUtil;
 
 public class ConfSystemHandlerProvider {
 	private static volatile String CONFIG_NAME = "application";
-	public static String SYSTEM_SEQUENCE = "system";
-	private ConfSystemHandlerProvider() {}
+	private static String SYSTEM_SEQUENCE = "system";
 	public static ConfSystemHandlerProvider INSTANCE = new ConfSystemHandlerProvider();
+	private ConfSystemHandlerProvider() {}
 	private Properties properties = null;
-
-	public void init(ConfCompositeProvider composite) {
+	
+	public void init(ConfigListener configListener) {
+		boolean isUpdate = false;
 		for (Map.Entry<Object, Object> entry : getProperties().entrySet()) {
-			composite.putProperty(entry.getKey(), entry.getValue());
+			if (configListener.onChange(SYSTEM_SEQUENCE, ConfigFactory.SYSTEM, Config.SYSTEM, entry.getKey(), entry.getValue(), Opt.ADD)) {
+				isUpdate = true;
+			}
+		}
+		ConfigFactory.SYSTEM.put(Config.SYSTEM, getProperties());
+		if (isUpdate) {
+			configListener.onComplete(SYSTEM_SEQUENCE);
 		}
 	}
 	
