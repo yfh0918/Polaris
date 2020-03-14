@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
-import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import com.polaris.core.config.Config;
 import com.polaris.core.config.ConfigFactory;
@@ -43,7 +43,7 @@ public class ConfigurationExt implements BeanPostProcessor, PriorityOrdered, App
 	
 	
 	private <A extends Annotation> A getAnnotation(Object bean, String beanName, Class<A> type) {
-		return AnnotationUtils.findAnnotation(bean.getClass(), type);
+		return AnnotatedElementUtils.findMergedAnnotation(bean.getClass(), type);
 	}
 	
 	private void init(Object bean, PolarisConfigurationExt annotation) {

@@ -18,6 +18,8 @@ import org.springframework.core.annotation.AliasFor;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Configuration
+@PolarisConfigurationExt
+@PolarisConfigurationGlobal
 @Import(ConfigurationPropertiesImport.class)
 public @interface PolarisConfigurationProperties {
 
@@ -47,4 +49,9 @@ public @interface PolarisConfigurationProperties {
      */
     boolean autoRefreshed() default true;
     
+	@AliasFor(annotation = PolarisConfigurationExt.class, attribute = "value")
+	String[] ext() default {};
+	
+	@AliasFor(annotation = PolarisConfigurationGlobal.class, attribute = "value")
+	String[] global() default {};
 }

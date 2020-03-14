@@ -23,7 +23,7 @@ public @interface PolarisConfigurationGlobal {
 	/**
 	 * global file from local or data center
 	 */
-	String[] value();
+	String[] value() default{};
 
 
 }
