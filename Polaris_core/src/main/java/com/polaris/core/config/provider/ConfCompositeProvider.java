@@ -42,11 +42,6 @@ public class ConfCompositeProvider implements ConfigListener {
 	
 	@Override
 	public boolean onChange(String sequence, Config config, String file, Object key, Object value, Opt opt) {
-		//优先级-system最高
-		if (config == ConfigFactory.get(Config.SYSTEM)) {
-			onChange(sequence,key, value, opt);
-		}
-		
 		//优先级-ext
 		if (config == ConfigFactory.get(Config.EXT)) {
 			if (ConfigFactory.get(Config.SYSTEM).contain(key)) {
@@ -54,7 +49,6 @@ public class ConfCompositeProvider implements ConfigListener {
 						+ "caused by conflicted with system properties ", config.getType(),file,key,value,opt.name());
 				return false;
 			}
-			onChange(sequence,key, value, opt);
 		}
 		
 		//优先级-global
@@ -69,18 +63,18 @@ public class ConfCompositeProvider implements ConfigListener {
 						+ "caused by conflicted with ext properties", config.getType(),file,key,value,opt.name());
 				return false;
 			}
-			onChange(sequence,key, value, opt);
 		}
-		return true;
-	}
-	
-	private void onChange(String sequence, Object key, Object value, Opt opt) {
+		
+		//update cache
 		if (opt != Opt.DELETE) {
 			cache.put(key, value);
 		} else {
 			cache.remove(key);
 		}
-		INSTANCE_ENDPOINT.onChange(sequence, key.toString(), value == null ? null: value.toString(),opt);
+		
+		//notiy endpoint
+		INSTANCE_ENDPOINT.onChange(sequence, config,file,key.toString(), value == null ? null: value.toString(),opt);
+		return true;
 	}
 	
 	@Override
