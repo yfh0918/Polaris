@@ -87,9 +87,9 @@ public abstract class FileUtil {
     	if (in == null) {
     		return null;
     	}
-    	try {
-    		InputStreamReader reader = new InputStreamReader(in, Charset.defaultCharset());
-			BufferedReader bf= new BufferedReader(reader);
+    	try(InputStreamReader reader = new InputStreamReader(in, Charset.defaultCharset());
+    		BufferedReader bf = new BufferedReader(reader);
+    			) {
 			StringBuffer buffer = new StringBuffer();
 			String line = bf.readLine();
 	        while (line != null) {
@@ -97,6 +97,7 @@ public abstract class FileUtil {
 	            line = bf.readLine();
 	        	buffer.append(Constant.LINE_SEP);
 	        }
+	        
 	        String content = buffer.toString();
 	        if (StringUtil.isNotEmpty(content)) {
 	        	return content;
@@ -109,7 +110,7 @@ public abstract class FileUtil {
     	return null;
     }
 	
-	public static File getFileNotInJar(String fileName) {
+	public static File getFile(String fileName) {
 		try {
 			String path = getFullPath("");
 			File file = new File(path + File.separator + Constant.CONFIG + File.separator + fileName);

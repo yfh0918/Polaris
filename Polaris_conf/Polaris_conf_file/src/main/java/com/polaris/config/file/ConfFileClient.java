@@ -75,7 +75,7 @@ public class ConfFileClient {
 	public String getConfig(String fileName, String group) {
 		
 		//可以监听的文件有效
-		File file = FileUtil.getFileNotInJar(fileName);
+		File file = FileUtil.getFile(fileName);
 		if (file != null) {
 			isModifiedByFile(fileName, file);
 		}
