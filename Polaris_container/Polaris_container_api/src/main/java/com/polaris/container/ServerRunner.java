@@ -1,5 +1,6 @@
 package com.polaris.container;
 
+import com.polaris.container.banner.PolarisBannerPrinter;
 import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerSupport;
@@ -30,6 +31,9 @@ public abstract class ServerRunner {
 		run(args, new Class<?>[]{configClass}, serverListeners);
 	}
     public static void run(String[] args, Class<?>[] configClass, ServerListener... serverListeners) {
+    	
+    	//banna打印
+    	PolarisBannerPrinter.print();
     	
     	//各类参数载入
     	ConfCompositeProvider.INSTANCE.init();
