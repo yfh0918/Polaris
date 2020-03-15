@@ -1,5 +1,6 @@
 package com.polaris.container.springboot.server;
 
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -73,6 +74,7 @@ public class SpringbootServer {
 			}
         	
         });
+        springApplication.setBannerMode(Banner.Mode.OFF);
         springApplication.run(ConfigurationSupport.getArgs());
     	
     }

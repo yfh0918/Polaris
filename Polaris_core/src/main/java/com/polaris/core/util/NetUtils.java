@@ -13,9 +13,6 @@ import java.util.Enumeration;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * @author:Tom.Yu
@@ -24,7 +21,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class NetUtils  {
-	private static Logger logger = LoggerFactory.getLogger(NetUtils.class);
     private static volatile String LOCAL_MAC = null;
     private static final String DEFAULT_MAC = "E0-94-67-CE-04-60";
 
@@ -114,14 +110,14 @@ public class NetUtils  {
 			}
 
         } catch (IOException e) {
-        	logger.error(e.getMessage());
+        	System.out.println(e.getMessage());
         } finally {
             try {
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }
             } catch (IOException e1) {
-				logger.error(e1.getMessage());
+            	System.out.println(e1.getMessage());
             }
             bufferedReader = null;
             process = null;
@@ -266,7 +262,7 @@ public class NetUtils  {
                 return localAddress;
             }
         } catch (Throwable e) {
-            logger.warn("Failed to retriving ip address, " + e.getMessage(), e);
+        	System.out.println("Failed to retriving ip address, " + e.getMessage());
         }
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
@@ -283,19 +279,19 @@ public class NetUtils  {
                                         return address;
                                     }
                                 } catch (Throwable e) {
-                                    logger.warn("Failed to retriving ip address, " + e.getMessage(), e);
+                                	System.out.println("Failed to retriving ip address, " + e.getMessage());
                                 }
                             }
                         }
                     } catch (Throwable e) {
-                        logger.warn("Failed to retriving ip address, " + e.getMessage(), e);
+                    	System.out.println("Failed to retriving ip address, " + e.getMessage());
                     }
                 }
             }
         } catch (Throwable e) {
-            logger.warn("Failed to retriving ip address, " + e.getMessage(), e);
+        	System.out.println("Failed to retriving ip address, " + e.getMessage());
         }
-        logger.error("Could not get local host ip address, will use 127.0.0.1 instead.");
+        System.out.println("Could not get local host ip address, will use 127.0.0.1 instead.");
         return localAddress;
     }
 

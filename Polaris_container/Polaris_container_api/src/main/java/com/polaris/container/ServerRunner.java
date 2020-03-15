@@ -1,5 +1,6 @@
 package com.polaris.container;
 
+import com.polaris.container.banner.Banner;
 import com.polaris.container.banner.PolarisBannerPrinter;
 import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.container.listener.ServerListener;
@@ -20,6 +21,8 @@ import com.polaris.core.config.provider.ConfCompositeProvider;
 */
 public abstract class ServerRunner {
 	
+	private static Banner.Mode bannerMode = Banner.Mode.CONSOLE;
+	
     /**
     * startServer
     * @param 
@@ -33,7 +36,7 @@ public abstract class ServerRunner {
     public static void run(String[] args, Class<?>[] configClass, ServerListener... serverListeners) {
     	
     	//banna打印
-    	PolarisBannerPrinter.print();
+    	PolarisBannerPrinter.print(bannerMode);
     	
     	//各类参数载入
     	ConfCompositeProvider.INSTANCE.init();
@@ -46,5 +49,9 @@ public abstract class ServerRunner {
     	
     	//启动
     	ServerFactory.getServer().start();
+    }
+    
+    public static void setBannerMode(Banner.Mode inputBannerMode) {
+    	bannerMode = inputBannerMode;
     }
 }

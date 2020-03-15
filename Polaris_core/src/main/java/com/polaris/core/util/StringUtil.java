@@ -18,8 +18,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import net.sf.json.JSONNull;
 
@@ -33,7 +31,6 @@ import net.sf.json.JSONNull;
  */
 
 public class StringUtil {
-    private static final Logger logger = LoggerFactory.getLogger(StringUtil.class);
     private static final String RTN_CODE = "\\r|\\n";
 
     private StringUtil() {
@@ -190,7 +187,7 @@ public class StringUtil {
         try {
             i = Integer.parseInt(s);
         } catch (Exception ex) {
-            logger.error("StringUtil.parseInt", ex);
+        	ex.printStackTrace();
         }
         return i;
     }
@@ -207,7 +204,7 @@ public class StringUtil {
         try {
             i = Long.parseLong(s);
         } catch (Exception ex) {
-            logger.error("StringUtil.parseLong", ex);
+        	ex.printStackTrace();
         }
         return i;
     }
@@ -239,7 +236,7 @@ public class StringUtil {
         try {
             i = Float.parseFloat(s);
         } catch (Exception ex) {
-            logger.error("StringUtil.parseFloat", ex);
+        	ex.printStackTrace();
         }
         return i;
     }
@@ -256,7 +253,7 @@ public class StringUtil {
         try {
             i = Double.parseDouble(s);
         } catch (Exception ex) {
-            logger.error("StringUtil.parseDouble", ex);
+        	ex.printStackTrace();
         }
         return i;
     }
@@ -271,7 +268,7 @@ public class StringUtil {
         try {
             return Integer.valueOf(s);
         } catch (Exception ex) {
-            logger.error("StringUtil.toInteger", ex);
+        	ex.printStackTrace();
             return null;
         }
     }
@@ -286,7 +283,7 @@ public class StringUtil {
         try {
             return Double.valueOf(s);
         } catch (Exception ex) {
-            logger.error("StringUtil.toDouble", ex);
+        	ex.printStackTrace();
             return null;
         }
     }
@@ -301,7 +298,7 @@ public class StringUtil {
         try {
             return Float.valueOf(s);
         } catch (Exception ex) {
-            logger.error("StringUtil.toFloat", ex);
+        	ex.printStackTrace();
             return null;
         }
     }
@@ -316,7 +313,7 @@ public class StringUtil {
         try {
             return Long.valueOf(s);
         } catch (Exception ex) {
-            logger.error("StringUtil.toLong", ex);
+        	ex.printStackTrace();
             return null;
         }
     }
@@ -346,7 +343,7 @@ public class StringUtil {
         try {
             return new BigDecimal(str);
         } catch (Exception ex) {
-            logger.error("StringUtil.toBigDecimal", ex);
+        	ex.printStackTrace();
             return null;
         }
 
@@ -770,7 +767,7 @@ public class StringUtil {
         try {
             return new String(s.getBytes("ISO-8859-1"));
         } catch (UnsupportedEncodingException ex) {
-            logger.error("nativeEncode.UnsupportedEncodingException", ex);
+        	ex.printStackTrace();
             return s;
         }
     }
