@@ -13,7 +13,7 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import com.polaris.core.config.Config;
 import com.polaris.core.config.ConfigFactory;
-import com.polaris.core.config.provider.ConfHandlerProvider;
+import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.util.StringUtil;
 
 public class ConfigurationExt implements BeanPostProcessor, PriorityOrdered, ApplicationContextAware, InitializingBean{
@@ -50,8 +50,8 @@ public class ConfigurationExt implements BeanPostProcessor, PriorityOrdered, App
 		String[] files = annotation.value();
 		for (String file : files) {
 			if (StringUtil.isNotEmpty(file)) {
-				if (ConfigFactory.EXT.getProperties(file) == null) {
-					if (!ConfHandlerProvider.INSTANCE.init(Config.EXT, file)) {
+				if (ConfigFactory.get(Config.EXT).getProperties(file) == null) {
+					if (!ConfHandlerProviderFactory.get(Config.EXT).init(file)) {
 						throw new RuntimeException("type:ext file:" + file + " is not exsit");
 					}
 				} 

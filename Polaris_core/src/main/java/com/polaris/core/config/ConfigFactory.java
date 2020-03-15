@@ -18,10 +18,6 @@ public class ConfigFactory {
 		configList.add(ConfigDefault.GLOBAL);
 	}
 	
-	public static Config SYSTEM = get(Config.SYSTEM);
-	public static Config EXT = get(Config.EXT);
-	public static Config GLOBAL = get(Config.GLOBAL);
-	
 	public static Config get(String type) {
 		return configMap.get(type);
 	}

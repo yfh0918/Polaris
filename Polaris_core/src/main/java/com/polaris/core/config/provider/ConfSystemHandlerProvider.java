@@ -14,21 +14,22 @@ import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
-public class ConfSystemHandlerProvider {
+public class ConfSystemHandlerProvider implements ConfHandlerProvider{
 	private static volatile String CONFIG_NAME = "application";
 	private static String SYSTEM_SEQUENCE = "system";
 	public static ConfSystemHandlerProvider INSTANCE = new ConfSystemHandlerProvider();
 	private ConfSystemHandlerProvider() {}
 	private Properties properties = null;
 	
+	@Override
 	public void init(ConfigListener configListener) {
 		boolean isUpdate = false;
 		for (Map.Entry<Object, Object> entry : getProperties().entrySet()) {
-			if (configListener.onChange(SYSTEM_SEQUENCE, ConfigFactory.SYSTEM, Config.SYSTEM, entry.getKey(), entry.getValue(), Opt.ADD)) {
+			if (configListener.onChange(SYSTEM_SEQUENCE, ConfigFactory.get(Config.SYSTEM), Config.SYSTEM, entry.getKey(), entry.getValue(), Opt.ADD)) {
 				isUpdate = true;
 			}
 		}
-		ConfigFactory.SYSTEM.put(Config.SYSTEM, getProperties());
+		ConfigFactory.get(Config.SYSTEM).put(Config.SYSTEM, getProperties());
 		if (isUpdate) {
 			configListener.onComplete(SYSTEM_SEQUENCE);
 		}

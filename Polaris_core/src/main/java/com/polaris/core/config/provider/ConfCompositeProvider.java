@@ -14,8 +14,9 @@ import com.polaris.core.config.ConfigListener;
 public class ConfCompositeProvider implements ConfigListener {
 	private static final Logger logger = LoggerFactory.getLogger(ConfCompositeProvider.class);
     public static final ConfCompositeProvider INSTANCE = new ConfCompositeProvider();
-    private static final ConfSystemHandlerProvider INSTANCE_SYSTEM = ConfSystemHandlerProvider.INSTANCE;
-    private static final ConfHandlerProvider INSTANCE_EXT = ConfHandlerProvider.INSTANCE;
+    private static final ConfHandlerProvider INSTANCE_SYSTEM = ConfHandlerProviderFactory.get(Config.SYSTEM);
+    private static final ConfHandlerProvider INSTANCE_EXT = ConfHandlerProviderFactory.get(Config.EXT);
+    private static final ConfHandlerProvider INSTANCE_GLOBAL = ConfHandlerProviderFactory.get(Config.GLOBAL);
     private static final ConfEndPointProvider INSTANCE_ENDPOINT = ConfEndPointProvider.INSTANCE;
     private Properties cache = new Properties();
     private ConfCompositeProvider() {}
@@ -23,6 +24,7 @@ public class ConfCompositeProvider implements ConfigListener {
     public void init() {
     	INSTANCE_SYSTEM.init(this);
     	INSTANCE_EXT.init(this);
+    	INSTANCE_GLOBAL.init(this);
     	INSTANCE_ENDPOINT.init();
     }
 	public String getProperty(String key, String... defaultValue) {
@@ -41,13 +43,13 @@ public class ConfCompositeProvider implements ConfigListener {
 	@Override
 	public boolean onChange(String sequence, Config config, String file, Object key, Object value, Opt opt) {
 		//优先级-system最高
-		if (config == ConfigFactory.SYSTEM) {
+		if (config == ConfigFactory.get(Config.SYSTEM)) {
 			onChange(sequence,key, value, opt);
 		}
 		
 		//优先级-ext
-		if (config == ConfigFactory.EXT) {
-			if (ConfigFactory.SYSTEM.contain(key)) {
+		if (config == ConfigFactory.get(Config.EXT)) {
+			if (ConfigFactory.get(Config.SYSTEM).contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with system properties ", config.getType(),file,key,value,opt.name());
 				return false;
@@ -56,13 +58,13 @@ public class ConfCompositeProvider implements ConfigListener {
 		}
 		
 		//优先级-global
-		if (config == ConfigFactory.GLOBAL) {
-			if (ConfigFactory.SYSTEM.contain(key)) {
+		if (config == ConfigFactory.get(Config.GLOBAL)) {
+			if (ConfigFactory.get(Config.SYSTEM).contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with system properties", config.getType(),file,key,value,opt.name());
 				return false;
 			}
-			if (ConfigFactory.EXT.contain(key)) {
+			if (ConfigFactory.get(Config.EXT).contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with ext properties", config.getType(),file,key,value,opt.name());
 				return false;

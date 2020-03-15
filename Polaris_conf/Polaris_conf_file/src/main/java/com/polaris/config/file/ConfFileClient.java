@@ -110,8 +110,10 @@ public class ConfFileClient {
 				lastModifiedTimeMap.put(fileName, file.lastModified());
 			}
 		} else {
-    		lastModifiedFileMap.put(fileName, file);
-			lastModifiedTimeMap.put(fileName, file.lastModified());
+			if (file != null) {
+	    		lastModifiedFileMap.put(fileName, file);
+				lastModifiedTimeMap.put(fileName, file.lastModified());
+			}
 		}
 		return isModified;
 	}
