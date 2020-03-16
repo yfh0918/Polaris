@@ -4,6 +4,7 @@ import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config;
+import com.polaris.core.config.ConfigException;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.ConfigListener;
 import com.polaris.core.util.StringUtil;
@@ -30,22 +31,19 @@ public class ConfHandlerExtProvider extends ConfHandlerAbsProvider {
 		//target files loop
 		for (String file : fileArray) {
 			if (!init(file)) {
-				throw new RuntimeException("type:ext file:"+file+" is not exsit");
+				throw new ConfigException("type:ext file:"+file+" is not exsit");
 			}
 		}
 	}
 
-	//@Override
+	@Override
     public boolean init(String file) {
     	
 		//get config
 		Config config = ConfigFactory.get(Config.EXT);
 		
-		//get config-center-group
-		String group = ConfClient.getAppName();
-		
 		//result
-		return init(file, group, config);
+		return init(file, ConfClient.getAppName(), config);
     }
     
 	@Override

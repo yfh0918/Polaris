@@ -12,6 +12,7 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import com.polaris.core.config.Config;
+import com.polaris.core.config.ConfigException;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.util.StringUtil;
@@ -52,7 +53,7 @@ public class ConfigurationExt implements BeanPostProcessor, PriorityOrdered, App
 			if (StringUtil.isNotEmpty(file)) {
 				if (ConfigFactory.get(Config.EXT).getProperties(file) == null) {
 					if (!ConfHandlerProviderFactory.get(Config.EXT).init(file)) {
-						throw new RuntimeException("type:ext file:" + file + " is not exsit");
+						throw new ConfigException("type:ext file:" + file + " is not exsit");
 					}
 				} 
 			} 

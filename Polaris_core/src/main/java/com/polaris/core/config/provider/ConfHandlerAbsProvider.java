@@ -16,7 +16,7 @@ import com.polaris.core.config.ConfHandler;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Opt;
-import com.polaris.core.config.ConfigChangeException;
+import com.polaris.core.config.ConfigException;
 import com.polaris.core.config.ConfigListener;
 import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.util.StringUtil;
@@ -67,7 +67,7 @@ public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
 			try {
 				configListener.onChange(sequence, config, file, entry.getKey(), entry.getValue(), Opt.ADD);
 				isUpdate = true;
-			} catch (ConfigChangeException ex) {
+			} catch (ConfigException ex) {
 				//nothing
 			}
 		}
@@ -90,7 +90,7 @@ public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
 							configListener.onChange(sequence,config, file, entry.getKey(), entry.getValue(), Opt.ADD);
 							logger.info("type:{} file:{} key:{} newValue:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.ADD.name());
 							isUpdate = true;
-						} catch (ConfigChangeException ex) {
+						} catch (ConfigException ex) {
 							//nothing
 						}
 
@@ -99,7 +99,7 @@ public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
 							configListener.onChange(sequence,config, file, entry.getKey(), entry.getValue(), Opt.UPDATE);
 							logger.info("type:{} file:{} key:{} oldValue:{} newvalue:{} opt:{}", config.getType(),file,entry.getKey(),oldProperties.get(entry.getKey()), entry.getValue(),Opt.UPDATE.name());
 							isUpdate = true;
-						} catch (ConfigChangeException ex) {
+						} catch (ConfigException ex) {
 							//nothing
 						}
 					}
@@ -110,7 +110,7 @@ public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
 						configListener.onChange(sequence,config, file, entry.getKey(), entry.getValue(), Opt.DELETE);
 						logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.DELETE.name());
 						isUpdate = true;
-					} catch (ConfigChangeException ex) {
+					} catch (ConfigException ex) {
 						//nothing
 					}
 				}

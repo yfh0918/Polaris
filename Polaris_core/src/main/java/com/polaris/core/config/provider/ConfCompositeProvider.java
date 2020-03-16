@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Opt;
-import com.polaris.core.config.ConfigChangeException;
+import com.polaris.core.config.ConfigException;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.ConfigListener;
 
@@ -48,7 +48,7 @@ public class ConfCompositeProvider implements ConfigListener {
 			if (ConfigFactory.get(Config.SYSTEM).contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with system properties ", config.getType(),file,key,value,opt.name());
-				throw new ConfigChangeException("conflicted with system properties");
+				throw new ConfigException("conflicted with system properties");
 			}
 		}
 		
@@ -57,12 +57,12 @@ public class ConfCompositeProvider implements ConfigListener {
 			if (ConfigFactory.get(Config.SYSTEM).contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with system properties", config.getType(),file,key,value,opt.name());
-				throw new ConfigChangeException("conflicted with system properties");
+				throw new ConfigException("conflicted with system properties");
 			}
 			if (ConfigFactory.get(Config.EXT).contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with ext properties", config.getType(),file,key,value,opt.name());
-				throw new ConfigChangeException("conflicted with ext properties");
+				throw new ConfigException("conflicted with ext properties");
 			}
 		}
 		
