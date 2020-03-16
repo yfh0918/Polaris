@@ -6,6 +6,7 @@ import java.util.Properties;
 import com.polaris.core.Constant;
 import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Opt;
+import com.polaris.core.config.ConfigChangeException;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.ConfigListener;
 import com.polaris.core.config.reader.ConfReaderFactory;
@@ -28,7 +29,7 @@ public class ConfSystemHandlerProvider implements ConfHandlerProvider{
 			try {
 				configListener.onChange(SYSTEM_SEQUENCE, ConfigFactory.get(Config.SYSTEM), Config.SYSTEM, entry.getKey(), entry.getValue(), Opt.ADD);
 				isUpdate = true;
-			} catch (RuntimeException ex) {
+			} catch (ConfigChangeException ex) {
 				//nothing
 			}
 		}
@@ -97,6 +98,4 @@ public class ConfSystemHandlerProvider implements ConfHandlerProvider{
      	this.properties = propeties;
     	return propeties;
 	}
-	
-
 }
