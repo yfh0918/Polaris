@@ -25,8 +25,11 @@ public class ConfSystemHandlerProvider implements ConfHandlerProvider{
 	public void init(ConfigListener configListener) {
 		boolean isUpdate = false;
 		for (Map.Entry<Object, Object> entry : getProperties().entrySet()) {
-			if (configListener.onChange(SYSTEM_SEQUENCE, ConfigFactory.get(Config.SYSTEM), Config.SYSTEM, entry.getKey(), entry.getValue(), Opt.ADD)) {
+			try {
+				configListener.onChange(SYSTEM_SEQUENCE, ConfigFactory.get(Config.SYSTEM), Config.SYSTEM, entry.getKey(), entry.getValue(), Opt.ADD);
 				isUpdate = true;
+			} catch (RuntimeException ex) {
+				//nothing
 			}
 		}
 		ConfigFactory.get(Config.SYSTEM).put(Config.SYSTEM, getProperties());

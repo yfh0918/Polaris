@@ -7,12 +7,11 @@ import com.polaris.core.util.SpringUtil;
 
 public class SpringValueEndPoint implements ConfEndPoint{
 	@Override
-	public boolean onChange(String sequence, Config config, String file, Object key, Object value, Opt opt) {
+	public void onChange(String sequence, Config config, String file, Object key, Object value, Opt opt) {
 		SpringAutoUpdateConfigChangeListener listener = SpringUtil.getBean(SpringAutoUpdateConfigChangeListener.class);
 		if (listener != null) {
 			listener.onChange(key.toString());
 		}
-		return true;
 	}
 
 }

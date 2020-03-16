@@ -16,7 +16,7 @@ public class DBEndPoint implements ConfEndPoint {
 	private static String prefix2 = "spring.datasource.";
 	
 	@Override
-	public boolean onChange(String sequence, Config config, String file, Object keyObj, Object value, Opt opt) {
+	public void onChange(String sequence, Config config, String file, Object keyObj, Object value, Opt opt) {
 		String key = keyObj.toString();
 		if (StringUtil.isNotEmpty(key) && key.endsWith(endfix)) {
 			if (key.startsWith(prefix1) && key.length() > 8) {
@@ -25,7 +25,6 @@ public class DBEndPoint implements ConfEndPoint {
 				nameList.add(key.substring(18,key.length() - 4));
 			}
 		}
-		return true;
 	}
 	
 	public static List<String> getNames() {

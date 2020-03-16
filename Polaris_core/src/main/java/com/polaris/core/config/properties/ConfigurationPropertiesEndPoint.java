@@ -17,14 +17,14 @@ public class ConfigurationPropertiesEndPoint implements ConfEndPoint{
 	private Map<String, Set<ConfigurationPropertiesBean>> benMap = new ConcurrentHashMap<>();
 	
 	@Override
-	public boolean onChange(String sequence, Config config, String file, Object key, Object value, Opt opt) {
+	public void onChange(String sequence, Config config, String file, Object key, Object value, Opt opt) {
 		ConfigurationProperties configurationProperties = SpringUtil.getBean(ConfigurationProperties.class);
 		if (configurationProperties == null) {
-			return true;
+			return;
 		}
 		Set<ConfigurationPropertiesBean> configBeans = configurationProperties.getConfigBeanSet();
 		if (configBeans.size() == 0) {
-			return true;
+			return;
 		}
 		Set<ConfigurationPropertiesBean> beanSet = benMap.get(sequence);
 		if (beanSet == null) {
@@ -44,7 +44,6 @@ public class ConfigurationPropertiesEndPoint implements ConfEndPoint{
 				}
 			}
 		}
-		return true;
 	}
 	
 	@Override

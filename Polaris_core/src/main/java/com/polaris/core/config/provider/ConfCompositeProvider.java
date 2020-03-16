@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Opt;
+import com.polaris.core.config.ConfigChangeException;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.ConfigListener;
 
@@ -41,13 +42,13 @@ public class ConfCompositeProvider implements ConfigListener {
 	}
 	
 	@Override
-	public boolean onChange(String sequence, Config config, String file, Object key, Object value, Opt opt) {
+	public void onChange(String sequence, Config config, String file, Object key, Object value, Opt opt) {
 		//优先级-ext
 		if (config == ConfigFactory.get(Config.EXT)) {
 			if (ConfigFactory.get(Config.SYSTEM).contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with system properties ", config.getType(),file,key,value,opt.name());
-				return false;
+				throw new ConfigChangeException("conflicted with system properties");
 			}
 		}
 		
@@ -56,12 +57,12 @@ public class ConfCompositeProvider implements ConfigListener {
 			if (ConfigFactory.get(Config.SYSTEM).contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with system properties", config.getType(),file,key,value,opt.name());
-				return false;
+				throw new ConfigChangeException("conflicted with system properties");
 			}
 			if (ConfigFactory.get(Config.EXT).contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with ext properties", config.getType(),file,key,value,opt.name());
-				return false;
+				throw new ConfigChangeException("conflicted with ext properties");
 			}
 		}
 		
@@ -74,7 +75,6 @@ public class ConfCompositeProvider implements ConfigListener {
 		
 		//notiy endpoint
 		INSTANCE_ENDPOINT.onChange(sequence, config,file,key.toString(), value == null ? null: value.toString(),opt);
-		return true;
 	}
 	
 	@Override
