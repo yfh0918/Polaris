@@ -25,12 +25,12 @@ import com.polaris.core.util.UuidUtil;
 public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
 	private static final Logger logger = LoggerFactory.getLogger(ConfHandlerAbsProvider.class);
     private static final ServiceLoader<ConfHandler> handlerLoader = ServiceLoader.load(ConfHandler.class);
-	private volatile AtomicBoolean initialized = new AtomicBoolean(false);
-	protected ConfHandler handler;
+	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
+	protected static ConfHandler handler;
 	protected ConfigListener configListener;
 
     @SuppressWarnings("rawtypes")
-	protected ConfHandler initHandler() {
+	protected static ConfHandler initHandler() {
 		if (!initialized.compareAndSet(false, true)) {
             return handler;
         }
