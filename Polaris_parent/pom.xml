@@ -188,17 +188,17 @@
 	        
 	       	<dependency>
 	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_workflow_parent</artifactId>
+	            <artifactId>Polaris_extension_workflow</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_workflow_api</artifactId>
+	            <artifactId>Polaris_extension_workflow_api</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_workflow_core</artifactId>
+	            <artifactId>Polaris_extension_workflow_core</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency>	    
 

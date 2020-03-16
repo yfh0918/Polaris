@@ -17,12 +17,9 @@
   <dependencies>
   	<dependency>
 		<groupId>com.polaris</groupId>
-		<artifactId>Polaris_workflow_api</artifactId>
+		<artifactId>Polaris_extension_workflow_core</artifactId>
 	</dependency>
-  	<dependency>
-		<groupId>com.polaris</groupId>
-		<artifactId>Polaris_workflow_api</artifactId>
-	</dependency>
+
 	<dependency>
 		<groupId>com.polaris</groupId>
 		<artifactId>Polaris_container_dubbo</artifactId>

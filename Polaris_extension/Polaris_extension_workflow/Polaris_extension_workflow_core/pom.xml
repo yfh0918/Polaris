@@ -2,19 +2,19 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <groupId>com.polaris</groupId>
-    <artifactId>Polaris_workflow_parent</artifactId>
+    <artifactId>Polaris_extension_workflow</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>Polaris_workflow_core</artifactId>
+  <artifactId>Polaris_extension_workflow_core</artifactId>
   <packaging>jar</packaging>
-  <name>Polaris_workflow_core</name>
+  <name>Polaris_extension_workflow_core</name>
 
   <dependencies>
   
   	  <dependency>
 		<groupId>com.polaris</groupId>
-		<artifactId>Polaris_workflow_api</artifactId>
+		<artifactId>Polaris_extension_workflow_api</artifactId>
 	  </dependency>
   
        <dependency>
