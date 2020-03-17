@@ -49,9 +49,19 @@ public @interface PolarisConfigurationProperties {
      */
     boolean autoRefreshed() default true;
     
+    /**
+     * linked PolarisConfigurationExt
+     *
+     * @return default value is <code>ext</code>
+     */
 	@AliasFor(annotation = PolarisConfigurationExt.class, attribute = "value")
 	String[] ext() default {};
 	
+	/**
+     * linked PolarisConfigurationGlobal
+     *
+     * @return default value is <code>global</code>
+     */
 	@AliasFor(annotation = PolarisConfigurationGlobal.class, attribute = "value")
 	String[] global() default {};
 }
