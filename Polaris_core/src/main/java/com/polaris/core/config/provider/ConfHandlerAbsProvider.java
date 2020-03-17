@@ -18,6 +18,7 @@ import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.ConfigListener;
 import com.polaris.core.config.ConfigStrategy;
+import com.polaris.core.config.ConfigStrategyFactory;
 import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.UuidUtil;
@@ -28,7 +29,7 @@ public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	protected static ConfHandler handler;
 	protected ConfigListener configListener;
-	protected ConfigStrategy strategy = ConfigStrategy.INSTANCE;
+	protected ConfigStrategy strategy = ConfigStrategyFactory.get();
 	
     @SuppressWarnings("rawtypes")
 	protected static ConfHandler initHandler() {
