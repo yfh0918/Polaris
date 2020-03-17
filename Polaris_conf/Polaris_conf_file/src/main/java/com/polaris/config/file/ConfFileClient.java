@@ -84,7 +84,6 @@ public class ConfFileClient {
 		try {
 			return FileUtil.read(ConfReaderStrategyFactory.get().getInputStream(fileName));
         } catch (IOException e) {
-        	logger.error("ConfigFile load error,ConfigFile is null");
         	e.printStackTrace();
         }
 		return null;

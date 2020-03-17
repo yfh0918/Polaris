@@ -35,34 +35,27 @@ public class ConfReaderStrategyDefault implements ConfReaderStrategy {
 		
 		//from path
 		for (String fileN : fileNames) {
-			File file = getFile_0(fileN);
-			if (file != null) {
-				try (InputStream in = new FileInputStream(file)) {
-					if (in != null) {
-						return ConfReaderFactory.get(fileN).getProperties(in);
-				    }
-			    } catch (IOException ex) {
-			    	ex.printStackTrace();
+			try (InputStream in = getInputStream_0(fileN)) {
+				if (in != null) {
+					return ConfReaderFactory.get(fileN).getProperties(in);
 			    }
-			}
-			
+		    } catch (IOException ex) {
+		    	ex.printStackTrace();
+		    }
 		}
 		for (String fileN : fileNames) {
-			File file = getFile_1(fileN);
-			if (file != null) {
-				try (InputStream in = new FileInputStream(file)) {
-					if (in != null) {
-						return ConfReaderFactory.get(fileN).getProperties(in);
-				    }
-			    } catch (IOException ex) {
-			    	ex.printStackTrace();
+			try (InputStream in = getInputStream_1(fileN)) {
+				if (in != null) {
+					return ConfReaderFactory.get(fileN).getProperties(in);
 			    }
-			}
+		    } catch (IOException ex) {
+		    	ex.printStackTrace();
+		    }
 		}
 		
 		//from class-path
 		for (String fileN : fileNames) {
-			try (InputStream in = getInputStream_0(fileN)) {
+			try (InputStream in = getInputStream_2(fileN)) {
 				if (in != null) {
 					return ConfReaderFactory.get(fileN).getProperties(in);
 			    }
@@ -72,7 +65,7 @@ public class ConfReaderStrategyDefault implements ConfReaderStrategy {
 			
 		}
 		for (String fileN : fileNames) {
-			try (InputStream in = getInputStream_1(fileN)) {
+			try (InputStream in = getInputStream_3(fileN)) {
 				if (in != null) {
 					return ConfReaderFactory.get(fileN).getProperties(in);
 			    }
@@ -91,32 +84,62 @@ public class ConfReaderStrategyDefault implements ConfReaderStrategy {
 		if (inputStream != null) {
 			return inputStream; 
 		}
-		return getInputStream_1(fileName);
+		inputStream = getInputStream_1(fileName);
+		if (inputStream != null) {
+			return inputStream; 
+		}
+		inputStream = getInputStream_2(fileName);
+		if (inputStream != null) {
+			return inputStream; 
+		}
+		return getInputStream_3(fileName);
 	}
 	private InputStream getInputStream_0 (String fileName) {
+		File file = getFile_0(fileName);
+		if (file != null) {
+			try {
+				return new FileInputStream(file);
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return null;
+	}
+	private InputStream getInputStream_1 (String fileName) {
+		File file = getFile_1(fileName);
+		if (file != null) {
+			try {
+				return new FileInputStream(file);
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return null;
+	}
+	private InputStream getInputStream_2 (String fileName) {
 		InputStream in = this.getClass().getClassLoader().getResourceAsStream(File.separator + CONFIG + File.separator + fileName);
 		if (in != null) {
 			return in;
 	    }
 		return null;
 	}
-	private InputStream getInputStream_1 (String fileName) {
+	private InputStream getInputStream_3 (String fileName) {
 		InputStream in = this.getClass().getClassLoader().getResourceAsStream(fileName);
 		if (in != null) {
 			return in;
 	    }
 		return null;
 	}
-	
+
 	@Override
-	public File getFile (String fileName) {
+	public File getFile(String fileName) {
 		File file = getFile_0(fileName);
 		if (file != null) {
 			return file;
 		}
 		return getFile_1(fileName);
 	}
-	private File getFile_0 (String fileName) {
+	private File getFile_0(String fileName) {
 		try {
 			String path = FileUtil.getFullPath("");
 			File file = new File(path + File.separator + CONFIG + File.separator + fileName);
@@ -128,7 +151,7 @@ public class ConfReaderStrategyDefault implements ConfReaderStrategy {
 		}
 		return null;
 	}
-	private File getFile_1 (String fileName) {
+	private File getFile_1(String fileName) {
 		try {
 			String path = FileUtil.getFullPath("");
 			File file = new File(path + File.separator + fileName);
@@ -140,5 +163,4 @@ public class ConfReaderStrategyDefault implements ConfReaderStrategy {
 		}
 		return null;
 	}
-	
 }
