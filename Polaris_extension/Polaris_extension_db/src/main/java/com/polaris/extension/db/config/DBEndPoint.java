@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.polaris.core.config.ConfEndPoint;
-import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Opt;
 import com.polaris.core.util.StringUtil;
 
@@ -16,7 +15,7 @@ public class DBEndPoint implements ConfEndPoint {
 	private static String prefix2 = "spring.datasource.";
 	
 	@Override
-	public void onChange(String sequence, Config config, String file, Object keyObj, Object value, Opt opt) {
+	public void onChange(String sequence, Object keyObj, Object value, Opt opt) {
 		String key = keyObj.toString();
 		if (StringUtil.isNotEmpty(key) && key.endsWith(endfix)) {
 			if (key.startsWith(prefix1) && key.length() > 8) {

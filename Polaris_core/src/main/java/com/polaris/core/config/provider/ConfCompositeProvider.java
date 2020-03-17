@@ -2,18 +2,12 @@ package com.polaris.core.config.provider;
 
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Opt;
-import com.polaris.core.config.ConfigException;
-import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.ConfigListener;
 
 
 public class ConfCompositeProvider implements ConfigListener {
-	private static final Logger logger = LoggerFactory.getLogger(ConfCompositeProvider.class);
     public static final ConfCompositeProvider INSTANCE = new ConfCompositeProvider();
     private static final ConfHandlerProvider INSTANCE_SYSTEM = ConfHandlerProviderFactory.get(Config.SYSTEM);
     private static final ConfHandlerProvider INSTANCE_EXT = ConfHandlerProviderFactory.get(Config.EXT);
@@ -42,30 +36,7 @@ public class ConfCompositeProvider implements ConfigListener {
 	}
 	
 	@Override
-	public void onChange(String sequence, Config config, String file, Object key, Object value, Opt opt) {
-		//优先级-ext
-		if (config == ConfigFactory.get(Config.EXT)) {
-			if (ConfigFactory.get(Config.SYSTEM).contain(key)) {
-				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
-						+ "caused by conflicted with system properties ", config.getType(),file,key,value,opt.name());
-				throw new ConfigException("conflicted with system properties");
-			}
-		}
-		
-		//优先级-global
-		if (config == ConfigFactory.get(Config.GLOBAL)) {
-			if (ConfigFactory.get(Config.SYSTEM).contain(key)) {
-				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
-						+ "caused by conflicted with system properties", config.getType(),file,key,value,opt.name());
-				throw new ConfigException("conflicted with system properties");
-			}
-			if (ConfigFactory.get(Config.EXT).contain(key)) {
-				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
-						+ "caused by conflicted with ext properties", config.getType(),file,key,value,opt.name());
-				throw new ConfigException("conflicted with ext properties");
-			}
-		}
-		
+	public void onChange(String sequence, Object key, Object value, Opt opt) {
 		//update cache
 		if (opt != Opt.DELETE) {
 			cache.put(key, value);
@@ -74,7 +45,7 @@ public class ConfCompositeProvider implements ConfigListener {
 		}
 		
 		//notiy endpoint
-		INSTANCE_ENDPOINT.onChange(sequence, config,file,key.toString(), value == null ? null: value.toString(),opt);
+		INSTANCE_ENDPOINT.onChange(sequence, key.toString(), value == null ? null: value.toString(),opt);
 	}
 	
 	@Override

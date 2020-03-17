@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.polaris.core.config.ConfEndPoint;
-import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.properties.ConfigurationProperties.ConfigurationPropertiesBean;
 import com.polaris.core.util.SpringUtil;
@@ -17,7 +16,7 @@ public class ConfigurationPropertiesEndPoint implements ConfEndPoint{
 	private Map<String, Set<ConfigurationPropertiesBean>> benMap = new ConcurrentHashMap<>();
 	
 	@Override
-	public void onChange(String sequence, Config config, String file, Object key, Object value, Opt opt) {
+	public void onChange(String sequence, Object key, Object value, Opt opt) {
 		ConfigurationProperties configurationProperties = SpringUtil.getBean(ConfigurationProperties.class);
 		if (configurationProperties == null) {
 			return;

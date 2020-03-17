@@ -16,8 +16,8 @@ import com.polaris.core.config.ConfHandler;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Opt;
-import com.polaris.core.config.ConfigException;
 import com.polaris.core.config.ConfigListener;
+import com.polaris.core.config.ConfigStrategy;
 import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.UuidUtil;
@@ -28,7 +28,8 @@ public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	protected static ConfHandler handler;
 	protected ConfigListener configListener;
-
+	protected ConfigStrategy strategy = ConfigStrategy.INSTANCE;
+	
     @SuppressWarnings("rawtypes")
 	protected static ConfHandler initHandler() {
 		if (!initialized.compareAndSet(false, true)) {
@@ -64,11 +65,9 @@ public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
 		boolean isUpdate = false;
 		String sequence = UuidUtil.generateUuid();
 		for (Map.Entry entry : properties.entrySet()) {
-			try {
-				configListener.onChange(sequence, config, file, entry.getKey(), entry.getValue(), Opt.ADD);
+			if (strategy.canChange(config, file, entry.getKey(), entry.getValue(), Opt.ADD)) {
+				configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.ADD);
 				isUpdate = true;
-			} catch (ConfigException ex) {
-				//nothing
 			}
 		}
 		config.put(file, properties);
@@ -86,32 +85,27 @@ public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
 				String sequence = UuidUtil.generateUuid();
 				for (Map.Entry entry : newProperties.entrySet()) {
 					if (!oldProperties.containsKey(entry.getKey())) {
-						try {
-							configListener.onChange(sequence,config, file, entry.getKey(), entry.getValue(), Opt.ADD);
+						if (strategy.canChange(config, file, entry.getKey(), entry.getValue(), Opt.ADD)) {
+							configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.ADD);
 							logger.info("type:{} file:{} key:{} newValue:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.ADD.name());
 							isUpdate = true;
-						} catch (ConfigException ex) {
-							//nothing
 						}
 
+
 					} else if (!Objects.equals(oldProperties.get(entry.getKey()), newProperties.get(entry.getKey()))) {
-						try {
-							configListener.onChange(sequence,config, file, entry.getKey(), entry.getValue(), Opt.UPDATE);
+						if (strategy.canChange(config, file, entry.getKey(), entry.getValue(), Opt.UPDATE)) {
+							configListener.onChange(sequence,entry.getKey(), entry.getValue(), Opt.UPDATE);
 							logger.info("type:{} file:{} key:{} oldValue:{} newvalue:{} opt:{}", config.getType(),file,entry.getKey(),oldProperties.get(entry.getKey()), entry.getValue(),Opt.UPDATE.name());
 							isUpdate = true;
-						} catch (ConfigException ex) {
-							//nothing
 						}
 					}
 					oldProperties.remove(entry.getKey());
 				}
 				for (Map.Entry entry : oldProperties.entrySet()) {
-					try {
-						configListener.onChange(sequence,config, file, entry.getKey(), entry.getValue(), Opt.DELETE);
+					if (strategy.canChange(config, file, entry.getKey(), entry.getValue(), Opt.DELETE)) {
+						configListener.onChange(sequence,entry.getKey(), entry.getValue(), Opt.DELETE);
 						logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.DELETE.name());
 						isUpdate = true;
-					} catch (ConfigException ex) {
-						//nothing
 					}
 				}
 				config.put(file, newProperties);
