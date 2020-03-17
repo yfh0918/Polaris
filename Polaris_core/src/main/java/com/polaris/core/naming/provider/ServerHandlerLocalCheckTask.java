@@ -15,13 +15,13 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.util.WeightedRoundRobinScheduling;
 
-public class ServerCheckTask implements Runnable {
+public class ServerHandlerLocalCheckTask implements Runnable {
 	
-	private static Logger logger = LoggerFactory.getLogger(ServerCheckTask.class);
+	private static Logger logger = LoggerFactory.getLogger(ServerHandlerLocalCheckTask.class);
     private final HttpClient client = HttpClientBuilder.create().build();
     private Map<String, WeightedRoundRobinScheduling> serverMap = new ConcurrentHashMap<>();
 
-    public ServerCheckTask(Map<String, WeightedRoundRobinScheduling> serverMap) {
+    public ServerHandlerLocalCheckTask(Map<String, WeightedRoundRobinScheduling> serverMap) {
     	this.serverMap = serverMap;
     }
     

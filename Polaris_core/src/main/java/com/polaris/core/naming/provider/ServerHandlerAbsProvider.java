@@ -41,6 +41,10 @@ public abstract class ServerHandlerAbsProvider {
 		}
 		return false;
 	}
+	
+    protected abstract boolean register(String ip, int port);
+    
+    protected abstract boolean deregister(String ip, int port);
 
 	protected abstract String getUrl(String key);
 	

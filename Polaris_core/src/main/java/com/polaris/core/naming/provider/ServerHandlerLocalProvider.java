@@ -34,7 +34,7 @@ public class ServerHandlerLocalProvider extends ServerHandlerAbsProvider {
 			synchronized(ServerHandlerLocalProvider.class){
 				if (scheduledThreadPoolExecutor == null) {
 					scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-			        scheduledThreadPoolExecutor.scheduleAtFixedRate(new ServerCheckTask(serverMap), 
+			        scheduledThreadPoolExecutor.scheduleAtFixedRate(new ServerHandlerLocalCheckTask(serverMap), 
 			        		Integer.parseInt(ConfClient.get("server.check.cycletime", "30")), 
 			        		Integer.parseInt(ConfClient.get("server.check.cycletime", "30")), TimeUnit.SECONDS);
 				}
@@ -111,6 +111,16 @@ public class ServerHandlerLocalProvider extends ServerHandlerAbsProvider {
     public void reset() {
     	serverMap.clear();
     }
+
+	@Override
+	protected boolean register(String ip, int port) {
+		return false;
+	}
+
+	@Override
+	protected boolean deregister(String ip, int port) {
+		return false;
+	}
 
 
 
