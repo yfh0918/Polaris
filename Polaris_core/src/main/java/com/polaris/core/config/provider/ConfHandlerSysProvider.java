@@ -8,10 +8,8 @@ import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.ConfigListener;
-import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.config.reader.ConfReaderStrategyFactory;
 import com.polaris.core.util.EnvironmentUtil;
-import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
@@ -49,18 +47,12 @@ public class ConfHandlerSysProvider implements ConfHandlerProvider{
     		file = System.getProperty(Constant.PROJECT_CONFIG_NAME);
     	}
     	if (StringUtil.isNotEmpty(file)) {
-    		propeties = ConfReaderStrategyFactory.get().getProperties(file, ConfReaderFactory.get(file));
+    		propeties = ConfReaderStrategyFactory.get().getProperties(file);
     	} 
     	
 		//folder-scan
     	if (propeties == null) {
-    		for (String suffix : ConfReaderFactory.SUPPORT_TYPE) {
-        		file =  CONFIG_NAME + FileUtil.DOT + suffix;
-        		propeties = ConfReaderStrategyFactory.get().getProperties(file, ConfReaderFactory.get(file));
-        		if (propeties != null) {
-        			break;
-        		}
-        	}
+    		propeties = ConfReaderStrategyFactory.get().getProperties(CONFIG_NAME);
     	}
     	
     	if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {

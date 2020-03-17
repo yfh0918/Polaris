@@ -67,7 +67,10 @@ public abstract class FileUtil {
     }
 	
 	public static String getSuffix(String fileName) {
-		return fileName.toLowerCase().substring(fileName.lastIndexOf(DOT) + 1);
+		if (fileName.lastIndexOf(DOT) > 0) {
+			return fileName.toLowerCase().substring(fileName.lastIndexOf(DOT) + 1);
+		}
+		return null;
 	}
 	
 }

@@ -1,28 +1,64 @@
 package com.polaris.core.config;
 
-import java.util.Set;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.Config.Opt;
+import com.polaris.core.config.reader.ConfReaderFactory;
+import com.polaris.core.util.UuidUtil;
 
-import cn.hutool.core.collection.ConcurrentHashSet;
-
+@SuppressWarnings("rawtypes")
 public class ConfigStrategyDefault implements ConfigStrategy {
 	private static final Logger logger = LoggerFactory.getLogger(ConfigStrategyDefault.class);
 	public static final ConfigStrategy INSTANCE = new ConfigStrategyDefault();
-	private ConfigListener configListener;
-	private Set<String> sequenceSet = new ConcurrentHashSet<>();
 	private ConfigStrategyDefault() {}
 	
 	@Override
-	public void init(ConfigListener configListener) {
-		this.configListener = configListener;
+	public void notify(ConfigListener configListener, Config config, String file, String contents) {
+		Properties oldProperties = config.getProperties(file);
+		Properties newProperties = ConfReaderFactory.get(file).getProperties(contents);
+		String sequence = UuidUtil.generateUuid();
+		boolean isUpdate = false;
+		for (Map.Entry entry : newProperties.entrySet()) {
+			if (oldProperties == null || !oldProperties.containsKey(entry.getKey())) {
+				if (canUpdate(sequence, config, file, entry.getKey(), entry.getValue(), Opt.ADD)) {
+					isUpdate = true;
+					configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.ADD);
+					if (oldProperties != null) {
+						logger.info("type:{} file:{} key:{} newValue:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.ADD.name());
+					}
+				}
+			} else if (!Objects.equals(oldProperties.get(entry.getKey()), newProperties.get(entry.getKey()))) {
+				if (canUpdate(sequence, config, file, entry.getKey(), entry.getValue(), Opt.UPDATE)) {
+					isUpdate = true;
+					configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.UPDATE);
+					logger.info("type:{} file:{} key:{} oldValue:{} newvalue:{} opt:{}", config.getType(),file,entry.getKey(),oldProperties.get(entry.getKey()), entry.getValue(),Opt.UPDATE.name());
+				}
+			}
+			if (oldProperties != null) {
+				oldProperties.remove(entry.getKey());
+			}
+		}
+		if (oldProperties != null) {
+			for (Map.Entry entry : oldProperties.entrySet()) {
+				if (canUpdate(sequence, config, file, entry.getKey(), entry.getValue(), Opt.DELETE)) {
+					isUpdate = true;
+					configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.DELETE);
+					logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.DELETE.name());
+				}
+			}
+		}
+		config.put(file, newProperties);
+		if (isUpdate) {
+			configListener.onComplete(sequence);
+		}
 	}
 	
-	@Override
-	public boolean onChange(String sequence, Config config,String file, Object key, Object value,Opt opt) {
+	public boolean canUpdate(String sequence, Config config,String file, Object key, Object value,Opt opt) {
 		//优先级-ext
 		if (config == ConfigFactory.get(Config.EXT)) {
 			if (ConfigFactory.get(Config.SYSTEM).contain(key)) {
@@ -45,17 +81,8 @@ public class ConfigStrategyDefault implements ConfigStrategy {
 				return false;
 			}
 		}
-		configListener.onChange(sequence, key, value, opt);
-		if (!sequenceSet.contains(sequence)) {
-			sequenceSet.add(sequence);
-		}
 		return true;
 	}
 	
-	@Override
-	public void onComplete(String sequence) {
-		if (sequenceSet.remove(sequence)) {
-			configListener.onComplete(sequence);
-		}
-	}
+
 }
