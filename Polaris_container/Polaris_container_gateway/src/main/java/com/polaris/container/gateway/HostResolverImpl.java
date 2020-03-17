@@ -14,8 +14,7 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
-import com.polaris.core.naming.provider.ServerHandlerProvider;
-import com.polaris.core.naming.provider.ServerHandlerSupport;
+import com.polaris.core.naming.provider.ServerCompositeProvider;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -71,7 +70,7 @@ public class HostResolverImpl implements HostResolver {
         staticServerSet = tempStaticServerSet;
         portServerMap = tempPortServerMap;
         uriPortMap = tempUriPortMap;
-        ServerHandlerSupport.reset();
+        ServerCompositeProvider.INSTANCE.reset();
     }
 
     //构造函数（单例）
@@ -168,13 +167,13 @@ public class HostResolverImpl implements HostResolver {
         
         //存在端口号
         if (portServerMap.containsKey(strPort)) {
-            String uri = ServerHandlerProvider.getInstance().getUrl(portServerMap.get(strPort));
+            String uri = ServerCompositeProvider.INSTANCE.getUrl(portServerMap.get(strPort));
             if (StringUtil.isNotEmpty(uri)) {
                 si = uri.split(":");
             } 
         }
         if (si == null) {
-        	String defaultUri = ServerHandlerProvider.getInstance().getUrl(portServerMap.get(uriPortMap.get(GatewayConstant.DEFAULT)));
+        	String defaultUri = ServerCompositeProvider.INSTANCE.getUrl(portServerMap.get(uriPortMap.get(GatewayConstant.DEFAULT)));
             si = defaultUri.split(":");
         }
         

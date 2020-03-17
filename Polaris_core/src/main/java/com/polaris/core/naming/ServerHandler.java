@@ -11,6 +11,7 @@ public interface ServerHandler {
 	String getUrl(String key);
 	
 	List<String> getAllUrls(String key);
+	
 	List<String> getAllUrls(String key, boolean subscribe);
 
 	void connectionFail(String key, String url);

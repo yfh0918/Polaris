@@ -10,11 +10,13 @@ import com.polaris.core.naming.ServerHandler;
 import com.polaris.core.util.StringUtil;
 
 @SuppressWarnings("rawtypes")
-public class ServerHandlerProvider {
+public class ServerHandlerRemoteProvider extends ServerHandlerAbsProvider {
 	private static final ServiceLoader<ServerHandler> serviceLoader = ServiceLoader.load(ServerHandler.class);
 	private static List<OrderWrapper> discoveryHandlerList = new ArrayList<OrderWrapper>();
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	private static ServerHandler handler = getHandler();
+    public static final ServerHandlerRemoteProvider INSTANCE = new ServerHandlerRemoteProvider();
+    private ServerHandlerRemoteProvider() {}
 	
 	//初始化
 	private static ServerHandler getHandler() {
@@ -28,11 +30,6 @@ public class ServerHandlerProvider {
     		handler = (ServerHandler)discoveryHandlerList.get(0).getHandler();
     	}
     	return handler;
-    }
-    private static final ServerHandlerProvider INSTANCE = new ServerHandlerProvider();
-
-    public static ServerHandlerProvider getInstance() {
-        return INSTANCE;
     }
     
     //注册
@@ -53,71 +50,58 @@ public class ServerHandlerProvider {
     	return false;
     }
     
-    //获取url
+    @Override
 	public String getUrl(String key) {
-		List<String> temp = ServerHandlerSupport.getRemoteAddress(key);
-		// 单个IP或者多IP不走注册中心
-		if (!ServerHandlerSupport.isSkip(temp.get(1))) {
-			
-			//走注册中心
+		List<String> temp = getRemoteAddress(key);
+		if (!isSkip(temp.get(1))) {
 			if (handler != null) {
-				
-				
-				// 走注册中心
 				String url = handler.getUrl(temp.get(1));
 				if (StringUtil.isNotEmpty(url)) {
 					return temp.get(0) + url + temp.get(2);
 				}
 			}
 		}
-		return temp.get(0) + ServerHandlerSupport.getUrl(temp.get(1)) + temp.get(2);
-	}
-
-    //获取所有的url
-	public List<String> getAllUrl(String key) {
-		return getAllUrl(key, true);
-	}
-	public List<String> getAllUrl(String key, boolean subscribe) {
-		List<String> temp = ServerHandlerSupport.getRemoteAddress(key);
-		// 单个IP或者多IP不走注册中心
-		if (ServerHandlerSupport.isSkip(temp.get(1))) {
-			List<String> urlList = new ArrayList<>();
-			String[] ips = temp.get(1).split(",");
-			for (int i0 = 0; i0 < ips.length; i0++) {
-				urlList.add(temp.get(0) + ips[i0] + temp.get(2));
-			}
-			return urlList;
-		}
-
-		// 走注册中心
-		if (handler != null) {
-			List<String> urls = handler.getAllUrls(temp.get(1));
-			for (int i0 = 0; i0 < urls.size(); i0++) {
-				String value = temp.get(0) + urls.get(i0) + temp.get(2);
-				urls.set(i0, value);
-			}
-			return urls;			
-		}
 		return null;
 	}
 
-	//获取失败的处理
-	public void connectionFail(String key, String url) {
-		List<String> temp = ServerHandlerSupport.getRemoteAddress(key);
-		List<String> temp2 = ServerHandlerSupport.getRemoteAddress(url);
-		// 单个IP或者多IP不走注册中心
-		if (!ServerHandlerSupport.isSkip(temp.get(1))) {
-			if (handler != null) {
-				handler.connectionFail(temp.get(1), temp2.get(1));
-				return;
-			}
-		}
-		ServerHandlerSupport.connectionFail(temp.get(1), temp2.get(1));
+	@Override
+	public List<String> getAllUrl(String key) {
+		return getAllUrl(key, true);
 	}
 	
-	public static void main(String[] args) {
-		String key = "FMS.APIRes.test.mcpsystem.com/api/partner/add";
-		System.out.println(ServerHandlerProvider.INSTANCE.getUrl(key));
-    }
+	@Override
+	public List<String> getAllUrl(String key, boolean subscribe) {
+		List<String> temp = getRemoteAddress(key);
+		if (!isSkip(temp.get(1))) {
+			if (handler != null) {
+				List<String> urls = handler.getAllUrls(temp.get(1),subscribe);
+				for (int i0 = 0; i0 < urls.size(); i0++) {
+					String value = temp.get(0) + urls.get(i0) + temp.get(2);
+					urls.set(i0, value);
+				}
+				return urls;			
+			}
+		}
+		
+		return null;
+	}
+
+	@Override
+	public boolean connectionFail(String key, String url) {
+		List<String> temp = getRemoteAddress(key);
+		List<String> temp2 = getRemoteAddress(url);
+		// 单个IP或者多IP不走注册中心
+		if (!isSkip(temp.get(1))) {
+			if (handler != null) {
+				handler.connectionFail(temp.get(1), temp2.get(1));
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	protected void reset() {
+	}
 	
 }

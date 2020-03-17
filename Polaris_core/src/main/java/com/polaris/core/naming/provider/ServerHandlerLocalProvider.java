@@ -11,22 +11,27 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.WeightedRoundRobinScheduling;
 import com.polaris.core.util.WeightedRoundRobinScheduling.Server;
 
-public class ServerHandlerSupport {
-	public static final String HTTP_PREFIX = "http://";
-	public static final String HTTPS_PREFIX = "https://";
+public class ServerHandlerLocalProvider extends ServerHandlerAbsProvider {
+    private Map<String, WeightedRoundRobinScheduling> serverMap = new ConcurrentHashMap<>();
+    private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = null;
 
-    private static Map<String, WeightedRoundRobinScheduling> serverMap = new ConcurrentHashMap<>();
-    private static ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = null;
-
-    public static String getUrl(String key) {
+    public static ServerHandlerLocalProvider INSTANCE = new ServerHandlerLocalProvider();
+    private ServerHandlerLocalProvider() {}
+    
+    @Override
+    public String getUrl(String key) {
+    	
+    	List<String> temp = getRemoteAddress(key);
+    	key = temp.get(1);
+    	
     	String[] serversInfo = key.split(",");
     	if (serversInfo.length == 1) {
-    		return key;
+    		return temp.get(0)+ key + temp.get(2);
     	}
     	
     	//初期化定时器
 		if (scheduledThreadPoolExecutor == null) {
-			synchronized(ServerHandlerSupport.class){
+			synchronized(ServerHandlerLocalProvider.class){
 				if (scheduledThreadPoolExecutor == null) {
 					scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
 			        scheduledThreadPoolExecutor.scheduleAtFixedRate(new ServerCheckTask(serverMap), 
@@ -60,14 +65,34 @@ public class ServerHandlerSupport {
     		}
     	}
     	Server server = wrrs.getServer();
-    	return server.getIp() + ":" + server.getPort();
+    	return temp.get(0)+ server.getIp() + ":" + server.getPort() + temp.get(2);
     }
     
-    public static void connectionFail(String key, String url) {
-    	
+	@Override
+	protected List<String> getAllUrl(String key) {
+		return getAllUrl(key,true);
+	}
+	
+    @Override
+    public List<String> getAllUrl(String key, boolean subscribe) {
+    	List<String> temp = getRemoteAddress(key);
+    	List<String> urlList = new ArrayList<>();
+		String[] ips = temp.get(1).split(",");
+		for (int i0 = 0; i0 < ips.length; i0++) {
+			urlList.add(temp.get(0) + ips[i0] + temp.get(2));
+		}
+		return urlList;
+
+    }
+    
+    @Override
+    public boolean connectionFail(String key, String url) {
+    	key = getRemoteAddress(key).get(1);
+    	url = getRemoteAddress(url).get(1);
+		
     	//只有单个url直接返回
     	if (key.split(",").length == 1) {
-    		return;
+    		return true;
     	}
     	
     	//多个URL
@@ -79,54 +104,14 @@ public class ServerHandlerSupport {
             weightedRoundRobinScheduling.unhealthilyServers.add(weightedRoundRobinScheduling.getServer(si[0], Integer.parseInt(si[1])));
             weightedRoundRobinScheduling.healthilyServers.remove(weightedRoundRobinScheduling.getServer(si[0], Integer.parseInt(si[1])));
     	}
+    	return true;
     }
     
-
-	public static List<String> getRemoteAddress(String serverInfo) {
-		List<String> serverList = new ArrayList<>(3);
-		if (serverInfo.toLowerCase().startsWith(HTTP_PREFIX)) {
-			serverList.add(HTTP_PREFIX);
-			serverInfo = serverInfo.substring(HTTP_PREFIX.length());
-		} else if (serverInfo.toLowerCase().startsWith(HTTPS_PREFIX)) {
-			serverList.add(HTTPS_PREFIX);
-			serverInfo = serverInfo.substring(HTTPS_PREFIX.length());
-		} else {
-			serverList.add("");
-		}
-		int suffixIndex = serverInfo.indexOf("/");
-		if (suffixIndex > 0) {
-			serverList.add(serverInfo.substring(0, suffixIndex));
-			serverList.add(serverInfo.substring(suffixIndex));
-		} else {
-			serverList.add(serverInfo);
-			serverList.add("");
-		}
-        return serverList;
-    }
-	public static boolean isSkip(String key) {
-		if (key.toLowerCase().startsWith("www.")) {
-			return true;
-		}
-		if (key.toLowerCase().endsWith(".com") || key.toLowerCase().endsWith(".cn")) {
-			return true;
-		}
-		if (key.contains(",") || key.contains(":")) {
-			return true;
-		}
-		return false;
-	}
-	
-    public static void main(String[] args) {
-    	for (int i0 = 0; i0 < 6; i0++) {
-    		String url = getUrl("localhost:8080,localhost:8081");
-    		System.out.println(url);
-    		connectionFail("localhost:8080,localhost:8081",url);
-    	}
-    }
-    
-    //如果重新配置了URL原先的serverMap全部清空重来
-    public static void reset() {
+    @Override
+    public void reset() {
     	serverMap.clear();
     }
+
+
 
 }
