@@ -2,7 +2,6 @@ package com.polaris.core.util;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -40,49 +39,6 @@ public abstract class FileUtil {
         return path + File.separator + fileDir;
     }
 
-    public static InputStream getStream(String fileName) throws IOException {
-		
-		//先判断目录下的文件夹
-    	InputStream inputStream = getStreamFromPath(fileName);
-		
-		//是否包含classpath
-		if (inputStream == null) {
-			return getStreamFromClassPath(fileName);
-		}
-		
-		return inputStream;
-	}
-    
-    public static InputStream getStreamFromPath(String fileName) throws IOException {
-		
-		//先判断目录下的文件夹
-		String path = getFullPath("");
-		File file = new File(path + File.separator + Constant.CONFIG + File.separator + fileName);
-		if (file.exists()) {
-			return new FileInputStream(file);
-		}
-		
-		//根目录下
-		file = new File(path + File.separator + fileName);
-		if (file.exists()) {
-			return new FileInputStream(file);
-		}
-		
-		return null;
-	}
-    
-    public static InputStream getStreamFromClassPath(String fileName) throws IOException {
-    	
-    	//classpath:config/filename
-		InputStream inputStream = FileUtil.class.getClassLoader().getResourceAsStream(Constant.CONFIG + File.separator + fileName);
-		if (inputStream != null) {
-			return inputStream;
-		}
-		
-		//classpath:filename
-		return FileUtil.class.getClassLoader().getResourceAsStream(fileName);
-    }
-    
     public static String read(InputStream in) throws IOException {
     	if (in == null) {
     		return null;
@@ -109,23 +65,6 @@ public abstract class FileUtil {
     	}
     	return null;
     }
-	
-	public static File getFile(String fileName) {
-		try {
-			String path = getFullPath("");
-			File file = new File(path + File.separator + Constant.CONFIG + File.separator + fileName);
-			if (file.exists()) {
-				return file;
-			}
-			file = new File(path + File.separator + fileName);
-			if (file.exists()) {
-				return file;
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		return null;
-	}
 	
 	public static String getSuffix(String fileName) {
 		return fileName.toLowerCase().substring(fileName.lastIndexOf(DOT) + 1);

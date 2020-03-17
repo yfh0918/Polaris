@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.ConfHandlerListener;
+import com.polaris.core.config.reader.ConfReaderStrategyFactory;
 import com.polaris.core.util.FileUtil;
 
 import cn.hutool.core.thread.NamedThreadFactory;
@@ -75,13 +76,13 @@ public class ConfFileClient {
 	public String getConfig(String fileName, String group) {
 		
 		//可以监听的文件有效
-		File file = FileUtil.getFile(fileName);
+		File file = ConfReaderStrategyFactory.get().getFile(fileName);
 		if (file != null) {
 			isModifiedByFile(fileName, file);
 		}
 
 		try {
-			return FileUtil.read(FileUtil.getStream(fileName));
+			return FileUtil.read(ConfReaderStrategyFactory.get().getInputStream(fileName));
         } catch (IOException e) {
         	logger.error("ConfigFile load error,ConfigFile is null");
         	e.printStackTrace();

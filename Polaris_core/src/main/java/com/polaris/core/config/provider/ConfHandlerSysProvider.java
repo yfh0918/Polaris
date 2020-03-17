@@ -9,6 +9,7 @@ import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.ConfigListener;
 import com.polaris.core.config.reader.ConfReaderFactory;
+import com.polaris.core.config.reader.ConfReaderStrategyFactory;
 import com.polaris.core.util.EnvironmentUtil;
 import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.NetUtils;
@@ -48,29 +49,18 @@ public class ConfHandlerSysProvider implements ConfHandlerProvider{
     		file = System.getProperty(Constant.PROJECT_CONFIG_NAME);
     	}
     	if (StringUtil.isNotEmpty(file)) {
-    		propeties = ConfReaderFactory.get(file).getProperties(file,true,true);
+    		propeties = ConfReaderStrategyFactory.get().getProperties(file, ConfReaderFactory.get(file));
     	} 
     	
 		//folder-scan
     	if (propeties == null) {
     		for (String suffix : ConfReaderFactory.SUPPORT_TYPE) {
         		file =  CONFIG_NAME + FileUtil.DOT + suffix;
-        		propeties = ConfReaderFactory.get(file).getProperties(file,true,false);
+        		propeties = ConfReaderStrategyFactory.get().getProperties(file, ConfReaderFactory.get(file));
         		if (propeties != null) {
         			break;
         		}
         	}
-        	
-			//classpath-scan
-    		if (propeties == null) {
-    			for (String suffix : ConfReaderFactory.SUPPORT_TYPE) {
-            		file =  CONFIG_NAME + FileUtil.DOT + suffix;
-            		propeties = ConfReaderFactory.get(file).getProperties(file,false,true);
-            		if (propeties != null) {
-            			break;
-            		}
-            	}
-    		}
     	}
     	
     	if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {

@@ -1,4 +1,5 @@
 package com.polaris.core.util;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
 
@@ -12,22 +13,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 public abstract class XmlUtil {
 	
-	public static Properties getProperties (String fileName,boolean includePath, boolean includeClassPath) {
-		if (includePath) {
-			try {
-				String content = FileUtil.read(FileUtil.getStreamFromPath(fileName));
-				return PropertyUtil.getProperties(xml2Json(content));
-		    } catch (Exception e) {
-		    	e.printStackTrace();
-		    }
-		}
-		if (includeClassPath) {
-			try {
-				String content = FileUtil.read(FileUtil.getStreamFromClassPath(fileName));
-				return PropertyUtil.getProperties(xml2Json(content));
-		    } catch (Exception e) {
-		    	e.printStackTrace();
-		    }
+	public static Properties getProperties (InputStream inputStream) {
+		try {
+			String content = FileUtil.read(inputStream);
+			return PropertyUtil.getProperties(xml2Json(content));
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
 		return null;
 	}

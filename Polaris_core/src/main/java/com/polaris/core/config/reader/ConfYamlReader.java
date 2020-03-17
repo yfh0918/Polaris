@@ -1,5 +1,6 @@
 package com.polaris.core.config.reader;
 
+import java.io.InputStream;
 import java.util.Properties;
 
 import com.polaris.core.util.YamlUtil;
@@ -12,8 +13,8 @@ public class ConfYamlReader implements ConfReader{
 	private ConfYamlReader() {}
 	
 	@Override
-	public Properties getProperties(String fileName, boolean includePath, boolean includeClassPath) {
-		return YamlUtil.getProperties(fileName, includePath, includeClassPath);
+	public Properties getProperties(InputStream inputStream) {
+		return YamlUtil.getProperties(inputStream);
 	}
 
 	@Override

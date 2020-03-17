@@ -1,6 +1,5 @@
 package com.polaris.core.util;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.LinkedHashMap;
@@ -16,29 +15,7 @@ import org.yaml.snakeyaml.reader.UnicodeReader;
 
 public abstract class YamlUtil {
 
-	public static Properties getProperties (String fileName,boolean includePath, boolean includeClassPath) {
-		if (includePath) {
-			try (InputStream in = FileUtil.getStreamFromPath(fileName)) {
-				if (in != null) {
-					return getProperties(in);
-			    }
-		    } catch (IOException e) {
-		    	e.printStackTrace();
-		    }
-		}
-		if (includeClassPath) {
-			try (InputStream in = FileUtil.getStreamFromClassPath(fileName)) {
-				if (in != null) {
-					return getProperties(in);
-			    }
-		    } catch (IOException e) {
-		    	e.printStackTrace();
-		    }
-		}
-		return null;
-	}
-	
-	public static Properties getProperties (InputStream inputStream) throws IOException {
+	public static Properties getProperties (InputStream inputStream) {
 		Yaml yaml = createYaml();
 		Resource resource = new InputStreamResource(inputStream);
 		Properties properties = CollectionFactory.createStringAdaptingProperties();
@@ -48,20 +25,27 @@ public abstract class YamlUtil {
 					properties.putAll(PropertyUtil.getProperties(asMap(object)));
 				}
 			}
-			
-		} 
-		return properties;
+			return properties;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
 	}
 	
 	public static Properties getProperties(String fileContent) {
-		Yaml yaml = createYaml();
-		Properties properties = CollectionFactory.createStringAdaptingProperties();
-		for (Object object : yaml.loadAll(fileContent)) {
-			if (object != null) {
-				properties.putAll(PropertyUtil.getProperties(asMap(object)));
+		try {
+			Yaml yaml = createYaml();
+			Properties properties = CollectionFactory.createStringAdaptingProperties();
+			for (Object object : yaml.loadAll(fileContent)) {
+				if (object != null) {
+					properties.putAll(PropertyUtil.getProperties(asMap(object)));
+				}
 			}
+			return properties;
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		return properties;
+		return null;
 	}
 	
 	private static Yaml createYaml() {

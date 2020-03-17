@@ -1,5 +1,6 @@
 package com.polaris.core.config.reader;
 
+import java.io.InputStream;
 import java.util.Properties;
 
 import com.polaris.core.util.XmlUtil;
@@ -11,8 +12,8 @@ public class ConfXmlReader implements ConfReader{
 	private ConfXmlReader() {}
 	
 	@Override
-	public Properties getProperties(String fileName, boolean includePath, boolean includeClassPath) {
-		return XmlUtil.getProperties(fileName, includePath, includeClassPath);
+	public Properties getProperties(InputStream inputStream) {
+		return XmlUtil.getProperties(inputStream);
 	}
 
 	@Override

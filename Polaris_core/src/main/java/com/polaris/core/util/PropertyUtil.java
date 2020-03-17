@@ -16,48 +16,31 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
 public abstract class PropertyUtil {
-	public static Properties getProperties (String fileName,boolean includePath, boolean includeClassPath) {
-		if (includePath) {
-			try (InputStream in = FileUtil.getStreamFromPath(fileName)) {
-				if (in != null) {
-					return getProperties(in);
-			    }
-		    } catch (IOException e) {
-		    	e.printStackTrace();
-		    }
-		}
-		if (includeClassPath) {
-			try (InputStream in = FileUtil.getStreamFromClassPath(fileName)) {
-				if (in != null) {
-					return getProperties(in);
-			    }
-		    } catch (IOException e) {
-		    	e.printStackTrace();
-		    }
-		}
-		return null;
-	}
 	
 	public static Properties getProperties(String fileContent) {
 		Properties properties = new Properties();
 		if (StringUtil.isEmpty(fileContent)) {
-			return properties;
+			return null;
 		}
 		
 		try (InputStream inStream = new ByteArrayInputStream(fileContent.getBytes())) {
 			properties = getProperties(inStream);
+			return properties;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-    	return properties;
+		return null;
     }
 	
-	private static Properties getProperties(InputStream inputStream) throws IOException {
+	public static Properties getProperties(InputStream inputStream) {
   		Properties properties = new Properties();
         try (InputStreamReader read = new InputStreamReader(inputStream, Charset.defaultCharset())) {
         	properties.load(read);
-        } 
-	    return properties;
+        	return properties;
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+	    return null;
 	}
 
 	public static Properties getProperties(Map<String, Object> map) {
