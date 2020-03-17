@@ -17,7 +17,7 @@ public class ConfHandlerProviderFactory {
 				} else if (type.equals(Config.GLOBAL)) {
 					provider = ConfHandlerGlobalProvider.INSTANCE;
 				} else if (type.equals(Config.SYSTEM)) {
-					provider = ConfSystemHandlerProvider.INSTANCE;
+					provider = ConfHandlerSysProvider.INSTANCE;
 				} else {
 					throw new RuntimeException("type:"+type+"is incorrect");
 				}

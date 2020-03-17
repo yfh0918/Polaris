@@ -14,11 +14,11 @@ import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
-public class ConfSystemHandlerProvider implements ConfHandlerProvider{
+public class ConfHandlerSysProvider implements ConfHandlerProvider{
 	private static volatile String CONFIG_NAME = "application";
 	private static String SYSTEM_SEQUENCE = "system";
-	public static ConfSystemHandlerProvider INSTANCE = new ConfSystemHandlerProvider();
-	private ConfSystemHandlerProvider() {}
+	public static ConfHandlerSysProvider INSTANCE = new ConfHandlerSysProvider();
+	private ConfHandlerSysProvider() {}
 	private Properties properties = null;
 	
 	@Override

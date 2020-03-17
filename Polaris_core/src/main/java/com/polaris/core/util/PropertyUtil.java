@@ -52,11 +52,11 @@ public abstract class PropertyUtil {
     	return properties;
     }
 	
-	public static Properties getProperties(InputStream inputStream) throws IOException {
+	private static Properties getProperties(InputStream inputStream) throws IOException {
   		Properties properties = new Properties();
         try (InputStreamReader read = new InputStreamReader(inputStream, Charset.defaultCharset())) {
         	properties.load(read);
-        }
+        } 
 	    return properties;
 	}
 
