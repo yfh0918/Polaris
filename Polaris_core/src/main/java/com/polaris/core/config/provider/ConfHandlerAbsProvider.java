@@ -28,7 +28,6 @@ public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
     private static final ServiceLoader<ConfHandler> handlerLoader = ServiceLoader.load(ConfHandler.class);
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	protected static ConfHandler handler;
-	protected ConfigListener configListener;
 	protected ConfigStrategy strategy = ConfigStrategyFactory.get();
 	
     @SuppressWarnings("rawtypes")
@@ -48,7 +47,7 @@ public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
     
     @Override
     public void init(ConfigListener configListener) {
-    	this.configListener = configListener;
+    	strategy.init(configListener);
     	initHandler();
     }
     
@@ -63,56 +62,41 @@ public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
 		
 		//config -set
 		Properties properties = ConfReaderFactory.get(file).getProperties(contents);
-		boolean isUpdate = false;
 		String sequence = UuidUtil.generateUuid();
 		for (Map.Entry entry : properties.entrySet()) {
-			if (strategy.canChange(config, file, entry.getKey(), entry.getValue(), Opt.ADD)) {
-				configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.ADD);
-				isUpdate = true;
-			}
+			strategy.onChange(sequence, config, file, entry.getKey(), entry.getValue(), Opt.ADD);
 		}
 		config.put(file, properties);
-		if (isUpdate) {
-			configListener.onComplete(sequence);
-		}
+		strategy.onComplete(sequence);
 		
 		//listen
     	listen(file, group, new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
-				boolean isUpdate = false;
 				Properties oldProperties = config.getProperties(file);
 				Properties newProperties = ConfReaderFactory.get(file).getProperties(get(file,group));
 				String sequence = UuidUtil.generateUuid();
 				for (Map.Entry entry : newProperties.entrySet()) {
 					if (!oldProperties.containsKey(entry.getKey())) {
-						if (strategy.canChange(config, file, entry.getKey(), entry.getValue(), Opt.ADD)) {
-							configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.ADD);
+						if (strategy.onChange(sequence, config, file, entry.getKey(), entry.getValue(), Opt.ADD)) {
 							logger.info("type:{} file:{} key:{} newValue:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.ADD.name());
-							isUpdate = true;
 						}
 
 
 					} else if (!Objects.equals(oldProperties.get(entry.getKey()), newProperties.get(entry.getKey()))) {
-						if (strategy.canChange(config, file, entry.getKey(), entry.getValue(), Opt.UPDATE)) {
-							configListener.onChange(sequence,entry.getKey(), entry.getValue(), Opt.UPDATE);
+						if (strategy.onChange(sequence, config, file, entry.getKey(), entry.getValue(), Opt.UPDATE)) {
 							logger.info("type:{} file:{} key:{} oldValue:{} newvalue:{} opt:{}", config.getType(),file,entry.getKey(),oldProperties.get(entry.getKey()), entry.getValue(),Opt.UPDATE.name());
-							isUpdate = true;
 						}
 					}
 					oldProperties.remove(entry.getKey());
 				}
 				for (Map.Entry entry : oldProperties.entrySet()) {
-					if (strategy.canChange(config, file, entry.getKey(), entry.getValue(), Opt.DELETE)) {
-						configListener.onChange(sequence,entry.getKey(), entry.getValue(), Opt.DELETE);
+					if (strategy.onChange(sequence, config, file, entry.getKey(), entry.getValue(), Opt.DELETE)) {
 						logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.DELETE.name());
-						isUpdate = true;
 					}
 				}
 				config.put(file, newProperties);
-				if (isUpdate) {
-					configListener.onComplete(sequence);
-				}
+				strategy.onComplete(sequence);
 			}
 		});
     	return true;
