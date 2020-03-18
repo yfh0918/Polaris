@@ -18,27 +18,15 @@ public class ConfApolloClient {
 		return INSTANCE;
 	}
 	private ConfApolloClient() {
-//		try {
-//			String appFile = PropertyUtils.getFilePath("META-INF"+File.separator+"app.properties");
-//			PropertyUtils.writeData(appFile, "app.id", ConfClient.getAppName(), true);
-//			PropertyUtils.writeData(appFile, "apollo.meta", ConfClient.getConfigRegistryAddress(), true);
-//			if (StringUtil.isNotEmpty(ConfClient.getNameSpace())) {
-//				PropertyUtils.writeData(appFile, "apollo.env", ConfClient.getNameSpace(), true);
-//			}
-//			if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
-//				System.setProperty("apollo.cluster", ConfClient.getGroup());
-//			}
-//		} catch (Exception e) {
-//			logger.error("create META-INF/app.properties error,cause:{}",e.getMessage());
-//		}
+		//must load META-INF/app.properties
 	}
-	
 	
 	// 获取文件内容
 	public String getConfig(String fileName, String group) {
-		String fileFormart = null;
+		String fileFormart = "properties";
 		if (fileName != null && fileName.lastIndexOf(".") > 0) {
 			fileFormart = fileName.substring(fileName.lastIndexOf(".") + 1);
+			fileName = fileName.substring(fileName.lastIndexOf("."));
 		}
 		ConfigFile config = ConfigService.getConfigFile(fileName, ConfigFileFormat.fromString(fileFormart));
 		if (config == null) {
@@ -64,7 +52,4 @@ public class ConfApolloClient {
 			}
 		});
 	}
-
-
-		
 }
