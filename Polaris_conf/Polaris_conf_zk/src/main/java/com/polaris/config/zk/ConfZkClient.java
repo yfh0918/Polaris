@@ -33,7 +33,7 @@ public class ConfZkClient {
 		StringBuilder groupSb = new StringBuilder();
 		
 		//rootPath
-		groupSb.append(ConfClient.get("config.zk.root.path",Constant.CONF_DATA_PATH));
+		groupSb.append(ConfClient.get("config.zk.root.path",Constant.CONF_ROOT_PATH));
 		groupSb.append(Constant.SLASH);
 
 		//namespace

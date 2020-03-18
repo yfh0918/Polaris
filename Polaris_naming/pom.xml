@@ -15,6 +15,7 @@
   <modules>
 	<module>Polaris_naming_nacos</module>
 	<module>Polaris_naming_eureka</module>
+	<module>Polaris_naming_zk</module>
   </modules>
   
   <dependencies>
