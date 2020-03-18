@@ -466,3 +466,7 @@
 /Polaris_demo/Polaris_workflow_web/.classpath
 /Polaris_demo/Polaris_workflow_web/.project
 /Polaris_demo/Polaris_workflow_web/.settings
+/Polaris_extension/Polaris_extension_zk/.settings
+/Polaris_extension/Polaris_extension_zk/bin
+/Polaris_extension/Polaris_extension_zk/target
+/Polaris_extension/Polaris_extension_zk/.classpath
