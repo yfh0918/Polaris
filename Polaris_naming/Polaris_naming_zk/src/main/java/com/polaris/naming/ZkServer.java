@@ -24,13 +24,14 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.ServerHandler;
 import com.polaris.core.naming.ServerHandlerOrder;
 import com.polaris.core.util.StringUtil;
+import com.polaris.core.util.WeightedRoundRobinScheduling;
+import com.polaris.core.util.WeightedRoundRobinScheduling.Server;
 
 @Order(ServerHandlerOrder.ZK)
 public class ZkServer implements ServerHandler {
 	private static final Logger logger = LoggerFactory.getLogger(ZkServer.class);
 	private CuratorFramework curator;
 	private Map<String, PathChildrenCache> pathMap = new ConcurrentHashMap<>();
-	private Map<String, Set<String>> urlMap = new ConcurrentHashMap<>(); 
 	public ZkServer() {
 	}
 	
@@ -53,13 +54,14 @@ public class ZkServer implements ServerHandler {
 		CuratorFramework curator = getCurator();
 		String childNodePathCache = getPath(key);
 
+        //childData：设置缓存节点的数据状态
+		PathChildrenCache childrenCache = pathMap.get(childNodePathCache);
 		try {
 					
-	        //childData：设置缓存节点的数据状态
-			if (pathMap.get(childNodePathCache) == null) {
+			if (childrenCache == null) {
 				synchronized(childNodePathCache.intern()) {
 					if (pathMap.get(childNodePathCache) == null) {
-						final PathChildrenCache childrenCache = new PathChildrenCache(curator,childNodePathCache,true);
+						childrenCache = new PathChildrenCache(curator,childNodePathCache,true);
 
 				        /*
 				        * StartMode：初始化方式
@@ -72,7 +74,6 @@ public class ZkServer implements ServerHandler {
 				        //获取所有子节点
 				        List<ChildData> childDataList = childrenCache.getCurrentData();
 				        Set<String> childList = new LinkedHashSet<>();
-						urlMap.put(childNodePathCache, childList);
 				        for(ChildData cd : childDataList){
 				        	childList.add(new String(cd.getData()));
 				        }
@@ -94,8 +95,27 @@ public class ZkServer implements ServerHandler {
 		} catch (Exception ex) {
 			logger.error("ERROR:",ex);
 		}
-		Set<String> childList = urlMap.get(childNodePathCache);
-		return null;
+		
+		//默认权重算法
+		List<WeightedRoundRobinScheduling.Server> serverList = new ArrayList<>();
+		List<ChildData> childDataList = childrenCache.getCurrentData();
+        for(ChildData cd : childDataList){
+        	String serverInfo = new String(cd.getData());
+			String[] si = serverInfo.split(":");
+			
+			// ip:port
+            if (si.length == 2) {
+	                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), 1);
+                serverList.add(server);
+            } else if (si.length == 3) {
+	                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2]));
+                serverList.add(server);
+            }
+
+        }
+		WeightedRoundRobinScheduling wrrs = new WeightedRoundRobinScheduling(serverList);
+    	Server server = wrrs.getServer();
+		return server.toString();
 	}
 	
 	@Override
@@ -105,19 +125,18 @@ public class ZkServer implements ServerHandler {
 
 	@Override
 	public List<String> getAllUrls(String key, boolean subscribe) {
-		if (subscribe) {
-			//get curator
-			String childNodePathCache = getPath(key);
-			PathChildrenCache childrenCache = pathMap.get(childNodePathCache);
-			//获取所有子节点
-	        List<ChildData> childDataList = childrenCache.getCurrentData();
-	        List<String> childList = new ArrayList<>();
-	        for(ChildData cd : childDataList){
-	        	childList.add(new String(cd.getData()));
-	        }
-	        return childList;
-		}
-		return new ArrayList<>(urlMap.get(key));
+		//get curator
+		String childNodePathCache = getPath(key);
+		PathChildrenCache childrenCache = pathMap.get(childNodePathCache);
+		//获取所有子节点
+        List<ChildData> childDataList = childrenCache.getCurrentData();
+        List<String> childList = new ArrayList<>();
+        for(ChildData cd : childDataList){
+        	String data = new String(cd.getData());
+        	String[] datas = data.split(":");
+    		childList.add(datas[0]+":"+datas[1]);
+        }
+        return childList;
 	}
 
 	@Override
@@ -131,7 +150,7 @@ public class ZkServer implements ServerHandler {
 		CuratorFramework curator = getCurator();
 		
 		//register-data
-		String regContent = ip + ":" + port;
+		String regContent = ip + ":" + port+ ":" + ConfClient.get(Constant.PROJECT_WEIGHT, Constant.PROJECT_WEIGHT_DEFAULT);
 		String zkRegPathPrefix = getPath(ConfClient.getAppName()) + "service-provider-";
 		
 		//re-connect
