@@ -2,11 +2,11 @@ package com.polaris.core.naming;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.provider.ServerCompositeProvider;
+import com.polaris.core.naming.provider.ServerStrategyProvider;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
-public abstract class ServerHandlerClient {
+public abstract class ServerClient {
 
 	public static boolean register() {
 		//注册中心
@@ -16,7 +16,7 @@ public abstract class ServerHandlerClient {
 				return false;
 			}
 			String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
-			return ServerCompositeProvider.INSTANCE.register(registerIp, Integer.parseInt(port));
+			return ServerStrategyProvider.INSTANCE.register(registerIp, Integer.parseInt(port));
 		}
 		return false;
 	}
@@ -29,7 +29,7 @@ public abstract class ServerHandlerClient {
 				return false;
 			}
 			String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
-        	return ServerCompositeProvider.INSTANCE.deregister(registerIp, Integer.parseInt(port));
+        	return ServerStrategyProvider.INSTANCE.deregister(registerIp, Integer.parseInt(port));
 		}
 		return false;
 	}

@@ -8,7 +8,7 @@ public abstract class ServerHandlerAbsProvider {
 	public static final String HTTP_PREFIX = "http://";
 	public static final String HTTPS_PREFIX = "https://";
 
-	public List<String> getRemoteAddress(String serverInfo) {
+	protected List<String> getRemoteAddress(String serverInfo) {
 		List<String> serverList = new ArrayList<>(3);
 		if (serverInfo.toLowerCase().startsWith(HTTP_PREFIX)) {
 			serverList.add(HTTP_PREFIX);

@@ -2,11 +2,11 @@ package com.polaris.core.naming.provider;
 
 import java.util.List;
 
-public class ServerCompositeProvider extends ServerHandlerAbsProvider{
-    public static final ServerCompositeProvider INSTANCE = new ServerCompositeProvider();
+public class ServerStrategyProvider extends ServerHandlerAbsProvider{
+    public static final ServerStrategyProvider INSTANCE = new ServerStrategyProvider();
     private static final ServerHandlerRemoteProvider INSTANCE_REMOTE = ServerHandlerRemoteProvider.INSTANCE;
     private static final ServerHandlerLocalProvider INSTANCE_LOCAL = ServerHandlerLocalProvider.INSTANCE;
-    private ServerCompositeProvider() {}
+    private ServerStrategyProvider() {}
     
     @Override
     public boolean register(String ip, int port) {
@@ -49,9 +49,5 @@ public class ServerCompositeProvider extends ServerHandlerAbsProvider{
 		INSTANCE_REMOTE.reset();
 		INSTANCE_LOCAL.reset();
 	}
-	
-	@Override
-	public List<String> getRemoteAddress(String serverInfo) {
-		return getRemoteAddress(serverInfo);
-	}
+
 }

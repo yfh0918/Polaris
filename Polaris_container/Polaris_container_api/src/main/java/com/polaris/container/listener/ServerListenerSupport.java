@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
-import com.polaris.core.naming.ServerHandlerClient;
+import com.polaris.core.naming.ServerClient;
 
 public abstract class ServerListenerSupport {
 	
@@ -65,12 +65,12 @@ public abstract class ServerListenerSupport {
 	protected static class ServerRegisterServerListener implements ServerListener {
 		@Override
 		public void started() {
-			ServerHandlerClient.register();
+			ServerClient.register();
 			
 		}
 		@Override
 		public void stopped() {
-	    	ServerHandlerClient.unRegister();
+	    	ServerClient.unRegister();
 		}
 	}
 
