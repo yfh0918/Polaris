@@ -136,10 +136,7 @@ public class ZkClient implements Watcher {
 	 */
 	@Override
 	public void process(WatchedEvent event) {
-
 	}
-
-
 
 	/**
 	 * create node path with parent path (如果父节点不存在,循环创建父节点, 因为父节点不存在zookeeper会抛异常)
@@ -177,13 +174,12 @@ public class ZkClient implements Watcher {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * get data from node
 	 * @param key
 	 * @return
 	 */
-
 	public static String getPathData(String url, String path){
 		try {
 			Stat stat = getInstance(url).exists(path, false);//add watch
@@ -206,7 +202,13 @@ public class ZkClient implements Watcher {
 		}
 		return null;
 	}
-	public static void setWatchForPath(String url, String path) {
+	
+	/**
+	 * add watch
+	 * @param key
+	 * @return
+	 */
+	public static void addWatchForPath(String url, String path) {
 		try {
 			Stat stat = getInstance(url).exists(path, true);
 			if (stat == null) {
@@ -220,18 +222,7 @@ public class ZkClient implements Watcher {
 			logger.error(e.getMessage());
 		}
 	}
-	
-	
-	public static void close(String url) {
-		try {
-			if (zkMap.get(url) != null) {
-				zkMap.get(url).close();
-				zkMap.remove(url);
-			}
-		} catch (InterruptedException e) {
-			logger.error(e.getMessage());
-		}
-	}
+
 	
 
 }

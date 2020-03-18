@@ -15,7 +15,7 @@ public class ConfZkClient {
 	}
 	public static void addListener(String fileName, String group, ConfHandlerListener listener) {
 		String path = getPath(fileName,group);
-		ZkClient.setWatchForPath(ConfClient.getConfigRegistryAddress(),path);
+		ZkClient.addWatchForPath(ConfClient.getConfigRegistryAddress(),path);
 		ZkClient.addZkListener(path, new ZkListener() {
 			@Override
 			public void listen(String url, String path, EventType type) {
