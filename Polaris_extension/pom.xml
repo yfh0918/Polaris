@@ -18,6 +18,8 @@
 	<module>Polaris_extension_sentinel</module>
 	<module>Polaris_extension_cache</module>
 	<module>Polaris_extension_workflow</module>
+	<module>Polaris_extension_zk</module>
+	
   </modules>
   
   <dependencies>

@@ -2,18 +2,28 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<parent>
 		<groupId>com.polaris</groupId>
-		<artifactId>Polaris_conf</artifactId>
+		<artifactId>Polaris_extension</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>Polaris_conf_zk</artifactId>
+	<artifactId>Polaris_extension_zk</artifactId>
 	<packaging>jar</packaging>
-	<name>Polaris_conf_zk</name>
+	<name>Polaris_extension_zk</name>
 
 	<dependencies>
 		<dependency>
-			<groupId>com.polaris</groupId>
-			<artifactId>Polaris_extension_zk</artifactId>
+			<groupId>org.apache.zookeeper</groupId>
+			<artifactId>zookeeper</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.curator</groupId>
+		    <artifactId>curator-framework</artifactId>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.curator/curator-recipes -->
+		<dependency>
+		    <groupId>org.apache.curator</groupId>
+		    <artifactId>curator-recipes</artifactId>
 		</dependency>
 	  </dependencies>
 	
