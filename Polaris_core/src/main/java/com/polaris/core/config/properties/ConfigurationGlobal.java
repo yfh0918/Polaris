@@ -11,7 +11,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
-import com.polaris.core.config.Config;
+import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.ConfigException;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
@@ -51,9 +51,9 @@ public class ConfigurationGlobal implements BeanPostProcessor, PriorityOrdered, 
 		String[] files = annotation.value();
 		for (String file : files) {
 			if (StringUtil.isNotEmpty(file)) {
-				if (ConfigFactory.get(Config.GLOBAL).getProperties(file) == null) {
-					if (!ConfHandlerProviderFactory.get(Config.GLOBAL).init(file)) {
-						throw new ConfigException("type:global file:" + file + " is not exsit");
+				if (ConfigFactory.get(Type.GBL).getProperties(file) == null) {
+					if (!ConfHandlerProviderFactory.get(Type.GBL).init(file)) {
+						throw new ConfigException("type:GBL file:" + file + " is not exsit");
 					}
 				} 
 			} 

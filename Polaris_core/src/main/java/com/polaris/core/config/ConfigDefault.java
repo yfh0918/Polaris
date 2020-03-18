@@ -7,19 +7,19 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public enum ConfigDefault implements Config {
 	
-	SYSTEM(Config.SYSTEM),
-	EXT(Config.EXT),
-    GLOBAL(Config.GLOBAL);
+	SYS(Type.SYS),
+	EXT(Type.EXT),
+	GBL(Type.GBL);
 
-	private String type;
+	private Type type;
     private Map<String, Properties> cacheFile = new ConcurrentHashMap<>();
 
-    ConfigDefault(String type) {
+    ConfigDefault(Type type) {
         this.type = type;
     }
     
     @Override
-    public String getType() {
+    public Type getType() {
         return type;
     }
 

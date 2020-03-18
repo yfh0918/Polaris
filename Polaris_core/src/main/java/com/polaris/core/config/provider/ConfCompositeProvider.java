@@ -2,24 +2,24 @@ package com.polaris.core.config.provider;
 
 import java.util.Properties;
 
-import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Opt;
+import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.ConfigListener;
 
 
 public class ConfCompositeProvider implements ConfigListener {
     public static final ConfCompositeProvider INSTANCE = new ConfCompositeProvider();
-    private static final ConfHandlerProvider INSTANCE_SYSTEM = ConfHandlerProviderFactory.get(Config.SYSTEM);
-    private static final ConfHandlerProvider INSTANCE_EXT = ConfHandlerProviderFactory.get(Config.EXT);
-    private static final ConfHandlerProvider INSTANCE_GLOBAL = ConfHandlerProviderFactory.get(Config.GLOBAL);
+    private static final ConfHandlerProvider INSTANCE_SYS = ConfHandlerProviderFactory.get(Type.SYS);
+    private static final ConfHandlerProvider INSTANCE_EXT = ConfHandlerProviderFactory.get(Type.EXT);
+    private static final ConfHandlerProvider INSTANCE_GBL = ConfHandlerProviderFactory.get(Type.GBL);
     private static final ConfEndPointProvider INSTANCE_ENDPOINT = ConfEndPointProvider.INSTANCE;
     private Properties cache = new Properties();
     private ConfCompositeProvider() {}
     
     public void init() {
-    	INSTANCE_SYSTEM.init(this);
+    	INSTANCE_SYS.init(this);
     	INSTANCE_EXT.init(this);
-    	INSTANCE_GLOBAL.init(this);
+    	INSTANCE_GBL.init(this);
     	INSTANCE_ENDPOINT.init();
     }
 	public String getProperty(String key, String... defaultValue) {

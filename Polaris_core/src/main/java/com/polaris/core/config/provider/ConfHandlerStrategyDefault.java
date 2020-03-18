@@ -1,4 +1,4 @@
-package com.polaris.core.config;
+package com.polaris.core.config.provider;
 
 import java.util.Map;
 import java.util.Objects;
@@ -7,15 +7,19 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.core.config.Config;
+import com.polaris.core.config.ConfigFactory;
+import com.polaris.core.config.ConfigListener;
 import com.polaris.core.config.Config.Opt;
+import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.util.UuidUtil;
 
 @SuppressWarnings("rawtypes")
-public class ConfigStrategyDefault implements ConfigStrategy {
-	private static final Logger logger = LoggerFactory.getLogger(ConfigStrategyDefault.class);
-	public static final ConfigStrategy INSTANCE = new ConfigStrategyDefault();
-	private ConfigStrategyDefault() {}
+public class ConfHandlerStrategyDefault implements ConfHandlerStrategy {
+	private static final Logger logger = LoggerFactory.getLogger(ConfHandlerStrategyDefault.class);
+	public static final ConfHandlerStrategy INSTANCE = new ConfHandlerStrategyDefault();
+	private ConfHandlerStrategyDefault() {}
 	
 	@Override
 	public void notify(ConfigListener configListener, Config config, String file, String contents) {
@@ -60,8 +64,8 @@ public class ConfigStrategyDefault implements ConfigStrategy {
 	
 	public boolean canUpdate(String sequence, Config config,String file, Object key, Object value,Opt opt) {
 		//优先级-ext
-		if (config == ConfigFactory.get(Config.EXT)) {
-			if (ConfigFactory.get(Config.SYSTEM).contain(key)) {
+		if (config == ConfigFactory.get(Type.EXT)) {
+			if (ConfigFactory.get(Type.SYS).contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with system properties ", config.getType(),file,key,value,opt.name());
 				return false;
@@ -69,13 +73,13 @@ public class ConfigStrategyDefault implements ConfigStrategy {
 		}
 		
 		//优先级-global
-		if (config == ConfigFactory.get(Config.GLOBAL)) {
-			if (ConfigFactory.get(Config.SYSTEM).contain(key)) {
+		if (config == ConfigFactory.get(Type.GBL)) {
+			if (ConfigFactory.get(Type.SYS).contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with system properties", config.getType(),file,key,value,opt.name());
 				return false;
 			}
-			if (ConfigFactory.get(Config.EXT).contain(key)) {
+			if (ConfigFactory.get(Type.EXT).contain(key)) {
 				logger.warn("type:{} file:{}, key:{} value:{} opt:{} failed ,"
 						+ "caused by conflicted with ext properties", config.getType(),file,key,value,opt.name());
 				return false;

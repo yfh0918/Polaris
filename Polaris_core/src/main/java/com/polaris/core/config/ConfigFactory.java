@@ -5,20 +5,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.polaris.core.config.Config.Type;
+
 public class ConfigFactory {
 
-	private static Map<String , Config> configMap = new HashMap<>();
+	private static Map<Type , Config> configMap = new HashMap<>();
 	private static List<Config> configList = new ArrayList<>();
 	static {
-		configMap.put(Config.SYSTEM, ConfigDefault.SYSTEM);
-		configMap.put(Config.EXT, ConfigDefault.EXT);
-		configMap.put(Config.GLOBAL, ConfigDefault.GLOBAL);
-		configList.add(ConfigDefault.SYSTEM);
+		configMap.put(Type.SYS, ConfigDefault.SYS);
+		configMap.put(Type.EXT, ConfigDefault.EXT);
+		configMap.put(Type.GBL, ConfigDefault.GBL);
+		configList.add(ConfigDefault.SYS);
 		configList.add(ConfigDefault.EXT);
-		configList.add(ConfigDefault.GLOBAL);
+		configList.add(ConfigDefault.GBL);
 	}
 	
-	public static Config get(String type) {
+	public static Config get(Type type) {
 		return configMap.get(type);
 	}
 	public static List<Config> get() {
@@ -31,24 +33,24 @@ public class ConfigFactory {
 		configMap.clear();
 		configList.clear();
 		if (configs.length == 1) {
-			configMap.put(Config.SYSTEM, configs[0]);
-			configMap.put(Config.EXT, configs[0]);
-			configMap.put(Config.GLOBAL, configs[0]);
+			configMap.put(Type.SYS, configs[0]);
+			configMap.put(Type.EXT, configs[0]);
+			configMap.put(Type.GBL, configs[0]);
 			configList.add(configs[0]);
 			return;
 		}
 		if (configs.length == 2) {
-			configMap.put(Config.SYSTEM, configs[0]);
-			configMap.put(Config.EXT, configs[1]);
-			configMap.put(Config.GLOBAL, configs[1]);
+			configMap.put(Type.SYS, configs[0]);
+			configMap.put(Type.EXT, configs[1]);
+			configMap.put(Type.GBL, configs[1]);
 			configList.add(configs[0]);
 			configList.add(configs[1]);
 			return;
 		}
 		if (configs.length >= 3) {
-			configMap.put(Config.SYSTEM, configs[0]);
-			configMap.put(Config.EXT, configs[1]);
-			configMap.put(Config.GLOBAL, configs[2]);
+			configMap.put(Type.SYS, configs[0]);
+			configMap.put(Type.EXT, configs[1]);
+			configMap.put(Type.GBL, configs[2]);
 			configList.add(configs[0]);
 			configList.add(configs[1]);
 			configList.add(configs[2]);

@@ -11,11 +11,13 @@ public interface Config {
 	    DELETE;
 	}
 	
-    public static final String SYSTEM = "system";
-    public static final String EXT = "ext";
-    public static final String GLOBAL = "global";
-    
-    String getType();
+	public enum Type {
+		SYS,//system
+		EXT,//extension
+	    GBL;//global
+	}
+	
+	Type getType();
 	default Collection<Properties> getProperties() {return null;}
 	default Properties getProperties(String file) {return null;}
 	default void put(String file, Properties properties) {};

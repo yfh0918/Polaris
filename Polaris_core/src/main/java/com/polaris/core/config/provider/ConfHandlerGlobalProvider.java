@@ -3,6 +3,7 @@ package com.polaris.core.config.provider;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config;
+import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.ConfigException;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.ConfigListener;
@@ -10,6 +11,7 @@ import com.polaris.core.util.StringUtil;
 
 public class ConfHandlerGlobalProvider extends ConfHandlerAbsProvider {
 
+	private final String GLOBAL = "global";
 	public static ConfHandlerGlobalProvider INSTANCE = new ConfHandlerGlobalProvider();
 	
 	private ConfHandlerGlobalProvider() {
@@ -21,7 +23,7 @@ public class ConfHandlerGlobalProvider extends ConfHandlerAbsProvider {
 		super.init(configListener);
 		
 		//get target files
-		String files = ConfigFactory.get(Config.SYSTEM).getProperties(Config.SYSTEM).getProperty(Constant.PROJECT_GLOBAL_PROPERTIES);
+		String files = ConfigFactory.get(Type.SYS).getProperties(Type.SYS.name()).getProperty(Constant.PROJECT_GLOBAL_PROPERTIES);
 		if (StringUtil.isEmpty(files)) {
 			return;
 		}
@@ -39,20 +41,20 @@ public class ConfHandlerGlobalProvider extends ConfHandlerAbsProvider {
     public boolean init(String file) {
     	
 		//get config
-		Config config = ConfigFactory.get(Config.GLOBAL);
+		Config config = ConfigFactory.get(Type.GBL);
 		
 		//result
-		return init(file, Config.GLOBAL, config);
+		return init(file, GLOBAL, config);
     }
     
 	@Override
 	public String get(String file) {
-		return get(file,Config.GLOBAL);
+		return get(file,GLOBAL);
 	}
 	
 	@Override
 	public void listen(String file, ConfHandlerListener listener) {
-		listen(file,Config.GLOBAL,listener);
+		listen(file,GLOBAL,listener);
 	}
 
 }

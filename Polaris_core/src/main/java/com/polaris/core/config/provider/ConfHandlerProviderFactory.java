@@ -3,20 +3,20 @@ package com.polaris.core.config.provider;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.polaris.core.config.Config;
+import com.polaris.core.config.Config.Type;
 
 public class ConfHandlerProviderFactory {
 	
-	private static Map<String , ConfHandlerProvider> confHandlerProviderMap = new ConcurrentHashMap<>();
-	public static ConfHandlerProvider get(String type) {
+	private static Map<Type , ConfHandlerProvider> confHandlerProviderMap = new ConcurrentHashMap<>();
+	public static ConfHandlerProvider get(Type type) {
 		ConfHandlerProvider provider = confHandlerProviderMap.get(type);
 		if (provider == null) {
-			synchronized(type.intern()) {
-				if (type.equals(Config.EXT)) {
+			synchronized(type.name().intern()) {
+				if (type.equals(Type.EXT)) {
 					provider = ConfHandlerExtProvider.INSTANCE;
-				} else if (type.equals(Config.GLOBAL)) {
+				} else if (type.equals(Type.GBL)) {
 					provider = ConfHandlerGlobalProvider.INSTANCE;
-				} else if (type.equals(Config.SYSTEM)) {
+				} else if (type.equals(Type.SYS)) {
 					provider = ConfHandlerSysProvider.INSTANCE;
 				} else {
 					throw new RuntimeException("type:"+type+"is incorrect");

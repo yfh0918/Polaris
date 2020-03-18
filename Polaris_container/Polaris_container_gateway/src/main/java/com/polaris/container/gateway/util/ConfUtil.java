@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import com.polaris.container.gateway.request.FilterType;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
-import com.polaris.core.config.Config;
+import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.util.StringUtil;
 
@@ -27,10 +27,10 @@ public class ConfUtil {
     	for (FilterType filterType : FilterType.values()) {
     		
     		//先获取
-    		loadPatters(filterType.name(), ConfHandlerProviderFactory.get(Config.EXT).get(filterType.getFileName()));
+    		loadPatters(filterType.name(), ConfHandlerProviderFactory.get(Type.EXT).get(filterType.getFileName()));
     		
     		//后监听
-    		ConfHandlerProviderFactory.get(Config.EXT).listen(filterType.getFileName(), new ConfHandlerListener() {
+    		ConfHandlerProviderFactory.get(Type.EXT).listen(filterType.getFileName(), new ConfHandlerListener() {
     			@Override
     			public void receive(String content) {
 					loadPatters(filterType.name(), content);

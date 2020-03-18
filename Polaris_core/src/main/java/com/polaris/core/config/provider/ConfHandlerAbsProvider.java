@@ -10,15 +10,13 @@ import com.polaris.core.config.ConfHandler;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config;
 import com.polaris.core.config.ConfigListener;
-import com.polaris.core.config.ConfigStrategy;
-import com.polaris.core.config.ConfigStrategyFactory;
 import com.polaris.core.util.StringUtil;
 
 public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
     private static final ServiceLoader<ConfHandler> handlerLoader = ServiceLoader.load(ConfHandler.class);
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	protected static ConfHandler handler;
-	protected ConfigStrategy strategy = ConfigStrategyFactory.get();
+	protected ConfHandlerStrategy strategy = ConfHandlerStrategyFactory.get();
 	private ConfigListener configListener;
 	
     @SuppressWarnings("rawtypes")

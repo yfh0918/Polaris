@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Opt;
+import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.ConfigListener;
 import com.polaris.core.config.reader.ConfReaderStrategyFactory;
@@ -25,7 +25,7 @@ public class ConfHandlerSysProvider implements ConfHandlerProvider{
 		for (Map.Entry<Object, Object> entry : getProperties().entrySet()) {
 			configListener.onChange(SYSTEM_SEQUENCE, entry.getKey(), entry.getValue(), Opt.ADD);
 		}
-		ConfigFactory.get(Config.SYSTEM).put(Config.SYSTEM, getProperties());
+		ConfigFactory.get(Type.SYS).put(Type.SYS.name(), getProperties());
 		configListener.onComplete(SYSTEM_SEQUENCE);
 	}
 	
