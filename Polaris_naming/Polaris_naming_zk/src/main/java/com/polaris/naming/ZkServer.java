@@ -2,10 +2,8 @@ package com.polaris.naming;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.curator.framework.CuratorFramework;
@@ -31,7 +29,8 @@ import com.polaris.core.util.WeightedRoundRobinScheduling.Server;
 public class ZkServer implements ServerHandler {
 	private static final Logger logger = LoggerFactory.getLogger(ZkServer.class);
 	private CuratorFramework curator;
-	private Map<String, PathChildrenCache> pathMap = new ConcurrentHashMap<>();
+	private Map<String, PathChildrenCache> pathCache = new ConcurrentHashMap<>();
+	private Map<String, WeightedRoundRobinScheduling> pathWeight = new ConcurrentHashMap<>();
 	public ZkServer() {
 	}
 	
@@ -55,12 +54,12 @@ public class ZkServer implements ServerHandler {
 		String childNodePathCache = getPath(key);
 
         //childData：设置缓存节点的数据状态
-		PathChildrenCache childrenCache = pathMap.get(childNodePathCache);
+		PathChildrenCache childrenCache = pathCache.get(childNodePathCache);
 		try {
 					
 			if (childrenCache == null) {
 				synchronized(childNodePathCache.intern()) {
-					if (pathMap.get(childNodePathCache) == null) {
+					if (pathCache.get(childNodePathCache) == null) {
 						childrenCache = new PathChildrenCache(curator,childNodePathCache,true);
 
 				        /*
@@ -72,22 +71,36 @@ public class ZkServer implements ServerHandler {
 				        childrenCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
 
 				        //获取所有子节点
-				        List<ChildData> childDataList = childrenCache.getCurrentData();
-				        Set<String> childList = new LinkedHashSet<>();
+						List<WeightedRoundRobinScheduling.Server> serverList = new ArrayList<>();
+						List<ChildData> childDataList = childrenCache.getCurrentData();
 				        for(ChildData cd : childDataList){
-				        	childList.add(new String(cd.getData()));
+				        	String serverInfo = new String(cd.getData());
+							String[] si = serverInfo.split(":");
+				            if (si.length == 2) {
+					                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), 1);
+				                serverList.add(server);
+				            } else if (si.length == 3) {
+					                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2]));
+				                serverList.add(server);
+				            }
 				        }
+						WeightedRoundRobinScheduling wrrs = new WeightedRoundRobinScheduling(serverList);
+						pathWeight.put(childNodePathCache, wrrs);
 
 				        childrenCache.getListenable().addListener(new PathChildrenCacheListener() {
 				            public void childEvent(CuratorFramework ient, PathChildrenCacheEvent event) throws Exception {
 				               if(event.getType().equals(PathChildrenCacheEvent.Type.CHILD_ADDED)){
-				            	   childList.add(new String(event.getData().getData()));
+				            	   String serverInfo = new String(event.getData().getData());
+				            	   String[] si = serverInfo.split(":");
+				            	   wrrs.add(new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2])));
 				               }else if(event.getType().equals(PathChildrenCacheEvent.Type.CHILD_REMOVED)){
-				            	   childList.remove(new String(event.getData().getData()));
+				            	   String serverInfo = new String(event.getData().getData());
+				            	   String[] si = serverInfo.split(":");
+				            	   wrrs.remove(wrrs.getServer(si[0], Integer.valueOf(si[1])));
 				               }
 				            }
 				        });
-				        pathMap.put(childNodePathCache, childrenCache);
+				        pathCache.put(childNodePathCache, childrenCache);
 					}
 				}
 			}
@@ -95,26 +108,7 @@ public class ZkServer implements ServerHandler {
 		} catch (Exception ex) {
 			logger.error("ERROR:",ex);
 		}
-		
-		//默认权重算法
-		List<WeightedRoundRobinScheduling.Server> serverList = new ArrayList<>();
-		List<ChildData> childDataList = childrenCache.getCurrentData();
-        for(ChildData cd : childDataList){
-        	String serverInfo = new String(cd.getData());
-			String[] si = serverInfo.split(":");
-			
-			// ip:port
-            if (si.length == 2) {
-	                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), 1);
-                serverList.add(server);
-            } else if (si.length == 3) {
-	                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2]));
-                serverList.add(server);
-            }
-
-        }
-		WeightedRoundRobinScheduling wrrs = new WeightedRoundRobinScheduling(serverList);
-    	Server server = wrrs.getServer();
+    	Server server = pathWeight.get(childNodePathCache).getServer();
 		return server.toString();
 	}
 	
@@ -127,7 +121,7 @@ public class ZkServer implements ServerHandler {
 	public List<String> getAllUrls(String key, boolean subscribe) {
 		//get curator
 		String childNodePathCache = getPath(key);
-		PathChildrenCache childrenCache = pathMap.get(childNodePathCache);
+		PathChildrenCache childrenCache = pathCache.get(childNodePathCache);
 		//获取所有子节点
         List<ChildData> childDataList = childrenCache.getCurrentData();
         List<String> childList = new ArrayList<>();
@@ -168,7 +162,7 @@ public class ZkServer implements ServerHandler {
 
 	@Override
 	public void deregister(String ip, int port) {
-		for (PathChildrenCache cache : pathMap.values()) {
+		for (PathChildrenCache cache : pathCache.values()) {
 			try {
 				cache.close();
 			} catch (IOException ex) {

@@ -100,6 +100,22 @@ public class WeightedRoundRobinScheduling {
             serversMap.put(server.getIp() + "_" + server.getPort(), server);
         }
     }
+    
+    public void add(Server server) {
+    	if (server == null) {
+    		return;
+    	}
+    	healthilyServers.add(server);
+    	serversMap.put(server.getIp() + "_" + server.getPort(), server);
+    }
+    
+    public void remove(Server server) {
+    	if (server == null) {
+    		return;
+    	}
+    	healthilyServers.remove(server);
+    	serversMap.remove(server.getIp() + "_" + server.getPort());
+    }
 
 
     public static class Server {

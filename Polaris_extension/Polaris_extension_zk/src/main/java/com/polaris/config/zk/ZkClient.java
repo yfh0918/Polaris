@@ -1,6 +1,8 @@
 package com.polaris.config.zk;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -52,8 +54,7 @@ public class ZkClient implements Watcher {
 
 	// ------------------------------ zookeeper client ------------------------------
 	private static ReentrantLock INSTANCE_INIT_LOCK = new ReentrantLock(true);
-	private static Map<String, ZkListener> listenerMap = new ConcurrentHashMap<>();
-	private static Map<String, ZooKeeper> zkMap = new ConcurrentHashMap<>();
+	private static Map<String, ZkInfo> zkMap = new ConcurrentHashMap<>();
 	public static ZooKeeper getInstance(String url){
 		return getInstance(url, false);
 	}
@@ -62,28 +63,28 @@ public class ZkClient implements Watcher {
     	if (StringUtil.isEmpty(url)) {
     		throw new NullPointerException("url is null");
     	}
-    	ZooKeeper zooKeeper = zkMap.get(url);
-		if (zooKeeper==null || refresh) {
+    	ZkInfo zkInfo = zkMap.get(url);
+		if (zkInfo == null || refresh) {
 			try {
 				if (INSTANCE_INIT_LOCK.tryLock(2, TimeUnit.SECONDS)) {
 					try {
 						
 						//每次都刷新
 						if (refresh) {
-							if (zooKeeper != null) {
-								zooKeeper.close();
+							if (zkInfo != null) {
+								zkInfo.clear();
 								zkMap.remove(url);
 							}
 						}
-						zkMap.put(url, new ZooKeeper(url, 20000, new Watcher() {
+						zkMap.put(url, new ZkInfo(new ZooKeeper(url, 20000, new Watcher() {
 							@Override
 							public void process(WatchedEvent watchedEvent) {
 								try {
 									logger.info(">>>>>>>>>> polaris_conf: watcher:{}", watchedEvent);
-									ZooKeeper zookeeper0 = zkMap.get(url);
+									ZkInfo zkinfo = zkMap.get(url);
 									// session expire, close old and create new
 									if (watchedEvent.getState() == Event.KeeperState.Expired) {
-										zookeeper0.close();
+										zkinfo.clear();
 										zkMap.remove(url);
 										getInstance(url);
 									}
@@ -93,22 +94,22 @@ public class ZkClient implements Watcher {
 										return;
 									}
 									// add One-time trigger
-									zookeeper0.exists(path, true);
+									zkinfo.getZk().exists(path, true);
 									
 									//获取监听者
-									ZkListener zkListener = listenerMap.get(path);
-									if (zkListener == null) {
-										return;
+									for (ZkListener zkListener : zkinfo.getListeners(path)) {
+										zkListener.listen(url, path, watchedEvent.getType());
 									}
-									zkListener.listen(url, path, watchedEvent.getType());
+									
+									
 								} catch (KeeperException e) {
 									logger.error(e.getMessage());
 								} catch (InterruptedException e) {
 									logger.error(e.getMessage());
 								}
 							}
-						}));
-						zooKeeper = zkMap.get(url);
+						})));
+						zkInfo = zkMap.get(url);
 						
 					} finally {
 						INSTANCE_INIT_LOCK.unlock();
@@ -120,14 +121,14 @@ public class ZkClient implements Watcher {
 				logger.error(e.getMessage());
 			}
 		}
-		if (zooKeeper == null) {
+		if (zkInfo == null) {
 			throw new NullPointerException(">>>>>>>>>>> url:"+url+" zooKeeper is null.");
 		}
-		return zooKeeper;
+		return zkInfo.getZk();
 	}
 	
-	public static void addZkListener(String path, ZkListener listener) {
-		listenerMap.put(path, listener);
+	public static void addZkListener(String url, String path, ZkListener listener) {
+		zkMap.get(url).getListeners(path).add(listener);
 	}
 
 	    
@@ -161,7 +162,7 @@ public class ZkClient implements Watcher {
 				}
 				// create desc node path
 				try {
-					zkMap.get(url).create(path, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+					zkMap.get(url).getZk().create(path, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 				} catch (Exception ex) {
 					logger.error(ex.getMessage());
 				}
@@ -223,6 +224,41 @@ public class ZkClient implements Watcher {
 		}
 	}
 
-	
+	public static class ZkInfo {
+		private ZooKeeper zk;
+		private Map<String, List<ZkListener>> zkListerners = new ConcurrentHashMap<>();
+		ZkInfo(ZooKeeper zk) {
+			this.zk = zk;
+		}
+		public List<ZkListener> getListeners(String path) {
+			List<ZkListener> list = zkListerners.get(path);
+			if (list == null) {
+				synchronized(path.intern()) {
+					list = zkListerners.get(path);
+					if (list == null) {
+						list = new ArrayList<>();
+						zkListerners.put(path, list);
+					}
+				}
+			}
+			return list;
+		}
+		public ZooKeeper getZk() {
+			return zk;
+		}
+		public void clear() {
+			try {
+				zk.close();
+			} catch (InterruptedException e) {
+				logger.error("Error:",e);
+			}
+			zk = null;
+			for (List<ZkListener> list : zkListerners.values()) {
+				list.clear();
+			}
+			zkListerners.clear();
+			zkListerners = null;
+		}
+	}
 
 }
