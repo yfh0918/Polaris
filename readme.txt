@@ -10,7 +10,7 @@
 3:集群部署服务的时候需要注册中心，
   支持nacos（需要自行下载nacos的server）,
   支持eureka(内置robbin负载均衡)，负载均衡策略 根据参数robbin.loadbalancer=com.netflix.loadbalancer.AvailabilityFilteringRule(可以选择其他的rule)
-  后续版本支持zookeeper注册中心(web这一块)
+  支持zookeeper注册中心，server版本3.5.5及以上
   每一个服务 需要在自己的配置文件中设置注册中心
   #name.registry.address=127.0.0.1:8848
   需要在自己的服务pom.xml中引入 Polaris_naming_nacos

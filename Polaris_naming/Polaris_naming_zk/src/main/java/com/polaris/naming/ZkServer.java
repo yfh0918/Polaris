@@ -23,7 +23,6 @@ import com.polaris.core.naming.ServerHandler;
 import com.polaris.core.naming.ServerHandlerOrder;
 import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.WeightedRoundRobinScheduling;
-import com.polaris.core.util.WeightedRoundRobinScheduling.Server;
 
 @Order(ServerHandlerOrder.ZK)
 public class ZkServer implements ServerHandler {
@@ -46,6 +45,7 @@ public class ZkServer implements ServerHandler {
 		}
 		return curator;
 	}
+	@SuppressWarnings("deprecation")
 	@Override
 	public String getUrl(String key) {
 		
@@ -68,7 +68,7 @@ public class ZkServer implements ServerHandler {
 				        * NORMAL：异步初始化
 				        * BUILD_INITIAL_CACHE：同步初始化
 				        * */
-				        childrenCache.start(PathChildrenCache.StartMode.POST_INITIALIZED_EVENT);
+				        childrenCache.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
 
 				        //获取所有子节点
 						List<WeightedRoundRobinScheduling.Server> serverList = new ArrayList<>();
@@ -86,8 +86,7 @@ public class ZkServer implements ServerHandler {
 				        }
 						WeightedRoundRobinScheduling wrrs = new WeightedRoundRobinScheduling(serverList);
 						pathWeight.put(childNodePathCache, wrrs);
-
-				        childrenCache.getListenable().addListener(new PathChildrenCacheListener() {
+						PathChildrenCacheListener listener = new PathChildrenCacheListener() {
 				            public void childEvent(CuratorFramework ient, PathChildrenCacheEvent event) throws Exception {
 				               if(event.getType().equals(PathChildrenCacheEvent.Type.CHILD_ADDED)){
 				            	   String serverInfo = new String(event.getData().getData());
@@ -99,7 +98,8 @@ public class ZkServer implements ServerHandler {
 				            	   wrrs.remove(wrrs.getServer(si[0], Integer.valueOf(si[1])));
 				               }
 				            }
-				        });
+				        };
+				        childrenCache.getListenable().addListener(listener);
 				        pathCache.put(childNodePathCache, childrenCache);
 					}
 				}
@@ -108,8 +108,10 @@ public class ZkServer implements ServerHandler {
 		} catch (Exception ex) {
 			logger.error("ERROR:",ex);
 		}
-    	Server server = pathWeight.get(childNodePathCache).getServer();
-		return server.toString();
+		if (pathWeight.get(childNodePathCache) == null || pathWeight.get(childNodePathCache).getServer() == null) {
+			return null;
+		}
+    	return pathWeight.get(childNodePathCache).getServer().toString();
 	}
 	
 	@Override
@@ -145,7 +147,7 @@ public class ZkServer implements ServerHandler {
 		
 		//register-data
 		String regContent = ip + ":" + port+ ":" + ConfClient.get(Constant.PROJECT_WEIGHT, Constant.PROJECT_WEIGHT_DEFAULT);
-		String zkRegPathPrefix = getPath(ConfClient.getAppName()) + "service-provider-";
+		String zkRegPathPrefix = getPath(ConfClient.getAppName()) + Constant.SLASH + "service-provider-";
 		
 		//re-connect
 		ZkConnectionStateListener stateListener = new ZkConnectionStateListener(zkRegPathPrefix, regContent);
@@ -194,7 +196,6 @@ public class ZkServer implements ServerHandler {
 		
 		//key
 		groupSb.append(key);
-		groupSb.append(Constant.SLASH);
 		
 		//返回
 		return groupSb.toString();

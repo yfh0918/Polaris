@@ -26,8 +26,8 @@ public class TokenExtendHttpRequestFilter extends HttpRequestFilter {
 	
 	@Override
     public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
-    	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,"TokenExtendHttpRequestFilter is added"));
-        return true;
+    	//this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,"TokenExtendHttpRequestFilter is added"));
+        return false;
     }
 }
 

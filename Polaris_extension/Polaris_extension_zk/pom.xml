@@ -11,10 +11,6 @@
 	<name>Polaris_extension_zk</name>
 
 	<dependencies>
-		<dependency>
-			<groupId>org.apache.zookeeper</groupId>
-			<artifactId>zookeeper</artifactId>
-		</dependency>
 		
 		<dependency>
 		    <groupId>org.apache.curator</groupId>

@@ -40,20 +40,59 @@ public abstract class ConfClient {
 		return ConfCompositeProvider.INSTANCE.getProperty(key,defaultVal);
 	}
 	
+	/**
+	* 应用名称
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
 	public static String getAppName() {
 		return get(Constant.PROJECT_NAME,get(Constant.SPRING_BOOT_NAME));
 	}
+	
+	/**
+	* 注册中心地址
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
+	public static String getNamingRegistryAddress() {
+		return get(Constant.NAMING_REGISTRY_ADDRESS_NAME);
+	}
+	
+	/**
+	* 配置中心地址
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
 	public static String getConfigRegistryAddress() {
 		return get(Constant.CONFIG_REGISTRY_ADDRESS_NAME);
 	}
+	
+	/**
+	* 命名空间 可以用于区分开发 环境，测试环境，生产环境
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
 	public static String getNameSpace() {
 		return get(Constant.PROJECR_NAMESPACE_NAME);
 	}
+	
+	/**
+	* 集群分组，介于namespace和AppName中间
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
 	public static String getGroup() {
 		return get(Constant.PROJECR_GROUP_NAME);
-	}
-	public static String getNamingRegistryAddress() {
-		return get(Constant.NAMING_REGISTRY_ADDRESS_NAME);
 	}
 
 }
