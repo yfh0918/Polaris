@@ -37,8 +37,12 @@ public class ZkServer implements ServerHandler {
 		if (curator == null) {
 			synchronized(this) {
 				if (curator == null) {
-					curator = CuratorFrameworkFactory.newClient(ConfClient.getNamingRegistryAddress(), 
-							5000, 3000, new RetryNTimes(5, 1000));
+			    	int sessionTimeoutMs = Integer.parseInt(ConfClient.get("name.registry.zk.sessionTimeoutMs", "20000"));
+			    	int retryCount = Integer.parseInt(ConfClient.get("name.registry.zk.retryCount", "5"));
+			    	int sleepMsBetweenRetries = Integer.parseInt(ConfClient.get("name.registry.zk.sleepMsBetweenRetries", "1000"));
+			    	int connectionTimeoutMs = Integer.parseInt(ConfClient.get("name.registry.zk.connectionTimeoutMs", "12000"));
+			    	curator = CuratorFrameworkFactory.newClient(ConfClient.getNamingRegistryAddress(), 
+							sessionTimeoutMs, connectionTimeoutMs, new RetryNTimes(retryCount, sleepMsBetweenRetries));
 					curator.start();
 				}
 			}
@@ -147,7 +151,7 @@ public class ZkServer implements ServerHandler {
 		
 		//register-data
 		String regContent = ip + ":" + port+ ":" + ConfClient.get(Constant.PROJECT_WEIGHT, Constant.PROJECT_WEIGHT_DEFAULT);
-		String zkRegPathPrefix = getPath(ConfClient.getAppName()) + Constant.SLASH + "service-provider-";
+		String zkRegPathPrefix = getPath(ConfClient.getAppName()) + Constant.SLASH + "server-provider-";
 		
 		//re-connect
 		ZkConnectionStateListener stateListener = new ZkConnectionStateListener(zkRegPathPrefix, regContent);

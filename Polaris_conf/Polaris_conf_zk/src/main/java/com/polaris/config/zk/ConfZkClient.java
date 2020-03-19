@@ -1,28 +1,31 @@
 package com.polaris.config.zk;
 
 import org.apache.zookeeper.Watcher.Event.EventType;
+import org.apache.zookeeper.ZooKeeper;
 
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.util.StringUtil;
 
 public class ConfZkClient {
+	private static int sessionTimeoutMs = Integer.parseInt(ConfClient.get("config.registry.zk.sessionTimeoutMs", "20000"));
+	private static ZooKeeper zk = ZkClient.getInstance(ConfClient.getConfigRegistryAddress(), sessionTimeoutMs);
 	
 	public static String getConfig(String fileName, String group) {
 		String path = getPath(fileName,group);
-		ZkClient.createWithParent(ConfClient.getConfigRegistryAddress(),path);//创建路径
-		return ZkClient.getPathData(ConfClient.getConfigRegistryAddress(),path);//获取数据
+		ZkClient.createWithParent(zk,path);//创建路径
+		return ZkClient.getPathData(zk,path);//获取数据
 	}
 	public static void addListener(String fileName, String group, ConfHandlerListener listener) {
 		String path = getPath(fileName,group);
-		ZkClient.addWatchForPath(ConfClient.getConfigRegistryAddress(),path);
+		ZkClient.addWatchForPath(zk,path);
 		ZkClient.addZkListener(ConfClient.getConfigRegistryAddress(),path, new ZkListener() {
 			@Override
 			public void listen(String url, String path, EventType type) {
 				if (type == EventType.NodeDeleted) {
 					listener.receive(null);
 				} else if (type == EventType.NodeDataChanged || type == EventType.NodeCreated) {
-					listener.receive(ZkClient.getPathData(ConfClient.getConfigRegistryAddress(),path));
+					listener.receive(ZkClient.getPathData(zk,path));
 				}
 			}
 			

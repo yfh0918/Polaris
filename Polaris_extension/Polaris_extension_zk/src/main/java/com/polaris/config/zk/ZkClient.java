@@ -55,11 +55,11 @@ public class ZkClient implements Watcher {
 	// ------------------------------ zookeeper client ------------------------------
 	private static ReentrantLock INSTANCE_INIT_LOCK = new ReentrantLock(true);
 	private static Map<String, ZkInfo> zkMap = new ConcurrentHashMap<>();
-	public static ZooKeeper getInstance(String url){
-		return getInstance(url, false);
+	public static ZooKeeper getInstance(String url, int sessionTimeoutMs){
+		return getInstance(url, sessionTimeoutMs, false);
 	}
 
-	public static ZooKeeper getInstance(String url, boolean refresh){
+	public static ZooKeeper getInstance(String url, int sessionTimeoutMs, boolean refresh){
     	if (StringUtil.isEmpty(url)) {
     		throw new NullPointerException("url is null");
     	}
@@ -76,7 +76,7 @@ public class ZkClient implements Watcher {
 								zkMap.remove(url);
 							}
 						}
-						zkMap.put(url, new ZkInfo(new ZooKeeper(url, 20000, new Watcher() {
+						zkMap.put(url, new ZkInfo(new ZooKeeper(url, sessionTimeoutMs, new Watcher() {
 							@Override
 							public void process(WatchedEvent watchedEvent) {
 								try {
@@ -86,7 +86,7 @@ public class ZkClient implements Watcher {
 									if (watchedEvent.getState() == Event.KeeperState.Expired) {
 										zkinfo.clear();
 										zkMap.remove(url);
-										getInstance(url);
+										getInstance(url,sessionTimeoutMs);
 									}
 
 									String path = watchedEvent.getPath();
@@ -143,31 +143,31 @@ public class ZkClient implements Watcher {
 	 * create node path with parent path (如果父节点不存在,循环创建父节点, 因为父节点不存在zookeeper会抛异常)
 	 * @param path	()
 	 */
-	public static Stat createWithParent(String url, String path){
+	public static Stat createWithParent(ZooKeeper zk, String path){
 		// valid
 		if (path==null || path.trim().length()==0) {
 			return null;
 		}
 
 		try {
-			Stat stat = getInstance(url).exists(path, false);
+			Stat stat = zk.exists(path, false);
 			if (stat == null) {
 				//  valid parent, createWithParent if not exists
 				if (path.lastIndexOf(Constant.SLASH) > 0) {
 					String parentPath = path.substring(0, path.lastIndexOf(Constant.SLASH));
-					Stat parentStat = getInstance(url).exists(parentPath, false);
+					Stat parentStat = zk.exists(parentPath, false);
 					if (parentStat == null) {
-						createWithParent(url, parentPath);
+						createWithParent(zk, parentPath);
 					}
 				}
 				// create desc node path
 				try {
-					zkMap.get(url).getZk().create(path, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+					zk.create(path, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 				} catch (Exception ex) {
 					logger.error(ex.getMessage());
 				}
 			}
-			return getInstance(url).exists(path, false);
+			return zk.exists(path, false);
 		} catch (KeeperException e) {
 			logger.error(e.getMessage());
 		} catch (InterruptedException e) {
@@ -181,12 +181,12 @@ public class ZkClient implements Watcher {
 	 * @param key
 	 * @return
 	 */
-	public static String getPathData(String url, String path){
+	public static String getPathData(ZooKeeper zk, String path){
 		try {
-			Stat stat = getInstance(url).exists(path, false);//add watch
+			Stat stat = zk.exists(path, false);//add watch
 			if (stat != null) {
 				String znodeValue = null;
-				byte[] resultData = getInstance(url).getData(path, false, null);
+				byte[] resultData = zk.getData(path, false, null);
 				if (resultData != null) {
 					znodeValue = new String(resultData,Constant.UTF_CODE);
 				}
@@ -209,9 +209,9 @@ public class ZkClient implements Watcher {
 	 * @param key
 	 * @return
 	 */
-	public static void addWatchForPath(String url, String path) {
+	public static void addWatchForPath(ZooKeeper zk, String path) {
 		try {
-			Stat stat = getInstance(url).exists(path, true);
+			Stat stat = zk.exists(path, true);
 			if (stat == null) {
 				logger.info(">>>>>>>>>> znodeKey[{}] not found.", path);
 			}
