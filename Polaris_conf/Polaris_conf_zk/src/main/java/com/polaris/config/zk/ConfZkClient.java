@@ -18,8 +18,7 @@ public class ConfZkClient {
 	}
 	public static void addListener(String fileName, String group, ConfHandlerListener listener) {
 		String path = getPath(fileName,group);
-		ZkClient.addWatchForPath(zk,path);
-		ZkClient.addZkListener(ConfClient.getConfigRegistryAddress(),path, new ZkListener() {
+		ZkClient.addWatchForPath(zk, path, new ZkListener() {
 			@Override
 			public void listen(String url, String path, EventType type) {
 				if (type == EventType.NodeDeleted) {

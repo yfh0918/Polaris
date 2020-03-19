@@ -127,9 +127,7 @@ public class ZkClient implements Watcher {
 		return zkInfo.getZk();
 	}
 	
-	public static void addZkListener(String url, String path, ZkListener listener) {
-		zkMap.get(url).getListeners(path).add(listener);
-	}
+
 
 	    
 	/**
@@ -209,12 +207,23 @@ public class ZkClient implements Watcher {
 	 * @param key
 	 * @return
 	 */
-	public static void addWatchForPath(ZooKeeper zk, String path) {
+	public static void addWatchForPath(ZooKeeper zk, String path, ZkListener... listeners) {
 		try {
 			Stat stat = zk.exists(path, true);
 			if (stat == null) {
 				logger.info(">>>>>>>>>> znodeKey[{}] not found.", path);
 			}
+			if (listeners != null && listeners.length > 0) {
+				for (ZkInfo zkInfo : zkMap.values()) {
+					if (zkInfo.getZk() == zk) {
+						for (ZkListener listener : listeners) {
+							zkInfo.getListeners(path).add(listener);
+						}
+						break;
+					}
+				}
+			}
+			
 		} catch (KeeperException e) {
 			logger.error(e.getMessage());
 		} catch (InterruptedException e) {
@@ -223,7 +232,7 @@ public class ZkClient implements Watcher {
 			logger.error(e.getMessage());
 		}
 	}
-
+	
 	public static class ZkInfo {
 		private ZooKeeper zk;
 		private Map<String, List<ZkListener>> zkListerners = new ConcurrentHashMap<>();
