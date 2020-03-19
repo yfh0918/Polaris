@@ -21,12 +21,12 @@ public class ServerHandlerLocalProvider extends ServerHandlerAbsProvider {
     @Override
     public String getUrl(String key) {
     	
-    	List<String> temp = getRemoteAddress(key);
-    	key = temp.get(1);
+    	List<String> serverInfoList = parseServer(key);
+    	key = serverInfoList.get(1);
     	
     	String[] serversInfo = key.split(",");
     	if (serversInfo.length == 1) {
-    		return temp.get(0)+ key + temp.get(2);
+    		return serverInfoList.get(0)+ key + serverInfoList.get(2);
     	}
     	
     	//初期化定时器
@@ -65,7 +65,7 @@ public class ServerHandlerLocalProvider extends ServerHandlerAbsProvider {
     		}
     	}
     	Server server = wrrs.getServer();
-    	return temp.get(0)+ server.getIp() + ":" + server.getPort() + temp.get(2);
+    	return serverInfoList.get(0)+ server.getIp() + ":" + server.getPort() + serverInfoList.get(2);
     }
     
 	@Override
@@ -75,11 +75,11 @@ public class ServerHandlerLocalProvider extends ServerHandlerAbsProvider {
 	
     @Override
     public List<String> getAllUrl(String key, boolean subscribe) {
-    	List<String> temp = getRemoteAddress(key);
+    	List<String> serverInfoList = parseServer(key);
     	List<String> urlList = new ArrayList<>();
-		String[] ips = temp.get(1).split(",");
+		String[] ips = serverInfoList.get(1).split(",");
 		for (int i0 = 0; i0 < ips.length; i0++) {
-			urlList.add(temp.get(0) + ips[i0] + temp.get(2));
+			urlList.add(serverInfoList.get(0) + ips[i0] + serverInfoList.get(2));
 		}
 		return urlList;
 
@@ -87,8 +87,8 @@ public class ServerHandlerLocalProvider extends ServerHandlerAbsProvider {
     
     @Override
     public boolean connectionFail(String key, String url) {
-    	key = getRemoteAddress(key).get(1);
-    	url = getRemoteAddress(url).get(1);
+    	key = parseServer(key).get(1);
+    	url = parseServer(url).get(1);
 		
     	//只有单个url直接返回
     	if (key.split(",").length == 1) {

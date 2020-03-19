@@ -52,13 +52,11 @@ public class ServerHandlerRemoteProvider extends ServerHandlerAbsProvider {
     
     @Override
 	public String getUrl(String key) {
-		List<String> temp = getRemoteAddress(key);
-		if (!isSkip(temp.get(1))) {
-			if (handler != null) {
-				String url = handler.getUrl(temp.get(1));
-				if (StringUtil.isNotEmpty(url)) {
-					return temp.get(0) + url + temp.get(2);
-				}
+		List<String> serverInfoList = parseServer(key);
+		if (handler != null) {
+			String url = handler.getUrl(serverInfoList.get(1));
+			if (StringUtil.isNotEmpty(url)) {
+				return serverInfoList.get(0) + url + serverInfoList.get(2);
 			}
 		}
 		return null;
@@ -71,31 +69,26 @@ public class ServerHandlerRemoteProvider extends ServerHandlerAbsProvider {
 	
 	@Override
 	public List<String> getAllUrl(String key, boolean subscribe) {
-		List<String> temp = getRemoteAddress(key);
-		if (!isSkip(temp.get(1))) {
-			if (handler != null) {
-				List<String> urls = handler.getAllUrls(temp.get(1),subscribe);
-				for (int i0 = 0; i0 < urls.size(); i0++) {
-					String value = temp.get(0) + urls.get(i0) + temp.get(2);
-					urls.set(i0, value);
-				}
-				return urls;			
+		List<String> serverInfoList = parseServer(key);
+		if (handler != null) {
+			List<String> urls = handler.getAllUrls(serverInfoList.get(1),subscribe);
+			for (int i0 = 0; i0 < urls.size(); i0++) {
+				String value = serverInfoList.get(0) + urls.get(i0) + serverInfoList.get(2);
+				urls.set(i0, value);
 			}
+			return urls;			
 		}
-		
 		return null;
 	}
 
 	@Override
 	public boolean connectionFail(String key, String url) {
-		List<String> temp = getRemoteAddress(key);
-		List<String> temp2 = getRemoteAddress(url);
+		List<String> serverInfoList = parseServer(key);
+		List<String> serverInfoList2 = parseServer(url);
 		// 单个IP或者多IP不走注册中心
-		if (!isSkip(temp.get(1))) {
-			if (handler != null) {
-				handler.connectionFail(temp.get(1), temp2.get(1));
-				return true;
-			}
+		if (handler != null) {
+			handler.connectionFail(serverInfoList.get(1), serverInfoList2.get(1));
+			return true;
 		}
 		return false;
 	}

@@ -20,25 +20,42 @@ public class ServerStrategyProvider extends ServerHandlerAbsProvider{
     
     @Override
 	public String getUrl(String key) {
-		String url = INSTANCE_REMOTE.getUrl(key);
+    	String url = null;
+    	List<String> serverInfoList = parseServer(key);
+		if (isRemote(serverInfoList.get(1))) {
+			url = INSTANCE_REMOTE.getUrl(key);
+		}
 		return url == null ? INSTANCE_LOCAL.getUrl(key) : url;
 	}
 
 	@Override
 	public List<String> getAllUrl(String key) {
-		List<String> urls = INSTANCE_REMOTE.getAllUrl(key);
+		List<String> urls = null;
+		List<String> serverInfoList = parseServer(key);
+		if (isRemote(serverInfoList.get(1))) {
+			urls = INSTANCE_REMOTE.getAllUrl(key);
+		}
 		return urls == null ? INSTANCE_LOCAL.getAllUrl(key) : urls;
 	}
 	
 	@Override
 	public List<String> getAllUrl(String key, boolean subscribe) {
-		List<String> urls = INSTANCE_REMOTE.getAllUrl(key,subscribe);
+		List<String> urls = null;
+		List<String> serverInfoList = parseServer(key);
+		if (isRemote(serverInfoList.get(1))) {
+			urls = INSTANCE_REMOTE.getAllUrl(key,subscribe);
+		}
 		return urls == null ? INSTANCE_LOCAL.getAllUrl(key,subscribe) : urls;
 	}
 
 	@Override
 	public boolean connectionFail(String key, String url) {
-		if (!INSTANCE_REMOTE.connectionFail(key,url) ) {
+		List<String> serverInfoList = parseServer(key);
+		boolean result = false;
+		if (isRemote(serverInfoList.get(1))) {
+			result = INSTANCE_REMOTE.connectionFail(key,url);
+		}
+		if (!result) {
 			return INSTANCE_LOCAL.connectionFail(key, url);
 		}
 		return true;
@@ -48,6 +65,19 @@ public class ServerStrategyProvider extends ServerHandlerAbsProvider{
 	public void reset() {
 		INSTANCE_REMOTE.reset();
 		INSTANCE_LOCAL.reset();
+	}
+	
+	private boolean isRemote(String key) {
+		if (key.toLowerCase().startsWith("www.")) {
+			return false;
+		}
+		if (key.toLowerCase().endsWith(".com") || key.toLowerCase().endsWith(".cn")) {
+			return false;
+		}
+		if (key.contains(",") || key.contains(":")) {
+			return false;
+		}
+		return true;
 	}
 
 }
