@@ -27,11 +27,11 @@
   #project.extension.properties=main.properties,redis.properties
   #project.extension.properties=main.yaml,redis.yaml
   #project.extension.properties=main.xml,redis.xml
-  #global files(以下配置文件配置方式  或者也可以采用PolarisConfigurationGlobal注解或者PolarisConfigurationProperties注解注入)
+  #global files(以下配置文件配置方式  或者也可以采用PolarisConfigurationGbl注解或者PolarisConfigurationProperties注解注入)
   #project.global.properties=redis.properties,database.properties
   #project.global.properties=redis.yaml,database.yaml
   
-  默认支持Spring注解@Value的自动更新-（nacos,zookeeper的推送更新会同步到@Value注解）
+  默认支持Spring注解@Value的自动更新-（nacos,zookeeper等配置中心的推送更新会同步到@Value注解）
   可以用value.auto.update=false来关闭，频繁更新配置会影响性能（配置更新采用文件形式）
 
 5:Polaris_extension_workflow是现有的服务（工作流activity内核）
