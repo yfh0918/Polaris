@@ -3,8 +3,11 @@ package com.polaris.core.event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executor;
 
 /**
  * Event dispatcher
@@ -23,12 +26,10 @@ public class EventDispatcher {
     }
 
     /**
-     * fire event, notify listeners.
+     * fire event, notify listeners. - sync
      */
     static public void fireEvent(Event event) {
-        if (null == event) {
-            throw new IllegalArgumentException();
-        }
+    	checkNotNull(event);
 
         for (AbstractEventListener listener : getEntry(event.getClass()).listeners) {
             try {
@@ -37,6 +38,22 @@ public class EventDispatcher {
                 log.error(e.toString(), e);
             }
         }
+    }
+    
+    /**
+     * fire event, notify listeners. - async
+     */
+    static public void fireEvent(Event event,Executor executor) {
+    	checkNotNull(event);
+        checkNotNull(executor);
+        executor.execute(
+            new Runnable() {
+              @Override
+              public void run() {
+            	  fireEvent(event);
+              }
+            }
+        );
     }
 
     /**
