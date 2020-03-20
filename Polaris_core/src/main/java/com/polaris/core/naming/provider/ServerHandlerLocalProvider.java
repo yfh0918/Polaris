@@ -11,17 +11,14 @@ import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.WeightedRoundRobinScheduling;
 import com.polaris.core.util.WeightedRoundRobinScheduling.Server;
 
-public class ServerHandlerLocalProvider extends ServerHandlerAbsProvider {
+public class ServerHandlerLocalProvider {
     private Map<String, WeightedRoundRobinScheduling> serverMap = new ConcurrentHashMap<>();
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = null;
 
     public static ServerHandlerLocalProvider INSTANCE = new ServerHandlerLocalProvider();
     private ServerHandlerLocalProvider() {}
     
-    @Override
-    public String getUrl(String key) {
-    	
-    	List<String> serverInfoList = parseServer(key);
+    public String getUrl(String key, List<String> serverInfoList) {
     	key = serverInfoList.get(1);
     	
     	String[] serversInfo = key.split(",");
@@ -68,14 +65,11 @@ public class ServerHandlerLocalProvider extends ServerHandlerAbsProvider {
     	return serverInfoList.get(0)+ server.getIp() + ":" + server.getPort() + serverInfoList.get(2);
     }
     
-	@Override
-	protected List<String> getAllUrl(String key) {
-		return getAllUrl(key,true);
+	protected List<String> getAllUrl(String key,List<String> serverInfoList) {
+		return getAllUrl(key,serverInfoList,true);
 	}
 	
-    @Override
-    public List<String> getAllUrl(String key, boolean subscribe) {
-    	List<String> serverInfoList = parseServer(key);
+    public List<String> getAllUrl(String key,List<String> serverInfoList, boolean subscribe) {
     	List<String> urlList = new ArrayList<>();
 		String[] ips = serverInfoList.get(1).split(",");
 		for (int i0 = 0; i0 < ips.length; i0++) {
@@ -85,11 +79,8 @@ public class ServerHandlerLocalProvider extends ServerHandlerAbsProvider {
 
     }
     
-    @Override
     public boolean connectionFail(String key, String url) {
-    	key = parseServer(key).get(1);
-    	url = parseServer(url).get(1);
-		
+    	
     	//只有单个url直接返回
     	if (key.split(",").length == 1) {
     		return true;
@@ -107,21 +98,8 @@ public class ServerHandlerLocalProvider extends ServerHandlerAbsProvider {
     	return true;
     }
     
-    @Override
     public void reset() {
     	serverMap.clear();
     }
-
-	@Override
-	protected boolean register(String ip, int port) {
-		return false;
-	}
-
-	@Override
-	protected boolean deregister(String ip, int port) {
-		return false;
-	}
-
-
 
 }
