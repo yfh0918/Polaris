@@ -1,15 +1,7 @@
 package com.polaris.core.naming.provider;
 
-import java.util.List;
+import com.polaris.core.naming.ServerHandler;
 
-public interface ServerStrategyProvider {
-    boolean register(String ip, int port);
-    boolean deregister(String ip, int port);
-	String getUrl(String key);
-	List<String> getAllUrl(String key);
-	List<String> getAllUrl(String key, boolean subscribe);
-	boolean connectionFail(String key, String url);
+public interface ServerStrategyProvider extends ServerHandler{
 	void reset();
-
-
 }

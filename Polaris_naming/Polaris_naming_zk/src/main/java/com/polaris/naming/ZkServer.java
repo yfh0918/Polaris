@@ -96,11 +96,12 @@ public class ZkServer implements ServerHandler {
 	}
 
 	@Override
-	public void connectionFail(String key, String url) {
+	public boolean connectionFail(String key, String url) {
+		return true;
 	}
 
 	@Override
-	public void register(String ip, int port) {
+	public boolean register(String ip, int port) {
 		
 		//get curator
 		CuratorFramework curator = getCurator();
@@ -117,13 +118,15 @@ public class ZkServer implements ServerHandler {
 		try {
 			curator.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
 			.forPath(zkRegPathPrefix, regContent.getBytes(Constant.UTF_CODE));
+			return  true;
 		} catch (Exception ex) {
 			logger.error("ERROR:",ex);
+			return false;
 		}
 	}
 
 	@Override
-	public void deregister(String ip, int port) {
+	public boolean deregister(String ip, int port) {
 		for (ZkCache zkCache : zkCacheMap.values()) {
 			try {
 				zkCache.getCache().close();
@@ -132,6 +135,7 @@ public class ZkServer implements ServerHandler {
 			}
 		}
 		getCurator().close();
+		return true;
 	}
 	
 	private String getPath(String key) {

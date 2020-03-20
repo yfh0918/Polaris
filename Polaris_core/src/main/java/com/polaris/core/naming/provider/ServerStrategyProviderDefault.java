@@ -32,7 +32,7 @@ public class ServerStrategyProviderDefault implements ServerStrategyProvider{
 	}
 
     @Override
-	public List<String> getAllUrl(String key) {
+	public List<String> getAllUrls(String key) {
 		List<String> urls = null;
 		List<String> serverInfoList = parseServer(key);
 		if (isRemote(serverInfoList.get(1))) {
@@ -42,7 +42,7 @@ public class ServerStrategyProviderDefault implements ServerStrategyProvider{
 	}
 	
     @Override
-	public List<String> getAllUrl(String key, boolean subscribe) {
+	public List<String> getAllUrls(String key, boolean subscribe) {
 		List<String> urls = null;
 		List<String> serverInfoList = parseServer(key);
 		if (isRemote(serverInfoList.get(1))) {
@@ -105,5 +105,6 @@ public class ServerStrategyProviderDefault implements ServerStrategyProvider{
 		}
         return serverList;
     }
+
 
 }

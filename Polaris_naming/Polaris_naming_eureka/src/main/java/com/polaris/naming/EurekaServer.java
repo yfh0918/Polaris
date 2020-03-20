@@ -174,25 +174,27 @@ public class EurekaServer implements ServerHandler {
 	}
 
 	@Override
-	public void connectionFail(String key, String url) {
-		//nothing
+	public boolean connectionFail(String key, String url) {
+		return true;
 	}
 
 	@Override
-	public void register(String ip, int port) {
+	public boolean register(String ip, int port) {
     	if (StringUtil.isEmpty(ConfClient.getNamingRegistryAddress())) {
-    		return;
+    		return false;
     	}
     	iniEurekaServer(ip,port, "true");
         waitForRegistrationWithEureka(ip,port);
+        return true;
 	}
 
 	@Override
-	public void deregister(String ip, int port) {
+	public boolean deregister(String ip, int port) {
 		if (eurekaClient == null) {
-			return;
+			return false;
 		}
 		eurekaClient.shutdown();
+		return true;
 	}
 
 	//注册结果
@@ -278,8 +280,5 @@ public class EurekaServer implements ServerHandler {
 		}
 		return null;
 	}
-	
-	
-
 
 }

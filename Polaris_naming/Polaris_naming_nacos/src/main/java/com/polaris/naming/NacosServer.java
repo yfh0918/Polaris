@@ -125,14 +125,14 @@ public class NacosServer implements ServerHandler {
 	}
 
 	@Override
-	public void connectionFail(String key, String url) {
-		//nothing
+	public boolean connectionFail(String key, String url) {
+		return true;
 	}
 
 	@Override
-	public void register(String ip, int port) {
+	public boolean register(String ip, int port) {
 		if (naming == null) {
-			return;
+			return false;
 		}
 		 try {
 			Instance instance = new Instance();
@@ -147,15 +147,17 @@ public class NacosServer implements ServerHandler {
 	        	groupName = ConfClient.getGroup();
 			}
         	naming.registerInstance(ConfClient.getAppName(), groupName, instance);
+        	return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			return false;
 		}
 	}
 
 	@Override
-	public void deregister(String ip, int port) {
+	public boolean deregister(String ip, int port) {
 		if (naming == null) {
-			return;
+			return false;
 		}
 		 try {
 	        //String cluster = ConfClient.getCluster();
@@ -165,8 +167,10 @@ public class NacosServer implements ServerHandler {
 			}
 
 			naming.deregisterInstance(ConfClient.getAppName(), groupName, ip, port);
+			return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			return false;
 		}
 	}
 	
