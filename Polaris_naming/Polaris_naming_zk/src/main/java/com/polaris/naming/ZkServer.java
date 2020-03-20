@@ -49,7 +49,7 @@ public class ZkServer implements ServerHandler {
 		}
 		return curator;
 	}
-	@SuppressWarnings("deprecation")
+
 	@Override
 	public String getUrl(String key) {
 		
@@ -60,55 +60,13 @@ public class ZkServer implements ServerHandler {
         //childData：设置缓存节点的数据状态
 		PathChildrenCache childrenCache = pathCache.get(childNodePathCache);
 		try {
-					
 			if (childrenCache == null) {
 				synchronized(childNodePathCache.intern()) {
 					if (pathCache.get(childNodePathCache) == null) {
-						childrenCache = new PathChildrenCache(curator,childNodePathCache,true);
-
-				        /*
-				        * StartMode：初始化方式
-				        * POST_INITIALIZED_EVENT：异步初始化。初始化后会触发事件
-				        * NORMAL：异步初始化
-				        * BUILD_INITIAL_CACHE：同步初始化
-				        * */
-				        childrenCache.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
-
-				        //获取所有子节点
-						List<WeightedRoundRobinScheduling.Server> serverList = new ArrayList<>();
-						List<ChildData> childDataList = childrenCache.getCurrentData();
-				        for(ChildData cd : childDataList){
-				        	String serverInfo = new String(cd.getData());
-							String[] si = serverInfo.split(":");
-				            if (si.length == 2) {
-					                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), 1);
-				                serverList.add(server);
-				            } else if (si.length == 3) {
-					                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2]));
-				                serverList.add(server);
-				            }
-				        }
-						WeightedRoundRobinScheduling wrrs = new WeightedRoundRobinScheduling(serverList);
-						pathWeight.put(childNodePathCache, wrrs);
-						PathChildrenCacheListener listener = new PathChildrenCacheListener() {
-				            public void childEvent(CuratorFramework ient, PathChildrenCacheEvent event) throws Exception {
-				               if(event.getType().equals(PathChildrenCacheEvent.Type.CHILD_ADDED)){
-				            	   String serverInfo = new String(event.getData().getData());
-				            	   String[] si = serverInfo.split(":");
-				            	   wrrs.add(new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2])));
-				               }else if(event.getType().equals(PathChildrenCacheEvent.Type.CHILD_REMOVED)){
-				            	   String serverInfo = new String(event.getData().getData());
-				            	   String[] si = serverInfo.split(":");
-				            	   wrrs.remove(wrrs.getServer(si[0], Integer.valueOf(si[1])));
-				               }
-				            }
-				        };
-				        childrenCache.getListenable().addListener(listener);
-				        pathCache.put(childNodePathCache, childrenCache);
+						init(curator, childNodePathCache);
 					}
 				}
 			}
-	        
 		} catch (Exception ex) {
 			logger.error("ERROR:",ex);
 		}
@@ -125,9 +83,25 @@ public class ZkServer implements ServerHandler {
 
 	@Override
 	public List<String> getAllUrls(String key, boolean subscribe) {
+		
 		//get curator
+		CuratorFramework curator = getCurator();
 		String childNodePathCache = getPath(key);
+		
+		//childData：设置缓存节点的数据状态
 		PathChildrenCache childrenCache = pathCache.get(childNodePathCache);
+		try {
+			if (childrenCache == null) {
+				synchronized(childNodePathCache.intern()) {
+					if (pathCache.get(childNodePathCache) == null) {
+						init(curator, childNodePathCache);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			logger.error("ERROR:",ex);
+		}
+				
 		//获取所有子节点
         List<ChildData> childDataList = childrenCache.getCurrentData();
         List<String> childList = new ArrayList<>();
@@ -178,7 +152,7 @@ public class ZkServer implements ServerHandler {
 		getCurator().close();
 	}
 	
-	private static String getPath(String key) {
+	private String getPath(String key) {
 		StringBuilder groupSb = new StringBuilder();
 		
 		//rootPath
@@ -203,6 +177,53 @@ public class ZkServer implements ServerHandler {
 		
 		//返回
 		return groupSb.toString();
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void init(CuratorFramework client, String childNodePathCache) throws Exception {
+		
+		//cache
+		PathChildrenCache childrenCache = new PathChildrenCache(client,childNodePathCache,true);
+
+        /*
+        * StartMode：初始化方式
+        * POST_INITIALIZED_EVENT：异步初始化。初始化后会触发事件
+        * NORMAL：异步初始化
+        * BUILD_INITIAL_CACHE：同步初始化
+        * */
+        childrenCache.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
+
+        //获取所有子节点
+		List<WeightedRoundRobinScheduling.Server> serverList = new ArrayList<>();
+		List<ChildData> childDataList = childrenCache.getCurrentData();
+        for(ChildData cd : childDataList){
+        	String serverInfo = new String(cd.getData());
+			String[] si = serverInfo.split(":");
+            if (si.length == 2) {
+	                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), 1);
+                serverList.add(server);
+            } else if (si.length == 3) {
+	                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2]));
+                serverList.add(server);
+            }
+        }
+		WeightedRoundRobinScheduling wrrs = new WeightedRoundRobinScheduling(serverList);
+		pathWeight.put(childNodePathCache, wrrs);
+		PathChildrenCacheListener listener = new PathChildrenCacheListener() {
+            public void childEvent(CuratorFramework ient, PathChildrenCacheEvent event) throws Exception {
+               if(event.getType().equals(PathChildrenCacheEvent.Type.CHILD_ADDED)){
+            	   String serverInfo = new String(event.getData().getData());
+            	   String[] si = serverInfo.split(":");
+            	   wrrs.add(new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2])));
+               }else if(event.getType().equals(PathChildrenCacheEvent.Type.CHILD_REMOVED)){
+            	   String serverInfo = new String(event.getData().getData());
+            	   String[] si = serverInfo.split(":");
+            	   wrrs.remove(wrrs.getServer(si[0], Integer.valueOf(si[1])));
+               }
+            }
+        };
+        childrenCache.getListenable().addListener(listener);
+        pathCache.put(childNodePathCache, childrenCache);
 	}
 
 }
