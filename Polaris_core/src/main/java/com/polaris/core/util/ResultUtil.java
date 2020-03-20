@@ -1,5 +1,7 @@
 package com.polaris.core.util;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.polaris.core.Constant;
 import com.polaris.core.dto.ResultDto;
 
@@ -44,5 +46,13 @@ public class ResultUtil {
 	public static ResultDto fail(String msg, Object val) {
         return new ResultDto(Constant.RESULT_FAIL, msg, val);
     }
+	
+	public static ResultDto get(String json) {
+		try {
+			return JSON.parseObject(json, new TypeReference<ResultDto>() {});
+    	} catch (Exception ex) {
+    		return null;
+    	}
+	}
 
 }
