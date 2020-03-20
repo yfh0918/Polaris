@@ -48,6 +48,9 @@ public class ResultUtil {
     }
 	
 	public static ResultDto get(String json) {
+		if (StringUtil.isEmpty(json)) {
+			return null;
+		}
 		try {
 			return JSON.parseObject(json, new TypeReference<ResultDto>() {});
     	} catch (Exception ex) {
