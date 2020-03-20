@@ -23,11 +23,11 @@
   需要在自己的服务pom.xml中引入 Polaris_conf_nacos
   引入配置中心后，所有的properties文件都可以放入nacos（除了application.properties或者application.yaml 或者application.xml 和 log4j2.xml）
   并且在application.properties中引入需要放入配置中心的配置文件
-  #extension files
+  #extension files(以下配置文件配置方式  或者也可以采用PolarisConfigurationExt注解或者PolarisConfigurationProperties注解注入)
   #project.extension.properties=main.properties,redis.properties
   #project.extension.properties=main.yaml,redis.yaml
   #project.extension.properties=main.xml,redis.xml
-  #global files
+  #global files(以下配置文件配置方式  或者也可以采用PolarisConfigurationGlobal注解或者PolarisConfigurationProperties注解注入)
   #project.global.properties=redis.properties,database.properties
   #project.global.properties=redis.yaml,database.yaml
   
