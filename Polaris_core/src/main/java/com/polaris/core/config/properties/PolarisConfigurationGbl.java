@@ -17,8 +17,8 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Configuration
-@Import(ConfigurationGlobalImport.class)
-public @interface PolarisConfigurationGlobal {
+@Import(ConfigurationGblImport.class)
+public @interface PolarisConfigurationGbl {
 
 	/**
 	 * global file from local or data center

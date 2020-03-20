@@ -26,12 +26,9 @@
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_conf_zk</artifactId>
+            <artifactId>Polaris_conf_file</artifactId>
         </dependency>
-                <dependency>
-            <groupId>com.polaris</groupId>
-            <artifactId>Polaris_naming_zk</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_extension_db</artifactId>

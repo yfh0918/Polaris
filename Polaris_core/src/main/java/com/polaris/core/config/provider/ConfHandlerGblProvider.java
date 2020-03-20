@@ -9,12 +9,12 @@ import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.ConfigListener;
 import com.polaris.core.util.StringUtil;
 
-public class ConfHandlerGlobalProvider extends ConfHandlerAbsProvider {
+public class ConfHandlerGblProvider extends ConfHandlerAbsProvider {
 
 	private final String GLOBAL = "global";
-	public static ConfHandlerGlobalProvider INSTANCE = new ConfHandlerGlobalProvider();
+	public static ConfHandlerGblProvider INSTANCE = new ConfHandlerGblProvider();
 	
-	private ConfHandlerGlobalProvider() {
+	private ConfHandlerGblProvider() {
 	}
 	
 	@Override

@@ -38,11 +38,7 @@ public class ConfCompositeProvider implements ConfigListener {
 	@Override
 	public void onChange(String sequence, Object key, Object value, Opt opt) {
 		//update cache
-		if (opt != Opt.DELETE) {
-			cache.put(key, value);
-		} else {
-			cache.remove(key);
-		}
+		value = opt != Opt.DEL ? cache.put(key, value) : cache.remove(key);
 		
 		//notiy endpoint
 		INSTANCE_ENDPOINT.onChange(sequence, key.toString(), value == null ? null: value.toString(),opt);

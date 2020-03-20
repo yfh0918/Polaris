@@ -15,7 +15,7 @@ public class ConfHandlerProviderFactory {
 				if (type.equals(Type.EXT)) {
 					provider = ConfHandlerExtProvider.INSTANCE;
 				} else if (type.equals(Type.GBL)) {
-					provider = ConfHandlerGlobalProvider.INSTANCE;
+					provider = ConfHandlerGblProvider.INSTANCE;
 				} else if (type.equals(Type.SYS)) {
 					provider = ConfHandlerSysProvider.INSTANCE;
 				} else {

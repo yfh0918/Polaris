@@ -37,10 +37,10 @@ public class ConfHandlerStrategyDefault implements ConfHandlerStrategy {
 					}
 				}
 			} else if (!Objects.equals(oldProperties.get(entry.getKey()), newProperties.get(entry.getKey()))) {
-				if (canUpdate(sequence, config, file, entry.getKey(), entry.getValue(), Opt.UPDATE)) {
+				if (canUpdate(sequence, config, file, entry.getKey(), entry.getValue(), Opt.UPD)) {
 					isUpdate = true;
-					configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.UPDATE);
-					logger.info("type:{} file:{} key:{} oldValue:{} newvalue:{} opt:{}", config.getType(),file,entry.getKey(),oldProperties.get(entry.getKey()), entry.getValue(),Opt.UPDATE.name());
+					configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.UPD);
+					logger.info("type:{} file:{} key:{} oldValue:{} newvalue:{} opt:{}", config.getType(),file,entry.getKey(),oldProperties.get(entry.getKey()), entry.getValue(),Opt.UPD.name());
 				}
 			}
 			if (oldProperties != null) {
@@ -49,10 +49,10 @@ public class ConfHandlerStrategyDefault implements ConfHandlerStrategy {
 		}
 		if (oldProperties != null) {
 			for (Map.Entry entry : oldProperties.entrySet()) {
-				if (canUpdate(sequence, config, file, entry.getKey(), entry.getValue(), Opt.DELETE)) {
+				if (canUpdate(sequence, config, file, entry.getKey(), entry.getValue(), Opt.DEL)) {
 					isUpdate = true;
-					configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.DELETE);
-					logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.DELETE.name());
+					configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.DEL);
+					logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.DEL.name());
 				}
 			}
 		}

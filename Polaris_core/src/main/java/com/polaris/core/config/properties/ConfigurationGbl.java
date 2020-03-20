@@ -17,8 +17,8 @@ import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.util.StringUtil;
 
-public class ConfigurationGlobal implements BeanPostProcessor, PriorityOrdered, ApplicationContextAware, InitializingBean{
-	public static final String BEAN_NAME = ConfigurationGlobal.class.getName();
+public class ConfigurationGbl implements BeanPostProcessor, PriorityOrdered, ApplicationContextAware, InitializingBean{
+	public static final String BEAN_NAME = ConfigurationGbl.class.getName();
 	
 	@Override
 	public int getOrder() {
@@ -35,7 +35,7 @@ public class ConfigurationGlobal implements BeanPostProcessor, PriorityOrdered, 
 	
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-		PolarisConfigurationGlobal annotation = getAnnotation(bean, beanName, PolarisConfigurationGlobal.class);
+		PolarisConfigurationGbl annotation = getAnnotation(bean, beanName, PolarisConfigurationGbl.class);
 		if (annotation != null) {
 			init(bean,annotation);
 		}
@@ -47,7 +47,7 @@ public class ConfigurationGlobal implements BeanPostProcessor, PriorityOrdered, 
 		return AnnotatedElementUtils.findMergedAnnotation(bean.getClass(), type);
 	}
 	
-	private void init(Object bean, PolarisConfigurationGlobal annotation) {
+	private void init(Object bean, PolarisConfigurationGbl annotation) {
 		String[] files = annotation.value();
 		for (String file : files) {
 			if (StringUtil.isNotEmpty(file)) {

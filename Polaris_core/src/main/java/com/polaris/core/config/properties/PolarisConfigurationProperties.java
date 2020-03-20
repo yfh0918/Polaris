@@ -19,7 +19,7 @@ import org.springframework.core.annotation.AliasFor;
 @Documented
 @Configuration
 @PolarisConfigurationExt
-@PolarisConfigurationGlobal
+@PolarisConfigurationGbl
 @Import(ConfigurationPropertiesImport.class)
 public @interface PolarisConfigurationProperties {
 
@@ -62,6 +62,6 @@ public @interface PolarisConfigurationProperties {
      *
      * @return default value is <code>global</code>
      */
-	@AliasFor(annotation = PolarisConfigurationGlobal.class, attribute = "value")
+	@AliasFor(annotation = PolarisConfigurationGbl.class, attribute = "value")
 	String[] global() default {};
 }

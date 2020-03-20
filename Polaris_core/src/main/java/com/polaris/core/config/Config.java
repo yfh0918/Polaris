@@ -6,9 +6,9 @@ import java.util.Properties;
 public interface Config {
 	
 	public enum Opt {
-		ADD,
-		UPDATE,
-	    DELETE;
+		ADD,//add
+		UPD,//update
+	    DEL;//delete
 	}
 	
 	public enum Type {
