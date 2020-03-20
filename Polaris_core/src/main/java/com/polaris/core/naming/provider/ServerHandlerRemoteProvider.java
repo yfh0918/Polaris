@@ -35,8 +35,7 @@ public class ServerHandlerRemoteProvider {
     //注册
     public boolean register(String ip, int port) {
     	if (handler != null) {
-    		handler.register(ip, port);
-    		return true;
+    		return handler.register(ip, port);
     	}
     	return false;
     }
@@ -44,8 +43,7 @@ public class ServerHandlerRemoteProvider {
     //反注册
     public boolean deregister(String ip, int port) {
     	if (handler != null) {
-			handler.deregister(ip, port);
-			return true;
+    		return handler.deregister(ip, port);
 		}
     	return false;
     }
@@ -78,8 +76,7 @@ public class ServerHandlerRemoteProvider {
 
 	public boolean connectionFail(String key, String url) {
 		if (handler != null) {
-			handler.connectionFail(key, url);
-			return true;
+			return handler.connectionFail(key, url);
 		}
 		return false;
 	}
