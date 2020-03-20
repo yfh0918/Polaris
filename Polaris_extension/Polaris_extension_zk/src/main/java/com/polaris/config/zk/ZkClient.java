@@ -235,7 +235,7 @@ public class ZkClient implements Watcher {
 		}
 	}
 	
-	public static class ZkInfo {
+	protected static class ZkInfo {
 		private ZooKeeper zk;
 		private Map<String, List<ZkListener>> zkListerners = new ConcurrentHashMap<>();
 		ZkInfo(ZooKeeper zk) {
