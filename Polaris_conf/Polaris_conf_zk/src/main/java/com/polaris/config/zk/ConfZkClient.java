@@ -20,7 +20,7 @@ public class ConfZkClient {
 		String path = getPath(fileName,group);
 		ZkClient.addWatchForPath(zk, path, new ZkListener() {
 			@Override
-			public void listen(String url, String path, EventType type) {
+			public void listen(String path, EventType type) {
 				if (type == EventType.NodeDeleted) {
 					listener.receive(null);
 				} else if (type == EventType.NodeDataChanged || type == EventType.NodeCreated) {

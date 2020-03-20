@@ -98,7 +98,7 @@ public class ZkClient implements Watcher {
 									
 									//获取监听者
 									for (ZkListener zkListener : zkinfo.getListeners(path)) {
-										zkListener.listen(url, path, watchedEvent.getType());
+										zkListener.listen(path, watchedEvent.getType());
 									}
 									
 									
