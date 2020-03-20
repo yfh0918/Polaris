@@ -68,9 +68,8 @@ public class HttpClientUtil {
 	private static final String RETRY_COUNT = "http.connect.retryCount";
 	private static final String POOL_CONN_MAX_COUNT="http.connect.maxCount";
 	private static final String POOL_CONN_PERROUTE = "http.connect.perRouteCount";
-	private static final String REQUEST_TIME_OUT = "http.request.timeout";
 	private static final String UTF8 = "UTF-8";
-	private static int timeout = Integer.parseInt(ConfClient.get(REQUEST_TIME_OUT, "10000"));
+	private static int timeout = -1;
 	private static Logger LOGGER = LoggerFactory.getLogger(HttpClientUtil.class);
  
     private static CloseableHttpClient defaultHttpClient = null;
