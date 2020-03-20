@@ -474,3 +474,5 @@
 /Polaris_naming/Polaris_naming_zk/.settings
 /Polaris_naming/Polaris_naming_zk/target
 /Polaris_naming/Polaris_naming_zk/.classpath
+/Polaris_naming/Polaris_naming_nacos/target
+/Polaris_naming/Polaris_naming_eureka/target
