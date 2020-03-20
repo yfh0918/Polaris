@@ -34,8 +34,8 @@
   默认支持Spring注解@Value的自动更新-（nacos,zookeeper的推送更新会同步到@Value注解）
   可以用value.auto.update=false来关闭，频繁更新配置会影响性能（配置更新采用文件形式）
 
-5:Polaris_workflow是现有的服务（工作流activity内核）
-  提供dubbo接口和http接口两种方式，没有画面，具体请参考模块的配置
+5:Polaris_extension_workflow是现有的服务（工作流activity内核）
+  提供dubbo接口和http接口两种方式，没有画面，具体请参考模块的配置,详细参考Polaris_demo目录下的workflow
 
 6:Polaris_container_gateway是现有的api网管，提供api的统一入口服务(基于netty http实现)
   具体的api代理请参考config\upstream.txt,其中static:开头的代理的存静态文件会跳过所有的filter
