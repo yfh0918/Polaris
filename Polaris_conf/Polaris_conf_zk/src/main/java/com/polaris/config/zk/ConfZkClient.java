@@ -1,6 +1,7 @@
 package com.polaris.config.zk;
 
 import org.apache.zookeeper.Watcher.Event.EventType;
+import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.ZooKeeper;
 
 import com.polaris.core.config.ConfClient;
@@ -13,7 +14,7 @@ public class ConfZkClient {
 	
 	public static String getConfig(String fileName, String group) {
 		String path = getPath(fileName,group);
-		ZkClient.createWithParent(zk,path);//创建路径
+		ZkClient.createWithParent(zk,path,CreateMode.PERSISTENT);//创建路径
 		return ZkClient.getPathData(zk,path);//获取数据
 	}
 	public static void addListener(String fileName, String group, ConfHandlerListener listener) {

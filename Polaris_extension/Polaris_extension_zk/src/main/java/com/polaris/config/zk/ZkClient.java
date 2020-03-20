@@ -141,7 +141,7 @@ public class ZkClient implements Watcher {
 	 * create node path with parent path (如果父节点不存在,循环创建父节点, 因为父节点不存在zookeeper会抛异常)
 	 * @param path	()
 	 */
-	public static Stat createWithParent(ZooKeeper zk, String path){
+	public static Stat createWithParent(ZooKeeper zk, String path, CreateMode createMode){
 		// valid
 		if (path==null || path.trim().length()==0) {
 			return null;
@@ -150,17 +150,19 @@ public class ZkClient implements Watcher {
 		try {
 			Stat stat = zk.exists(path, false);
 			if (stat == null) {
-				//  valid parent, createWithParent if not exists
+				
+				//  parent - CreateMode.PERSISTENT
 				if (path.lastIndexOf(Constant.SLASH) > 0) {
 					String parentPath = path.substring(0, path.lastIndexOf(Constant.SLASH));
 					Stat parentStat = zk.exists(parentPath, false);
 					if (parentStat == null) {
-						createWithParent(zk, parentPath);
+						createWithParent(zk, parentPath,CreateMode.PERSISTENT);
 					}
 				}
-				// create desc node path
+				
+				// current node path
 				try {
-					zk.create(path, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+					zk.create(path, new byte[]{}, ZooDefs.Ids.OPEN_ACL_UNSAFE, createMode);
 				} catch (Exception ex) {
 					logger.error(ex.getMessage());
 				}
