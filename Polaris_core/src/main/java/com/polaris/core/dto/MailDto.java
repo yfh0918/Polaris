@@ -5,7 +5,7 @@ import java.util.Map;
  * EmailDto
  *
  */
-public class EmailDto {
+public class MailDto {
 	
 	private String receiver;//收件人，多个以英文分号（;）分割
 	

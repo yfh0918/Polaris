@@ -32,19 +32,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.dto.EmailDto;
+import com.polaris.core.dto.MailDto;
 
 /**
  * @ClassName: EmailUtils
  * @Description: 发送邮件工具类
  * @date 2020年1月3日 
  */
-public class EmailUtil {
-	private static final Logger LOGGER = LoggerFactory.getLogger(EmailUtil.class);
+public class MailUtil {
+	private static final Logger LOGGER = LoggerFactory.getLogger(MailUtil.class);
 
     private static final String MAIL_ACCOUNT_SEPARATOR = ";"; // separator
 
-    public static boolean sendEmail(String receiveMailAccount, String subject, String content) {
+    public static boolean sendMail(String receiveMailAccount, String subject, String content) {
         Boolean isSent = true;
         Transport transport = null;
         MimeMessage message = null;
@@ -62,13 +62,13 @@ public class EmailUtil {
             transport = session.getTransport();
 
             // 5. 使用 邮箱账号 和 密码 连接邮件服务器, 这里认证的邮箱必须与 message 中的发件人邮箱一致, 否则报错
-            transport.connect(ConfClient.get("mail.email.sender"), ConfClient.get("mail.email.password"));
+            transport.connect(ConfClient.get("mail.sender"), ConfClient.get("mail.password"));
 
             // 6. 发送邮件, 发到所有的收件地址, message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人, 密送人
             transport.sendMessage(message, message.getAllRecipients());
 
         } catch (Exception e) {
-            LOGGER.error("send email failed,email={}", receiveMailAccount);
+            LOGGER.error("send mail failed,mail={}", receiveMailAccount);
             LOGGER.error(e.getMessage(), e);
             isSent = false;
             throw new RuntimeException(e.getMessage());
@@ -115,7 +115,7 @@ public class EmailUtil {
             transport.sendMessage(message, message.getAllRecipients());
 
         } catch (Exception e) {
-            LOGGER.error("send email failed,email={}", receiveMailAccount);
+            LOGGER.error("send mail failed,mail={}", receiveMailAccount);
             LOGGER.error(e.getMessage(), e);
             isSent = false;
             throw new RuntimeException(e.getMessage());
@@ -138,8 +138,8 @@ public class EmailUtil {
         MimeMessage message = new MimeMessage(session);
 
         // 2. From: 发件人 -> 密尔克卫官网
-        String sender = ConfClient.get("mail.email.sender");
-        message.setFrom(new InternetAddress(ConfClient.get("mail.email.sender"), sender, "UTF-8"));
+        String sender = ConfClient.get("mail.sender");
+        message.setFrom(new InternetAddress(ConfClient.get("mail.sender"), sender, "UTF-8"));
 
         InternetAddress[] internetAddressTo = null;
         if(receiveMailAccount!=null) {
@@ -163,7 +163,7 @@ public class EmailUtil {
         message.setRecipients(MimeMessage.RecipientType.TO, internetAddressTo);
         // 4. Subject: 邮件主题
         if (StringUtils.isBlank(subject)) {
-            subject = ConfClient.get("mail.email.default.subject");;
+            subject = ConfClient.get("mail.default.subject");;
         }
         message.setSubject(subject, "UTF-8");
 
@@ -212,7 +212,7 @@ public class EmailUtil {
          // 4. Subject: 邮件主题
         if (StringUtils.isBlank(subject)) {
             // 密尔克卫集团官网-通知
-            subject = ConfClient.get("mail.email.default.subject");
+            subject = ConfClient.get("mail.default.subject");
         }
         message.setSubject(subject, "UTF-8");
 
@@ -259,7 +259,7 @@ public class EmailUtil {
     static class MyAuthenricator extends Authenticator {
         @Override
         protected PasswordAuthentication getPasswordAuthentication() {
-            return new PasswordAuthentication(ConfClient.get("mail.email.sender"), ConfClient.get("mail.email.password"));
+            return new PasswordAuthentication(ConfClient.get("mail.sender"), ConfClient.get("mail.password"));
         }
     }
 
@@ -277,24 +277,24 @@ public class EmailUtil {
         props.setProperty("mail.smtp.auth", ConfClient.get("mail.smtp.auth"));
         props.setProperty("mail.smtp.host", ConfClient.get("mail.smtp.host"));
         props.setProperty("mail.smtp.port", ConfClient.get("mail.smtp.port"));
-        props.setProperty("mail.email.sender", ConfClient.get("mail.email.sender"));
-        props.setProperty("mail.email.password", ConfClient.get("mail.email.password"));
+        props.setProperty("mail.sender", ConfClient.get("mail.sender"));
+        props.setProperty("mail.password", ConfClient.get("mail.password"));
         return props;
     }
     
     /**
 	 * 发邮件
-	 * @param email
+	 * @param mail
 	 */
-    public static void sendEmail(String key, Executor executor, String... placeHolder) {
+    public static void sendMail(String key, Executor executor, String... placeHolder) {
     	if (StringUtil.isEmpty(key)) {
-    		LOGGER.error("email.key.subject is null");
+    		LOGGER.error("mail.key.subject is null");
     		return;
     	}
-    	EmailDto emailDTO = new EmailDto();
-        emailDTO.setSubject(ConfClient.get("email."+key+".subject"));
-        emailDTO.setReceiver(ConfClient.get("email."+key+".receiver"));
-        emailDTO.setContent(ConfClient.get("email."+key+".content"));
+    	MailDto emailDTO = new MailDto();
+        emailDTO.setSubject(ConfClient.get("mail."+key+".subject"));
+        emailDTO.setReceiver(ConfClient.get("mail."+key+".receiver"));
+        emailDTO.setContent(ConfClient.get("mail."+key+".content"));
         if (placeHolder != null && placeHolder.length > 0) {
         	Map<String, String> placeHolderMap = new HashMap<>();
         	for (int index = 1; index < placeHolder.length + 1; index++) {
@@ -302,10 +302,10 @@ public class EmailUtil {
         	}
         	emailDTO.setPlaceHolderMap(placeHolderMap);
         }
-        EmailUtil.sendEmail(emailDTO, executor);
+        sendMail(emailDTO, executor);
     }
-	public static void sendEmail(EmailDto email,Executor executor) {
-		if(email == null) {
+	public static void sendMail(MailDto mailDto,Executor executor) {
+		if(mailDto == null) {
 			return;
 		}
 		
@@ -313,17 +313,17 @@ public class EmailUtil {
 		executor.execute(new Runnable() {
             @Override
             public void run() {
-        		String content = email.getContent();
+        		String content = mailDto.getContent();
         		if (StringUtil.isEmpty(content)) {
-        			LOGGER.error("email content is null");
+        			LOGGER.error("mail content is null");
         			return;
         		}
-                if(email.getPlaceHolderMap()!=null && email.getPlaceHolderMap().size()>0) {
-                	Set<String> set = email.getPlaceHolderMap().keySet();
+                if(mailDto.getPlaceHolderMap()!=null && mailDto.getPlaceHolderMap().size()>0) {
+                	Set<String> set = mailDto.getPlaceHolderMap().keySet();
                     //替换内容
                     for (String key : set) {
-                        if (StringUtil.isNotEmpty(email.getPlaceHolderMap().get(key))) {
-                            content = content.replace("{" + key + "}", email.getPlaceHolderMap().get(key));
+                        if (StringUtil.isNotEmpty(mailDto.getPlaceHolderMap().get(key))) {
+                            content = content.replace("{" + key + "}", mailDto.getPlaceHolderMap().get(key));
                         } else {
                             content = content.replace("{" + key + "}", "");
                         }
@@ -331,7 +331,7 @@ public class EmailUtil {
                 }
                 
                 //发邮件
-        		sendEmail(email.getReceiver(), email.getSubject(), content);            
+                sendMail(mailDto.getReceiver(), mailDto.getSubject(), content);            
         	}
         });
 	}
