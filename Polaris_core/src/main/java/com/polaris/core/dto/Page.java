@@ -5,9 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
-/**
- * @author HenryYan
- */
 public class Page<T> {
 
     // -- 公共变量 --//

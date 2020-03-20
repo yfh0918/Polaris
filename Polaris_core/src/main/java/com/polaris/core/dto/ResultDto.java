@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.polaris.core.Constant;
 
 public class ResultDto<T> extends MessageDto implements Serializable {
@@ -13,7 +12,7 @@ public class ResultDto<T> extends MessageDto implements Serializable {
 	private static final long serialVersionUID = 1L;
 
     private T data;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    
     private String detailMessage;
 
     public String getDetailMessage() {

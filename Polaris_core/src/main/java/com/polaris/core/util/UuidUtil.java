@@ -18,6 +18,4 @@ public abstract class UuidUtil {
         return UUID.randomUUID().toString();
     }
 
-
-
 }

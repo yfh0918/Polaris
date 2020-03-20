@@ -19,6 +19,7 @@ public class ParameterDto implements Serializable{
 	public Map<String, Object> getParameterMap() {
 		return parameterMap;
 	}
+	
 	public void setParameterMap(Map<String, Object> parameterMap) {
 		this.parameterMap = parameterMap;
 	}

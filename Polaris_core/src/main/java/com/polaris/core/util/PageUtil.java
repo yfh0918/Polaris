@@ -1,11 +1,13 @@
-package com.polaris.core.dto;
+package com.polaris.core.util;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.polaris.core.dto.Page;
+import com.polaris.core.dto.PageDto;
 
 /**
  * 分页工具
  *
- * @author yufenghua
  */
 public class PageUtil {
 

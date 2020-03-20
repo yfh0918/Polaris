@@ -26,8 +26,6 @@ import net.sf.json.JSONNull;
  * 字符串工具类
  * </p>
  *
- * @author xubo
- * @date 2008-9-4
  */
 
 public class StringUtil {
