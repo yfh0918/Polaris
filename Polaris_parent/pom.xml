@@ -17,6 +17,8 @@
         <spring_version>5.2.3.RELEASE</spring_version>
         <tomcat-version>9.0.31</tomcat-version>
         <jetty-version>9.4.24.v20191120</jetty-version>
+        <undertow-version>2.0.30.Final</undertow-version>
+        
         <activiti-version>5.22.0</activiti-version>
         <hibernate-version>5.4.10.Final</hibernate-version>
         <lucene-version>7.2.0</lucene-version>
@@ -531,6 +533,33 @@
 			    <artifactId>javax-websocket-client-impl</artifactId>
 			    <version>${jetty-version}</version>
 			</dependency>
+	    <!-- undertow -->
+	    <dependency>
+		    <groupId>io.undertow</groupId>
+		    <artifactId>undertow-core</artifactId>
+		    <version>${undertow-version}</version>
+	    </dependency>
+	    <dependency>
+		    <groupId>io.undertow</groupId>
+		    <artifactId>undertow-servlet</artifactId>
+		    <version>${undertow-version}</version>
+	    </dependency>
+	    <dependency>
+		    <groupId>io.undertow</groupId>
+		    <artifactId>undertow-websockets-jsr</artifactId>
+		    <version>${undertow-version}</version>
+	    </dependency>
+		<dependency>
+		    <groupId>io.undertow</groupId>
+		    <artifactId>undertow-examples</artifactId>
+		    <version>${undertow-version}</version>
+		</dependency>
+	    <dependency>
+		    <groupId>io.undertow.jastow</groupId>
+		    <artifactId>jastow</artifactId>
+		    <version>2.1.0.Final</version>
+	    </dependency>
+
 
             <!-- activiti -->
             <dependency>
