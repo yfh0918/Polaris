@@ -1,4 +1,4 @@
-package com.polaris.core.dto;
+package com.polaris.core.pojo;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.polaris.core.Constant;
 
-public class ResultDto<T> extends MessageDto implements Serializable {
+public class Result<T> extends Message implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -23,27 +23,27 @@ public class ResultDto<T> extends MessageDto implements Serializable {
         this.detailMessage = detailMessage;
     }
 
-    public ResultDto() {
+    public Result() {
         super(Constant.RESULT_SUCCESS,"");
     }
 
-    public ResultDto(T value) {
+    public Result(T value) {
     	super(Constant.RESULT_SUCCESS,"");
         this.data = value;
     }
 
-    public ResultDto(String code, String message) {
+    public Result(String code, String message) {
         super(code,message);
         this.data = null;
     }
 
-    public ResultDto(String code, String message, String detailMessage, T val) {
+    public Result(String code, String message, String detailMessage, T val) {
     	super(code,message);
         this.detailMessage = detailMessage;
         this.data = val;
     }
 
-    public ResultDto(String code, String message, T value) {
+    public Result(String code, String message, T value) {
     	super(code,message);
         this.data = value;
     }

@@ -1,4 +1,4 @@
-package com.polaris.core.dto;
+package com.polaris.core.pojo;
 
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -23,11 +23,9 @@ public class Page<T> {
     protected long totalCount = -1;
 
     // -- 构造函数 --//
-    public Page() {
-    }
-
-    public Page(int pageSize) {
+    public Page(int pageSize, int pageNo) {
         this.pageSize = pageSize;
+        this.pageNo = pageNo;
     }
 
     // -- 分页参数访问函数 --//

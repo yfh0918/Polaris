@@ -1,11 +1,11 @@
-package com.polaris.core.dto;
+package com.polaris.core.pojo;
 
 import java.util.Map;
 /**
  * EmailDto
  *
  */
-public class MailDto {
+public class Mail {
 	
 	private String receiver;//收件人，多个以英文分号（;）分割
 	

@@ -3,7 +3,7 @@ package com.polaris.container.gateway;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.polaris.core.dto.ResultDto;
+import com.polaris.core.pojo.Result;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 
@@ -13,12 +13,12 @@ public abstract class HttpFilter extends HttpFilterOrder {
      * 中途被拦截需要返回的信息
      *
      */
-	private ResultDto resultDto;
-	public ResultDto getResultDto() {
+	private Result resultDto;
+	public Result getResultDto() {
 		return resultDto;
 	}
 
-	public void setResultDto(ResultDto resultDto) {
+	public void setResultDto(Result resultDto) {
 		this.resultDto = resultDto;
 	}
 	

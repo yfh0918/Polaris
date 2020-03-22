@@ -33,7 +33,7 @@ import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
-import com.polaris.core.dto.ResultDto;
+import com.polaris.core.pojo.Result;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.UuidUtil;
@@ -288,7 +288,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             //获取cc宜兰
             if (url.equals("/gateway/cc/ip")) {
             	@SuppressWarnings("rawtypes")
-				ResultDto<List> dto = new ResultDto<>();
+				Result<List> dto = new Result<>();
             	dto.setCode(Constant.RESULT_SUCCESS);
         		List<String> dataList = new ArrayList<>();
             	try {

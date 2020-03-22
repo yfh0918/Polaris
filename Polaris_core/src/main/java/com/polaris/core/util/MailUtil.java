@@ -32,10 +32,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.dto.MailDto;
+import com.polaris.core.pojo.Mail;
 
 /**
- * @ClassName: EmailUtils
+ * @ClassName: MailUtil
  * @Description: 发送邮件工具类
  * @date 2020年1月3日 
  */
@@ -291,7 +291,7 @@ public class MailUtil {
     		LOGGER.error("mail.key.subject is null");
     		return;
     	}
-    	MailDto emailDTO = new MailDto();
+    	Mail emailDTO = new Mail();
         emailDTO.setSubject(ConfClient.get("mail."+key+".subject"));
         emailDTO.setReceiver(ConfClient.get("mail."+key+".receiver"));
         emailDTO.setContent(ConfClient.get("mail."+key+".content"));
@@ -304,7 +304,7 @@ public class MailUtil {
         }
         sendMail(emailDTO, executor);
     }
-	public static void sendMail(MailDto mailDto,Executor executor) {
+	public static void sendMail(Mail mailDto,Executor executor) {
 		if(mailDto == null) {
 			return;
 		}

@@ -1,6 +1,6 @@
 package com.polaris.demo.service;
 
-import com.polaris.core.dto.ResultDto;
+import com.polaris.core.pojo.Result;
 import com.polaris.demo.mapper.ComboBean;
 
 /**

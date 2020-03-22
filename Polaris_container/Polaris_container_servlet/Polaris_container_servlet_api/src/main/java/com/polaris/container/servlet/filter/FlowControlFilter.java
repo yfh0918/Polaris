@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.alibaba.fastjson.JSON;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.dto.ResultDto;
+import com.polaris.core.pojo.Result;
 
 /**
 * 流量控制过滤器
@@ -144,7 +144,7 @@ public class FlowControlFilter implements Filter {
 	@SuppressWarnings("rawtypes")
 	private void setRtnResponse(HttpServletResponse httpServletResponse) throws IOException  {
 		httpServletResponse.setStatus(200);
-		ResultDto responseDto = new ResultDto();
+		Result responseDto = new Result();
 		responseDto.setMessage(FLOW_CONTROL_MESSAGE);
 		responseDto.setCode(Constant.RESULT_FAIL);
 		httpServletResponse.getWriter().write(JSON.toJSONString(responseDto));

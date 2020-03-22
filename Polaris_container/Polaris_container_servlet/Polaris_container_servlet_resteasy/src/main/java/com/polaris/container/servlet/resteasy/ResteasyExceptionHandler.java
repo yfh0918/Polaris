@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.dto.ResultDto;
+import com.polaris.core.pojo.Result;
 import com.polaris.core.util.StringUtil;
 
 @Provider  
@@ -21,7 +21,7 @@ public class ResteasyExceptionHandler implements ExceptionMapper<Exception>{
     @SuppressWarnings({ "rawtypes" })
 	@Override  
     public Response toResponse(Exception ex) {
-    	ResultDto responseDto = new ResultDto();
+    	Result responseDto = new Result();
     	responseDto.setCode(Constant.RESULT_FAIL);
     	if (ex instanceof RuntimeException) {
         	responseDto.setMessage(Constant.MESSAGE_GLOBAL_ERROR);

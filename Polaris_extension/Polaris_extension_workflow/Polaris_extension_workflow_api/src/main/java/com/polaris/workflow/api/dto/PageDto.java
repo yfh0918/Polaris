@@ -1,9 +1,11 @@
-package com.polaris.core.dto;
+package com.polaris.workflow.api.dto;
 
 import java.io.Serializable;
 
+import com.polaris.core.pojo.Result;
+
 @SuppressWarnings("rawtypes")
-public class PageDto extends ResultDto implements Serializable {
+public class PageDto extends Result implements Serializable {
 
 	/**o
 	 * 

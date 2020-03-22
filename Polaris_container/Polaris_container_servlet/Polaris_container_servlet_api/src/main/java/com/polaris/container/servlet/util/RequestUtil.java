@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
-import com.polaris.core.dto.ParameterDto;
+import com.polaris.core.pojo.Parameter;
 import com.polaris.core.util.StringUtil;
 
 public final class RequestUtil {
@@ -78,8 +78,8 @@ public final class RequestUtil {
 		
 		//系统认定的
 		T rtnObject = JSONObject.parseObject(JSONObject.toJSONString(parameterMap), clazz, feature);
-	    if (rtnObject instanceof ParameterDto) {
-	    	((ParameterDto)rtnObject).setParameterMap(parameterMap);
+	    if (rtnObject instanceof Parameter) {
+	    	((Parameter)rtnObject).setParameterMap(parameterMap);
 	    } 
     	return rtnObject;
 	}

@@ -19,8 +19,8 @@ import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.container.gateway.util.RequestUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.GlobalContext;
-import com.polaris.core.dto.ResultDto;
 import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
+import com.polaris.core.pojo.Result;
 import com.polaris.core.util.UuidUtil;
 
 import io.netty.buffer.ByteBuf;
@@ -169,7 +169,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
 
     //创建resoponse(中途退出错误的场合)
     @SuppressWarnings("rawtypes")
-	private HttpResponse createResponse(HttpResponseStatus httpResponseStatus, HttpRequest originalRequest, ResultDto responseDto, Map<String, Object> headerMap) {
+	private HttpResponse createResponse(HttpResponseStatus httpResponseStatus, HttpRequest originalRequest, Result responseDto, Map<String, Object> headerMap) {
         HttpResponse httpResponse;
         if (responseDto != null) {
         	ByteBuf buf = io.netty.buffer.Unpooled.copiedBuffer(responseDto.toJSONString(), CharsetUtil.UTF_8); 

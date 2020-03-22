@@ -9,7 +9,6 @@ import java.util.Map;
 import org.activiti.bpmn.model.BpmnModel;
 import org.apache.commons.collections.CollectionUtils;
 
-import com.polaris.core.dto.PageDto;
 import com.polaris.core.util.StringUtil;
 
 public class WorkflowDto extends PageDto implements Serializable {

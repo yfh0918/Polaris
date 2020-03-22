@@ -66,12 +66,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.dto.Page;
+import com.polaris.core.pojo.Page;
+import com.polaris.core.util.FileUtil;
+import com.polaris.core.util.PageUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.workflow.api.dto.WorkflowDto;
 import com.polaris.workflow.util.WorkflowUtils;
-import com.polaris.core.util.FileUtil;
-import com.polaris.core.util.PageUtil;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
@@ -347,8 +347,8 @@ public class WorkflowProcessService {
             List<Map<String, Object>> datas = new ArrayList<>();
 
             //分页
-            Page<WorkflowDto> page = new Page<WorkflowDto>(dto.getPageSize());
-            int[] pageParams = PageUtil.init(page, dto);
+            Page<WorkflowDto> page = new Page<WorkflowDto>(dto.getPageSize(),dto.getPageIndex());
+            int[] pageParams = PageUtil.init(page);
 
             // 根据当前人的ID查询
             TaskQuery taskQuery = taskService.createTaskQuery().processDefinitionKey(dto.getProcessDefinitionKey()).taskCandidateOrAssigned(dto.getUserId());
@@ -501,8 +501,8 @@ public class WorkflowProcessService {
             List<Map<String, Object>> datas = new ArrayList<>();
 
             //分页
-            Page<WorkflowDto> page = new Page<WorkflowDto>(dto.getPageSize());
-            int[] pageParams = PageUtil.init(page, dto);
+            Page<WorkflowDto> page = new Page<WorkflowDto>(dto.getPageSize(),dto.getPageIndex());
+            int[] pageParams = PageUtil.init(page);
 
             //查询
             ProcessInstanceQuery query = runtimeService.createProcessInstanceQuery().processDefinitionKey(dto.getProcessDefinitionKey());
@@ -613,8 +613,8 @@ public class WorkflowProcessService {
             List<Map<String, Object>> datas = new ArrayList<>();
 
             //分页
-            Page<WorkflowDto> page = new Page<WorkflowDto>(dto.getPageSize());
-            int[] pageParams = PageUtil.init(page, dto);
+            Page<WorkflowDto> page = new Page<WorkflowDto>(dto.getPageSize(),dto.getPageIndex());
+            int[] pageParams = PageUtil.init(page);
 
             //查询流程
             HistoricProcessInstanceQuery query = historyService.createHistoricProcessInstanceQuery().processDefinitionKey(dto.getProcessDefinitionKey());

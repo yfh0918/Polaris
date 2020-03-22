@@ -3,7 +3,7 @@ package com.polaris.core.util;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.polaris.core.Constant;
-import com.polaris.core.dto.ResultDto;
+import com.polaris.core.pojo.Result;
 
 /**
  * @author 
@@ -18,41 +18,41 @@ public class ResultUtil {
 
     private static final String MSG_FAIL = "fail";
 
-    public static ResultDto success() {
+    public static Result success() {
         return ResultUtil.success(MSG_SUCCESS);
     }
 
 
-    public static ResultDto success(Object val) {
+    public static Result success(Object val) {
         return ResultUtil.success(MSG_SUCCESS, val);
     }
 
-    public static ResultDto success(String msg, Object val) {
-        return new ResultDto(Constant.RESULT_SUCCESS, msg, val);
+    public static Result success(String msg, Object val) {
+        return new Result(Constant.RESULT_SUCCESS, msg, val);
     }
 
-    public static ResultDto fail() {
+    public static Result fail() {
         return ResultUtil.fail(MSG_FAIL);
     }
 
-    public static ResultDto fail(String msg) {
-        return new ResultDto(Constant.RESULT_FAIL, msg);
+    public static Result fail(String msg) {
+        return new Result(Constant.RESULT_FAIL, msg);
     }
 
-    public static ResultDto fail(String msg, String detailMsg, Object val) {
-        return new ResultDto(Constant.RESULT_FAIL, msg, detailMsg, val);
+    public static Result fail(String msg, String detailMsg, Object val) {
+        return new Result(Constant.RESULT_FAIL, msg, detailMsg, val);
     }
 
-	public static ResultDto fail(String msg, Object val) {
-        return new ResultDto(Constant.RESULT_FAIL, msg, val);
+	public static Result fail(String msg, Object val) {
+        return new Result(Constant.RESULT_FAIL, msg, val);
     }
 	
-	public static ResultDto get(String json) {
+	public static Result get(String json) {
 		if (StringUtil.isEmpty(json)) {
 			return null;
 		}
 		try {
-			return JSON.parseObject(json, new TypeReference<ResultDto>() {});
+			return JSON.parseObject(json, new TypeReference<Result>() {});
     	} catch (Exception ex) {
     		return null;
     	}

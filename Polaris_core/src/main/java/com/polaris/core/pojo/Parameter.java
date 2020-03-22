@@ -1,10 +1,10 @@
-package com.polaris.core.dto;
+package com.polaris.core.pojo;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ParameterDto implements Serializable{
+public class Parameter implements Serializable{
 	/**
 	 * 
 	 */

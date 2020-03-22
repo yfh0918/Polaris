@@ -1,8 +1,8 @@
-package com.polaris.core.dto;
+package com.polaris.core.pojo;
 
 import java.io.Serializable;
 
-public class MessageDto implements Serializable {
+public class Message implements Serializable {
 	
 	/**
 	 * 
@@ -20,11 +20,11 @@ public class MessageDto implements Serializable {
 	 */
 	private String message;
 
-	 public  MessageDto(){
+	 public  Message(){
 		 
 	 }
 	 
-	 public  MessageDto(String code,String message){
+	 public  Message(String code,String message){
 	    	this.code = code;
 	    	this.message=message;
 	  }
