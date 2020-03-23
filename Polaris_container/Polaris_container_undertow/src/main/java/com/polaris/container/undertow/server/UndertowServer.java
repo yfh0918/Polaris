@@ -1,18 +1,32 @@
 package com.polaris.container.undertow.server;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.ServiceLoader;
+
+import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.container.listener.ServerListenerSupport;
+import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
+
+import io.undertow.Handlers;
 import io.undertow.Undertow;
 import io.undertow.Undertow.Builder;
 import io.undertow.server.HttpHandler;
+import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.session.SessionManager;
 import io.undertow.servlet.Servlets;
 import io.undertow.servlet.api.DeploymentInfo;
 import io.undertow.servlet.api.DeploymentManager;
+import io.undertow.servlet.api.ServletContainerInitializerInfo;
+import io.undertow.servlet.api.ServletStackTraces;
+import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
 
 /**
  * Class Name : UndertowServer
@@ -23,12 +37,13 @@ import io.undertow.servlet.api.DeploymentManager;
 
 public class UndertowServer {
     private static final Logger logger = LoggerFactory.getLogger(UndertowServer.class);
-//    private static final String MAX_THREADS = "300";//和tomcat保持一致
-//    private static final  int MAX_SAVE_POST_SIZE = 4 * 1024;
     
     private Undertow undertow;
     private DeploymentManager manager;
-    
+    private String serverPort;
+    private String contextPath;
+	private final ServiceLoader<ServletContainerInitializer> serviceLoader = ServiceLoader.load(ServletContainerInitializer.class);
+
     /**
      * servlet上下文
      */
@@ -45,56 +60,68 @@ public class UndertowServer {
      * @throws ServletException 
      */
     private void init() throws ServletException {
-    	DeploymentManager manager = createDeploymentManager();
-    	int port = 8080;
-    	Builder builder = createBuilder(port);
+    	
+    	//create context();
+    	contextPath = createContextPath();
+    	
+    	//create deployment manager
+    	manager = createDeploymentManager();
+    	
+    	//create builder
+    	serverPort = ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE);
+    	Builder builder = createBuilder(Integer.parseInt(serverPort));
+    	
+    	//create httpHander
     	HttpHandler httpHandler = manager.start();
-		builder.setHandler(httpHandler);
+    	PathHandler path = Handlers.path(Handlers.redirect(contextPath))
+                .addPrefixPath(contextPath, httpHandler);
+    	
+    	//path set
+		builder.setHandler(path);
+		
+		//build server
 		undertow =  builder.build();
     }
     private Builder createBuilder(int port) {
 		Builder builder = Undertow.builder();
-//		if (this.bufferSize != null) {
-//			builder.setBufferSize(this.bufferSize);
-//		}
-//		if (this.ioThreads != null) {
-//			builder.setIoThreads(this.ioThreads);
-//		}
-//		if (this.workerThreads != null) {
-//			builder.setWorkerThreads(this.workerThreads);
-//		}
-//		if (this.directBuffers != null) {
-//			builder.setDirectBuffers(this.directBuffers);
-//		}
-//		if (getSsl() != null && getSsl().isEnabled()) {
-//			customizeSsl(builder);
-//		}
-//		else {
-			builder.addHttpListener(port, "0.0.0.0");
-//		}
-//		for (UndertowBuilderCustomizer customizer : this.builderCustomizers) {
-//			customizer.customize(builder);
-//		}
+		builder.addHttpListener(port, "0.0.0.0");
 		return builder;
 	}
 
     private DeploymentManager createDeploymentManager() {
 		DeploymentInfo deployment = Servlets.deployment();
-//		deployment.setClassLoader(getServletClassLoader());
-//		deployment.setContextPath(getContextPath());
-//		deployment.setDisplayName(getDisplayName());
-//		deployment.setDeploymentName("xxx");
-//		deployment.setServletStackTraces(ServletStackTraces.NONE);
-//		deployment.setResourceManager(getDocumentRootResourceManager());
-//		deployment.setTempDir(createTempDir("undertow"));
-//		deployment.setEagerFilterInit(this.eagerInitFilters);
-		manager = Servlets.newContainer().addDeployment(deployment);
-		manager.deploy();
-    	servletContext = manager.getDeployment().getServletContext();
-		SessionManager sessionManager = manager.getDeployment().getSessionManager();
-		sessionManager.setDefaultSessionTimeout(30 * 60);//30mins
-		return manager;
+        deployment.setClassLoader(UndertowServer.class.getClassLoader());
+        deployment.setContextPath(contextPath);
+		deployment.setDisplayName(ConfClient.getAppName());
+		deployment.setDeploymentName("Polaris");
+		deployment.setServletStackTraces(ServletStackTraces.NONE);
+        for (ServletContainerInitializer servletContainerInitializer : serviceLoader) {
+    		deployment.addServletContainerInitializer(new ServletContainerInitializerInfo(servletContainerInitializer.getClass(),Collections.emptySet()));
+		}
+        WebSocketDeploymentInfo info = new WebSocketDeploymentInfo();
+        deployment.addServletContextAttribute(WebSocketDeploymentInfo.ATTRIBUTE_NAME, info);
+		
+        //add deployment
+		DeploymentManager deployManager = Servlets.newContainer().addDeployment(deployment);
+		deployManager.deploy();
+		
+		//session
+		SessionManager sessionManager = deployManager.getDeployment().getSessionManager();
+		int sessionTimeout = Integer.parseInt(ConfClient.get("server.sessionTimeout",String.valueOf(30 * 60)));
+		sessionManager.setDefaultSessionTimeout(sessionTimeout);//30mins
+		
+		//servlet context
+    	servletContext = deployManager.getDeployment().getServletContext();
+		return deployManager;
 	}
+    
+    private String createContextPath() {
+    	String contextPath =ConfClient.get(Constant.SERVER_CONTEXT,"/"); 
+        if (!contextPath.startsWith("/")) {
+        	contextPath = "/" + contextPath;
+        }
+        return contextPath;
+    }
     
     /**
      * 获取单实例公共静态方法
@@ -133,14 +160,21 @@ public class UndertowServer {
             if (this.undertow == null) {
                 init();
             }
-
+        	
             //启动服务
             this.undertow.start();
+            
+            //server listener start
+            ServerListenerSupport.started();
 
+            //log
+            logger.info("Undertow started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
+            
             // add shutdown hook to stop server
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 public void run() {
                     try {
+                    	ServerListenerSupport.stopped();
                     	undertow.stop();
                     	manager.stop();
                     	manager.undeploy();
@@ -155,6 +189,7 @@ public class UndertowServer {
             this.undertow = null;
             logger.error(e.getMessage());
         }
+
     }
 
     

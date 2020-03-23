@@ -74,19 +74,21 @@ public class WebfluxServer {
                           .handle(httpHandlerAdapter);
         
         
-        //设置ssl
+        //ssl set
         server = secure(server);
         if (server == null) {
         	return;
         }
         
-        //设置协议
+        //protocals set
         server.protocol(listProtocols());
         
-        //绑定服务
+        //bind server
         DisposableServer disposableSever = server.bindNow();
-        logger.info("netty-webflux is started,port:{}",port);
         ServerListenerSupport.started();
+
+        //log
+        logger.info("netty-webflux started on port(s) " + port + " with context path '/'");
         
         // add shutdown hook to stop server
         Runtime.getRuntime().addShutdownHook(new Thread() {

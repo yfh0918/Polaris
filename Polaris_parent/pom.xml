@@ -141,6 +141,11 @@
 	            <artifactId>Polaris_container_gateway</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency>  
+	        <dependency>
+	            <groupId>com.polaris</groupId>
+	            <artifactId>Polaris_container_undertow</artifactId>
+	            <version>${polaris-version}</version>
+	        </dependency>  
 	        
 	        <dependency>
 	            <groupId>com.polaris</groupId>
