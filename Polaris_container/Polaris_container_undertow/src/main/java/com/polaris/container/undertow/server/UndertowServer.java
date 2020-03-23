@@ -84,6 +84,22 @@ public class UndertowServer {
     private Builder createBuilder(int port) {
 		Builder builder = Undertow.builder();
 		builder.addHttpListener(port, "0.0.0.0");
+		String bufferSize = ConfClient.get("server.bufferSize");
+		if (bufferSize != null) {
+			builder.setBufferSize(Integer.parseInt(bufferSize));
+		}
+		String ioThreads = ConfClient.get("server.ioThreads");
+		if (ioThreads != null) {
+			builder.setIoThreads(Integer.parseInt(ioThreads));
+		}
+		String workerThreads = ConfClient.get("server.workerThreads");
+		if (workerThreads != null) {
+			builder.setWorkerThreads(Integer.parseInt(workerThreads));
+		}
+		String directBuffers = ConfClient.get("server.directBuffers");
+		if (directBuffers != null) {
+			builder.setDirectBuffers(Boolean.parseBoolean(directBuffers));
+		}
 		return builder;
 	}
 
@@ -94,6 +110,10 @@ public class UndertowServer {
 		deployment.setDisplayName(ConfClient.getAppName());
 		deployment.setDeploymentName("Polaris");
 		deployment.setServletStackTraces(ServletStackTraces.NONE);
+		String eagerInitFilters = ConfClient.get("server.eagerInitFilters");
+		if (eagerInitFilters != null) {
+			deployment.setEagerFilterInit(Boolean.parseBoolean(eagerInitFilters));
+		}
         for (ServletContainerInitializer servletContainerInitializer : serviceLoader) {
     		deployment.addServletContainerInitializer(new ServletContainerInitializerInfo(servletContainerInitializer.getClass(),Collections.emptySet()));
 		}
@@ -186,9 +206,8 @@ public class UndertowServer {
             });
         } catch (Exception e) {
             this.undertow = null;
-            logger.error("failed to stop undertow.", e);
+            logger.error("failed to start undertow.", e);
         }
-
     }
 
     
