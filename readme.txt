@@ -61,7 +61,7 @@
         </dependency>
 	  <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_container_jetty</artifactId>  ->可修改成Polaris_container_tomcat
+            <artifactId>Polaris_container_jetty</artifactId>  ->可修改成Polaris_container_tomcat或者Polaris_container_undertow
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
