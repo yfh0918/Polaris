@@ -1,7 +1,6 @@
 package com.polaris.container.undertow.server;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.ServiceLoader;
 
 import javax.servlet.ServletContainerInitializer;
@@ -175,19 +174,19 @@ public class UndertowServer {
                 public void run() {
                     try {
                     	ServerListenerSupport.stopped();
-                    	undertow.stop();
                     	manager.stop();
                     	manager.undeploy();
+                    	undertow.stop();
+                    	manager = null;
+                    	undertow = null;
                     } catch (Exception e) {
                         logger.error("failed to stop undertow.", e);
                     }
                 }
             });
         } catch (Exception e) {
-
-            //启动出错的话，清空服务
             this.undertow = null;
-            logger.error(e.getMessage());
+            logger.error("failed to stop undertow.", e);
         }
 
     }
