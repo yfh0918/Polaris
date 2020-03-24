@@ -111,6 +111,7 @@ public class WorkflowDto extends PageDto implements Serializable {
 	public static final String PROCESS_INSTANCE_ID = "processInstanceId";
 	public static final String PROCESS_DEFINITION_ID = "processDefinitionId";
 	public static final String TASKS = "tasks";
+	public static final String TASK_DEFINITION_KEY = "taskDefinitionKey";
 	public static final String TASK_ID = "taskId";
 	public static final String TASK_NAME = "taskName";
 	public static final String TASK_ASSIGNEE = "taskAssignee";
@@ -124,6 +125,7 @@ public class WorkflowDto extends PageDto implements Serializable {
 	private String processDefinitionKey;//定义流程图的key,决定到底查看的是哪一个流程图
 	private String processInstanceId;//启动流程的ID（每个流程都是唯一的）
 	private String processDefinitionId;//启动流程的ID（每个流程都是唯一的）
+	private String taskDefinitionKey;
 	private String taskId;//任务	ID
 	private String taskName;//任务名称
 	private Map<String, Object> variables = new HashMap<String, Object>();//可以传递一些变量参数（用于画面流转时使用）
@@ -190,6 +192,12 @@ public class WorkflowDto extends PageDto implements Serializable {
 		this.taskId = taskId;
 	}
 
+	public String getTaskDefinitionKey() {
+		return taskDefinitionKey;
+	}
+	public void setTaskDefinitionKey(String taskDefinitionKey) {
+		this.taskDefinitionKey = taskDefinitionKey;
+	}
 	public String getTaskName() {
 		return taskName;
 	}

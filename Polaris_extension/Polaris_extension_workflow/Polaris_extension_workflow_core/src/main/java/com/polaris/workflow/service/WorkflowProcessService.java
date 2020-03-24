@@ -1,6 +1,7 @@
 package com.polaris.workflow.service;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -370,6 +371,7 @@ public class WorkflowProcessService {
                 //获取全局的APPLY_USERID
                 map.put(WorkflowDto.APPLY_USERID, taskService.getVariable(task.getId(), WorkflowDto.APPLY_USERID));
                 map.put(WorkflowDto.TASK_ID, task.getId());
+                map.put(WorkflowDto.TASK_DEFINITION_KEY, task.getTaskDefinitionKey());
                 map.put(WorkflowDto.TASK_NAME, task.getName());
                 map.put(WorkflowDto.TASK_ASSIGNEE, task.getAssignee());
                 map.put(WorkflowDto.TASK_VARIABLES, taskService.getVariables(task.getId()));
@@ -936,10 +938,10 @@ public class WorkflowProcessService {
         }
         ProcessDefinitionEntity processDefinitionEntity;
 
-        TaskDefinition task;
-
         //获取流程实例Id信息
-        String processInstanceId = taskService.createTaskQuery().taskId(taskId).singleResult().getProcessInstanceId();
+        Task taskResult = taskService.createTaskQuery().taskId(taskId).singleResult();
+        String processInstanceId = taskResult.getProcessInstanceId();
+        String executionId = taskResult.getExecutionId();
 
         //获取流程发布Id信息
         String definitionId = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult().getProcessDefinitionId();
@@ -947,7 +949,8 @@ public class WorkflowProcessService {
         processDefinitionEntity = (ProcessDefinitionEntity) ((RepositoryServiceImpl) repositoryService)
                 .getDeployedProcessDefinition(definitionId);
 
-        ExecutionEntity execution = (ExecutionEntity) runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+//        ExecutionEntity execution = (ExecutionEntity) runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+        ExecutionEntity execution = (ExecutionEntity) runtimeService.createExecutionQuery().executionId(executionId).processInstanceId(processInstanceId).singleResult();
 
         //当前流程节点Id信息
         String activitiId = execution.getActivityId();
@@ -968,15 +971,13 @@ public class WorkflowProcessService {
             return dto;
         }
         //查找下个节点
-        task = nextTaskDefinition(collect.get(0), collect.get(0).getId(), gateWayCond, processInstanceId);
-        if (task == null) {
-            dto.setMessage(WorkflowDto.MESSAGE_INFO[11]);
-            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
-            return dto;
-        }
-        //key为节点id，value为节点中文描述
+        List<TaskDefinition> taskList = new ArrayList<>();
+        nextTaskDefinition(taskList, collect.get(0), collect.get(0).getId(), gateWayCond, processInstanceId);
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put(task.getKey(), task.getNameExpression().getExpressionText());
+        for (TaskDefinition task : taskList) {
+            //key为节点id，value为节点中文描述
+            resultMap.put(task.getKey(), task.getNameExpression().getExpressionText());
+        }
         dto.setData(resultMap);
         dto.setCode(Constant.RESULT_SUCCESS);
         return dto;
@@ -996,14 +997,15 @@ public class WorkflowProcessService {
      * @param processInstanceId 流程实例Id信息
      * @return
      */
-    private TaskDefinition nextTaskDefinition(ActivityImpl activityImpl, String activityId, List<Map<String, Object>> gateWayCond, String processInstanceId) {
+    private void nextTaskDefinition(List<TaskDefinition> taskList, ActivityImpl activityImpl, String activityId, List<Map<String, Object>> gateWayCond, String processInstanceId) {
         PvmActivity ac = null;
         Object s = null;
         //如果遍历节点为用户任务并且节点不是当前节点信息
         if ("userTask".equals(activityImpl.getProperty("type")) && !activityId.equals(activityImpl.getId())) {
             //获取该节点下一个节点信息
             TaskDefinition taskDefinition = ((UserTaskActivityBehavior) activityImpl.getActivityBehavior()).getTaskDefinition();
-            return taskDefinition;
+            taskList.add(taskDefinition);
+            return;
         } else {
             //获取节点所有流向线路信息
             List<PvmTransition> outTransitions = activityImpl.getOutgoingTransitions();
@@ -1011,32 +1013,46 @@ public class WorkflowProcessService {
             for (PvmTransition tr : outTransitions) {
                 ac = tr.getDestination(); //获取线路的终点节点
                 //如果流向线路为排他网关
-                if ("exclusiveGateway".equals(ac.getProperty("type"))) {
+                if ("exclusiveGateway".equalsIgnoreCase(ac.getProperty("type").toString())) {
                     outTransitionsTemp = ac.getOutgoingTransitions();
                     //如果排他网关只有一条线路信息
                     if (outTransitionsTemp.size() == 1) {
-                        return nextTaskDefinition((ActivityImpl) outTransitionsTemp.get(0).getDestination(), activityId, gateWayCond, processInstanceId);
+                    	nextTaskDefinition(taskList, (ActivityImpl) outTransitionsTemp.get(0).getDestination(), activityId, gateWayCond, processInstanceId);
+                    	return;
                     } else if (outTransitionsTemp.size() > 1) {  //如果排他网关有多条线路信息
                         for (PvmTransition tr1 : outTransitionsTemp) {
                             s = tr1.getProperty("conditionText");  //获取排他网关线路判断条件信息
                             //判断网关路由
                             if (CollectionUtil.isEmpty(gateWayCond)) {
                                 logger.info(StrUtil.format("网关判断需要的条件不存在，网关名称L{}", ac.getId()));
-                                return null;
+                                return;
                             }
                             if (isCondition(StrUtil.trim(s.toString()), gateWayCond.get(0))) {
                                 //条件集合去除第一个
                                 gateWayCond.remove(0);
-                                return nextTaskDefinition((ActivityImpl) tr1.getDestination(), activityId, gateWayCond, processInstanceId);
+                                nextTaskDefinition(taskList,(ActivityImpl) tr1.getDestination(), activityId, gateWayCond, processInstanceId);
+                                return;
                             }
                         }
                     }
-                } else if ("userTask".equals(ac.getProperty("type"))) {
-                    return ((UserTaskActivityBehavior) ((ActivityImpl) ac).getActivityBehavior()).getTaskDefinition();
+                } else if ("userTask".equalsIgnoreCase(ac.getProperty("type").toString())) {
+                    taskList.add(((UserTaskActivityBehavior) ((ActivityImpl) ac).getActivityBehavior()).getTaskDefinition());
+                    return;
+                    
+                //并行网关
+                } else if ("parallelGateway".equalsIgnoreCase(ac.getProperty("type").toString())) {
+                	outTransitionsTemp = ac.getOutgoingTransitions();
+                	for (PvmTransition tracition : outTransitionsTemp) {
+                    	nextTaskDefinition(taskList, (ActivityImpl) tracition.getDestination(), activityId, gateWayCond, processInstanceId);
+                	}
+                	return;
+                } else if ("endEvent".equalsIgnoreCase(ac.getProperty("type").toString())){
+                	return;
                 } else {
+                	return;
                 }
             }
-            return null;
+            return;
         }
     }
 
@@ -1076,8 +1092,8 @@ public class WorkflowProcessService {
         String resourceName = dto.getProcessDefinitionKey() + ".bpmn20.xml";
         InputStream resouceStream = repositoryService.getResourceAsStream(deploymentId, resourceName);
         XMLInputFactory xif = XMLInputFactory.newInstance();
-        InputStreamReader in;
-        XMLStreamReader xtr;
+        InputStreamReader in = null;
+        XMLStreamReader xtr = null;
         try {
             in = new InputStreamReader(resouceStream, "UTF-8");
             xtr = xif.createXMLStreamReader(in);
@@ -1094,6 +1110,21 @@ public class WorkflowProcessService {
             logger.error(e.getMessage());
         } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage());
+        } finally {
+        	if (in != null) {
+        		try {
+					in.close();
+				} catch (IOException e) {
+					logger.error(e.getMessage());
+				}
+        	}
+        	if (xtr != null) {
+        		try {
+					xtr.close();
+				} catch (XMLStreamException e) {
+					logger.error(e.getMessage());
+				}
+        	}
         }
         return dto;
     }
