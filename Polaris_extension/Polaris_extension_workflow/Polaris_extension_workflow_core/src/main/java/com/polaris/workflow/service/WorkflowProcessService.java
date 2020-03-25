@@ -356,6 +356,10 @@ public class WorkflowProcessService {
             if (StringUtil.isNotEmpty(dto.getProcessInstanceId())) {
             	taskQuery = taskQuery.processInstanceId(dto.getProcessInstanceId());
             }
+            if (StringUtil.isNotEmpty(dto.getTaskId())) {
+            	taskQuery = taskQuery.taskId(dto.getTaskId());
+            }
+            
             List<Task> tasks = taskQuery.orderByTaskCreateTime().asc().listPage(pageParams[0], pageParams[1]);
 
             // 根据流程的业务ID查询实体并关联
