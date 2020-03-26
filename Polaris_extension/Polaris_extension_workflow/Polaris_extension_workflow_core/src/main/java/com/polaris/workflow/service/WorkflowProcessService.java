@@ -114,20 +114,18 @@ public class WorkflowProcessService {
             dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
-        if (StringUtil.isEmpty(dto.getBusinessKey())) {
-            dto.setMessage(WorkflowDto.MESSAGE_INFO[2]);
-            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
-            return dto;
-        }
-        if (dto.getVariables() == null) {
+        if (dto.getVariables() == null || dto.getVariables().size() == 0) {
             dto.setMessage(WorkflowDto.MESSAGE_INFO[3]);
             dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
+        
 
         //检查该businessKey是否使用中或者使用过
-        if (!businessKeyValidate(dto)) {
-            return dto;
+        if (StringUtil.isNotEmpty(dto.getBusinessKey())) {
+        	if (!businessKeyValidate(dto)) {
+                return dto;
+            }
         }
 
         //启动流程
@@ -286,7 +284,7 @@ public class WorkflowProcessService {
 
         try {
             //完成任务（流程继续往前或者回退）
-            if (dto.getVariables() == null) {
+            if (dto.getVariables() == null || dto.getVariables().size() == 0) {
                 taskService.complete(dto.getTaskId());
             } else {
 

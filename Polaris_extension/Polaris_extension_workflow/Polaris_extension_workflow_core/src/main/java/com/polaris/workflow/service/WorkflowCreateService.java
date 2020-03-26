@@ -51,7 +51,7 @@ public class WorkflowCreateService {
     @Autowired
     private RepositoryService repositoryService;
     
-    public static final String prefix = "deployments/";
+    public static final String prefix = "diagrams/";
     public static final String suffix = ".bpmn";
     
     /*Model*/  
