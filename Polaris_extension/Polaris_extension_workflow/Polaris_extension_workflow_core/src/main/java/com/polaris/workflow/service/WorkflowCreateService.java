@@ -35,6 +35,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.polaris.core.Constant;
 import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.StringUtil;
@@ -43,10 +44,26 @@ import com.polaris.workflow.util.WorkflowUtils;
 
 import cn.hutool.core.collection.CollectionUtil;
 
+@SuppressWarnings("unchecked")
 @Component
 public class WorkflowCreateService {
 	
     private static Logger logger = LoggerFactory.getLogger(WorkflowCreateService.class);
+    
+    private static String PROCESS = "process";
+    private static String ID = "id";
+    private static String NAME = "name";
+    private static String CANDIDATE_GROUP = "candidateGroup";
+    private static String COND_EXP = "conditionExpression";
+    private static String START_EVENT = "startEvent";
+    private static String END_EVENT = "endEvent";
+    private static String SEQUENCE_FLOW = "sequenceFlow";
+    private static String USER_TASK = "userTask";
+    private static String PA_GW = "parallelGateway";
+    private static String EX_GW = "exclusiveGateway";
+    private static String FROM = "from";
+    private static String TO = "to";
+    
     
     @Autowired
     private RepositoryService repositoryService;
@@ -68,22 +85,35 @@ public class WorkflowCreateService {
     } 
     
     /*任务节点*/  
+    public UserTask createUserTask(String id, String name) {  
+    	return createUserTask(id,name,null);
+    }
     public UserTask createUserTask(String id, String name, String candidateGroup) {  
-        List<String> candidateGroups=new ArrayList<String>();  
-        candidateGroups.add(candidateGroup);  
         UserTask userTask = new UserTask();  
         userTask.setName(name);  
         userTask.setId(id);  
-        userTask.setCandidateGroups(candidateGroups);  
+    	if (StringUtil.isNotEmpty(candidateGroup)) {
+            List<String> candidateGroups=new ArrayList<String>();  
+            candidateGroups.add(candidateGroup);  
+            userTask.setCandidateGroups(candidateGroups);  
+    	}
         return userTask;  
     }  
   
-    /*连线*/  
+    /*连线*/ 
+    public SequenceFlow createSequenceFlow(String from, String to) { 
+    	return createSequenceFlow(from,to,null,null);
+    }
+    public SequenceFlow createSequenceFlow(String from, String to,String name) { 
+    	return createSequenceFlow(from,to,name,null);
+    }
     public SequenceFlow createSequenceFlow(String from, String to,String name,String conditionExpression) {  
         SequenceFlow flow = new SequenceFlow();  
         flow.setSourceRef(from);  
         flow.setTargetRef(to);  
-        flow.setName(name);  
+        if (!StringUtils.isEmpty(name)) {
+        	flow.setName(name);  
+        }
         if(!StringUtils.isEmpty(conditionExpression)){  
             flow.setConditionExpression(conditionExpression);  
         }         
@@ -92,29 +122,60 @@ public class WorkflowCreateService {
       
     /*排他网关*/  
     public ExclusiveGateway createExclusiveGateway(String id) {  
+    	return createExclusiveGateway(id,null);
+    }
+    public ExclusiveGateway createExclusiveGateway(String id, String name) {  
         ExclusiveGateway exclusiveGateway = new ExclusiveGateway();  
-        exclusiveGateway.setId(id);  
+        exclusiveGateway.setId(id);
+        if (!StringUtils.isEmpty(name)) {
+        	exclusiveGateway.setName(name);
+    	}
         return exclusiveGateway;  
     }
     
     /*并行网关*/  
-    public ParallelGateway createParallelGateway(String id) {  
+    public ParallelGateway createParallelGateway(String id) {
+    	return createParallelGateway(id,null);
+    }
+    public ParallelGateway createParallelGateway(String id, String name) {  
     	ParallelGateway parallelGateway = new ParallelGateway();  
-    	parallelGateway.setId(id);  
+    	parallelGateway.setId(id);
+    	if (!StringUtils.isEmpty(name)) {
+    		parallelGateway.setName(name);
+    	}
+    	
         return parallelGateway;  
     }
   
     /*开始节点*/  
-    public StartEvent createStartEvent() {  
+    public StartEvent createStartEvent() { 
+    	return createStartEvent(null,null);
+    }
+    public StartEvent createStartEvent(String id, String name) {  
         StartEvent startEvent = new StartEvent();  
-        startEvent.setId("startEvent");  
+        if (StringUtils.isEmpty(id)) {
+        	id = "startEvent";
+        }
+        startEvent.setId(id); 
+        if (!StringUtils.isEmpty(name)) {
+        	startEvent.setName(name);
+        }
         return startEvent;  
     }  
   
     /*结束节点*/  
-    public EndEvent createEndEvent() {  
-        EndEvent endEvent = new EndEvent();  
-        endEvent.setId("endEvent");  
+    public EndEvent createEndEvent() {
+    	return createEndEvent(null,null);
+    }
+    public EndEvent createEndEvent(String id, String name) {  
+        EndEvent endEvent = new EndEvent(); 
+        if (StringUtils.isEmpty(id)) {
+        	id = "endEvent";
+        }
+        endEvent.setId(id);  
+        if (!StringUtils.isEmpty(name)) {
+        	endEvent.setName(name);
+        }
         return endEvent;  
     }
     
@@ -123,8 +184,72 @@ public class WorkflowCreateService {
      *
      * @param WorkflowDto dto
      */
+	@Transactional
+    public String createDiagram(String diagramJson) {
+		Map<String, Object> deployment = JSON.parseObject(diagramJson);
+		String name = deployment.get(NAME).toString();
+		List<Map<String, Object>> processList = (List<Map<String, Object>>)deployment.get(PROCESS);
+		List<Process> processObjList = new ArrayList<>();
+		for (Map<String, Object> process : processList) {
+			if (process.get(NAME) == null) {
+				process.put(NAME, process.get(ID));
+			}
+			Process processObj = createProcess(process.get(ID).toString(), process.get(NAME).toString()); 
+			processObjList.add(processObj);
+			
+			//START_EVENT
+			Map<String, String> startEvent = (Map<String, String>)process.get(START_EVENT);
+			processObj.addFlowElement(createStartEvent(startEvent.get(ID) ,startEvent.get(NAME))); 
+			
+			//USER_TASK
+			if (process.get(USER_TASK) != null) {
+				List<Map<String, String>> userTaskList = (List<Map<String, String>>)process.get(USER_TASK);
+				for (Map<String, String> userTask : userTaskList) {
+					processObj.addFlowElement(createUserTask(userTask.get(ID), userTask.get(NAME), userTask.get(CANDIDATE_GROUP)));
+				}
+			}
+			
+			//PA_GW
+			if (process.get(PA_GW) != null) {
+				List<Map<String, String>> paGatewayList = (List<Map<String, String>>)process.get(PA_GW);
+				for (Map<String, String> paGateway : paGatewayList) {
+					processObj.addFlowElement(createParallelGateway(paGateway.get(ID), paGateway.get(NAME)));
+				}
+			}
+			
+			//EX_GW
+			if (process.get(EX_GW) != null) {
+				List<Map<String, String>> exGatewayList = (List<Map<String, String>>)process.get(EX_GW);
+				for (Map<String, String> exGateway : exGatewayList) {
+					processObj.addFlowElement(createExclusiveGateway(exGateway.get(ID), exGateway.get(NAME)));
+				}
+			}
+			
+			//END_EVENT
+			Map<String, String> endEvent = (Map<String, String>)process.get(END_EVENT);
+			processObj.addFlowElement(createEndEvent(endEvent.get(ID).toString() ,endEvent.get(NAME).toString())); 
+			
+			//SEQUENCE_FLOW
+			if (process.get(SEQUENCE_FLOW) != null) {
+				List<Map<String, String>> sequenceFlowList =(List<Map<String, String>>)process.get(SEQUENCE_FLOW);
+				for (Map<String, String> sequenceFlow : sequenceFlowList) {
+					processObj.addFlowElement(createSequenceFlow(sequenceFlow.get(FROM), sequenceFlow.get(TO),sequenceFlow.get(NAME),sequenceFlow.get(COND_EXP)));
+				}
+			}
+			
+
+		}
+		Process[] processArray = processObjList.toArray(new Process[processObjList.size()]);
+		return this.createDiagram(name, processArray);
+    }
+    
+    /**
+     * 动态创建流程
+     *
+     * @param WorkflowDto dto
+     */
     @Transactional
-    public String createDiagram(String processDefinitionKey,Process... processes) {
+    public String createDiagram(String name,Process... processes) {
     	BpmnModel bpmnModel = createBpmnModel(); 
     	if (processes == null) {
     		return null;
@@ -138,12 +263,12 @@ public class WorkflowCreateService {
           
         // 3. Deploy the process to the engine    
         Deployment deployment = repositoryService.createDeployment().addBpmnModel(
-        		prefix+processDefinitionKey+suffix, bpmnModel).name(processDefinitionKey).deploy(); 
+        		prefix+name+suffix, bpmnModel).name(name).deploy(); 
         
         // save bpmn
         try {
-            InputStream processBpmn = repositoryService.getResourceAsStream(deployment.getId(), prefix+processDefinitionKey+suffix);
-            String fileName = FileUtil.getFullPath(prefix+processDefinitionKey+suffix);
+            InputStream processBpmn = repositoryService.getResourceAsStream(deployment.getId(), prefix+name+suffix);
+            String fileName = FileUtil.getFullPath(prefix+name+suffix);
             FileUtils.copyInputStreamToFile(processBpmn,new File(fileName));  
         } catch (Exception ex) {
         	logger.error("create BPMN file error：{}",ex);
@@ -154,19 +279,19 @@ public class WorkflowCreateService {
     }
     
     @Transactional
-    public String createDiagram(String processDefinitionKey,BpmnModel bpmnModel) {
+    public String createDiagram(String name,BpmnModel bpmnModel) {
     	
         // 2. Generate graphical information    
         new BpmnAutoLayout(bpmnModel).execute();  
           
         // 3. Deploy the process to the engine    
         Deployment deployment = repositoryService.createDeployment().addBpmnModel(
-        		prefix+processDefinitionKey+suffix, bpmnModel).name(processDefinitionKey).deploy(); 
+        		prefix+name+suffix, bpmnModel).name(name).deploy(); 
         
         // save bpmn
         try {
-            InputStream processBpmn = repositoryService.getResourceAsStream(deployment.getId(), prefix+processDefinitionKey+suffix);
-            String fileName = FileUtil.getFullPath(prefix+processDefinitionKey+suffix);
+            InputStream processBpmn = repositoryService.getResourceAsStream(deployment.getId(), prefix+name+suffix);
+            String fileName = FileUtil.getFullPath(prefix+name+suffix);
             FileUtils.copyInputStreamToFile(processBpmn,new File(fileName));  
         } catch (Exception ex) {
         	logger.error("create BPMN file error：{}",ex);
@@ -182,10 +307,10 @@ public class WorkflowCreateService {
      * @param WorkflowDto dto
      */
     @Transactional
-    public WorkflowDto deployDiagram(String processDefinitionKey, String exportDir) {
+    public WorkflowDto deployDiagram(String name, String exportDir) {
     	WorkflowDto result = new WorkflowDto();
        
-        if (StringUtil.isEmpty(processDefinitionKey)) {
+        if (StringUtil.isEmpty(name)) {
         	result.setMessage(WorkflowDto.MESSAGE_INFO[1]);
         	result.setCode(String.valueOf(Constant.RESULT_FAIL));
             return result;
@@ -195,7 +320,7 @@ public class WorkflowCreateService {
         try {
             //载入流程
             ResourceLoader resourceLoader = new DefaultResourceLoader();
-            String classpathResourceUrl = prefix + processDefinitionKey + suffix;
+            String classpathResourceUrl = prefix + name + suffix;
             logger.debug("read workflow from: {}", classpathResourceUrl);
             Resource resource = resourceLoader.getResource(classpathResourceUrl);
             InputStream inputStream = null;
@@ -204,7 +329,7 @@ public class WorkflowCreateService {
                 logger.warn("ignore deploy workflow module: {}", classpathResourceUrl);
             } else {
                 logger.debug("finded workflow module: {}, deploy it!", classpathResourceUrl);
-                Deployment deployment = repositoryService.createDeployment().name(processDefinitionKey).addClasspathResource(classpathResourceUrl).deploy();
+                Deployment deployment = repositoryService.createDeployment().name(name).addClasspathResource(classpathResourceUrl).deploy();
                 // export diagram
                 List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().deploymentId(deployment.getId()).list();
                 result.setDeploymentId(deployment.getId());
@@ -277,7 +402,6 @@ public class WorkflowCreateService {
      * @return 流程的名称和key的集合
      * @throws Exception
      */
-    @SuppressWarnings("unchecked")
 	public WorkflowDto getAllDeployment() {
     	
         List<Deployment> deploymentList = repositoryService.createDeploymentQuery().list();
