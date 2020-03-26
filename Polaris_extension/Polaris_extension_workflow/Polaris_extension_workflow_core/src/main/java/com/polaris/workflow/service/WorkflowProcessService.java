@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.zip.ZipInputStream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -167,7 +166,7 @@ public class WorkflowProcessService {
         try {
             //载入流程
             ResourceLoader resourceLoader = new DefaultResourceLoader();
-            String classpathResourceUrl = "classpath:/deployments/" + dto.getProcessDefinitionKey() + ".bar";
+            String classpathResourceUrl = "diagrams/" + dto.getProcessDefinitionKey() + ".bpmn";
             logger.debug("read workflow from: {}", classpathResourceUrl);
             Resource resource = resourceLoader.getResource(classpathResourceUrl);
             InputStream inputStream = null;
@@ -176,9 +175,7 @@ public class WorkflowProcessService {
                 logger.warn("ignore deploy workflow module: {}", classpathResourceUrl);
             } else {
                 logger.debug("finded workflow module: {}, deploy it!", classpathResourceUrl);
-                ZipInputStream zis = new ZipInputStream(inputStream);
-                Deployment deployment = repositoryService.createDeployment().name(dto.getProcessDefinitionKey()).enableDuplicateFiltering().addZipInputStream(zis).deploy();
-
+                Deployment deployment = repositoryService.createDeployment().addClasspathResource(classpathResourceUrl).deploy();
                 // export diagram
                 List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().deploymentId(deployment.getId()).list();
                 dto.setDeploymentId(deployment.getId());
@@ -358,6 +355,9 @@ public class WorkflowProcessService {
             }
             if (StringUtil.isNotEmpty(dto.getTaskId())) {
             	taskQuery = taskQuery.taskId(dto.getTaskId());
+            }
+            if (StringUtil.isNotEmpty(dto.getTaskDefinitionKey())) {
+            	taskQuery = taskQuery.taskDefinitionKey(dto.getTaskDefinitionKey());
             }
             
             List<Task> tasks = taskQuery.orderByTaskCreateTime().asc().listPage(pageParams[0], pageParams[1]);

@@ -10,6 +10,7 @@
 	<!-- 流程定义：每个模块的路径 -->
 	<property name="wd.wgshxx" value="${workflow.diagrams}/wgshxx" />
 	<property name="wd.claim" value="${workflow.diagrams}/claim" />
+	<property name="wd.test" value="${workflow.diagrams}/test" />
 
 	<!-- 显示欢迎信息以及操作提示 -->
 	<target name="welcome">
@@ -31,8 +32,14 @@
 		<zip destfile="${workflow.deployments}/claim.bar" basedir="${wd.claim}" update="true" includes="*.xml,*.png" />
 		<delete file="${wd.claim}/claim.bpmn20.xml" />
 	</target>
-
+	<!-- 理赔直付 -->
+	<target name="workflow.package.test">
+		<echo>测试</echo>
+		<copy file="${wd.test}/test.bpmn" tofile="${wd.test}/test.bpmn20.xml" />
+		<zip destfile="${workflow.deployments}/test.bar" basedir="${wd.test}" update="true" includes="*.xml,*.png" />
+		<delete file="${wd.test}/test.bpmn20.xml" />
+	</target>
 	<!-- 流程定义打包 -->
-	<target name="workflow.package.all" depends="workflow.package.claim,workflow.package.wgshxx">
+	<target name="workflow.package.all" depends="workflow.package.claim,workflow.package.wgshxx,workflow.package.test">
 	</target>
 </project>

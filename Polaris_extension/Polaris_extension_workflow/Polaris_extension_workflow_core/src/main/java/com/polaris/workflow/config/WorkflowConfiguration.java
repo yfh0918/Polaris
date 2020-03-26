@@ -106,7 +106,6 @@ public class WorkflowConfiguration implements ConfigurationExtension{
 			processEngineConfiguration.setDatabaseSchemaUpdate("true");
 			processEngineConfiguration.setJobExecutorActivate(false);
 			processEngineConfiguration.setProcessDefinitionCacheLimit(10);
-			processEngineConfiguration.setDbIdentityUsed(false);
 			processEngineConfiguration.setIdGenerator(uuidGenerator);
 			processEngineConfiguration.setActivityFontName(activityFontName);
 			processEngineConfiguration.setLabelFontName(labelFontName);
