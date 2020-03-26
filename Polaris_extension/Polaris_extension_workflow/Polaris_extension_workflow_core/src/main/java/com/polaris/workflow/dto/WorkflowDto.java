@@ -1,4 +1,4 @@
-package com.polaris.workflow.api.dto;
+package com.polaris.workflow.dto;
 
 import java.io.InputStream;
 import java.io.Serializable;

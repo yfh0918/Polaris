@@ -1,4 +1,4 @@
-package com.polaris.workflow.api.exception;
+package com.polaris.workflow.exception;
 
 /**
  * 自定义异常类(继承运行时异常)

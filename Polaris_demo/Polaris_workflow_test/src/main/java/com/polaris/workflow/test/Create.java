@@ -2,79 +2,68 @@ package com.polaris.workflow.test;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.activiti.bpmn.model.BpmnModel;
-import org.activiti.bpmn.model.EndEvent;
-import org.activiti.bpmn.model.ExclusiveGateway;
 import org.activiti.bpmn.model.Process;
-import org.activiti.bpmn.model.SequenceFlow;
-import org.activiti.bpmn.model.StartEvent;
-import org.activiti.bpmn.model.UserTask;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.polaris.core.util.FileUtil;
-import com.polaris.workflow.api.dto.WorkflowDto;
-import com.polaris.workflow.api.service.WorkflowService;
+import com.polaris.workflow.dto.WorkflowDto;
+import com.polaris.workflow.service.WorkflowCreateService;
+import com.polaris.workflow.service.WorkflowProcessService;
 
 @Service
 public class Create {
 	
 	@Autowired
-	WorkflowService workflowService;
+	WorkflowCreateService workflowCreateService;
+	
+	@Autowired
+	WorkflowProcessService workflowProcessService;
 	
     public void test01() throws IOException {  
         System.out.println(".........start...");  
-        //ProcessEngine processEngine=getProcessEngine();  
-        //workflowService.
           
         // 1. Build up the model from scratch  
-        BpmnModel model = new BpmnModel();    
-        Process process=new Process();  
-        model.addProcess(process);   
         final String PROCESSID ="process02";  
         final String PROCESSNAME ="测试02";  
-        process.setId(PROCESSID);   
-        process.setName(PROCESSNAME);  
+
+        Process process=workflowCreateService.createProcess(PROCESSID, PROCESSNAME);          
+        process.addFlowElement(workflowCreateService.createStartEvent());    
+        process.addFlowElement(workflowCreateService.createUserTask("task1", "节点01", "candidateGroup1"));   
+        process.addFlowElement(workflowCreateService.createExclusiveGateway("createExclusiveGateway1"));   
+        process.addFlowElement(workflowCreateService.createUserTask("task2", "节点02", "candidateGroup2"));   
+        process.addFlowElement(workflowCreateService.createExclusiveGateway("createExclusiveGateway2"));   
+        process.addFlowElement(workflowCreateService.createUserTask("task3", "节点03", "candidateGroup3"));   
+        process.addFlowElement(workflowCreateService.createExclusiveGateway("createExclusiveGateway3"));   
+        process.addFlowElement(workflowCreateService.createUserTask("task4", "节点04", "candidateGroup4"));  
+        process.addFlowElement(workflowCreateService.createEndEvent());    
           
-        process.addFlowElement(createStartEvent());    
-        process.addFlowElement(createUserTask("task1", "节点01", "candidateGroup1"));   
-        process.addFlowElement(createExclusiveGateway("createExclusiveGateway1"));   
-        process.addFlowElement(createUserTask("task2", "节点02", "candidateGroup2"));   
-        process.addFlowElement(createExclusiveGateway("createExclusiveGateway2"));   
-        process.addFlowElement(createUserTask("task3", "节点03", "candidateGroup3"));   
-        process.addFlowElement(createExclusiveGateway("createExclusiveGateway3"));   
-        process.addFlowElement(createUserTask("task4", "节点04", "candidateGroup4"));  
-        process.addFlowElement(createEndEvent());    
-          
-        process.addFlowElement(createSequenceFlow("startEvent", "task1", "", ""));   
-        process.addFlowElement(createSequenceFlow("task1", "task2", "", ""));   
-        process.addFlowElement(createSequenceFlow("task2", "createExclusiveGateway1", "", ""));  
-        process.addFlowElement(createSequenceFlow("createExclusiveGateway1", "task1", "不通过", "${pass=='2'}"));  
-        process.addFlowElement(createSequenceFlow("createExclusiveGateway1", "task3", "通过", "${pass=='1'}"));   
-        process.addFlowElement(createSequenceFlow("task3", "createExclusiveGateway2", "", ""));  
-        process.addFlowElement(createSequenceFlow("createExclusiveGateway2", "task2", "不通过", "${pass=='2'}"));  
-        process.addFlowElement(createSequenceFlow("createExclusiveGateway2", "task4", "通过", "${pass=='1'}"));  
-        process.addFlowElement(createSequenceFlow("task4", "createExclusiveGateway3", "", ""));  
-        process.addFlowElement(createSequenceFlow("createExclusiveGateway3", "task3", "不通过", "${pass=='2'}"));  
-        process.addFlowElement(createSequenceFlow("createExclusiveGateway3", "endEvent", "通过", "${pass=='1'}"));  
-          
-        // 3. Deploy the process to the engine 
-        WorkflowDto dto = new WorkflowDto();
-        dto.setBpmnModel(model);
-        dto.setProcessDefinitionKey(PROCESSID);
-        dto = workflowService.createDiagram(dto);
+        process.addFlowElement(workflowCreateService.createSequenceFlow("startEvent", "task1", "", ""));   
+        process.addFlowElement(workflowCreateService.createSequenceFlow("task1", "task2", "", ""));   
+        process.addFlowElement(workflowCreateService.createSequenceFlow("task2", "createExclusiveGateway1", "", ""));  
+        process.addFlowElement(workflowCreateService.createSequenceFlow("createExclusiveGateway1", "task1", "不通过", "${pass=='2'}"));  
+        process.addFlowElement(workflowCreateService.createSequenceFlow("createExclusiveGateway1", "task3", "通过", "${pass=='1'}"));   
+        process.addFlowElement(workflowCreateService.createSequenceFlow("task3", "createExclusiveGateway2", "", ""));  
+        process.addFlowElement(workflowCreateService.createSequenceFlow("createExclusiveGateway2", "task2", "不通过", "${pass=='2'}"));  
+        process.addFlowElement(workflowCreateService.createSequenceFlow("createExclusiveGateway2", "task4", "通过", "${pass=='1'}"));  
+        process.addFlowElement(workflowCreateService.createSequenceFlow("task4", "createExclusiveGateway3", "", ""));  
+        process.addFlowElement(workflowCreateService.createSequenceFlow("createExclusiveGateway3", "task3", "不通过", "${pass=='2'}"));  
+        process.addFlowElement(workflowCreateService.createSequenceFlow("createExclusiveGateway3", "endEvent", "通过", "${pass=='1'}"));  
         
+        // 3. Deploy the process to the engine 
+        String deploymentId = workflowCreateService.createDiagram(PROCESSID,process);
+        System.out.println("deploymentId == "+deploymentId);
+        
+        WorkflowDto dto = new WorkflowDto();
+        dto.setProcessDefinitionKey(PROCESSID);
         dto.setUserId("adfad");
         dto.setVariable("test", "test");
         dto.setBusinessKey("afdadfadsfad");
-        workflowService.startWorkflow(dto);
+        workflowProcessService.startWorkflow(dto);
         
-        dto = workflowService.getProcessDiagram(dto);
+        dto = workflowProcessService.getProcessDiagram(dto);
 
         //Deployment deployment = processEngine.getRepositoryService().createDeployment().addBpmnModel(PROCESSID+".bpmn", model).name(PROCESSID+"_deployment").deploy();    
              
@@ -94,47 +83,4 @@ public class Create {
     }  
       
 
-    /*任务节点*/  
-    protected static UserTask createUserTask(String id, String name, String candidateGroup) {  
-        List<String> candidateGroups=new ArrayList<String>();  
-        candidateGroups.add(candidateGroup);  
-        UserTask userTask = new UserTask();  
-        userTask.setName(name);  
-        userTask.setId(id);  
-        userTask.setCandidateGroups(candidateGroups);  
-        return userTask;  
-    }  
-  
-    /*连线*/  
-    protected static SequenceFlow createSequenceFlow(String from, String to,String name,String conditionExpression) {  
-        SequenceFlow flow = new SequenceFlow();  
-        flow.setSourceRef(from);  
-        flow.setTargetRef(to);  
-        flow.setName(name);  
-        if(!StringUtils.isEmpty(conditionExpression)){  
-            flow.setConditionExpression(conditionExpression);  
-        }         
-        return flow;  
-    }  
-      
-    /*排他网关*/  
-    protected static ExclusiveGateway createExclusiveGateway(String id) {  
-        ExclusiveGateway exclusiveGateway = new ExclusiveGateway();  
-        exclusiveGateway.setId(id);  
-        return exclusiveGateway;  
-    }  
-  
-    /*开始节点*/  
-    protected static StartEvent createStartEvent() {  
-        StartEvent startEvent = new StartEvent();  
-        startEvent.setId("startEvent");  
-        return startEvent;  
-    }  
-  
-    /*结束节点*/  
-    protected static EndEvent createEndEvent() {  
-        EndEvent endEvent = new EndEvent();  
-        endEvent.setId("endEvent");  
-        return endEvent;  
-    }
 }

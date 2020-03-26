@@ -1,6 +1,5 @@
 package com.polaris.workflow.service;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,7 +20,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.activiti.bpmn.BpmnAutoLayout;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowElement;
@@ -54,7 +52,6 @@ import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
 import org.activiti.engine.task.TaskQuery;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,10 +64,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.pojo.Page;
-import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.PageUtil;
 import com.polaris.core.util.StringUtil;
-import com.polaris.workflow.api.dto.WorkflowDto;
+import com.polaris.workflow.dto.WorkflowDto;
 import com.polaris.workflow.util.WorkflowUtils;
 
 import cn.hutool.core.collection.CollectionUtil;
@@ -101,49 +97,6 @@ public class WorkflowProcessService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    
-    /**
-     * 动态创建流程
-     *
-     * @param WorkflowDto dto
-     */
-    @Transactional
-    public WorkflowDto createDiagram(WorkflowDto dto) {
-    	if (dto == null) {
-            dto = new WorkflowDto();
-        }
-        if (dto.getBpmnModel() == null) {
-            dto.setMessage(WorkflowDto.MESSAGE_INFO[12]);
-            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
-            return dto;
-        }
-        if (StringUtil.isEmpty(dto.getProcessDefinitionKey())) {
-            dto.setMessage(WorkflowDto.MESSAGE_INFO[1]);
-            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
-            return dto;
-        }
-        // 2. Generate graphical information    
-        new BpmnAutoLayout(dto.getBpmnModel()).execute();  
-          
-        // 3. Deploy the process to the engine    
-        Deployment deployment = repositoryService.createDeployment().addBpmnModel(
-        		dto.getProcessDefinitionKey()+".bpmn", dto.getBpmnModel()).name(dto.getProcessDefinitionKey()+"_deployment").deploy(); 
-        dto.setDeploymentId(deployment.getId());
-        
-        // save bpmn
-        try {
-            InputStream processBpmn = repositoryService.getResourceAsStream(deployment.getId(), dto.getProcessDefinitionKey()+".bpmn");
-            String fileName = FileUtil.getFullPath("deployments/"+dto.getProcessDefinitionKey()+".bpmn");
-            FileUtils.copyInputStreamToFile(processBpmn,new File(fileName));  
-        } catch (Exception ex) {
-        	logger.error("create BPMN file error：{}",ex);
-        }
-        
-        dto.setCode(Constant.RESULT_SUCCESS);
-        return dto;
-
-    }
-    
     /**
      * 部署单个流程定义
      *

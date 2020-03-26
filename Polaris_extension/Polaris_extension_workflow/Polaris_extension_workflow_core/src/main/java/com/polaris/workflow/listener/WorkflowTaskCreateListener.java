@@ -8,7 +8,7 @@ import org.activiti.engine.impl.persistence.entity.TaskEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.polaris.workflow.api.dto.WorkflowDto;
+import com.polaris.workflow.dto.WorkflowDto;
 
 /**
  * 引擎的全局监听器（监听任务的创建）

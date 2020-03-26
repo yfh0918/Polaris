@@ -31,8 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.polaris.core.Constant;
 import com.polaris.core.util.StringUtil;
-import com.polaris.workflow.api.dto.WorkflowDto;
-import com.polaris.workflow.api.exception.WorkflowException;
+import com.polaris.workflow.dto.WorkflowDto;
+import com.polaris.workflow.exception.WorkflowException;
 import com.polaris.workflow.util.WorkflowUtils;
 
 /**

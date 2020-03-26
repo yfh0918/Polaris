@@ -12,7 +12,6 @@
   <name>Polaris_extension_workflow</name>
   
   <modules>
-	<module>Polaris_extension_workflow_api</module>
 	<module>Polaris_extension_workflow_core</module>
   </modules>
   

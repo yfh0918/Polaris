@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.dubbo.config.annotation.Reference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
@@ -14,13 +14,16 @@ import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.util.SpringUtil;
-import com.polaris.workflow.api.dto.WorkflowDto;
-import com.polaris.workflow.api.service.WorkflowService;
+import com.polaris.workflow.dto.WorkflowDto;
+import com.polaris.workflow.service.WorkflowProcessService;
+import com.polaris.workflow.service.WorkflowTraceService;
 
 @Component
 public class ClaimApp {
-    @Reference
-    private WorkflowService workflowService;
+    @Autowired
+    private WorkflowProcessService workflowService;
+    @Autowired
+    private WorkflowTraceService traceService;
 
     private final String processDefinitionKey = "claim";
     private final String businessKey = "test002";
@@ -294,7 +297,7 @@ public class ClaimApp {
     public void traceProcess() {
         WorkflowDto dto = new WorkflowDto();
         dto.setProcessInstanceId("b6eee943-7d6c-11e7-9afd-000c295e0f9b");
-        dto = workflowService.traceProcess(dto);
+        dto = traceService.traceProcess(dto);
         System.out.println((JSONObject) JSONObject.toJSON(dto));
         // {"pageSize":10,"pageTo":10,"total":0,"map":{},"processInstanceId":"b6eee943-7d6c-11e7-9afd-000c295e0f9b","totalPage":0,"pageFrom":1,"msgContent":"没有processInstanceId","pageIndex":1,"status":1}
     }

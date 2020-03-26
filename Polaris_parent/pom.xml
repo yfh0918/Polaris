@@ -205,11 +205,6 @@
 	        </dependency>
 	        <dependency>
 	            <groupId>com.polaris</groupId>
-	            <artifactId>Polaris_extension_workflow_api</artifactId>
-	            <version>${polaris-version}</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>com.polaris</groupId>
 	            <artifactId>Polaris_extension_workflow_core</artifactId>
 	            <version>${polaris-version}</version>
 	        </dependency>	    
