@@ -63,18 +63,8 @@ public class Create {
         dto.setBusinessKey("afdadfadsfad");
         workflowProcessService.startWorkflow(dto);
         
-        dto = workflowProcessService.getProcessDiagram(dto);
+        dto = workflowCreateService.getDiagram(dto.getProcessInstanceId());
 
-        //Deployment deployment = processEngine.getRepositoryService().createDeployment().addBpmnModel(PROCESSID+".bpmn", model).name(PROCESSID+"_deployment").deploy();    
-             
-//        // 4. Start a process instance    
-//        ProcessInstance processInstance = processEngine.getRuntimeService().startProcessInstanceByKey(PROCESSID);   
-          
-//        // 5. Check if task is available    
-//        List<Task> tasks = processEngine.getTaskService().createTaskQuery().processInstanceId(processInstance.getId()).list();  
-          
-        // 6. Save process diagram to a file      
-//        InputStream processDiagram = processEngine.getRepositoryService().getProcessDiagram(processInstance.getProcessDefinitionId());   
         String fileName = FileUtil.getFullPath("deployments/"+dto.getProcessDefinitionKey()+".png");
         FileUtils.copyInputStreamToFile(dto.getProcessDiagram(), new File(fileName));    
              

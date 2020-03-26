@@ -23,7 +23,6 @@ import javax.xml.stream.XMLStreamReader;
 import org.activiti.bpmn.converter.BpmnXMLConverter;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowElement;
-import org.activiti.bpmn.model.Process;
 import org.activiti.bpmn.model.UserTask;
 import org.activiti.engine.HistoryService;
 import org.activiti.engine.IdentityService;
@@ -47,7 +46,6 @@ import org.activiti.engine.impl.pvm.PvmTransition;
 import org.activiti.engine.impl.pvm.process.ActivityImpl;
 import org.activiti.engine.impl.task.TaskDefinition;
 import org.activiti.engine.repository.Deployment;
-import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.runtime.ProcessInstanceQuery;
 import org.activiti.engine.task.Task;
@@ -55,19 +53,14 @@ import org.activiti.engine.task.TaskQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfClient;
 import com.polaris.core.pojo.Page;
 import com.polaris.core.util.PageUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.workflow.dto.WorkflowDto;
-import com.polaris.workflow.util.WorkflowUtils;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
@@ -96,93 +89,8 @@ public class WorkflowProcessService {
 
     @PersistenceContext
     private EntityManager entityManager;
+    
 
-    /**
-     * 部署单个流程定义
-     *
-     * @param WorkflowDto dto
-     */
-    @Transactional
-    public WorkflowDto deployDiagram(WorkflowDto dto) {
-
-        //参数检查
-        if (dto == null) {
-            dto = new WorkflowDto();
-        }
-        if (StringUtil.isEmpty(dto.getProcessDefinitionKey())) {
-            dto.setMessage(WorkflowDto.MESSAGE_INFO[1]);
-            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
-            return dto;
-        }
-        
-
-        try {
-            //载入流程
-            ResourceLoader resourceLoader = new DefaultResourceLoader();
-            String classpathResourceUrl = "diagrams/" + dto.getProcessDefinitionKey() + ".bpmn";
-            logger.debug("read workflow from: {}", classpathResourceUrl);
-            Resource resource = resourceLoader.getResource(classpathResourceUrl);
-            InputStream inputStream = null;
-            inputStream = resource.getInputStream();
-            if (inputStream == null) {
-                logger.warn("ignore deploy workflow module: {}", classpathResourceUrl);
-            } else {
-                logger.debug("finded workflow module: {}, deploy it!", classpathResourceUrl);
-                Deployment deployment = repositoryService.createDeployment().addClasspathResource(classpathResourceUrl).deploy();
-                // export diagram
-                List<ProcessDefinition> list = repositoryService.createProcessDefinitionQuery().deploymentId(deployment.getId()).list();
-                dto.setDeploymentId(deployment.getId());
-                String exportDir = null;
-                String diagramDir = ConfClient.get("diagram.output", "");
-                if (!StringUtil.isEmpty(dto.getDiagramDir())) {
-                    exportDir = dto.getDiagramDir();
-                } else if (!StringUtil.isEmpty(diagramDir)) {
-                    exportDir = diagramDir;
-                }
-                if (!StringUtil.isEmpty(exportDir)) {
-                    for (ProcessDefinition processDefinition : list) {
-                        WorkflowUtils.exportDiagramToFile(repositoryService, processDefinition, exportDir);
-                    }
-                }
-            }
-            dto.setCode(Constant.RESULT_SUCCESS);
-        } catch (Exception ex) {
-            logger.error("异常", ex);
-            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
-            dto.setMessage(ex.getMessage());
-        }
-        return dto;
-    }
-
-    /**
-     * 删除部署的流程，级联删除流程实例
-     *
-     * @param deploymentId 流程部署ID
-     */
-    @Transactional
-    public WorkflowDto deleteDiagram(WorkflowDto dto) {
-
-        //参数检查
-        if (dto == null) {
-            dto = new WorkflowDto();
-        }
-        if (StringUtil.isEmpty(dto.getDeploymentId())) {
-            dto.setMessage(WorkflowDto.MESSAGE_INFO[5]);
-            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
-            return dto;
-        }
-
-        //删除发布图
-        try {
-            repositoryService.deleteDeployment(dto.getDeploymentId(), true);
-            dto.setCode(Constant.RESULT_SUCCESS);
-        } catch (Exception ex) {
-            logger.error("异常", ex);
-            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
-            dto.setMessage(ex.getMessage());
-        }
-        return dto;
-    }
 
     /**
      * 启动流程
@@ -243,30 +151,6 @@ public class WorkflowProcessService {
         }
         return dto;
     }
-    /**
-     * 启动流程
-     *
-     * @param entity
-     */
-    public WorkflowDto getProcessDiagram(WorkflowDto dto) {
-
-        //参数检查
-        if (dto == null) {
-            dto = new WorkflowDto();
-        }
-        if (StringUtil.isEmpty(dto.getProcessDefinitionId())) {
-            dto.setMessage(WorkflowDto.MESSAGE_INFO[13]);
-            dto.setCode(String.valueOf(Constant.RESULT_FAIL));
-            return dto;
-        }
-        
-
-        InputStream processDiagram = repositoryService.getProcessDiagram(dto.getProcessDefinitionId()); 
-        dto.setProcessDiagram(processDiagram);
-        dto.setCode(Constant.RESULT_SUCCESS);
-        return dto;
-    }
-    
 
     /**
      * 查询待办任务
@@ -642,19 +526,17 @@ public class WorkflowProcessService {
      * @return
      */
     @Transactional
-    public WorkflowDto deleteRuntimeProcessInstance(WorkflowDto dto) {
+    public WorkflowDto deleteRuntimeProcessInstance(String processInstanceId, String deleteReason) {
         // 参数检查
-        if (dto == null) {
-            dto = new WorkflowDto();
-        }
-        if (StringUtil.isEmpty(dto.getProcessInstanceId())) {
+    	WorkflowDto dto = new WorkflowDto();
+        if (StringUtil.isEmpty(processInstanceId)) {
             dto.setMessage(WorkflowDto.MESSAGE_INFO[6]);
             dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
         }
         // 删除流程
         try {
-            runtimeService.deleteProcessInstance(dto.getProcessInstanceId(), dto.getDeleteReason());
+            runtimeService.deleteProcessInstance(processInstanceId, deleteReason);
             dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
@@ -670,13 +552,11 @@ public class WorkflowProcessService {
      * @return
      */
     @Transactional
-    public WorkflowDto deleteFinishedProcessInstaces(WorkflowDto dto) {
+    public WorkflowDto deleteFinishedProcessInstaces(String processInstanceId) {
 
         //参数检查
-        if (dto == null) {
-            dto = new WorkflowDto();
-        }
-        if (StringUtil.isEmpty(dto.getProcessInstanceId())) {
+    	WorkflowDto dto = new WorkflowDto();
+        if (StringUtil.isEmpty(processInstanceId)) {
             dto.setMessage(WorkflowDto.MESSAGE_INFO[6]);
             dto.setCode(String.valueOf(Constant.RESULT_FAIL));
             return dto;
@@ -684,7 +564,7 @@ public class WorkflowProcessService {
 
         //删除流程
         try {
-            historyService.deleteHistoricProcessInstance(dto.getProcessInstanceId());
+            historyService.deleteHistoricProcessInstance(processInstanceId);
             dto.setCode(Constant.RESULT_SUCCESS);
         } catch (Exception ex) {
             logger.error("异常", ex);
@@ -906,7 +786,6 @@ public class WorkflowProcessService {
         processDefinitionEntity = (ProcessDefinitionEntity) ((RepositoryServiceImpl) repositoryService)
                 .getDeployedProcessDefinition(definitionId);
 
-//        ExecutionEntity execution = (ExecutionEntity) runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
         ExecutionEntity execution = (ExecutionEntity) runtimeService.createExecutionQuery().executionId(executionId).processInstanceId(processInstanceId).singleResult();
 
         //当前流程节点Id信息
@@ -1046,7 +925,7 @@ public class WorkflowProcessService {
 	public WorkflowDto getAllUserTask(WorkflowDto dto) {
         Deployment deployment = repositoryService.createDeploymentQuery().deploymentName(dto.getProcessDefinitionKey()).singleResult();
         String deploymentId = deployment.getId();
-        String resourceName = dto.getProcessDefinitionKey() + ".bpmn20.xml";
+        String resourceName = dto.getProcessDefinitionKey() + WorkflowCreateService.suffix;
         InputStream resouceStream = repositoryService.getResourceAsStream(deploymentId, resourceName);
         XMLInputFactory xif = XMLInputFactory.newInstance();
         InputStreamReader in = null;
@@ -1086,50 +965,6 @@ public class WorkflowProcessService {
         return dto;
     }
 
-    /**
-     * 查询当前系统中已经部署的流程
-     *
-     * @return 流程的名称和key的集合
-     * @throws Exception
-     */
-    @SuppressWarnings("unchecked")
-	public WorkflowDto getAllDeployWorkFlow(WorkflowDto dto) {
-        List<Deployment> deploymentList = repositoryService.createDeploymentQuery().list();
-        //查询ACT_RE_PROCDEF，获取中文名称  只有开启流程才会有中文名称
-        List<Map<String, Object>> resultList = new ArrayList<>();
-        String key;
-        InputStream resouceStream;
-        InputStreamReader in;
-        XMLStreamReader xtr;
-        BpmnModel model;
-        XMLInputFactory xif = XMLInputFactory.newInstance();
-        List<Process> processes;
 
-        for (Deployment deployment : deploymentList) {
-            //获取部署的流程的key名称
-            key = deployment.getName();
-            //由于没有启动的流程回去不到中文名称,只能从生成xml文件读取
-            try {
-                resouceStream = repositoryService.getResourceAsStream(deployment.getId(), key + ".bpmn20.xml");
-                in = new InputStreamReader(resouceStream, "UTF-8");
-                xtr = xif.createXMLStreamReader(in);
-            } catch (Exception e) {
-                logger.error("解析工作流文件出错，ERROR:", e);
-                continue;
-            }
-            model = new BpmnXMLConverter().convertToBpmnModel(xtr);
-            //创建map，存放流程的key及中文名称
-            processes = model.getProcesses();
-            if (CollectionUtil.isEmpty(processes)) {
-                continue;
-            }
-            Map<String, Object> tmpMap = new HashMap<>();
-            tmpMap.put("showValue", processes.get(0).getDocumentation());
-            tmpMap.put("definitionKey", processes.get(0).getId());
-            resultList.add(tmpMap);
-        }
-        dto.setData(resultList);
-        return dto;
-    }
 
 }

@@ -15,6 +15,7 @@ import com.polaris.core.Constant;
 import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.util.SpringUtil;
 import com.polaris.workflow.dto.WorkflowDto;
+import com.polaris.workflow.service.WorkflowCreateService;
 import com.polaris.workflow.service.WorkflowProcessService;
 import com.polaris.workflow.service.WorkflowTraceService;
 
@@ -24,6 +25,8 @@ public class ClaimApp {
     private WorkflowProcessService workflowService;
     @Autowired
     private WorkflowTraceService traceService;
+    @Autowired
+    private WorkflowCreateService workflowCreateService;
 
     private final String processDefinitionKey = "claim";
     private final String businessKey = "test002";
@@ -53,10 +56,7 @@ public class ClaimApp {
      * @throws IOException 找不到zip文件时
      */
     public void deployDiagram() {
-        WorkflowDto dto = new WorkflowDto();
-        //dto.setProcessDefinitionKey("wgshxx");
-        // dto = workflowService.deployDiagram(dto);
-        dto = workflowService.getAllDeployWorkFlow(dto);
+        WorkflowDto dto = workflowCreateService.getAllDeployment();
         System.out.println((JSONObject) JSONObject.toJSON(dto));
         //{"pageSize":10,"pageTo":10,"processDefinitionKey":"claim","total":0,"deploymentId":"b65da5bf-7d6c-11e7-9afd-000c295e0f9b","map":{},"totalPage":0,"pageFrom":1,"pageIndex":1,"status":0}
 
@@ -295,9 +295,7 @@ public class ClaimApp {
      * @return 封装了各种节点信息
      */
     public void traceProcess() {
-        WorkflowDto dto = new WorkflowDto();
-        dto.setProcessInstanceId("b6eee943-7d6c-11e7-9afd-000c295e0f9b");
-        dto = traceService.traceProcess(dto);
+        WorkflowDto dto = traceService.traceProcess("b6eee943-7d6c-11e7-9afd-000c295e0f9b");
         System.out.println((JSONObject) JSONObject.toJSON(dto));
         // {"pageSize":10,"pageTo":10,"total":0,"map":{},"processInstanceId":"b6eee943-7d6c-11e7-9afd-000c295e0f9b","totalPage":0,"pageFrom":1,"msgContent":"没有processInstanceId","pageIndex":1,"status":1}
     }
@@ -308,11 +306,8 @@ public class ClaimApp {
      * @return
      */
     public void deleteFinishedProcessInstaces() {
-        WorkflowDto dto = new WorkflowDto();
-        dto.setProcessInstanceId("5af8c2cd-7cb0-11e7-b0e2-000c295e0f9b");
-
         //执行处理
-        dto = workflowService.deleteFinishedProcessInstaces(dto);
+        WorkflowDto dto = workflowService.deleteFinishedProcessInstaces("5af8c2cd-7cb0-11e7-b0e2-000c295e0f9b");
         System.out.println((JSONObject) JSONObject.toJSON(dto));
     }
 
@@ -320,10 +315,7 @@ public class ClaimApp {
      * 删除运行中的流程
      */
     public void deleteRuntimeProcessInstance() {
-        WorkflowDto dto = new WorkflowDto();
-        dto.setProcessInstanceId("5af8c2cd-7cb0-11e7-b0e2-000c295e0f9b");
-        dto.setDeleteReason("delete reason");
-        dto = workflowService.deleteRuntimeProcessInstance(dto);
+        WorkflowDto dto = workflowService.deleteRuntimeProcessInstance("5af8c2cd-7cb0-11e7-b0e2-000c295e0f9b","delete reason");
         System.out.println(JSONObject.toJSON(dto));
     }
 

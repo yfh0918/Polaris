@@ -64,13 +64,11 @@ public class WorkflowTraceService {
      */
     @SuppressWarnings("unchecked")
 	@Transactional
-    public WorkflowDto traceProcess(WorkflowDto dto) {
+    public WorkflowDto traceProcess(String processInstanceId) {
 
         //参数检查
-        if (dto == null) {
-            dto = new WorkflowDto();
-        }
-        if (StringUtil.isEmpty(dto.getProcessInstanceId())) {
+    	WorkflowDto dto = new WorkflowDto();
+        if (StringUtil.isEmpty(processInstanceId)) {
             dto.setMessage(WorkflowDto.MESSAGE_INFO[6]);
             dto.setCode(Constant.RESULT_FAIL);
             return dto;
@@ -78,7 +76,7 @@ public class WorkflowTraceService {
 
         try {
             //获取跟踪图信息
-            Execution execution = runtimeService.createExecutionQuery().executionId(dto.getProcessInstanceId()).singleResult();//执行实例
+            Execution execution = runtimeService.createExecutionQuery().executionId(processInstanceId).singleResult();//执行实例
             Object property = null;
             try {
                 property = PropertyUtils.getProperty(execution, "activityId");
@@ -90,7 +88,7 @@ public class WorkflowTraceService {
             if (property != null) {
                 activityId = property.toString();
             }
-            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(dto.getProcessInstanceId())
+            ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId)
                     .singleResult();
             ProcessDefinitionEntity processDefinition = (ProcessDefinitionEntity) ((RepositoryServiceImpl) repositoryService)
                     .getDeployedProcessDefinition(processInstance.getProcessDefinitionId());
