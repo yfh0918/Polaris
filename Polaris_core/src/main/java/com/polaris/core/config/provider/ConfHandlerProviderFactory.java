@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.polaris.core.config.Config.Type;
+import com.polaris.core.config.ConfigException;
 
 public class ConfHandlerProviderFactory {
 	
@@ -19,7 +20,7 @@ public class ConfHandlerProviderFactory {
 				} else if (type.equals(Type.SYS)) {
 					provider = ConfHandlerSysProvider.INSTANCE;
 				} else {
-					throw new RuntimeException("type:"+type+"is incorrect");
+					throw new ConfigException("type:"+type+"is incorrect");
 				}
 				confHandlerProviderMap.put(type, provider);
 			}
