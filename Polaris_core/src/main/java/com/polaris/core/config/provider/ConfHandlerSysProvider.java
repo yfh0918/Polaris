@@ -29,7 +29,7 @@ public class ConfHandlerSysProvider implements ConfHandlerProvider{
 		configListener.onComplete(SYSTEM_SEQUENCE);
 	}
 	
-	public Properties getProperties() {
+	public synchronized Properties getProperties() {
 		if (this.properties != null) {
 			return this.properties;
 		}
