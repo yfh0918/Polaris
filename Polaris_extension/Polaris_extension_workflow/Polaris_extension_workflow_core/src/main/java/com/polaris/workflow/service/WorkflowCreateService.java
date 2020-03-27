@@ -99,9 +99,7 @@ public class WorkflowCreateService {
         return userTask;  
     } 
     public UserTask createUserTask(Map<String, Object> userTaskMap) { 
-    	UserTask userTask = new UserTask();  
-    	JsonUtil.toBean(userTask, JSON.toJSONString(userTaskMap), true);
-    	return userTask;
+    	return JsonUtil.toBean(UserTask.class, JSON.toJSONString(userTaskMap), true);
     }
   
     /*连线*/ 
@@ -124,9 +122,7 @@ public class WorkflowCreateService {
         return flow;  
     }
     public SequenceFlow createSequenceFlow(Map<String, Object> sequenceFlowMap) { 
-    	SequenceFlow flow = new SequenceFlow(); 
-    	JsonUtil.toBean(flow, JSON.toJSONString(sequenceFlowMap), true);
-    	return flow;
+    	return JsonUtil.toBean(SequenceFlow.class, JSON.toJSONString(sequenceFlowMap), true);
     }
       
     /*排他网关*/  
@@ -142,9 +138,7 @@ public class WorkflowCreateService {
         return exclusiveGateway;  
     }
     public ExclusiveGateway createExclusiveGateway(Map<String, Object> exclusiveGatewayMap) { 
-    	ExclusiveGateway exclusiveGateway = new ExclusiveGateway();  
-    	JsonUtil.toBean(exclusiveGateway, JSON.toJSONString(exclusiveGatewayMap), true);
-        return exclusiveGateway;
+    	return JsonUtil.toBean(ExclusiveGateway.class, JSON.toJSONString(exclusiveGatewayMap), true);
     }
     
     /*并行网关*/  
@@ -161,9 +155,7 @@ public class WorkflowCreateService {
         return parallelGateway;  
     }
     public ParallelGateway createParallelGateway(Map<String, Object> parallelGatewayMap) {  
-    	ParallelGateway parallelGateway = new ParallelGateway();  
-    	JsonUtil.toBean(parallelGateway, JSON.toJSONString(parallelGatewayMap), true);
-        return parallelGateway;  
+    	return JsonUtil.toBean(ParallelGateway.class, JSON.toJSONString(parallelGatewayMap), true);
     }
   
     /*开始节点*/  
@@ -182,9 +174,7 @@ public class WorkflowCreateService {
         return startEvent;  
     }  
     public StartEvent createStartEvent(Map<String, Object> startEventMap) {  
-        StartEvent startEvent = new StartEvent();  
-        JsonUtil.toBean(startEvent, JSON.toJSONString(startEventMap), true);
-        return startEvent;  
+         return JsonUtil.toBean(StartEvent.class, JSON.toJSONString(startEventMap), true);
     }  
     
   
@@ -204,9 +194,7 @@ public class WorkflowCreateService {
         return endEvent;  
     }
     public EndEvent createEndEvent(Map<String, Object> endEventMap) {  
-        EndEvent endEvent = new EndEvent(); 
-        JsonUtil.toBean(endEvent, JSON.toJSONString(endEventMap), true);
-        return endEvent;  
+        return JsonUtil.toBean(EndEvent.class, JSON.toJSONString(endEventMap), true);
     }
     
     /**
@@ -281,35 +269,17 @@ public class WorkflowCreateService {
     @Transactional
     public String createDiagram(String name,Process... processes) {
     	BpmnModel bpmnModel = createBpmnModel(); 
-    	if (processes == null) {
-    		return null;
-    	}
-    	for (Process process : processes) {
-    		bpmnModel.addProcess(process);
-    	}
-    	
-        // 2. Generate graphical information    
-        new BpmnAutoLayout(bpmnModel).execute();  
-          
-        // 3. Deploy the process to the engine    
-        Deployment deployment = repositoryService.createDeployment().addBpmnModel(
-        		prefix+name+suffix, bpmnModel).name(name).deploy(); 
-        
-        // save bpmn
-        try {
-            InputStream processBpmn = repositoryService.getResourceAsStream(deployment.getId(), prefix+name+suffix);
-            String fileName = FileUtil.getFullPath(prefix+name+suffix);
-            FileUtils.copyInputStreamToFile(processBpmn,new File(fileName));  
-        } catch (Exception ex) {
-        	logger.error("create BPMN file error：{}",ex);
-        }
-
-        return deployment.getId();
+    	return createDiagram(name,bpmnModel,processes);
 
     }
     
     @Transactional
-    public String createDiagram(String name,BpmnModel bpmnModel) {
+    public String createDiagram(String name,BpmnModel bpmnModel,Process... processes) {
+    	if (processes != null) {
+    		for (Process process : processes) {
+        		bpmnModel.addProcess(process);
+        	}
+    	}
     	
         // 2. Generate graphical information    
         new BpmnAutoLayout(bpmnModel).execute();  

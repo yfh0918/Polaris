@@ -17,18 +17,22 @@ import cn.hutool.json.JSONObject;
 
 public abstract class JsonUtil {
 	private final static Type mapType = new TypeToken<Map<String, String>>(){}.getType();
-	private final static Gson gson = new GsonBuilder()
-							.registerTypeAdapter(mapType, new JsonMapSerializer())
+	private final static Gson gson0 = new GsonBuilder()
+							.registerTypeAdapter(mapType, new JsonMapSerializer())//properties convert
 							.create();
+	private final static Gson gson1 = new GsonBuilder().create();
 	
-	public static void toBeanFromProperties(Object target, Map<String, String> bundleMap,boolean ignoreError) {
-		String json = gson.toJson(bundleMap, mapType);
+	public static void toBean(Object bean, Map<String, String> bundleMap,boolean ignoreError) {
+		String json = gson0.toJson(bundleMap, mapType);
 		JSONObject hutJson = new JSONObject(json);
-		hutJson.toBean(target,ignoreError);
+		hutJson.toBean(bean, ignoreError);
 	}
-	public static void toBean(Object target, String json,boolean ignoreError) {
-		JSONObject hutJson = new JSONObject(json);
-		hutJson.toBean(target,ignoreError);
+	public static <T> T toBean(Class<T> targetClass, Map<String, String> bundleMap,boolean ignoreError) {
+		String json = gson0.toJson(bundleMap, mapType);
+		return gson1.fromJson(json, targetClass);
+	}
+	public static <T> T toBean(Class<T> targetClass, String json,boolean ignoreError) {
+		return gson1.fromJson(json, targetClass);
 	}
 	
 	public static class JsonMapSerializer implements JsonSerializer<Map<String, String>> {
