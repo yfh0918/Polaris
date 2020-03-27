@@ -38,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.polaris.core.Constant;
 import com.polaris.core.util.FileUtil;
+import com.polaris.core.util.JsonUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.workflow.dto.WorkflowDto;
 import com.polaris.workflow.util.WorkflowUtils;
@@ -50,19 +51,19 @@ public class WorkflowCreateService {
 	
     private static Logger logger = LoggerFactory.getLogger(WorkflowCreateService.class);
     
-    private static String PROCESS = "process";
-    private static String ID = "id";
-    private static String NAME = "name";
-    private static String CANDIDATE_GROUP = "candidateGroup";
-    private static String COND_EXP = "conditionExpression";
-    private static String START_EVENT = "startEvent";
-    private static String END_EVENT = "endEvent";
-    private static String SEQUENCE_FLOW = "sequenceFlow";
-    private static String USER_TASK = "userTask";
-    private static String PA_GW = "parallelGateway";
-    private static String EX_GW = "exclusiveGateway";
-    private static String FROM = "from";
-    private static String TO = "to";
+    public static String PROCESS = "process";
+    public static String ID = "id";
+    public static String NAME = "name";
+    public static String CANDIDATE_GROUPS = "candidateGroups";
+    public static String COND_EXP = "conditionExpression";
+    public static String START_EVENT = "startEvent";
+    public static String END_EVENT = "endEvent";
+    public static String SEQUENCE_FLOW = "sequenceFlow";
+    public static String USER_TASK = "userTask";
+    public static String PA_GW = "parallelGateway";
+    public static String EX_GW = "exclusiveGateway";
+    public static String FROM = "sourceRef";
+    public static String TO = "targetRef";
     
     
     @Autowired
@@ -85,32 +86,35 @@ public class WorkflowCreateService {
     } 
     
     /*任务节点*/  
-    public UserTask createUserTask(String id, String name) {  
+    public UserTask createUserTask(String id, String name) { 
     	return createUserTask(id,name,null);
     }
-    public UserTask createUserTask(String id, String name, String candidateGroup) {  
+    public UserTask createUserTask(String id, String name, List<String> candidateGroups) {  
         UserTask userTask = new UserTask();  
         userTask.setName(name);  
         userTask.setId(id);  
-    	if (StringUtil.isNotEmpty(candidateGroup)) {
-            List<String> candidateGroups=new ArrayList<String>();  
-            candidateGroups.add(candidateGroup);  
-            userTask.setCandidateGroups(candidateGroups);  
-    	}
+        if (candidateGroups != null) {
+        	userTask.setCandidateGroups(candidateGroups);  
+        }
         return userTask;  
-    }  
+    } 
+    public UserTask createUserTask(Map<String, Object> userTaskMap) { 
+    	UserTask userTask = new UserTask();  
+    	JsonUtil.toBean(userTask, JSON.toJSONString(userTaskMap), true);
+    	return userTask;
+    }
   
     /*连线*/ 
-    public SequenceFlow createSequenceFlow(String from, String to) { 
-    	return createSequenceFlow(from,to,null,null);
+    public SequenceFlow createSequenceFlow(String sourceRef, String targetRef) { 
+    	return createSequenceFlow(sourceRef,targetRef,null,null);
     }
-    public SequenceFlow createSequenceFlow(String from, String to,String name) { 
-    	return createSequenceFlow(from,to,name,null);
+    public SequenceFlow createSequenceFlow(String sourceRef, String targetRef,String name) { 
+    	return createSequenceFlow(sourceRef,targetRef,name,null);
     }
-    public SequenceFlow createSequenceFlow(String from, String to,String name,String conditionExpression) {  
+    public SequenceFlow createSequenceFlow(String sourceRef, String targetRef,String name,String conditionExpression) {  
         SequenceFlow flow = new SequenceFlow();  
-        flow.setSourceRef(from);  
-        flow.setTargetRef(to);  
+        flow.setSourceRef(sourceRef);  
+        flow.setTargetRef(targetRef);  
         if (!StringUtils.isEmpty(name)) {
         	flow.setName(name);  
         }
@@ -118,7 +122,12 @@ public class WorkflowCreateService {
             flow.setConditionExpression(conditionExpression);  
         }         
         return flow;  
-    }  
+    }
+    public SequenceFlow createSequenceFlow(Map<String, Object> sequenceFlowMap) { 
+    	SequenceFlow flow = new SequenceFlow(); 
+    	JsonUtil.toBean(flow, JSON.toJSONString(sequenceFlowMap), true);
+    	return flow;
+    }
       
     /*排他网关*/  
     public ExclusiveGateway createExclusiveGateway(String id) {  
@@ -132,6 +141,11 @@ public class WorkflowCreateService {
     	}
         return exclusiveGateway;  
     }
+    public ExclusiveGateway createExclusiveGateway(Map<String, Object> exclusiveGatewayMap) { 
+    	ExclusiveGateway exclusiveGateway = new ExclusiveGateway();  
+    	JsonUtil.toBean(exclusiveGateway, JSON.toJSONString(exclusiveGatewayMap), true);
+        return exclusiveGateway;
+    }
     
     /*并行网关*/  
     public ParallelGateway createParallelGateway(String id) {
@@ -144,6 +158,11 @@ public class WorkflowCreateService {
     		parallelGateway.setName(name);
     	}
     	
+        return parallelGateway;  
+    }
+    public ParallelGateway createParallelGateway(Map<String, Object> parallelGatewayMap) {  
+    	ParallelGateway parallelGateway = new ParallelGateway();  
+    	JsonUtil.toBean(parallelGateway, JSON.toJSONString(parallelGatewayMap), true);
         return parallelGateway;  
     }
   
@@ -162,6 +181,12 @@ public class WorkflowCreateService {
         }
         return startEvent;  
     }  
+    public StartEvent createStartEvent(Map<String, Object> startEventMap) {  
+        StartEvent startEvent = new StartEvent();  
+        JsonUtil.toBean(startEvent, JSON.toJSONString(startEventMap), true);
+        return startEvent;  
+    }  
+    
   
     /*结束节点*/  
     public EndEvent createEndEvent() {
@@ -176,6 +201,11 @@ public class WorkflowCreateService {
         if (!StringUtils.isEmpty(name)) {
         	endEvent.setName(name);
         }
+        return endEvent;  
+    }
+    public EndEvent createEndEvent(Map<String, Object> endEventMap) {  
+        EndEvent endEvent = new EndEvent(); 
+        JsonUtil.toBean(endEvent, JSON.toJSONString(endEventMap), true);
         return endEvent;  
     }
     
@@ -198,42 +228,42 @@ public class WorkflowCreateService {
 			processObjList.add(processObj);
 			
 			//START_EVENT
-			Map<String, String> startEvent = (Map<String, String>)process.get(START_EVENT);
-			processObj.addFlowElement(createStartEvent(startEvent.get(ID) ,startEvent.get(NAME))); 
+			Map<String, Object> startEvent = (Map<String, Object>)process.get(START_EVENT);
+			processObj.addFlowElement(createStartEvent(startEvent)); 
 			
 			//USER_TASK
 			if (process.get(USER_TASK) != null) {
-				List<Map<String, String>> userTaskList = (List<Map<String, String>>)process.get(USER_TASK);
-				for (Map<String, String> userTask : userTaskList) {
-					processObj.addFlowElement(createUserTask(userTask.get(ID), userTask.get(NAME), userTask.get(CANDIDATE_GROUP)));
+				List<Map<String, Object>> userTaskList = (List<Map<String, Object>>)process.get(USER_TASK);
+				for (Map<String, Object> userTask : userTaskList) {
+					processObj.addFlowElement(createUserTask(userTask));
 				}
 			}
 			
 			//PA_GW
 			if (process.get(PA_GW) != null) {
-				List<Map<String, String>> paGatewayList = (List<Map<String, String>>)process.get(PA_GW);
-				for (Map<String, String> paGateway : paGatewayList) {
-					processObj.addFlowElement(createParallelGateway(paGateway.get(ID), paGateway.get(NAME)));
+				List<Map<String, Object>> paGatewayList = (List<Map<String, Object>>)process.get(PA_GW);
+				for (Map<String, Object> paGateway : paGatewayList) {
+					processObj.addFlowElement(createParallelGateway(paGateway));
 				}
 			}
 			
 			//EX_GW
 			if (process.get(EX_GW) != null) {
-				List<Map<String, String>> exGatewayList = (List<Map<String, String>>)process.get(EX_GW);
-				for (Map<String, String> exGateway : exGatewayList) {
-					processObj.addFlowElement(createExclusiveGateway(exGateway.get(ID), exGateway.get(NAME)));
+				List<Map<String, Object>> exGatewayList = (List<Map<String, Object>>)process.get(EX_GW);
+				for (Map<String, Object> exGateway : exGatewayList) {
+					processObj.addFlowElement(createExclusiveGateway(exGateway));
 				}
 			}
 			
 			//END_EVENT
-			Map<String, String> endEvent = (Map<String, String>)process.get(END_EVENT);
-			processObj.addFlowElement(createEndEvent(endEvent.get(ID).toString() ,endEvent.get(NAME).toString())); 
+			Map<String, Object> endEvent = (Map<String, Object>)process.get(END_EVENT);
+			processObj.addFlowElement(createEndEvent(endEvent)); 
 			
 			//SEQUENCE_FLOW
 			if (process.get(SEQUENCE_FLOW) != null) {
-				List<Map<String, String>> sequenceFlowList =(List<Map<String, String>>)process.get(SEQUENCE_FLOW);
-				for (Map<String, String> sequenceFlow : sequenceFlowList) {
-					processObj.addFlowElement(createSequenceFlow(sequenceFlow.get(FROM), sequenceFlow.get(TO),sequenceFlow.get(NAME),sequenceFlow.get(COND_EXP)));
+				List<Map<String, Object>> sequenceFlowList =(List<Map<String, Object>>)process.get(SEQUENCE_FLOW);
+				for (Map<String, Object> sequenceFlow : sequenceFlowList) {
+					processObj.addFlowElement(createSequenceFlow(sequenceFlow));
 				}
 			}
 			

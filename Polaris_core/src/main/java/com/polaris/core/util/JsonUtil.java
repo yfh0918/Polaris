@@ -21,8 +21,12 @@ public abstract class JsonUtil {
 							.registerTypeAdapter(mapType, new JsonMapSerializer())
 							.create();
 	
-	public static void toBean(Object target, Map<String, String> bundleMap,boolean ignoreError) {
+	public static void toBeanFromProperties(Object target, Map<String, String> bundleMap,boolean ignoreError) {
 		String json = gson.toJson(bundleMap, mapType);
+		JSONObject hutJson = new JSONObject(json);
+		hutJson.toBean(target,ignoreError);
+	}
+	public static void toBean(Object target, String json,boolean ignoreError) {
 		JSONObject hutJson = new JSONObject(json);
 		hutJson.toBean(target,ignoreError);
 	}
@@ -43,7 +47,7 @@ public abstract class JsonUtil {
 	        return resultJson;
 	    }
 	    
-	    public static JsonElement createFromBundleKey(final JsonObject resultJson, final String key, final String value) throws IOException {
+	    public static JsonElement createFromBundleKey(final JsonObject resultJson, final String key, final Object value) throws IOException {
 	        if (!key.contains(".")) {
 	        	addElement(resultJson, key, value);
 	            
