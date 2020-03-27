@@ -29,46 +29,47 @@ public class ConfHandlerSysProvider implements ConfHandlerProvider{
 		configListener.onComplete(SYSTEM_SEQUENCE);
 	}
 	
-	public synchronized Properties getProperties() {
+	public Properties getProperties() {
 		if (this.properties != null) {
 			return this.properties;
 		}
-		
-		//encode
-    	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
+		synchronized(this) {
+			//encode
+	    	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
 
-    	//spring.config.location or project.config.name
-    	Properties propeties = null;
-    	String file = null;
-    	String projectConfigLocation = System.getProperty(Constant.SPRING_CONFIG_LOCACTION);
-    	if (StringUtil.isNotEmpty(projectConfigLocation)) {
-    		file = projectConfigLocation;
-    	} else if (StringUtil.isNotEmpty(System.getProperty(Constant.PROJECT_CONFIG_NAME))) {
-    		file = System.getProperty(Constant.PROJECT_CONFIG_NAME);
-    	}
-    	if (StringUtil.isNotEmpty(file)) {
-    		propeties = ConfReaderStrategyFactory.get().getProperties(file);
-    	} 
-    	
-		//folder-scan
-    	if (propeties == null) {
-    		propeties = ConfReaderStrategyFactory.get().getProperties(CONFIG_NAME);
-    	}
-    	
-    	if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
-    		propeties.put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
-		} else {
-			if (StringUtil.isEmpty(propeties.getProperty(Constant.IP_ADDRESS))) {
-				propeties.put(Constant.IP_ADDRESS, NetUtils.getLocalHost());
+	    	//spring.config.location or project.config.name
+	    	Properties propeties = null;
+	    	String file = null;
+	    	String projectConfigLocation = System.getProperty(Constant.SPRING_CONFIG_LOCACTION);
+	    	if (StringUtil.isNotEmpty(projectConfigLocation)) {
+	    		file = projectConfigLocation;
+	    	} else if (StringUtil.isNotEmpty(System.getProperty(Constant.PROJECT_CONFIG_NAME))) {
+	    		file = System.getProperty(Constant.PROJECT_CONFIG_NAME);
+	    	}
+	    	if (StringUtil.isNotEmpty(file)) {
+	    		propeties = ConfReaderStrategyFactory.get().getProperties(file);
+	    	} 
+	    	
+			//folder-scan
+	    	if (propeties == null) {
+	    		propeties = ConfReaderStrategyFactory.get().getProperties(CONFIG_NAME);
+	    	}
+	    	
+	    	if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
+	    		propeties.put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
+			} else {
+				if (StringUtil.isEmpty(propeties.getProperty(Constant.IP_ADDRESS))) {
+					propeties.put(Constant.IP_ADDRESS, NetUtils.getLocalHost());
+				}
 			}
+			
+			//system-environment
+	    	propeties.putAll(EnvironmentUtil.getSystemEnvironment());
+			
+			//system-properties
+			propeties.putAll(EnvironmentUtil.getSystemProperties());
+	     	this.properties = propeties;
 		}
-		
-		//system-environment
-    	propeties.putAll(EnvironmentUtil.getSystemEnvironment());
-		
-		//system-properties
-		propeties.putAll(EnvironmentUtil.getSystemProperties());
-     	this.properties = propeties;
-    	return propeties;
+    	return this.properties;
 	}
 }
