@@ -248,7 +248,10 @@ public class Create {
     	
 		String json = JSON.toJSONString(deployment);
     	System.out.println(json);
-    	return workflowCreateService.createDiagram(json);
+    	Map<String, Object> diagramMap = workflowCreateService.createDiagramMap(json);
+    	return workflowCreateService.createDiagram(
+    			diagramMap.get(WorkflowCreateService.NAME).toString(), 
+    			workflowCreateService.createBpmnModel(diagramMap));
     } 
       
 

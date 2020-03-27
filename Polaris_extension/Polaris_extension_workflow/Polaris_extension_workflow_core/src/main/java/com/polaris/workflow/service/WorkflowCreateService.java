@@ -72,10 +72,73 @@ public class WorkflowCreateService {
     public static final String prefix = "diagrams/";
     public static final String suffix = ".bpmn";
     
+
     /*Model*/  
     public BpmnModel createBpmnModel() {  
         return new BpmnModel();  
     }  
+	public BpmnModel createBpmnModel(String json) {
+		Map<String, Object> diagramMap = createDiagramMap(json);
+		return createBpmnModel(diagramMap);
+	}
+	public BpmnModel createBpmnModel(Map<String, Object> diagramMap) {
+		List<Map<String, Object>> processList = (List<Map<String, Object>>)diagramMap.get(PROCESS);
+		List<Process> processObjList = new ArrayList<>();
+		for (Map<String, Object> process : processList) {
+			if (process.get(NAME) == null) {
+				process.put(NAME, process.get(ID));
+			}
+			Process processObj = createProcess(process.get(ID).toString(), process.get(NAME).toString()); 
+			processObjList.add(processObj);
+			
+			//START_EVENT
+			Map<String, Object> startEvent = (Map<String, Object>)process.get(START_EVENT);
+			processObj.addFlowElement(createStartEvent(startEvent)); 
+			
+			//USER_TASK
+			if (process.get(USER_TASK) != null) {
+				List<Map<String, Object>> userTaskList = (List<Map<String, Object>>)process.get(USER_TASK);
+				for (Map<String, Object> userTask : userTaskList) {
+					processObj.addFlowElement(createUserTask(userTask));
+				}
+			}
+			
+			//PA_GW
+			if (process.get(PA_GW) != null) {
+				List<Map<String, Object>> paGatewayList = (List<Map<String, Object>>)process.get(PA_GW);
+				for (Map<String, Object> paGateway : paGatewayList) {
+					processObj.addFlowElement(createParallelGateway(paGateway));
+				}
+			}
+			
+			//EX_GW
+			if (process.get(EX_GW) != null) {
+				List<Map<String, Object>> exGatewayList = (List<Map<String, Object>>)process.get(EX_GW);
+				for (Map<String, Object> exGateway : exGatewayList) {
+					processObj.addFlowElement(createExclusiveGateway(exGateway));
+				}
+			}
+			
+			//END_EVENT
+			Map<String, Object> endEvent = (Map<String, Object>)process.get(END_EVENT);
+			processObj.addFlowElement(createEndEvent(endEvent)); 
+			
+			//SEQUENCE_FLOW
+			if (process.get(SEQUENCE_FLOW) != null) {
+				List<Map<String, Object>> sequenceFlowList =(List<Map<String, Object>>)process.get(SEQUENCE_FLOW);
+				for (Map<String, Object> sequenceFlow : sequenceFlowList) {
+					processObj.addFlowElement(createSequenceFlow(sequenceFlow));
+				}
+			}
+			
+
+		}
+		BpmnModel bpmnModel = new BpmnModel();
+		for (Process process: processObjList) {
+			bpmnModel.addProcess(process);
+		}
+		return bpmnModel;
+    }
 
     /*Process*/
     public Process createProcess(String id, String name) {  
@@ -198,69 +261,13 @@ public class WorkflowCreateService {
     }
     
     /**
-     * 动态创建流程
+     * 动态创建流程Map
      *
-     * @param WorkflowDto dto
+     * @param map
      */
-	@Transactional
-    public String createDiagram(String diagramJson) {
-		Map<String, Object> deployment = JSON.parseObject(diagramJson);
-		String name = deployment.get(NAME).toString();
-		List<Map<String, Object>> processList = (List<Map<String, Object>>)deployment.get(PROCESS);
-		List<Process> processObjList = new ArrayList<>();
-		for (Map<String, Object> process : processList) {
-			if (process.get(NAME) == null) {
-				process.put(NAME, process.get(ID));
-			}
-			Process processObj = createProcess(process.get(ID).toString(), process.get(NAME).toString()); 
-			processObjList.add(processObj);
-			
-			//START_EVENT
-			Map<String, Object> startEvent = (Map<String, Object>)process.get(START_EVENT);
-			processObj.addFlowElement(createStartEvent(startEvent)); 
-			
-			//USER_TASK
-			if (process.get(USER_TASK) != null) {
-				List<Map<String, Object>> userTaskList = (List<Map<String, Object>>)process.get(USER_TASK);
-				for (Map<String, Object> userTask : userTaskList) {
-					processObj.addFlowElement(createUserTask(userTask));
-				}
-			}
-			
-			//PA_GW
-			if (process.get(PA_GW) != null) {
-				List<Map<String, Object>> paGatewayList = (List<Map<String, Object>>)process.get(PA_GW);
-				for (Map<String, Object> paGateway : paGatewayList) {
-					processObj.addFlowElement(createParallelGateway(paGateway));
-				}
-			}
-			
-			//EX_GW
-			if (process.get(EX_GW) != null) {
-				List<Map<String, Object>> exGatewayList = (List<Map<String, Object>>)process.get(EX_GW);
-				for (Map<String, Object> exGateway : exGatewayList) {
-					processObj.addFlowElement(createExclusiveGateway(exGateway));
-				}
-			}
-			
-			//END_EVENT
-			Map<String, Object> endEvent = (Map<String, Object>)process.get(END_EVENT);
-			processObj.addFlowElement(createEndEvent(endEvent)); 
-			
-			//SEQUENCE_FLOW
-			if (process.get(SEQUENCE_FLOW) != null) {
-				List<Map<String, Object>> sequenceFlowList =(List<Map<String, Object>>)process.get(SEQUENCE_FLOW);
-				for (Map<String, Object> sequenceFlow : sequenceFlowList) {
-					processObj.addFlowElement(createSequenceFlow(sequenceFlow));
-				}
-			}
-			
-
-		}
-		Process[] processArray = processObjList.toArray(new Process[processObjList.size()]);
-		return this.createDiagram(name, processArray);
+    public Map<String, Object> createDiagramMap(String json) {
+    	return JSON.parseObject(json);
     }
-    
     /**
      * 动态创建流程
      *
