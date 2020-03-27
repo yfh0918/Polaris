@@ -38,27 +38,32 @@ public interface WorkflowCreateService {
 
     /*Process*/
     public Process createProcess(String id, String name); 
+    public List<Map<String, Object>> getAllProcess(Map<String, Object> diagramMap);
     
     /*任务节点*/  
     public UserTask createUserTask(String id, String name);
     public UserTask createUserTask(String id, String name, List<String> candidateGroups);
     public UserTask createUserTask(Map<String, Object> userTaskMap);
+    public List<Map<String, Object>> getAllTaskMap(Map<String, Object> processMap);
   
     /*连线*/ 
     public SequenceFlow createSequenceFlow(String sourceRef, String targetRef);
     public SequenceFlow createSequenceFlow(String sourceRef, String targetRef,String name);
     public SequenceFlow createSequenceFlow(String sourceRef, String targetRef,String name,String conditionExpression);
     public SequenceFlow createSequenceFlow(Map<String, Object> sequenceFlowMap);
+    public List<Map<String, Object>> getAllSequenceFlowMap(Map<String, Object> processMap);
       
     /*排他网关*/  
     public ExclusiveGateway createExclusiveGateway(String id);
     public ExclusiveGateway createExclusiveGateway(String id, String name);
     public ExclusiveGateway createExclusiveGateway(Map<String, Object> exclusiveGatewayMap);
+    public List<Map<String, Object>> getAllExclusiveGatewayMap(Map<String, Object> processMap);
     
     /*并行网关*/  
     public ParallelGateway createParallelGateway(String id);
     public ParallelGateway createParallelGateway(String id, String name);
     public ParallelGateway createParallelGateway(Map<String, Object> parallelGatewayMap);
+    public List<Map<String, Object>> getAllParallelGatewayMap(Map<String, Object> processMap);
   
     /*开始节点*/  
     public StartEvent createStartEvent();

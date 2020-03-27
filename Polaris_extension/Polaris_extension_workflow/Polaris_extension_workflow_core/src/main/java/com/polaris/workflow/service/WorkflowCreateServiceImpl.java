@@ -114,9 +114,8 @@ public class WorkflowCreateServiceImpl implements WorkflowCreateService{
 					processObj.addFlowElement(createSequenceFlow(sequenceFlow));
 				}
 			}
-			
-
 		}
+		
 		BpmnModel bpmnModel = new BpmnModel();
 		for (Process process: processObjList) {
 			bpmnModel.addProcess(process);
@@ -132,6 +131,10 @@ public class WorkflowCreateServiceImpl implements WorkflowCreateService{
         process.setName(name);
         return process;
     } 
+    @Override
+    public List<Map<String, Object>> getAllProcess(Map<String, Object> diagramMap) {
+    	return (List<Map<String, Object>>)diagramMap.get(PROCESS);
+    }
     
     /*任务节点*/  
     @Override
@@ -151,6 +154,10 @@ public class WorkflowCreateServiceImpl implements WorkflowCreateService{
     @Override
     public UserTask createUserTask(Map<String, Object> userTaskMap) { 
     	return JsonUtil.toBean(UserTask.class, JSON.toJSONString(userTaskMap), true);
+    }
+    @Override
+    public List<Map<String, Object>> getAllTaskMap(Map<String, Object> processMap) {
+    	return (List<Map<String, Object>>)processMap.get(USER_TASK);
     }
   
     /*连线*/ 
@@ -179,6 +186,11 @@ public class WorkflowCreateServiceImpl implements WorkflowCreateService{
     public SequenceFlow createSequenceFlow(Map<String, Object> sequenceFlowMap) { 
     	return JsonUtil.toBean(SequenceFlow.class, JSON.toJSONString(sequenceFlowMap), true);
     }
+    @Override
+    public List<Map<String, Object>> getAllSequenceFlowMap(Map<String, Object> processMap) {
+    	return (List<Map<String, Object>>)processMap.get(SEQUENCE_FLOW);
+    }
+
       
     /*排他网关*/  
     @Override
@@ -197,6 +209,10 @@ public class WorkflowCreateServiceImpl implements WorkflowCreateService{
     @Override
     public ExclusiveGateway createExclusiveGateway(Map<String, Object> exclusiveGatewayMap) { 
     	return JsonUtil.toBean(ExclusiveGateway.class, JSON.toJSONString(exclusiveGatewayMap), true);
+    }
+    @Override
+    public List<Map<String, Object>> getAllExclusiveGatewayMap(Map<String, Object> processMap) {
+    	return (List<Map<String, Object>>)processMap.get(EX_GW);
     }
     
     /*并行网关*/ 
@@ -217,6 +233,10 @@ public class WorkflowCreateServiceImpl implements WorkflowCreateService{
     @Override
     public ParallelGateway createParallelGateway(Map<String, Object> parallelGatewayMap) {  
     	return JsonUtil.toBean(ParallelGateway.class, JSON.toJSONString(parallelGatewayMap), true);
+    }
+    @Override
+    public List<Map<String, Object>> getAllParallelGatewayMap(Map<String, Object> processMap) {
+    	return (List<Map<String, Object>>)processMap.get(PA_GW);
     }
   
     /*开始节点*/  
