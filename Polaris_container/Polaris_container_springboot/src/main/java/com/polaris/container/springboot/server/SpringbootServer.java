@@ -3,6 +3,7 @@ package com.polaris.container.springboot.server;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextStoppedEvent;
 
@@ -10,6 +11,7 @@ import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.SpringUtil;
 
 public class SpringbootServer {
 	
@@ -75,8 +77,8 @@ public class SpringbootServer {
         	
         });
         springApplication.setBannerMode(Banner.Mode.OFF);
-        springApplication.run(ConfigurationSupport.getArgs());
-    	
+        ConfigurableApplicationContext context = springApplication.run(ConfigurationSupport.getArgs());
+        SpringUtil.setApplicationContext(context);
     }
     
 }
