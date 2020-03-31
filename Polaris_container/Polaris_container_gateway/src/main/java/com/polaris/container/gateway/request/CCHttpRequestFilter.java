@@ -2,13 +2,15 @@ package com.polaris.container.gateway.request;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -34,9 +36,9 @@ import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.pojo.Result;
+import com.polaris.core.thread.InheritableThreadLocalExecutor;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;
-import com.polaris.core.util.UuidUtil;
 import com.polaris.extension.cache.Cache;
 import com.polaris.extension.cache.CacheFactory;
 
@@ -79,12 +81,16 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 	//被禁止的IP是否要持久化磁盘 
 	public static volatile boolean isBlackIp = false;
 	public static volatile Cache blackIpCache = CacheFactory.getCache("cc.black.ip");//被禁止的ip
+	public static volatile Cache statisticsIpCache = CacheFactory.getCache("cc.statistics.ip");//统计用的缓存
 	public static volatile Integer blockSeconds = 60;
-	public static volatile boolean blockIpPersistent = false;
-	public static volatile String blockIpSavePath = "";
-	public static volatile int timerinterval = 0;//每间隔600秒执行一次
-	public static volatile Timer timer = null;
-	
+	public static volatile boolean ipPersistent = false;
+	public static volatile String ipSavePath = "";
+	private static ThreadPoolExecutor threadPool = new InheritableThreadLocalExecutor(
+            1, 1, 10, TimeUnit.SECONDS,
+            new LinkedBlockingDeque<Runnable>(10000), //默认10000，超过放弃
+            new ThreadPoolExecutor.AbortPolicy());
+	private DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+	private DateTimeFormatter dataFormat2=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 	
 	static {
 		
@@ -133,9 +139,8 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     	int[] IP_RATE = {10,60};
     	int ALL_RATE = 300;
     	int int_all_timeout_temp = 30;
-    	int timerintervalTemp = 600;
-    	boolean blockIpPersistentTemp = false;
-    	String blockIpSavePathTemp = null;
+    	boolean ipPersistentTemp = false;
+    	String ipSavePathTemp = null;
     	
     	Set<String> tempCcSkipIp = new HashSet<>();
     	
@@ -198,22 +203,14 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     			// 被禁止IP的是否持久化
     			if (kv[0].equals("cc.ip.persistent")) {
     				try {
-    					blockIpPersistentTemp = Boolean.parseBoolean(kv[1]);
-    				} catch (Exception ex) {
-    				}
-    			}
-    			
-    			// 被禁止间隔时间秒
-    			if (kv[0].equals("cc.ip.persistent.interval")) {
-    				try {
-    					timerintervalTemp = Integer.parseInt(kv[1]);
+    					ipPersistentTemp = Boolean.parseBoolean(kv[1]);
     				} catch (Exception ex) {
     				}
     			}
     			
     			// 持久化地址
     			if (kv[0].equals("cc.ip.persistent.path")) {
-					blockIpSavePathTemp = kv[1];
+    				ipSavePathTemp = kv[1];
     			}
 
     		}
@@ -235,46 +232,10 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 		//被限制IP的访问时间
 		isBlackIp = isBlackIpTemp;
         blockSeconds = blockSecondsTemp;
-        blockIpPersistent = blockIpPersistentTemp;
-        blockIpSavePath = blockIpSavePathTemp;
-        
-		//执行频次
-        if (blockIpPersistent && StringUtil.isNotEmpty(blockIpSavePath)) {
-            if (timerinterval != timerintervalTemp || !blockIpSavePathTemp.equals(blockIpSavePath)) {
-         		FileUtil.mkdir(blockIpSavePath);
-            	if (timer != null) {
-            		timer.cancel();
-            		timer = null;
-            	}
-            	timerinterval = timerintervalTemp;
-            	long period = timerinterval*1000;
-            	timer = new Timer();
-            	timer.scheduleAtFixedRate(new BusinessTask(), period, period);
-            }
-        } else {
-        	if (timer != null) {
-        		timer.cancel();
-        		timer = null;
-        	}
-        }
+        ipPersistent = ipPersistentTemp;
+        ipSavePath = ipSavePathTemp;
     }
     
-    private static class BusinessTask extends TimerTask{
-		@Override
-        public void run() {
-         	try {
-         		@SuppressWarnings("unchecked")
-				List<String> keys = blackIpCache.getKeys();
-         		if (keys != null && keys.size() > 0) {
-             		String path = blockIpSavePath + File.separator + UuidUtil.generateUuid();
-             		FileUtil.appendLines(keys, path, Charset.defaultCharset().toString());
-         		}
-			} catch (Exception e) {
-				logger.error("ERROR",e);
-			}
-        }
-    }
-
 	@Override
     public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
@@ -285,7 +246,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             HttpRequest httpRequest = (HttpRequest)httpObject;
             String url = getUrl(httpRequest);
             
-            //获取cc宜兰
+            //获取black ip list
             if (url.equals("/gateway/cc/ip")) {
             	@SuppressWarnings("rawtypes")
 				Result<List> dto = new Result<>();
@@ -295,7 +256,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
                 	for (Object key : blackIpCache.getKeys()) {
                 		Object obj = blackIpCache.get(key);
                 		if (obj != null) {
-                			dataList.add(key + ":" +obj.toString());
+                			dataList.add(key + " " +obj.toString());
                 		}
                 	}
             	} catch (Exception ex) {}
@@ -333,12 +294,15 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             	return true;
             }
             
+            //统计
+            saveStatisticsCache(url, realIp);
+            
         }
         return false;
     }
 	
 	//目标拦截
-	public static boolean doSentinel(String url, String realIp) {
+	public boolean doSentinel(String url, String realIp) {
     	Entry entry = null;
     	try {
             UrlCleaner urlCleaner = WebCallbackManager.getUrlCleaner();
@@ -374,7 +338,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         return url;
     }
     
-    public static boolean ccHack(String url, String realIp) {
+    public boolean ccHack(String url, String realIp) {
        	
     	//IP每秒访问
 		try {
@@ -415,13 +379,50 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         return false;
     }
     
-    public static void saveBlackCache(String realIp, String reason) {
+    public void saveStatisticsCache(String url, String realIp) {
+    	if (ipPersistent && StringUtil.isNotEmpty(ipSavePath)) {
+    		try {
+    			threadPool.execute(new Runnable() {
+    				@Override
+    				public void run() {
+    					LocalDateTime time = LocalDateTime.now();
+    		    		String fileNamePrefix = dataFormat.format(time);
+    					String path = ipSavePath + File.separator + fileNamePrefix+"_statistics.txt";
+                 		FileUtil.appendString(dataFormat2.format(time) + " " + realIp + " " +url, path, Charset.defaultCharset().toString());
+                 		FileUtil.appendString(FileUtil.getLineSeparator(), path, Charset.defaultCharset().toString());
+    				}
+    			});
+    		} catch (Exception ex) {
+    			logger.error("Error:",ex);
+    		}
+		}
+    }
+    
+    public void saveBlackCache(String realIp, String reason) {
     	if (isBlackIp) {
     		logger.info("ip:{} is blocked ,caused by:{}",realIp, reason);
     		blackIpCache.put(realIp, reason ,blockSeconds);//拒绝
+    		
+    		//持久化
+    		if (ipPersistent && StringUtil.isNotEmpty(ipSavePath)) {
+    			try {
+    				threadPool.execute(new Runnable() {
+    					@Override
+    					public void run() {
+    						LocalDateTime time = LocalDateTime.now();
+    		    			String fileNamePrefix = dataFormat.format(time);
+    						String path = ipSavePath + File.separator + fileNamePrefix+"_black.txt";
+    	             		FileUtil.appendString(dataFormat2.format(time) + " " + realIp + " " +reason, path, Charset.defaultCharset().toString());
+                     		FileUtil.appendString(FileUtil.getLineSeparator(), path, Charset.defaultCharset().toString());
+    					}
+        			});
+    			}catch (Exception ex) {
+        			logger.error("Error:",ex);
+        		}
+    			
+    		}
     	}
     }
-    
 }
 
 

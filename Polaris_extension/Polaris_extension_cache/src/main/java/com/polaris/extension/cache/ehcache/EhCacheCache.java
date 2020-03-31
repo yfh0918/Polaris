@@ -33,10 +33,15 @@ public class EhCacheCache implements com.polaris.extension.cache.Cache {
 			}
 		}
 		net.sf.ehcache.Cache ehcache = EhCacheFactory.getEhCache(cacheName);
-		Element element = new Element(key.toString(), value);
-		element.setTimeToIdle(0);
-		element.setTimeToLive(timeout);
-		ehcache.put(element);
+		ehcache.acquireWriteLockOnKey(key);
+		try {
+			Element element = new Element(key, value);
+			element.setTimeToIdle(0);
+			element.setTimeToLive(timeout);
+			ehcache.put(element);
+		} finally {
+			ehcache.releaseWriteLockOnKey(key);
+		} 
 	}
 
 	@Override
@@ -74,9 +79,15 @@ public class EhCacheCache implements com.polaris.extension.cache.Cache {
 				e.printStackTrace();
 				return null;
 			}
-		}
+		}		
 		net.sf.ehcache.Cache ehcache = EhCacheFactory.getEhCache(cacheName);
-		Element element = ehcache.get(key);
+		ehcache.acquireReadLockOnKey(key);
+		Element element = null;
+		try{
+			element = ehcache.get(key);
+		} finally {
+			ehcache.releaseReadLockOnKey(key);
+		}
 		if (element != null) {
 			return element.getObjectValue();
 		}
