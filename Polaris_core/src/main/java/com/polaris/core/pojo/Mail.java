@@ -7,6 +7,8 @@ import java.util.Map;
  */
 public class Mail {
 	
+	private boolean enable = true;
+	
 	private String receiver;//收件人，多个以英文分号（;）分割
 	
 	private String subject;//主题
@@ -14,6 +16,14 @@ public class Mail {
 	private String content;//内容
 	
 	private Map<String,String> placeHolderMap;
+
+	public boolean isEnable() {
+		return enable;
+	}
+
+	public void setEnable(boolean enable) {
+		this.enable = enable;
+	}
 
 	public String getReceiver() {
 		return receiver;

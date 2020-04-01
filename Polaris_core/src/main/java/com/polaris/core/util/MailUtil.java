@@ -292,6 +292,7 @@ public class MailUtil {
     		return;
     	}
     	Mail emailDTO = new Mail();
+    	emailDTO.setEnable(Boolean.parseBoolean(ConfClient.get("mail."+key+".enable", "true")));
         emailDTO.setSubject(ConfClient.get("mail."+key+".subject"));
         emailDTO.setReceiver(ConfClient.get("mail."+key+".receiver"));
         emailDTO.setContent(ConfClient.get("mail."+key+".content"));
@@ -306,6 +307,9 @@ public class MailUtil {
     }
 	public static void sendMail(Mail mailDto,Executor executor) {
 		if(mailDto == null) {
+			return;
+		}
+		if (!mailDto.isEnable()) {
 			return;
 		}
 		
