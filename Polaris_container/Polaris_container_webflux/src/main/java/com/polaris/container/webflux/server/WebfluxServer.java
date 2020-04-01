@@ -107,8 +107,8 @@ public class WebfluxServer {
     }
     
     private HttpProtocol[] listProtocols() {
-        boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl","false"));
-        boolean http2 = Boolean.parseBoolean(ConfClient.get("server.http2","false"));
+        boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl.enable","false"));
+        boolean http2 = Boolean.parseBoolean(ConfClient.get("server.http2.enable","false"));
 		if (http2) {
 			if (ssl) {
 				return new HttpProtocol[] { HttpProtocol.H2, HttpProtocol.HTTP11 };
@@ -121,7 +121,7 @@ public class WebfluxServer {
 	}
     
     private HttpServer secure(HttpServer server) {
-        boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl","false"));
+        boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl.enable","false"));
     	if (!ssl) {
     		return server;
     	}

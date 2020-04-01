@@ -25,19 +25,7 @@
 		    <groupId>org.apache.dubbo</groupId>
 		    <artifactId>dubbo</artifactId>
 		</dependency>
-	    <dependency>
-	        <groupId>org.apache.dubbo</groupId>
-	        <artifactId>dubbo-registry-nacos</artifactId>
-	    </dependency>	  
-		<dependency>
-		    <groupId>com.alibaba.csp</groupId>
-		    <artifactId>sentinel-core</artifactId>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.alibaba.nacos</groupId>
-			<artifactId>nacos-client</artifactId>
-		</dependency>
+
         
         <dependency>
 			<groupId>io.netty</groupId>
