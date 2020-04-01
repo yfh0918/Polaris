@@ -30,10 +30,12 @@ public class WebsocketListerner implements ServerListenerExtension{
 
 		@Override
 		public void started() {
-			//加载websocket
-	    	WSEndpointExporter wsEndpointExporter = new WSEndpointExporter();
+			if (ServerFactory.getServer().getContext() == null) {
+	    		return;
+	    	}
 	    	ServletContext servletContext = (ServletContext)(ServerFactory.getServer().getContext());
 	    	ServerContainer serverContainer = (ServerContainer) servletContext.getAttribute("javax.websocket.server.ServerContainer");
+	    	WSEndpointExporter wsEndpointExporter = new WSEndpointExporter();
 	    	wsEndpointExporter.registerEndpoints(serverContainer);
 		}
 		

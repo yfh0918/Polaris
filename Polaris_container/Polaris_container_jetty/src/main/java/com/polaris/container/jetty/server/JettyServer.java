@@ -38,6 +38,9 @@ public class JettyServer {
      * servlet上下文
      */
     private ServletContext servletContext;
+    
+    private String serverPort;
+    private String contextPath;
 
     /**
      * 私有构造方法
@@ -53,7 +56,7 @@ public class JettyServer {
         try {
 
             //定义server
-        	String serverPort = ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE);
+        	serverPort = ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE);
             InetSocketAddress addr = new InetSocketAddress("0.0.0.0", Integer.parseInt(serverPort));
             server = new Server(addr);
             QueuedThreadPool threadPool = (QueuedThreadPool)server.getThreadPool();
@@ -65,7 +68,7 @@ public class JettyServer {
             //定义context
             WebAppContext context = new WebAppContext();
             context.setDefaultsDescriptor("webdefault.xml");
-            String contextPath =ConfClient.get(Constant.SERVER_CONTEXT,"/"); 
+            contextPath =ConfClient.get(Constant.SERVER_CONTEXT,"/"); 
             if (!contextPath.startsWith("/")) {
             	contextPath = "/" + contextPath;
             }
@@ -128,11 +131,17 @@ public class JettyServer {
             //启动服务
             this.server.start();
             
+            //启动日志
+            logger.info("jetty started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
+            
             // add shutdown hook to stop server
+            final String port = this.serverPort;
+            final String context = this.contextPath;
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 public void run() {
                     try {
                     	server.stop();
+                    	logger.info("jetty stopped on port(s) " + port + " with context path '" + context + "'");
                     } catch (Exception e) {
                         logger.error("failed to stop jetty.", e);
                     }

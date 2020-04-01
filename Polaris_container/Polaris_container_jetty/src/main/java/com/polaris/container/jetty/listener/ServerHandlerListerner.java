@@ -2,8 +2,6 @@ package com.polaris.container.jetty.listener;
 
 import org.eclipse.jetty.util.component.AbstractLifeCycle.AbstractLifeCycleListener;
 import org.eclipse.jetty.util.component.LifeCycle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.polaris.container.listener.ServerListenerSupport;
 
@@ -16,8 +14,7 @@ import com.polaris.container.listener.ServerListenerSupport;
  */
 
 public class ServerHandlerListerner extends AbstractLifeCycleListener{
-	
-	private static final Logger logger = LoggerFactory.getLogger(ServerHandlerListerner.class);
+
 	/**
 	 * 服务器监听器集合
 	 */
@@ -31,7 +28,6 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 */
 	public void lifeCycleStarting(LifeCycle event) {
 		ServerListenerSupport.starting();
-    	logger.info("JettyServer启动中！");
 	}
 	
 	/**
@@ -40,8 +36,6 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 */
     public void lifeCycleStarted(LifeCycle event) {
 		ServerListenerSupport.started();
-    	//日志
-    	logger.info("JettyServer启动成功！");
     }
     
 	/**
@@ -50,7 +44,6 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 */
     public void lifeCycleFailure(LifeCycle event,Throwable cause) {
 		ServerListenerSupport.failure();
-    	logger.info("JettyServer启动失败！");
     }
     
 	/**
@@ -59,7 +52,6 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 */
    public void lifeCycleStopping(LifeCycle event) {
        ServerListenerSupport.stopping();
-	   logger.info("JettyServer已经中！");
    }
    
 	/**
@@ -68,7 +60,6 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 */
     public void lifeCycleStopped(LifeCycle event) {
 		ServerListenerSupport.stopped();
-    	logger.info("JettyServer已经停止！");
     }
     
 }

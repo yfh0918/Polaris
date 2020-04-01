@@ -190,6 +190,8 @@ public class UndertowServer {
             logger.info("Undertow started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
             
             // add shutdown hook to stop server
+            final String port = this.serverPort;
+            final String context = this.contextPath;
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 public void run() {
                     try {
@@ -199,6 +201,7 @@ public class UndertowServer {
                     	undertow.stop();
                     	manager = null;
                     	undertow = null;
+                    	logger.info("Undertow stopped on port(s) " + port + " with context path '" + context + "'");
                     } catch (Exception e) {
                         logger.error("failed to stop undertow.", e);
                     }

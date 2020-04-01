@@ -58,6 +58,7 @@ public class SpringbootServer {
     	System.setProperty(Constant.SERVER_SPRING_CONTEXT, serverContext);
     	
     	//启动应用
+    	ConfigurationSupport.addConfiguration(SpringbootConfiguration.class);
     	SpringApplication springApplication = new SpringApplication(ConfigurationSupport.getConfiguration());
         springApplication.addListeners(new ApplicationListener<ContextRefreshedEvent>() {
 

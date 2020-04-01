@@ -49,6 +49,9 @@ public class TomcatServer {
      * servlet上下文
      */
     private StandardContext standardContext;
+    
+    private String serverPort;
+    private String contextPath;
 
     /**
      * 服务器初始化
@@ -61,7 +64,7 @@ public class TomcatServer {
             tomcat = new Tomcat();
 
             //端口号
-            String serverPort = ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE);
+            serverPort = ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE);
 
             //工作路径
             String resourceBase = FileUtil.getFullPath("WebContent");
@@ -70,7 +73,7 @@ public class TomcatServer {
             	resDir.mkdirs();
             }
             String catalina_home = resDir.getCanonicalPath();
-            String contextPath =ConfClient.get(Constant.SERVER_CONTEXT,"/"); 
+            contextPath =ConfClient.get(Constant.SERVER_CONTEXT,"/"); 
             if (!contextPath.startsWith("/")) {
             	contextPath = "/" + contextPath;
             }
@@ -165,12 +168,18 @@ public class TomcatServer {
 
             //启动服务
             this.tomcat.start();
+            
+            //启动日志
+            logger.info("tomcat started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
 
             // add shutdown hook to stop server
+            final String port = this.serverPort;
+            final String context = this.contextPath;
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 public void run() {
                     try {
                         tomcat.stop();
+                        logger.info("tomcat stopped on port(s) " + port + " with context path '" + context + "'");
                     } catch (LifecycleException e) {
                         logger.error("failed to stop tomcat.", e);
                     }

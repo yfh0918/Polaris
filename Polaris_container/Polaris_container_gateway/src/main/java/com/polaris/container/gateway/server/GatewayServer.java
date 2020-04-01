@@ -134,12 +134,14 @@ public class GatewayServer {
                 }).start();
         
         ServerListenerSupport.started();//监听启动
+        logger.info("Gateway started on port(s) " + inetSocketAddress.getPort() + " with context path '/'");
         
         // add shutdown hook to stop server
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
                 	ServerListenerSupport.stopped();
+                	logger.info("Gateway stopped on port(s) " + inetSocketAddress.getPort() + " with context path '/'");
                 } catch (Exception e) {
                     logger.error("failed to stop gateway.", e);
                 }
