@@ -28,6 +28,15 @@
 		<groupId>com.polaris</groupId>
 		<artifactId>Polaris_logger</artifactId>
 	  </dependency>  
+	  
+	  <dependency>
+	        <groupId>org.apache.dubbo</groupId>
+	        <artifactId>dubbo-registry-nacos</artifactId>
+	    </dependency>	  
+		<dependency>
+			<groupId>com.alibaba.nacos</groupId>
+			<artifactId>nacos-client</artifactId>
+		</dependency>
     </dependencies>
 
     <build>
