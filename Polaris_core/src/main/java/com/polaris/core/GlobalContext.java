@@ -36,8 +36,7 @@ public class GlobalContext {
 
 	public static String getModuleId() {
 		return  ConfClient.getAppName() + "|" +	
-				ConfClient.get(Constant.IP_ADDRESS) + "|" +
-				ConfClient.get(Constant.SERVER_PORT_NAME);
+				ConfClient.get(Constant.IP_ADDRESS);
 	}
 	//构造函数
 	private static final InheritablePolarisThreadLocal<Map<String, Object>> holder=new InheritablePolarisThreadLocal<Map<String,Object>>(){
