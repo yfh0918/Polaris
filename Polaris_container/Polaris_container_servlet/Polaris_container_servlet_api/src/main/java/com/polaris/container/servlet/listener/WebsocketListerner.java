@@ -13,7 +13,6 @@ import javax.websocket.server.ServerEndpointConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.util.Assert;
 
 import com.polaris.container.ServerFactory;
 import com.polaris.container.listener.ServerListener;
@@ -24,12 +23,11 @@ public class WebsocketListerner implements ServerListenerExtension{
 
 	@Override
 	public ServerListener[] getServerListeners() {
-		// TODO Auto-generated method stub
 		return new ServerListener[] {new Websocket()};
 	}
 	
 	public static class Websocket implements  ServerListener {
-		
+
 		@Override
 		public void started() {
 			//加载websocket
@@ -44,7 +42,9 @@ public class WebsocketListerner implements ServerListenerExtension{
 			
 			@javax.annotation.Nullable
 			private static ServerContainer serverContainer;
-			
+			private static Set<Class<?>> endpointClassSet = new LinkedHashSet<>();
+			private static Set<ServerEndpointConfig> endpointConfigSet = new LinkedHashSet<>();
+	
 			/**
 			 * Actually register the endpoints. Called by {@link #afterSingletonsInstantiated()}.
 			 */
@@ -64,21 +64,28 @@ public class WebsocketListerner implements ServerListenerExtension{
 				for (Class<?> endpointClass : endpointClasses) {
 					registerEndpoint(endpointClass);
 				}
-
+				
+				for (Class<?> endpointClass : endpointClassSet) {
+					registerEndpoint(endpointClass);
+				}
+				endpointClassSet.clear();
 				if (context != null) {
 					Map<String, ServerEndpointConfig> endpointConfigMap = context.getBeansOfType(ServerEndpointConfig.class);
 					for (ServerEndpointConfig endpointConfig : endpointConfigMap.values()) {
 						registerEndpoint(endpointConfig);
 					}
+					for (ServerEndpointConfig endpointConfig : endpointConfigSet) {
+						registerEndpoint(endpointConfig);
+					}
+					endpointConfigSet.clear();
 				}
 			}
 
 			public static void registerEndpoint(Class<?> endpointClass) {
-				Assert.state(serverContainer != null,
-						"No ServerContainer set. Most likely the server's own WebSocket ServletContainerInitializer " +
-						"has not run yet. Was the Spring ApplicationContext refreshed through a " +
-						"org.springframework.web.context.ContextLoaderListener, " +
-						"i.e. after the ServletContext has been fully initialized?");
+				if (serverContainer == null) {
+					endpointClassSet.add(endpointClass);
+					return;
+				}
 				try {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Registering @ServerEndpoint class: " + endpointClass);
@@ -91,7 +98,10 @@ public class WebsocketListerner implements ServerListenerExtension{
 			}
 
 			public static void registerEndpoint(ServerEndpointConfig endpointConfig) {
-				Assert.state(serverContainer != null, "No ServerContainer set");
+				if (serverContainer == null) {
+					endpointConfigSet.add(endpointConfig);
+					return;
+				}
 				try {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Registering ServerEndpointConfig: " + endpointConfig);
