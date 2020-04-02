@@ -5,7 +5,7 @@ import java.util.EnumSet;
 import javax.servlet.DispatcherType;
 import javax.servlet.ServletContext;
 
-import com.polaris.container.servlet.filter.RequestFirstFilter;
+import com.polaris.container.servlet.filter.TraceFilter;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.StringUtil;
 
@@ -44,7 +44,7 @@ public abstract class ExtensionInitializerAbs implements ExtensionInitializer {
 		String POLARIS_REQUEST_FIRST_FILTER = "PolarisRequestFirstFilter";
 		
 		// filter
-		servletContext.addFilter(POLARIS_REQUEST_FIRST_FILTER, new RequestFirstFilter())
+		servletContext.addFilter(POLARIS_REQUEST_FIRST_FILTER, new TraceFilter())
 					  .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 		
 		//其他filter

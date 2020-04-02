@@ -6,7 +6,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.polaris.container.servlet.filter.RequestFirstFilter;
+import com.polaris.container.servlet.filter.TraceFilter;
 
 @Configuration
 public class SpringbootConfiguration { 
@@ -14,7 +14,7 @@ public class SpringbootConfiguration {
 	@Bean
     public FilterRegistrationBean<Filter> registerFilter() {
         FilterRegistrationBean<Filter> filter = new FilterRegistrationBean<>();
-        filter.setFilter(new RequestFirstFilter());
+        filter.setFilter(new TraceFilter());
         filter.addUrlPatterns("/*");
         return filter;
     }

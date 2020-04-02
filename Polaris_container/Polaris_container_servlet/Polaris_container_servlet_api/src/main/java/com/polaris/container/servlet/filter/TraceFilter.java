@@ -17,12 +17,11 @@ import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.UuidUtil;
 
 /**
- * 实现的第一个过滤器
- * 用于初始化一些参数，变量等信息
+ * 用于追踪的filter
  *
  * @return 
  */
-public class RequestFirstFilter implements Filter {
+public class TraceFilter implements Filter {
 	
 	@Override
     public void destroy() {
