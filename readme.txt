@@ -90,6 +90,7 @@
    可以采用注解com.polaris.cache.Cacheable
    目前支持的方法参考com.polaris.cache.Cache接口
    缓存 序列化可以自己配置，默认KryoSerializer
+   
 11，数据库模块Polaris_extension_db
   默认采用mybatis+hikari,支持多数据源
   如果是多数据源请采用
@@ -99,6 +100,7 @@
 12，和Springboot的融合
  详细请参考Polaris_demo_springboot
 
-13, 至此webflux
+13, webflux
  引入Polaris_container_webflux模块，详细请参考Polaris_demo_webflux
-   
+
+14, 分布式事务，建议采用阿里巴巴开源的seata
