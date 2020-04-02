@@ -1,5 +1,5 @@
-﻿1:install or deploy 全体(在之前先install或者deploy Polaris_parent)
- Polaris_assembly插件可以install和deploy但是，jekins构建会存在问题
+﻿1:install 全体
+ Polaris_assembly插件可以install 但是deploy，jekins构建会存在问题
  （插件目前只能从  http://repository.apache.org/snapshots/com/polaris/Polaris_assembly/1.0.0-SNAPSHOT/maven-metadata.xml拉取）
  需要本地Polaris_assembly包手动copy到jekins的maven仓库
 
@@ -35,7 +35,7 @@
   可以用value.auto.update=false来关闭，频繁更新配置会影响性能（配置更新采用文件形式）
 
 5:Polaris_extension_workflow是现有的服务（工作流activity内核）
-  提供dubbo接口和http接口两种方式，没有画面，具体请参考模块的配置,详细参考Polaris_demo目录下的workflow
+ 具体请参考模块的配置,详细参考Polaris_demo目录下的workflow
 
 6:Polaris_container_gateway是现有的api网管，提供api的统一入口服务(基于netty http实现)
   具体的api代理请参考config\upstream.txt,其中static:开头的代理的存静态文件会跳过所有的filter
