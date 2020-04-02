@@ -407,8 +407,13 @@ public class HttpClientUtil {
  
     //设置头部
     private static void setHeaderParams(HttpRequestBase request, Map<String, String> headParams) {
-    	request.addHeader(GlobalContext.TRACE_ID, GlobalContext.getTraceId());
-    	request.addHeader(GlobalContext.SPAN_ID, GlobalContext.getSpanId());
+    	request.setHeader(GlobalContext.TRACE_ID, GlobalContext.getTraceId());
+    	request.setHeader(GlobalContext.SPAN_ID, GlobalContext.getSpanId());
+    	if (headParams != null) {
+        	for (Map.Entry<String, String> entry : headParams.entrySet()) {
+        		request.addHeader(entry.getKey(), entry.getValue());
+        	}
+        }
     }
 
     public static void main(String[] args) {
