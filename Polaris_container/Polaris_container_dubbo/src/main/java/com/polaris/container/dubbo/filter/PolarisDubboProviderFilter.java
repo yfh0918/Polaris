@@ -18,11 +18,15 @@ public class PolarisDubboProviderFilter implements Filter  {
 
 	@Override
 	public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
-		Map<String, String> attachementMap = RpcContext.getContext().getAttachments();
-		GlobalContext.setTraceId(attachementMap.remove(GlobalContext.TRACE_ID));
-		GlobalContext.setParentId(attachementMap.remove(GlobalContext.SPAN_ID));
-		GlobalContext.setSpanId(UuidUtil.generateUuid());
-		return invoker.invoke(invocation);
+		try {
+			Map<String, String> attachementMap = RpcContext.getContext().getAttachments();
+			GlobalContext.setTraceId(attachementMap.remove(GlobalContext.TRACE_ID));
+			GlobalContext.setParentId(attachementMap.remove(GlobalContext.SPAN_ID));
+			GlobalContext.setSpanId(UuidUtil.generateUuid());
+			return invoker.invoke(invocation);
+		} finally {
+			GlobalContext.removeContext();
+		}
 	}
 
 }
