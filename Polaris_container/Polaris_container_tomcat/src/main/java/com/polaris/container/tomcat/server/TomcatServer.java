@@ -179,7 +179,7 @@ public class TomcatServer {
                 public void run() {
                     try {
                         tomcat.stop();
-                        logger.info("tomcat stopped on port(s) " + port + " with context path '" + context + "'");
+                        logger.info("Tomcat stopped on port(s) " + port + " with context path '" + context + "'");
                     } catch (LifecycleException e) {
                         logger.error("failed to stop tomcat.", e);
                     }

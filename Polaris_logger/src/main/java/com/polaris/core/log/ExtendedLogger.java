@@ -562,27 +562,36 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 			str = "";
 		}
 
-		//日志本地输出格式设定
+		//logger
 		StringBuilder strB = new StringBuilder();
-		if (StringUtil.isNotEmpty(GlobalContext.getTraceId())) {
+		String traceId = GlobalContext.getTraceId();
+		if (StringUtil.isNotEmpty(traceId)) {
 			strB.append(GlobalContext.TRACE_ID);
 			strB.append(":");
-			strB.append(GlobalContext.getTraceId());
+			strB.append(traceId);
 			strB.append(' ');
 		}
-		if (StringUtil.isNotEmpty(GlobalContext.getParentId())) {
+		String spanId = GlobalContext.getSpanId();
+		if (StringUtil.isNotEmpty(spanId)) {
+			strB.append(GlobalContext.SPAN_ID);
+			strB.append(":");
+			strB.append(spanId);
+			strB.append(' ');
+		}
+		String parentId = GlobalContext.getParentId();
+		if (StringUtil.isNotEmpty(parentId)) {
 			strB.append(GlobalContext.PARENT_ID);
 			strB.append(":");
-			strB.append(GlobalContext.getParentId());
+			strB.append(parentId);
 			strB.append(' ');
 		}
-		if (StringUtil.isNotEmpty(GlobalContext.getModuleId())) {
+		String moduleId = GlobalContext.getModuleId();
+		if (StringUtil.isNotEmpty(moduleId)) {
 			strB.append(GlobalContext.MODULE_ID);
 			strB.append(":");
-			strB.append(GlobalContext.getModuleId());
+			strB.append(moduleId);
 			strB.append(' ');
 		}
-
 		strB.append(str);
 		return strB.toString();
 	}

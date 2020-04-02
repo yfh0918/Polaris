@@ -11,18 +11,17 @@ import org.apache.dubbo.rpc.RpcContext;
 import org.apache.dubbo.rpc.RpcException;
 
 import com.polaris.core.GlobalContext;
-import com.polaris.core.util.StringUtil;
+import com.polaris.core.util.UuidUtil;
 
 @Activate(group = "provider")
 public class PolarisDubboProviderFilter implements Filter  {
 
 	@Override
 	public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
-    	for (Map.Entry<String, String> entry : RpcContext.getContext().getAttachments().entrySet()) {
-    		if (StringUtil.isNotEmpty(entry.getValue())) {
-    			GlobalContext.setContext(entry.getKey(), entry.getValue());
-    		}
-        }
+		Map<String, String> attachementMap = RpcContext.getContext().getAttachments();
+		GlobalContext.setTraceId(attachementMap.remove(GlobalContext.TRACE_ID));
+		GlobalContext.setParentId(attachementMap.remove(GlobalContext.SPAN_ID));
+		GlobalContext.setSpanId(UuidUtil.generateUuid());
 		return invoker.invoke(invocation);
 	}
 

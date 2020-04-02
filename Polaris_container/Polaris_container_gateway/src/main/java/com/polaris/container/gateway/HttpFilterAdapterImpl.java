@@ -18,10 +18,8 @@ import com.polaris.container.gateway.response.HttpResponseFilterChain;
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.container.gateway.util.RequestUtil;
 import com.polaris.core.Constant;
-import com.polaris.core.GlobalContext;
 import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
 import com.polaris.core.pojo.Result;
-import com.polaris.core.util.UuidUtil;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -91,7 +89,6 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     	//清除线程池残余值
 		RequestUtil.remove();
 		HostResolverImpl.getSingleton().replaceHost(httpRequest);
-		httpRequest.headers().set(GlobalContext.TRACE_ID, UuidUtil.generateUuid());
     }
     
     @Override

@@ -31,18 +31,29 @@ public class RequestFirstFilter implements Filter {
 	@Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
-		GlobalContext.setContext(GlobalContext.REQUEST, request);
-		GlobalContext.setContext(GlobalContext.RESPONSE, response);
-		if (StringUtil.isNotEmpty(((HttpServletRequest)request).getHeader(GlobalContext.TRACE_ID))) {
-			GlobalContext.setContext(GlobalContext.TRACE_ID, ((HttpServletRequest)request).getHeader(GlobalContext.TRACE_ID));
-		} else {
-			GlobalContext.setContext(GlobalContext.TRACE_ID, UuidUtil.generateUuid());
-		}
-		GlobalContext.setContext(GlobalContext.MODULE_ID, GlobalContext.getModuleId());
-		if (StringUtil.isNotEmpty(((HttpServletRequest)request).getHeader(GlobalContext.PARENT_ID))) {
-			GlobalContext.setContext(GlobalContext.PARENT_ID, ((HttpServletRequest)request).getHeader(GlobalContext.PARENT_ID));
-		}
+		
 		try {
+			GlobalContext.setContext(GlobalContext.REQUEST, request);
+			GlobalContext.setContext(GlobalContext.RESPONSE, response);
+			
+			//traceId
+			String traceId = ((HttpServletRequest)request).getHeader(GlobalContext.TRACE_ID);
+			if (StringUtil.isEmpty(traceId)) {
+				GlobalContext.setTraceId(UuidUtil.generateUuid());
+			}  else {
+				GlobalContext.setTraceId(traceId);
+			}
+			
+			//parentId
+			String parentId = ((HttpServletRequest)request).getHeader(GlobalContext.SPAN_ID);
+			if (StringUtil.isNotEmpty(parentId)) {
+				GlobalContext.setParentId(parentId);
+			} 
+			
+			//spanId
+			GlobalContext.setSpanId(UuidUtil.generateUuid());
+			
+			//encoding
 			request.setCharacterEncoding(ConfClient.get("encoding",Constant.UTF_CODE));
 	        response.setCharacterEncoding(ConfClient.get("encoding",Constant.UTF_CODE));
 	        chain.doFilter(request, response);

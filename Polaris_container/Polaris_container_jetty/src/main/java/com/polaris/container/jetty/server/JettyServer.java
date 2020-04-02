@@ -132,7 +132,7 @@ public class JettyServer {
             this.server.start();
             
             //启动日志
-            logger.info("jetty started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
+            logger.info("Jetty started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
             
             // add shutdown hook to stop server
             final String port = this.serverPort;

@@ -11,23 +11,37 @@ public class GlobalContext {
 	public static final String RESPONSE = "response";
 	public static final String TRACE_ID = "traceId";
 	public static final String PARENT_ID = "parentId";
+	public static final String SPAN_ID = "spanId";
 	public static final String MODULE_ID = "moduleId";// 本模块ID
 	public static String getTraceId() {
-		if (GlobalContext.getContext(GlobalContext.TRACE_ID) == null) {
+		Object objTraceId = GlobalContext.getContext(GlobalContext.TRACE_ID);
+		if (objTraceId == null) {
 			return null;
 		}
-		return GlobalContext.getContext(GlobalContext.TRACE_ID).toString();
+		return objTraceId.toString();
 	}
 
 	public static void setTraceId(String traceId) {
 		GlobalContext.setContext(GlobalContext.TRACE_ID, traceId);
 	}
 	
-	public static String getParentId() {
-		if (GlobalContext.getContext(GlobalContext.PARENT_ID) == null) {
+	public static String getSpanId() {
+		Object objSpanId = GlobalContext.getContext(GlobalContext.SPAN_ID);
+		if (objSpanId == null) {
 			return null;
 		}
-		return GlobalContext.getContext(GlobalContext.PARENT_ID).toString();
+		return objSpanId.toString();
+	}
+	public static void setSpanId(String spanId) {
+		GlobalContext.setContext(GlobalContext.SPAN_ID, spanId);
+	}
+	
+	public static String getParentId() {
+		Object objParentId = GlobalContext.getContext(GlobalContext.PARENT_ID);
+		if (objParentId == null) {
+			return null;
+		}
+		return objParentId.toString();
 	}
 
 	public static void setParentId(String parentId) {
@@ -35,8 +49,7 @@ public class GlobalContext {
 	}
 
 	public static String getModuleId() {
-		return  ConfClient.getAppName() + "|" +	
-				ConfClient.get(Constant.IP_ADDRESS);
+		return  ConfClient.getAppName();
 	}
 	//构造函数
 	private static final InheritablePolarisThreadLocal<Map<String, Object>> holder=new InheritablePolarisThreadLocal<Map<String,Object>>(){
