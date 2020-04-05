@@ -67,8 +67,8 @@ public class ServerStrategyProviderDefault implements ServerStrategyProvider{
 	}
 	
     @Override
-	public void reset() {
-		INSTANCE_LOCAL.reset();
+	public void init() {
+		INSTANCE_LOCAL.init();
 	}
 	
 	private boolean isRemote(String key) {

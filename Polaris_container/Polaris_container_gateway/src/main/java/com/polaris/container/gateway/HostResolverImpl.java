@@ -70,7 +70,7 @@ public class HostResolverImpl implements HostResolver {
         staticServerSet = tempStaticServerSet;
         portServerMap = tempPortServerMap;
         uriPortMap = tempUriPortMap;
-        ServerStrategyProviderFactory.get().reset();
+        ServerStrategyProviderFactory.get().init();
     }
 
     //构造函数（单例）

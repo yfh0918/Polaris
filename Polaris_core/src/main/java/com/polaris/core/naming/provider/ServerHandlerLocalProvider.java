@@ -98,7 +98,7 @@ public class ServerHandlerLocalProvider {
     	return true;
     }
     
-    public void reset() {
+    public void init() {
     	serverMap.clear();
     }
 
