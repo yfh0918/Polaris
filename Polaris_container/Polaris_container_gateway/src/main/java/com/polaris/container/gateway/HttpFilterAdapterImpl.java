@@ -57,7 +57,8 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	        	
         	//request init
         	if (httpObject instanceof HttpRequest) {
-        		initRequest((HttpRequest) httpObject);
+        		RequestUtil.remove();
+        		HostResolverImpl.getSingleton().convertHost((HttpRequest) httpObject);
         	}
         	
         	//静态资源不拦截
@@ -84,17 +85,10 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         return httpResponse;
     }
     
-    //初期化Request
-    private void initRequest(HttpRequest httpRequest) {
-    	//清除线程池残余值
-		RequestUtil.remove();
-		HostResolverImpl.getSingleton().replaceHost(httpRequest);
-    }
-    
     @Override
     public HttpResponse proxyToServerRequest(HttpObject httpObject) {
     	if (httpObject instanceof HttpRequest) {
-    		HostResolverImpl.getSingleton().resetHost((HttpRequest) httpObject);
+    		HostResolverImpl.getSingleton().reConvertHost((HttpRequest) httpObject);
     	}
         return null;
     }
@@ -158,7 +152,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             String remoteUrl = remoteIp + ":" + remotePort;
             String serverHostAndPort = proxyToServerConnection.getServerHostAndPort();
             String port = serverHostAndPort.substring(serverHostAndPort.indexOf(":")+1);
-            ServerStrategyProviderFactory.get().connectionFail(HostResolverImpl.getSingleton().getServers(port), remoteUrl);
+            ServerStrategyProviderFactory.get().connectionFail(HostResolverImpl.getSingleton().getHost(port), remoteUrl);
         } catch (Exception e) {
             logger.error("connection of proxy->server is failed", e);
         } 

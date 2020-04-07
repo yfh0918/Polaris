@@ -25,10 +25,6 @@
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_container_gateway</artifactId>
         </dependency>
-      <dependency>
-            <groupId>com.polaris</groupId>
-            <artifactId>Polaris_naming_zk</artifactId>
-        </dependency>
 
     </dependencies>
 

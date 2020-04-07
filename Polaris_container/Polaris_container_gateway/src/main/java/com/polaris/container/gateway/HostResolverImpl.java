@@ -2,10 +2,8 @@ package com.polaris.container.gateway;
 
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.littleshoot.proxy.HostResolver;
 
@@ -16,10 +14,8 @@ import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
 import com.polaris.core.util.NetUtils;
-import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;
 
-import cn.hutool.core.collection.ConcurrentHashSet;
 import io.netty.handler.codec.http.HttpRequest;
 
 /**
@@ -28,49 +24,14 @@ import io.netty.handler.codec.http.HttpRequest;
 public class HostResolverImpl implements HostResolver {
 
     private volatile static HostResolverImpl singleton;
-    private volatile Map<String, String> portServerMap = new ConcurrentHashMap<>();
-    private volatile Set<String> staticServerSet = new ConcurrentHashSet<>();
-    private volatile Map<String, String> uriPortMap = new ConcurrentHashMap<>();
-    public static final String UPSTREAM = "upstream.txt";
-    private static final String STATIC_RESOURCE_PREFIX = "static:";
 
     //载入需要代理的IP(需要动态代理)
     private void loadUpstream(String content) {
         if (StringUtil.isEmpty(content)) {
             return;
         }
-        Set<String> tempStaticServerSet = new ConcurrentHashSet<>();
-        Map<String, String> tempPortServerMap = new ConcurrentHashMap<>();
-        Map<String, String> tempUriPortMap = new ConcurrentHashMap<>();
         String[] contents = content.split(Constant.LINE_SEP);
-        int port = 7000;
-        for (String detail : contents) {
-        	detail = detail.replace("\n", "");
-        	detail = detail.replace("\r", "");
-            String[] contextUrl = PropertyUtil.getKeyValue(detail);
-            
-            //获取context和服务名称(url)
-            if (contextUrl != null) {
-            	
-            	//key=端口号，value=服务
-            	tempPortServerMap.put(String.valueOf(port), contextUrl[1]);
-            	
-            	//是否包含[static:]
-                if (contextUrl[0].startsWith(STATIC_RESOURCE_PREFIX)) {
-                	String key = contextUrl[0].substring(STATIC_RESOURCE_PREFIX.length());
-                	tempStaticServerSet.add(key);//记录今天服务的set
-                	tempUriPortMap.put(key, String.valueOf(port)); //key = context, value = 端口号
-                } else {
-                	tempUriPortMap.put(contextUrl[0], String.valueOf(port)); //key = context, value = 端口号
-                }
-                
-                //端口号累加（临时的端口号）
-                port++;
-            }
-        }
-        staticServerSet = tempStaticServerSet;
-        portServerMap = tempPortServerMap;
-        uriPortMap = tempUriPortMap;
+        Upstream.load(contents);
         ServerStrategyProviderFactory.get().init();
     }
 
@@ -78,10 +39,10 @@ public class HostResolverImpl implements HostResolver {
     private HostResolverImpl() {
        
     	//先获取
-    	loadUpstream(ConfHandlerProviderFactory.get(Type.EXT).get(UPSTREAM));
+    	loadUpstream(ConfHandlerProviderFactory.get(Type.EXT).get(Upstream.NAME));
     	
     	//后监听
-    	ConfHandlerProviderFactory.get(Type.EXT).listen(UPSTREAM, new ConfHandlerListener() {
+    	ConfHandlerProviderFactory.get(Type.EXT).listen(Upstream.NAME, new ConfHandlerListener() {
             @Override
             public void receive(String content) {
                 loadUpstream(content);
@@ -100,104 +61,100 @@ public class HostResolverImpl implements HostResolver {
         return singleton;
     }
 
-    //获取服务
-    String getServers(String key) {
-        return portServerMap.get(key);
+    public String getHost(String key) {
+        return Upstream.getFromvirtualPort(key).getHost();
     }
 
     //根据服务，反向获取端口号
-    String getPort(String uri) {
+    public String getVirtualPort(String uri) {
     	if (!uri.substring(1).contains("/")) {
     		uri = uri + "/";
     	}
         if (uri != null) {
-            for (Entry<String, String> entry : uriPortMap.entrySet()) {
+            for (Entry<String, Upstream> entry : Upstream.getContextEntrySet()) {
                 if (uri.startsWith(entry.getKey()+"/")) {
-                    return entry.getValue();
+                    return entry.getValue().getVirtualPort();
                 }
-
             }
         }
 
         // default
-        if (uriPortMap.containsKey(GatewayConstant.DEFAULT)) {
-            return uriPortMap.get(GatewayConstant.DEFAULT);
+        Upstream upstream = Upstream.getFromContext(GatewayConstant.DEFAULT);
+        if (upstream != null) {
+        	return upstream.getVirtualPort();
         }
 
         //异常
-        throw new NullPointerException("url is null");
+        throw new NullPointerException("url is not corrected");
     }
     
-    //替换host 通过uri可见的端口号替换成 uriPortMap中的端口号
-    void replaceHost(HttpRequest httpRequest) {
-    	
-    	//获取HOST
-    	String host = httpRequest.headers().get(GatewayConstant.HOST);
-    	if (StringUtil.isEmpty(host)) {
-    		host = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
-    	}
-    	if (!host.contains(":")) {
-    		host = host + ":" + ConfClient.get("server.port", "80");
-    	}
-    	
-    	//获取HOST中的的端口号
-    	String oldPort = host.substring(host.indexOf(":") + 1);
-    	
-    	//获取URI中新的端口号
-		String uri = httpRequest.uri();
-		String port = HostResolverImpl.getSingleton().getPort(uri);
-		
-		//移除就得HOST
+    public void convertHost(HttpRequest httpRequest) {
+    	String port =  ConfClient.get("server.port", "80");
+    	String host = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost()) + ":" + port;
+		String virtualPort = getVirtualPort(httpRequest.uri());
 		httpRequest.headers().remove(GatewayConstant.HOST);
-		
-		//添加新的HOST
-		httpRequest.headers().add(GatewayConstant.HOST, host.replace(oldPort, port));
+		httpRequest.headers().add(GatewayConstant.HOST, host.replace(port, virtualPort));
     }
-    //replaceHost的反操作
-    void resetHost(HttpRequest httpRequest) {
+    
+    public void reConvertHost(HttpRequest httpRequest) {
 		String host = httpRequest.headers().get(GatewayConstant.HOST);
-    	String oldPort = host.substring(host.indexOf(":") + 1);
+    	String virtualPort = host.substring(host.indexOf(":") + 1);
 		httpRequest.headers().remove(GatewayConstant.HOST);
-		httpRequest.headers().add(GatewayConstant.HOST, host.replace(oldPort, ConfClient.get("server.port","80")));
+		httpRequest.headers().add(GatewayConstant.HOST, host.replace(virtualPort, ConfClient.get("server.port","80")));
     }
 
     @Override
-    public InetSocketAddress resolve(String host, int port)
+    public InetSocketAddress resolve(String host, int virtualPort)
             throws UnknownHostException {
     	
-    	//端口号
-        String strPort = String.valueOf(port);
-        String[] si = null;
-        
-        //存在端口号
-        if (portServerMap.containsKey(strPort)) {
-            String uri = ServerStrategyProviderFactory.get().getUrl(portServerMap.get(strPort));
+    	//元素0:ip  元素1:port
+        String[] address = null;
+
+        //端口号
+    	Upstream upstream = Upstream.getFromvirtualPort(String.valueOf(virtualPort));
+        if (upstream != null) {
+            String uri = ServerStrategyProviderFactory.get().getUrl(upstream.getHost());
             if (StringUtil.isNotEmpty(uri)) {
-                si = uri.split(":");
+                address = uri.split(":");
             } 
         }
-        if (si == null) {
-        	String defaultUri = ServerStrategyProviderFactory.get().getUrl(portServerMap.get(uriPortMap.get(GatewayConstant.DEFAULT)));
-            si = defaultUri.split(":");
+        if (address == null) {
+        	upstream = Upstream.getFromContext(GatewayConstant.DEFAULT);
+        	if (upstream != null) {
+        		String uri = ServerStrategyProviderFactory.get().getUrl(upstream.getHost());
+        		if (StringUtil.isNotEmpty(uri)) {
+                    address = uri.split(":");
+                } 
+        	}
         }
-        
-        //返回地址列表
-        if (si.length == 1) {
-            return new InetSocketAddress(si[0], 80);
+        if (address != null) {
+            if (address.length == 1) {
+                return new InetSocketAddress(address[0], 80);
+            }
+            return new InetSocketAddress(address[0], Integer.parseInt(address[1]));
         }
-        return new InetSocketAddress(si[0], Integer.parseInt(si[1]));
+        throw new UnknownHostException(host + ":" + virtualPort);
     }
     
-    //是否是静态资源（静态资源不需要拦截）
     public boolean isStatic(String url) {
     	if (StringUtil.isEmpty(url)) {
     		return false;
     	}
-    	for (String key : staticServerSet) {
-    		if (url.startsWith(key)) {
-    			return true;
-    		}
+    	Set<String> staticSet = Upstream.getStaticSet();
+    	if (staticSet.size() == 0) {
+    		return false;
     	}
+    	
+    	if (!url.substring(1).contains("/")) {
+    		url = url + "/";
+    	}
+        if (url != null) {
+            for (String key : staticSet) {
+                if (url.startsWith(key+"/")) {
+                	return true;
+                }
+            }
+        }
     	return false;
     }
 }
