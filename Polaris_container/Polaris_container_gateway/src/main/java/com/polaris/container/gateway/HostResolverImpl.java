@@ -15,6 +15,7 @@ import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
+import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -132,6 +133,9 @@ public class HostResolverImpl implements HostResolver {
     	
     	//获取HOST
     	String host = httpRequest.headers().get(GatewayConstant.HOST);
+    	if (StringUtil.isEmpty(host)) {
+    		host = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
+    	}
     	if (!host.contains(":")) {
     		host = host + ":" + ConfClient.get("server.port", "80");
     	}
