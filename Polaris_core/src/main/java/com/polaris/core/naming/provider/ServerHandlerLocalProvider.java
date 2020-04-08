@@ -79,7 +79,7 @@ public class ServerHandlerLocalProvider {
 
     }
     
-    public boolean connectionFail(String key, String url) {
+    public boolean connectionFail(String key, String host) {
     	
     	//只有单个url直接返回
     	if (key.split(",").length == 1) {
@@ -91,7 +91,7 @@ public class ServerHandlerLocalProvider {
     	
     	//只有一个有效服务地址，即使链接失败也不移除
     	if (weightedRoundRobinScheduling.healthilyServers.size() > 1) {
-    		String[] si = url.split(":");
+    		String[] si = host.split(":");
             weightedRoundRobinScheduling.unhealthilyServers.add(weightedRoundRobinScheduling.getServer(si[0], Integer.parseInt(si[1])));
             weightedRoundRobinScheduling.healthilyServers.remove(weightedRoundRobinScheduling.getServer(si[0], Integer.parseInt(si[1])));
     	}

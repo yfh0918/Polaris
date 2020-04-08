@@ -3,7 +3,6 @@ package com.polaris.container.gateway;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.littleshoot.proxy.HostResolver;
 
@@ -24,6 +23,8 @@ import io.netty.handler.codec.http.HttpRequest;
 public class HostResolverImpl implements HostResolver {
 
     private volatile static HostResolverImpl singleton;
+    
+    private static String port =  ConfClient.get("server.port", "80");
 
     //载入需要代理的IP(需要动态代理)
     private void loadUpstream(String content) {
@@ -61,8 +62,8 @@ public class HostResolverImpl implements HostResolver {
         return singleton;
     }
 
-    public String getHost(String key) {
-        return Upstream.getFromvirtualPort(key).getHost();
+    public String getHostFromVirtualPort(String key) {
+        return Upstream.getFromVirtualPort(key).getHost();
     }
 
     //根据服务，反向获取端口号
@@ -89,7 +90,6 @@ public class HostResolverImpl implements HostResolver {
     }
     
     public void convertHost(HttpRequest httpRequest) {
-    	String port =  ConfClient.get("server.port", "80");
     	String host = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost()) + ":" + port;
 		String virtualPort = getVirtualPort(httpRequest.uri());
 		httpRequest.headers().remove(GatewayConstant.HOST);
@@ -100,7 +100,7 @@ public class HostResolverImpl implements HostResolver {
 		String host = httpRequest.headers().get(GatewayConstant.HOST);
     	String virtualPort = host.substring(host.indexOf(":") + 1);
 		httpRequest.headers().remove(GatewayConstant.HOST);
-		httpRequest.headers().add(GatewayConstant.HOST, host.replace(virtualPort, ConfClient.get("server.port","80")));
+		httpRequest.headers().add(GatewayConstant.HOST, host.replace(virtualPort, port));
     }
 
     @Override
@@ -111,7 +111,7 @@ public class HostResolverImpl implements HostResolver {
         String[] address = null;
 
         //端口号
-    	Upstream upstream = Upstream.getFromvirtualPort(String.valueOf(virtualPort));
+    	Upstream upstream = Upstream.getFromVirtualPort(String.valueOf(virtualPort));
         if (upstream != null) {
             String uri = ServerStrategyProviderFactory.get().getUrl(upstream.getHost());
             if (StringUtil.isNotEmpty(uri)) {
@@ -134,27 +134,5 @@ public class HostResolverImpl implements HostResolver {
             return new InetSocketAddress(address[0], Integer.parseInt(address[1]));
         }
         throw new UnknownHostException(host + ":" + virtualPort);
-    }
-    
-    public boolean isStatic(String url) {
-    	if (StringUtil.isEmpty(url)) {
-    		return false;
-    	}
-    	Set<String> staticSet = Upstream.getStaticSet();
-    	if (staticSet.size() == 0) {
-    		return false;
-    	}
-    	
-    	if (!url.substring(1).contains("/")) {
-    		url = url + "/";
-    	}
-        if (url != null) {
-            for (String key : staticSet) {
-                if (url.startsWith(key+"/")) {
-                	return true;
-                }
-            }
-        }
-    	return false;
     }
 }

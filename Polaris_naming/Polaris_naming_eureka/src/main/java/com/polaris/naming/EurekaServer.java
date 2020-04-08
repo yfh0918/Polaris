@@ -32,8 +32,8 @@ import com.netflix.niws.loadbalancer.DiscoveryEnabledNIWSServerList;
 import com.netflix.niws.loadbalancer.DiscoveryEnabledServer;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.ServerHandlerOrder;
 import com.polaris.core.naming.ServerHandler;
+import com.polaris.core.naming.ServerHandlerOrder;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
@@ -171,11 +171,6 @@ public class EurekaServer implements ServerHandler {
 			urlList.add(serverInfo.getIPAddr() + ":" + serverInfo.getPort());
 		}
 		return urlList;
-	}
-
-	@Override
-	public boolean connectionFail(String key, String url) {
-		return true;
 	}
 
 	@Override

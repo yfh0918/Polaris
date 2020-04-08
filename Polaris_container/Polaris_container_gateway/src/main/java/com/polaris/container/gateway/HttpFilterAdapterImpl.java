@@ -61,11 +61,6 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         		HostResolverImpl.getSingleton().convertHost((HttpRequest) httpObject);
         	}
         	
-        	//静态资源不拦截
-        	if (HostResolverImpl.getSingleton().isStatic(originalRequest.uri())) {
-        		return httpResponse;
-        	}
-        	
         	//进入request过滤器
             ImmutablePair<Boolean, HttpRequestFilter> immutablePair = HttpRequestFilterChain.doFilter(originalRequest, httpObject, ctx);
             
@@ -151,8 +146,8 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             int remotePort = proxyToServerConnection.getRemoteAddress().getPort();
             String remoteUrl = remoteIp + ":" + remotePort;
             String serverHostAndPort = proxyToServerConnection.getServerHostAndPort();
-            String port = serverHostAndPort.substring(serverHostAndPort.indexOf(":")+1);
-            ServerStrategyProviderFactory.get().connectionFail(HostResolverImpl.getSingleton().getHost(port), remoteUrl);
+            String virtualPort = serverHostAndPort.substring(serverHostAndPort.indexOf(":")+1);
+            ServerStrategyProviderFactory.get().connectionFail(HostResolverImpl.getSingleton().getHostFromVirtualPort(virtualPort), remoteUrl);
         } catch (Exception e) {
             logger.error("connection of proxy->server is failed", e);
         } 

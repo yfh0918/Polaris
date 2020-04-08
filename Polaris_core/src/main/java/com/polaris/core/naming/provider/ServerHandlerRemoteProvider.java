@@ -74,9 +74,9 @@ public class ServerHandlerRemoteProvider {
 		return null;
 	}
 
-	public boolean connectionFail(String key, String url) {
+	public boolean connectionFail(String key, String host) {
 		if (handler != null) {
-			return handler.connectionFail(key, url);
+			return handler.connectionFail(key, host);
 		}
 		return false;
 	}

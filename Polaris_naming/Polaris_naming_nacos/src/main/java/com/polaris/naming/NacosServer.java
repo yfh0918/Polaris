@@ -13,8 +13,8 @@ import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.ServerHandlerOrder;
 import com.polaris.core.naming.ServerHandler;
+import com.polaris.core.naming.ServerHandlerOrder;
 import com.polaris.core.util.StringUtil;
 
 @Order(ServerHandlerOrder.NACOS)
@@ -122,11 +122,6 @@ public class NacosServer implements ServerHandler {
 		} catch (Exception e) {
 		}
 		return null;
-	}
-
-	@Override
-	public boolean connectionFail(String key, String url) {
-		return true;
 	}
 
 	@Override

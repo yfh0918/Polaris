@@ -8,5 +8,5 @@ public interface ServerHandler {
 	String getUrl(String key);
 	List<String> getAllUrls(String key);
 	List<String> getAllUrls(String key, boolean subscribe);
-	boolean connectionFail(String key, String url);
+	default boolean connectionFail(String key, String host) {return true;};
 }

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
@@ -93,6 +94,11 @@ public class HttpStatic {
     }
     
     public static boolean isStatic(HttpRequest request) {
+    	Set<Map.Entry<String, Map<String, String>>> entrySet = urlMap.entrySet();
+    	if (entrySet.size() == 0) {
+    		return false;
+    	}
+    	
     	// 获取URI
         String uri = request.uri();
 
@@ -102,7 +108,7 @@ public class HttpStatic {
     	}
         
         //判断url
-        for (Map.Entry<String, Map<String, String>> entry : urlMap.entrySet()) { 
+        for (Map.Entry<String, Map<String, String>> entry : entrySet) { 
         	if (uri.startsWith(entry.getKey() +"/")) {
         		return true;
         	}

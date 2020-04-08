@@ -96,11 +96,6 @@ public class ZkServer implements ServerHandler {
 	}
 
 	@Override
-	public boolean connectionFail(String key, String url) {
-		return true;
-	}
-
-	@Override
 	public boolean register(String ip, int port) {
 		
 		//get curator
