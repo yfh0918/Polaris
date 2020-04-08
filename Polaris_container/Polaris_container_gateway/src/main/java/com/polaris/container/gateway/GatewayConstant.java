@@ -35,6 +35,9 @@ public class GatewayConstant {
     public static final String HOST = "Host";
     public static final String DEFAULT="default";
     public static final String CLAIMS = "claims";
+    
+    public static final String COLON = ":";
+    public static final String SLASH = "/";
 
     public static String getRealIp(HttpRequest httpRequest) {
 	    List<String> headerValues = getHeaderValues(httpRequest, X_Real_IP);

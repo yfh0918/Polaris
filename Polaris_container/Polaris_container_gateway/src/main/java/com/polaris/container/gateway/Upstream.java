@@ -25,7 +25,6 @@ public class Upstream {
             port++;
         }
         contextMap = temp_contextMap;
-//        staticMap = temp_staticMap;
         virtualPortMap = temp_virtualPortMap;
     }
     private static Upstream create(String line, String virtualPort) {

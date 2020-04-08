@@ -103,13 +103,13 @@ public class HttpStatic {
         String uri = request.uri();
 
         //设置uri
-        if (!uri.substring(1).contains("/")) {
-    		uri = uri + "/";
+        if (!uri.substring(1).contains(GatewayConstant.SLASH)) {
+    		uri = uri + GatewayConstant.SLASH;
     	}
         
         //判断url
         for (Map.Entry<String, Map<String, String>> entry : entrySet) { 
-        	if (uri.startsWith(entry.getKey() +"/")) {
+        	if (uri.startsWith(entry.getKey() +GatewayConstant.SLASH)) {
         		return true;
         	}
         }
@@ -126,8 +126,8 @@ public class HttpStatic {
         }
 
         // 获取URI
-        if (!uri.substring(1).contains("/")) {
-    		uri = uri + "/";
+        if (!uri.substring(1).contains(GatewayConstant.SLASH)) {
+    		uri = uri + GatewayConstant.SLASH;
     	}
         
         // 状态为1xx的话，继续请求
@@ -139,7 +139,7 @@ public class HttpStatic {
         Map<String, String> urls = null;
         String context = null;
         for (Map.Entry<String, Map<String, String>> entry : urlMap.entrySet()) { 
-        	if (uri.startsWith(entry.getKey() +"/")) {
+        	if (uri.startsWith(entry.getKey() +GatewayConstant.SLASH)) {
         		context = entry.getKey();
         		urls = entry.getValue();
         		break;
@@ -150,13 +150,13 @@ public class HttpStatic {
         }
         
         //找到位置
-        if ((context + "/").equals(uri)) {
-        	uri = context + "/" + urls.get("startup");
+        if ((context + GatewayConstant.SLASH).equals(uri)) {
+        	uri = context + GatewayConstant.SLASH + urls.get("startup");
         } 
         
         //不包含相应的context
-        if (!uri.startsWith(context + "/")) {
-        	uri = context + "/" + urls.get("error");//直接返回error
+        if (!uri.startsWith(context + GatewayConstant.SLASH)) {
+        	uri = context + GatewayConstant.SLASH + urls.get("error");//直接返回error
         }
         
         //去掉context后获取真实的物理路径
@@ -168,7 +168,7 @@ public class HttpStatic {
 
         // 当文件不存在的时候，将资源指向NOT_FOUND
         if (!html.exists()) {
-            html = new File(urls.get("location") + "/" + urls.get("error"));
+            html = new File(urls.get("location") + GatewayConstant.SLASH + urls.get("error"));
             response.setStatus(HttpResponseStatus.NOT_FOUND);
         }
 

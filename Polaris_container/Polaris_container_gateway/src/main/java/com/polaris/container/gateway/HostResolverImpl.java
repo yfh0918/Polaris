@@ -21,12 +21,11 @@ import io.netty.handler.codec.http.HttpRequest;
  * @author:Tom.Yu Description:
  */
 public class HostResolverImpl implements HostResolver {
-
     private volatile static HostResolverImpl singleton;
+    private static String port =  ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE);
+    private static String ip = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
     
-    private static String port =  ConfClient.get("server.port", "80");
 
-    //载入需要代理的IP(需要动态代理)
     private void loadUpstream(String content) {
         if (StringUtil.isEmpty(content)) {
             return;
@@ -36,7 +35,6 @@ public class HostResolverImpl implements HostResolver {
         ServerStrategyProviderFactory.get().init();
     }
 
-    //构造函数（单例）
     private HostResolverImpl() {
        
     	//先获取
@@ -66,14 +64,13 @@ public class HostResolverImpl implements HostResolver {
         return Upstream.getFromVirtualPort(key).getHost();
     }
 
-    //根据服务，反向获取端口号
     public String getVirtualPort(String uri) {
-    	if (!uri.substring(1).contains("/")) {
-    		uri = uri + "/";
+    	if (!uri.substring(1).contains(GatewayConstant.SLASH)) {
+    		uri = uri + GatewayConstant.SLASH;
     	}
         if (uri != null) {
             for (Entry<String, Upstream> entry : Upstream.getContextEntrySet()) {
-                if (uri.startsWith(entry.getKey()+"/")) {
+                if (uri.startsWith(entry.getKey()+GatewayConstant.SLASH)) {
                     return entry.getValue().getVirtualPort();
                 }
             }
@@ -90,7 +87,7 @@ public class HostResolverImpl implements HostResolver {
     }
     
     public void convertHost(HttpRequest httpRequest) {
-    	String host = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost()) + ":" + port;
+    	String host = ip + GatewayConstant.COLON + port;
 		String virtualPort = getVirtualPort(httpRequest.uri());
 		httpRequest.headers().remove(GatewayConstant.HOST);
 		httpRequest.headers().add(GatewayConstant.HOST, host.replace(port, virtualPort));
@@ -98,7 +95,7 @@ public class HostResolverImpl implements HostResolver {
     
     public void reConvertHost(HttpRequest httpRequest) {
 		String host = httpRequest.headers().get(GatewayConstant.HOST);
-    	String virtualPort = host.substring(host.indexOf(":") + 1);
+    	String virtualPort = host.substring(host.indexOf(GatewayConstant.COLON) + 1);
 		httpRequest.headers().remove(GatewayConstant.HOST);
 		httpRequest.headers().add(GatewayConstant.HOST, host.replace(virtualPort, port));
     }
@@ -115,7 +112,7 @@ public class HostResolverImpl implements HostResolver {
         if (upstream != null) {
             String uri = ServerStrategyProviderFactory.get().getUrl(upstream.getHost());
             if (StringUtil.isNotEmpty(uri)) {
-                address = uri.split(":");
+                address = uri.split(GatewayConstant.COLON);
             } 
         }
         if (address == null) {
@@ -123,7 +120,7 @@ public class HostResolverImpl implements HostResolver {
         	if (upstream != null) {
         		String uri = ServerStrategyProviderFactory.get().getUrl(upstream.getHost());
         		if (StringUtil.isNotEmpty(uri)) {
-                    address = uri.split(":");
+                    address = uri.split(GatewayConstant.COLON);
                 } 
         	}
         }
@@ -133,6 +130,6 @@ public class HostResolverImpl implements HostResolver {
             }
             return new InetSocketAddress(address[0], Integer.parseInt(address[1]));
         }
-        throw new UnknownHostException(host + ":" + virtualPort);
+        throw new UnknownHostException(host + GatewayConstant.COLON + virtualPort);
     }
 }
