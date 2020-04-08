@@ -147,7 +147,8 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             String remoteUrl = remoteIp + ":" + remotePort;
             String serverHostAndPort = proxyToServerConnection.getServerHostAndPort();
             String virtualPort = serverHostAndPort.substring(serverHostAndPort.indexOf(":")+1);
-            ServerStrategyProviderFactory.get().connectionFail(HostResolverImpl.getSingleton().getHostFromVirtualPort(virtualPort), remoteUrl);
+            ServerStrategyProviderFactory.get().connectionFail(
+            		Upstream.getFromVirtualPort(virtualPort).getHost(), remoteUrl);
         } catch (Exception e) {
             logger.error("connection of proxy->server is failed", e);
         } 

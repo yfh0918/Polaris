@@ -60,10 +60,6 @@ public class HostResolverImpl implements HostResolver {
         return singleton;
     }
 
-    public String getHostFromVirtualPort(String key) {
-        return Upstream.getFromVirtualPort(key).getHost();
-    }
-
     public String getVirtualPort(String uri) {
     	if (!uri.substring(1).contains(GatewayConstant.SLASH)) {
     		uri = uri + GatewayConstant.SLASH;
