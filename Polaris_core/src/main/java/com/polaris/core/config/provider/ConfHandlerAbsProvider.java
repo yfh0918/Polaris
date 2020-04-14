@@ -40,7 +40,7 @@ public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
     	initHandler();
     }
     
-	public boolean init(String file, String group, Config config) {
+	public boolean getAndListen(String file, String group, Config config) {
     	
 		//get
 		String contents = get(file,group);

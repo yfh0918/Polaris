@@ -52,7 +52,7 @@ public class ConfigurationGbl implements BeanPostProcessor, PriorityOrdered, App
 		for (String file : files) {
 			if (StringUtil.isNotEmpty(file)) {
 				if (ConfigFactory.get(Type.GBL).getProperties(file) == null) {
-					if (!ConfHandlerProviderFactory.get(Type.GBL).init(file)) {
+					if (!ConfHandlerProviderFactory.get(Type.GBL).getAndListen(file)) {
 						throw new ConfigException("type:GBL file:" + file + " is not exsit");
 					}
 				} 

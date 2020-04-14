@@ -31,20 +31,20 @@ public class ConfHandlerExtProvider extends ConfHandlerAbsProvider {
 		
 		//target files loop
 		for (String file : fileArray) {
-			if (!init(file)) {
+			if (!getAndListen(file)) {
 				throw new ConfigException("type:ext file:"+file+" is not exsit");
 			}
 		}
 	}
 
 	@Override
-    public boolean init(String file) {
+    public boolean getAndListen(String file) {
     	
 		//get config
 		Config config = ConfigFactory.get(Type.EXT);
 		
 		//result
-		return init(file, ConfClient.getAppName(), config);
+		return getAndListen(file, ConfClient.getAppName(), config);
     }
     
 	@Override

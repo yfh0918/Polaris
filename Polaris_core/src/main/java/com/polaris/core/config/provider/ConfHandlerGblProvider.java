@@ -31,20 +31,20 @@ public class ConfHandlerGblProvider extends ConfHandlerAbsProvider {
 		
 		//target files loop
 		for (String file : fileArray) {
-			if (!init(file)) {
+			if (!getAndListen(file)) {
 				throw new ConfigException("type:ext file:"+file+" is not exsit");
 			}
 		}
 	}
 
 	@Override
-    public boolean init(String file) {
+    public boolean getAndListen(String file) {
     	
 		//get config
 		Config config = ConfigFactory.get(Type.GBL);
 		
 		//result
-		return init(file, GLOBAL, config);
+		return getAndListen(file, GLOBAL, config);
     }
     
 	@Override

@@ -52,7 +52,7 @@ public class ConfigurationExt implements BeanPostProcessor, PriorityOrdered, App
 		for (String file : files) {
 			if (StringUtil.isNotEmpty(file)) {
 				if (ConfigFactory.get(Type.EXT).getProperties(file) == null) {
-					if (!ConfHandlerProviderFactory.get(Type.EXT).init(file)) {
+					if (!ConfHandlerProviderFactory.get(Type.EXT).getAndListen(file)) {
 						throw new ConfigException("type:EXT file:" + file + " is not exsit");
 					}
 				} 
