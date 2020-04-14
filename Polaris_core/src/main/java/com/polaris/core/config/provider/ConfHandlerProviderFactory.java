@@ -20,7 +20,7 @@ public class ConfHandlerProviderFactory {
 				} else if (type.equals(Type.SYS)) {
 					provider = ConfHandlerSysProvider.INSTANCE;
 				} else {
-					throw new ConfigException("type:"+type+"is incorrect");
+					throw new ConfigException("type:"+type+" is not supported");
 				}
 				confHandlerProviderMap.put(type, provider);
 			}
