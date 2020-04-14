@@ -185,7 +185,12 @@ public class WorkflowProcessServiceImpl implements WorkflowProcessService {
             int[] pageParams = PageUtil.init(page);
 
             // 根据当前人的ID查询
-            TaskQuery taskQuery = taskService.createTaskQuery().processDefinitionKey(dto.getProcessDefinitionKey()).taskCandidateOrAssigned(dto.getUserId());
+            TaskQuery taskQuery = null;
+            if (StringUtil.isNotEmpty(dto.getBusinessKey())) {
+            	taskQuery = taskService.createTaskQuery().processInstanceBusinessKey(dto.getBusinessKey()).processDefinitionKey(dto.getProcessDefinitionKey()).taskCandidateOrAssigned(dto.getUserId());
+            } else {
+                taskQuery = taskService.createTaskQuery().processDefinitionKey(dto.getProcessDefinitionKey()).taskCandidateOrAssigned(dto.getUserId());
+            }
             if (StringUtil.isNotEmpty(dto.getProcessInstanceId())) {
             	taskQuery = taskQuery.processInstanceId(dto.getProcessInstanceId());
             }
