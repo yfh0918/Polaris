@@ -28,6 +28,8 @@ import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.io.FileWriteMode;
+import com.google.common.io.Files;
 import com.google.common.util.concurrent.RateLimiter;
 import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
@@ -295,7 +297,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             }
             
             //统计
-            saveStatisticsCache(url, realIp);
+            saveStatisticsLog(url, realIp);
             
         }
         return false;
@@ -315,7 +317,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         	
         	//热点参数目前只有IP维度限流，限流的场合直接加入黑名单
         	if (e instanceof ParamFlowException) {
-        		saveBlackCache(realIp,"sentinel block "+((ParamFlowException)e).getLimitParam());//拒绝
+        		saveBlackLog(realIp,"sentinel block "+((ParamFlowException)e).getLimitParam());//拒绝
         	}
         	return true;
         } finally {
@@ -345,7 +347,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 			AtomicInteger secRateLimiter = (AtomicInteger) secIploadingCache.get(realIp);
 	        int count = secRateLimiter.incrementAndGet();
 	        if (count > int_ip_rate[0]) {
-	        	saveBlackCache(realIp, count + " visits per second");//拒绝
+	        	saveBlackLog(realIp, count + " visits per second");//拒绝
 	    		return true;//拒绝
 	        } 
 		} catch (ExecutionException e) {
@@ -358,7 +360,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 	        AtomicInteger minRateLimiter = (AtomicInteger) minIploadingCache.get(realIp);
 	        int count = minRateLimiter.incrementAndGet();
 	        if (count > int_ip_rate[1]) {
-	        	saveBlackCache(realIp, count + " visits per minute");//拒绝
+	        	saveBlackLog(realIp, count + " visits per minute");//拒绝
 	    		return true;//拒绝
 	        } 
 		} catch (ExecutionException e) {
@@ -379,7 +381,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         return false;
     }
     
-    public void saveStatisticsCache(String url, String realIp) {
+    public void saveStatisticsLog(String url, String realIp) {
     	if (ipPersistent && StringUtil.isNotEmpty(ipSavePath)) {
     		try {
     			threadPool.execute(new Runnable() {
@@ -388,8 +390,12 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     					LocalDateTime time = LocalDateTime.now();
     		    		String fileNamePrefix = dataFormat.format(time);
     					String path = ipSavePath + File.separator + fileNamePrefix+"_statistics.txt";
-                 		FileUtil.appendString(dataFormat2.format(time) + " " + realIp + " " +url, path, Charset.defaultCharset().toString());
-                 		FileUtil.appendString(FileUtil.getLineSeparator(), path, Charset.defaultCharset().toString());
+    					try {
+							Files.asCharSink(FileUtil.touch(path), Charset.defaultCharset(), FileWriteMode.APPEND).write(dataFormat2.format(time) + " " + realIp + " " +url);
+							Files.asCharSink(FileUtil.touch(path), Charset.defaultCharset(), FileWriteMode.APPEND).write(FileUtil.getLineSeparator());
+    					} catch (Exception e) {
+							logger.error(e.getMessage());
+						} 
     				}
     			});
     		} catch (Exception ex) {
@@ -398,7 +404,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 		}
     }
     
-    public void saveBlackCache(String realIp, String reason) {
+    public void saveBlackLog(String realIp, String reason) {
     	if (isBlackIp) {
     		logger.info("ip:{} is blocked ,caused by:{}",realIp, reason);
     		blackIpCache.put(realIp, reason ,blockSeconds);//拒绝
@@ -412,8 +418,12 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     						LocalDateTime time = LocalDateTime.now();
     		    			String fileNamePrefix = dataFormat.format(time);
     						String path = ipSavePath + File.separator + fileNamePrefix+"_black.txt";
-    	             		FileUtil.appendString(dataFormat2.format(time) + " " + realIp + " " +reason, path, Charset.defaultCharset().toString());
-                     		FileUtil.appendString(FileUtil.getLineSeparator(), path, Charset.defaultCharset().toString());
+    						try {
+								Files.asCharSink(FileUtil.touch(path), Charset.defaultCharset(), FileWriteMode.APPEND).write(dataFormat2.format(time) + " " + realIp + " " +reason);
+								Files.asCharSink(FileUtil.touch(path), Charset.defaultCharset(), FileWriteMode.APPEND).write(FileUtil.getLineSeparator());
+							} catch (Exception e) {
+								logger.error(e.getMessage());
+							} 
     					}
         			});
     			}catch (Exception ex) {
