@@ -246,22 +246,8 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             HttpRequest httpRequest = (HttpRequest)httpObject;
             String url = getUrl(httpRequest);
             
-            //获取black ip list
-            if (url.equals("/gateway/cc/ip")) {
-            	@SuppressWarnings("rawtypes")
-				Result<List> dto = new Result<>();
-            	dto.setCode(Constant.RESULT_SUCCESS);
-        		List<String> dataList = new ArrayList<>();
-            	try {
-                	for (Object key : blackIpCache.getKeys()) {
-                		Object obj = blackIpCache.get(key);
-                		if (obj != null) {
-                			dataList.add(key + " " +obj.toString());
-                		}
-                	}
-            	} catch (Exception ex) {}
-            	dto.setData(dataList);
-            	this.setResultDto(dto);
+            //view black ip list
+            if (viewBlackLog(url)) {
             	return true;
             }
             
@@ -286,14 +272,6 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             	return true;
             }
             
-            //对各个URL资源进行熔断拦截
-            if (doSentinel(url, realIp)) {
-            	String message = httpRequest.uri() + " access  has exceeded ";
-            	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.RESULT_FAIL,message));
-                hackLog(logger, realIp, "cc", message);
-            	return true;
-            }
-            
             //统计
             saveStatisticsLog(url, realIp);
             
@@ -301,7 +279,27 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         return false;
     }
 	
-	//目标拦截
+	private boolean viewBlackLog(String url) {
+        if (url.equals("/gateway/cc/ip")) {
+        	@SuppressWarnings("rawtypes")
+			Result<List> dto = new Result<>();
+        	dto.setCode(Constant.RESULT_SUCCESS);
+    		List<String> dataList = new ArrayList<>();
+        	try {
+            	for (Object key : blackIpCache.getKeys()) {
+            		Object obj = blackIpCache.get(key);
+            		if (obj != null) {
+            			dataList.add(key + " " +obj.toString());
+            		}
+            	}
+        	} catch (Exception ex) {}
+        	dto.setData(dataList);
+        	this.setResultDto(dto);
+        	return true;
+        }
+        return false;
+	}
+	
 	public boolean doSentinel(String url, String realIp) {
     	Entry entry = null;
     	try {
@@ -370,6 +368,11 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 		} catch (Exception ex) {
 			logger.error(ex.toString());
         	return true;
+		}
+		
+		//sentinel控制
+		if (doSentinel(url, realIp)) {
+			return true;
 		}
 
         return false;
