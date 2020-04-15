@@ -21,8 +21,6 @@ import org.springframework.stereotype.Service;
 import com.alibaba.csp.sentinel.Entry;
 import com.alibaba.csp.sentinel.EntryType;
 import com.alibaba.csp.sentinel.SphU;
-import com.alibaba.csp.sentinel.adapter.servlet.callback.UrlCleaner;
-import com.alibaba.csp.sentinel.adapter.servlet.callback.WebCallbackManager;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowException;
 import com.google.common.cache.CacheBuilder;
@@ -307,10 +305,6 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 	public boolean doSentinel(String url, String realIp) {
     	Entry entry = null;
     	try {
-            UrlCleaner urlCleaner = WebCallbackManager.getUrlCleaner();
-            if (urlCleaner != null) {
-            	url = urlCleaner.clean(url);
-            }
             SphU.entry(url, EntryType.IN, 1, realIp);
             return false;
         } catch (BlockException e) {
