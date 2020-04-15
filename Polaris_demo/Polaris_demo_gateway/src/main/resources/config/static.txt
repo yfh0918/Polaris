@@ -1,1 +1,0 @@
-/swagger=D:/Downloads/swagger-ui-master/swagger-ui-master/dist;startup=index.html;error=404.html
