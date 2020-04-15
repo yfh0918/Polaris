@@ -40,10 +40,6 @@ public class SentinelEndPoint implements ConfEndPoint {
 		System.setProperty("project.name", ConfClient.getAppName());
 		
 		try {
-			//web过滤
-			WebFilterInit webFilterInit = new WebFilterInit();
-			webFilterInit.init();
-			
 			//获取类型参数
 			String datasource = System.getProperty("csp.sentinel.datasource");
 			if (StringUtil.isEmpty(datasource)) {
