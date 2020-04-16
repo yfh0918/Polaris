@@ -29,6 +29,10 @@ public class JwtUtil {
 	private final static String JWT_TTL_MILLIS_KEY = "jwtTtlMillis";
 	public static String JWT_KEY = "jwtKey";
 	public static final String CLAIMS_KEY = "ClaimsKey";
+	private static final String JWT_SIGN_KEY = "jwt.sign.key";
+	private static final String JWT_ADDITIONAL_KEY = "jwt.additional.key";
+	public static String USER_NAME = "username";
+	private static String EMPTY = "";
 	
     /**
      * 用户登录成功后生成Jwt
@@ -49,7 +53,7 @@ public class JwtUtil {
         return createJWT(ttlMillis, user, SignatureAlgorithm.HS256);
 	}
 	public static String createJWT(long ttlMillis, Map<String, Object> user,SignatureAlgorithm signatureAlgorithm) {
-        String key = ConfClient.get("jwt.sign.key", RANDOM_UUID);
+        String key = ConfClient.get(JWT_SIGN_KEY, RANDOM_UUID);
         return createJWT(ttlMillis, user, key,signatureAlgorithm);
 	}
 	public static String createJWT(Map<String, Object> user, String key) {
@@ -69,7 +73,7 @@ public class JwtUtil {
         Date now = new Date(nowMillis);
 
         //生成签发人
-        String subject = user.get("username").toString();
+        String subject = user.get(USER_NAME).toString();
 
         //下面就是在为payload添加各种标准声明和私有声明了
         //这里其实就是new一个JwtBuilder，设置jwt的body
@@ -102,7 +106,7 @@ public class JwtUtil {
      */
     public static Claims parseJWT(String token) {
         //签名秘钥，和生成的签名的秘钥一模一样
-        String key = ConfClient.get("jwt.sign.key", RANDOM_UUID);
+        String key = ConfClient.get(JWT_SIGN_KEY, RANDOM_UUID);
         return parseJWT(token, key);
     }
     public static Claims parseJWT(String token, String key) {
@@ -118,15 +122,15 @@ public class JwtUtil {
 
 	//获取含有附加信息的jwt
 	public static Map<String, Object> createAdditionalJWTMap(Map<String, Object> userMap, String additionalKey, String id, String num, long tokenTime) {
-        String additionalValue = id + userMap.get("username") + num;
+        String additionalValue = id + userMap.get(USER_NAME) + num;
         return createAdditionalJWTMap(userMap, additionalKey, additionalValue, tokenTime);
 	}
 	public static Map<String, Object> createAdditionalJWTMap(Map<String, Object> userMap, String additionalKey, String additionalValue, long tokenTime) {
-		EncryptUtil en = EncryptUtil.getInstance(ConfClient.get("jwt.additional.key", EncryptUtil.getDefaultKey()), Type.DES);
+		EncryptUtil en = EncryptUtil.getInstance(ConfClient.get(JWT_ADDITIONAL_KEY, EncryptUtil.getDefaultKey()), Type.DES);
         try {
 			userMap.put(additionalKey, en.encrypt(additionalValue));
 		} catch (Exception e) {
-			userMap.put(additionalKey, "");
+			userMap.put(additionalKey, EMPTY);
 		}
         createJWTMap(userMap, tokenTime);
         return userMap;
