@@ -39,22 +39,30 @@ public class JwtUtil {
      * @return
      */
 	public static String createJWT(Map<String, Object> user) {
+		return createJWT(user,SignatureAlgorithm.HS256);
+	}
+	public static String createJWT(Map<String, Object> user,SignatureAlgorithm signatureAlgorithm) {
 		long ttlMillis = Long.parseLong(user.remove(JWT_TTL_MILLIS_KEY).toString());
-		return createJWT(ttlMillis, user);
+		return createJWT(ttlMillis, user, signatureAlgorithm);
 	}
 	public static String createJWT(long ttlMillis, Map<String, Object> user) {
-        //创建payload的私有声明（根据特定的业务需要添加，如果要拿这个做验证，一般是需要和jwt的接收方提前沟通好验证方式的）
-        //生成签名的时候使用的秘钥secret,这个方法本地封装了的，一般可以从本地配置文件中读取，切记这个秘钥不能外露哦。它就是你服务端的私钥，在任何场景都不应该流露出去。一旦客户端得知这个secret, 那就意味着客户端是可以自我签发jwt了。
+        return createJWT(ttlMillis, user, SignatureAlgorithm.HS256);
+	}
+	public static String createJWT(long ttlMillis, Map<String, Object> user,SignatureAlgorithm signatureAlgorithm) {
         String key = ConfClient.get("jwt.sign.key", RANDOM_UUID);
-        return createJWT(ttlMillis, user, key);
+        return createJWT(ttlMillis, user, key,signatureAlgorithm);
 	}
 	public static String createJWT(Map<String, Object> user, String key) {
-		long ttlMillis = Long.parseLong(user.remove(JWT_TTL_MILLIS_KEY).toString());
-		return createJWT(ttlMillis, user, key);
+		return createJWT(user, key,SignatureAlgorithm.HS256);
 	}
-    public static String createJWT(long ttlMillis, Map<String, Object> user, String key) {
-        //指定签名的时候使用的签名算法，也就是header那部分，jjwt已经将这部分内容封装好了。
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+	public static String createJWT(Map<String, Object> user, String key,SignatureAlgorithm signatureAlgorithm) {
+		long ttlMillis = Long.parseLong(user.remove(JWT_TTL_MILLIS_KEY).toString());
+		return createJWT(ttlMillis, user, key,signatureAlgorithm);
+	}
+	public static String createJWT(long ttlMillis, Map<String, Object> user, String key) {
+		return createJWT(ttlMillis,user,key,SignatureAlgorithm.HS256);
+	}
+    public static String createJWT(long ttlMillis, Map<String, Object> user, String key,SignatureAlgorithm signatureAlgorithm) {
 
         //生成JWT的时间
         long nowMillis = System.currentTimeMillis();
