@@ -18,8 +18,7 @@ import io.netty.handler.codec.http.HttpResponse;
 public class TokenExtendHttpResponseFilter extends HttpResponseFilter {
 	
 	static {
-		//注册扩展过滤器
-		HttpFilterEnum.addExtendFilter(HttpFilterEnum.TokenResponse.getKey(), TokenExtendHttpResponseFilter.class);
+		HttpFilterEnum.addOrUpdateFilter(HttpFilterEnum.TokenResponse.getKey(), TokenExtendHttpResponseFilter.class,HttpFilterEnum.TokenResponse.getOrder());
     }
 	
     @Override

@@ -4,8 +4,6 @@ import org.springframework.stereotype.Service;
 
 import com.polaris.container.gateway.HttpFilterEnum;
 import com.polaris.container.gateway.request.HttpRequestFilter;
-import com.polaris.container.gateway.support.HttpRequestFilterSupport;
-import com.polaris.core.Constant;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -21,7 +19,7 @@ import io.netty.handler.codec.http.HttpRequest;
 public class TokenExtendHttpRequestFilter extends HttpRequestFilter {
 
 	static {
-		HttpFilterEnum.addExtendFilter(HttpFilterEnum.Token.getKey(), TokenExtendHttpRequestFilter.class);
+		HttpFilterEnum.addOrUpdateFilter(HttpFilterEnum.Token.getKey(), TokenExtendHttpRequestFilter.class,HttpFilterEnum.Token.getOrder());
 	}
 	
 	@Override

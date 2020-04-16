@@ -92,28 +92,24 @@ public enum HttpFilterEnum {
 		}
 		return -1;
 	}
-	public synchronized static void addExtendFilter(String switchKey, Class<?> clazz) {
+
+	public synchronized static void addOrUpdateFilter( String switchKey, Class<?> clazz, Integer order) {
 		Class<?> defautlFilterClass = filterKeyMap.get(switchKey);
-		int order = -1;
 		if (defautlFilterClass != null) {
 			filterKeyMap.remove(switchKey);
 			filterMap.remove(defautlFilterClass);
-			order = filterOrderMap.get(defautlFilterClass);
 			filterOrderMap.remove(defautlFilterClass);
 		}
 		filterMap.put(clazz, switchKey);
 		filterOrderMap.put(clazz, order);
 		filterKeyMap.put(switchKey, clazz);
 	}
-	public synchronized static void addExtendFilter( String switchKey, Class<?> clazz, Integer order) {
+	public synchronized static void removeFilter(String switchKey) {
 		Class<?> defautlFilterClass = filterKeyMap.get(switchKey);
 		if (defautlFilterClass != null) {
 			filterKeyMap.remove(switchKey);
 			filterMap.remove(defautlFilterClass);
 			filterOrderMap.remove(defautlFilterClass);
 		}
-		filterMap.put(clazz, switchKey);
-		filterOrderMap.put(clazz, order);
-		filterKeyMap.put(switchKey, clazz);
 	}
 }
