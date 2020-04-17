@@ -23,7 +23,6 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import com.polaris.container.config.ConfigurationExtension;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.event.EventDispatcher;
 import com.polaris.core.util.ReflectionUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -39,12 +38,6 @@ public class MVCConfigurer implements ConfigurationExtension {
 		
 		@Bean(name = DispatcherServlet.MULTIPART_RESOLVER_BEAN_NAME)
 	    public MultipartResolver multipartResolver() {
-			MVCConfigurerEvent event = new MVCConfigurerEvent(MultipartResolver.class);
-			EventDispatcher.fireEvent(event);
-			MultipartResolver result = event.getEventResult(MultipartResolver.class);
-			if (result != null) {
-				return result;
-			}
 	        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
 			ReflectionUtils.doWithMethods(CommonsMultipartResolver.class, new MethodCallback() {
 				@Override
@@ -76,12 +69,6 @@ public class MVCConfigurer implements ConfigurationExtension {
 	       */
 		@Bean
 	    public FreeMarkerConfigurer freeMarkerConfigurer() {
-			MVCConfigurerEvent event = new MVCConfigurerEvent(FreeMarkerConfigurer.class);
-			EventDispatcher.fireEvent(event);
-			FreeMarkerConfigurer result = event.getEventResult(FreeMarkerConfigurer.class);
-			if (result != null) {
-				return result;
-			}
 			FreeMarkerConfigurer freeMarkerConfigurer = new FreeMarkerConfigurer();
 			ReflectionUtils.doWithMethods(FreeMarkerConfigurer.class, new MethodCallback() {
 				@Override
@@ -107,12 +94,6 @@ public class MVCConfigurer implements ConfigurationExtension {
 
 	    @Bean
 	    public FreeMarkerViewResolver freeMarkerViewResolver() {
-			MVCConfigurerEvent event = new MVCConfigurerEvent(FreeMarkerViewResolver.class);
-			EventDispatcher.fireEvent(event);
-			FreeMarkerViewResolver result = event.getEventResult(FreeMarkerViewResolver.class);
-			if (result != null) {
-				return result;
-			}
 		    FreeMarkerViewResolver viewResolver = new FreeMarkerViewResolver();
 			ReflectionUtils.doWithMethods(FreeMarkerViewResolver.class, new MethodCallback() {
 				@Override
@@ -149,21 +130,15 @@ public class MVCConfigurer implements ConfigurationExtension {
 	    @Override
 	    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 	    	
-	    	MVCConfigurerEvent event = new MVCConfigurerEvent(HttpMessageConverter.class, converters);
-			EventDispatcher.fireEvent(event);
-			
-			//默认事件
-			if (event.getEventResult() == null) {
-		    	//string utf-8
-		        converters.add(new StringHttpMessageConverter(Charset.defaultCharset()));
-		        
-		        //pojo utf-8
-		    	List<MediaType> list = new ArrayList<MediaType>();
-		    	list.add(MediaType.APPLICATION_JSON);
-		    	MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
-		    	mappingJackson2HttpMessageConverter.setSupportedMediaTypes(list);
-		        converters.add(mappingJackson2HttpMessageConverter);
-			}
+	    	//string utf-8
+	        converters.add(new StringHttpMessageConverter(Charset.defaultCharset()));
+	        
+	        //pojo utf-8
+	    	List<MediaType> list = new ArrayList<MediaType>();
+	    	list.add(MediaType.APPLICATION_JSON);
+	    	MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
+	    	mappingJackson2HttpMessageConverter.setSupportedMediaTypes(list);
+	        converters.add(mappingJackson2HttpMessageConverter);
 	    }
 	}
 
