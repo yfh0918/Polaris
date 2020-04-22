@@ -34,8 +34,8 @@ import net.lightbody.bmp.mitm.keys.RSAKeyGenerator;
  * Description:
  *
  */
-public class GatewaySelfSignedSslEngineSource implements SslEngineSource {
-	private static Logger logger = LoggerFactory.getLogger(GatewaySelfSignedSslEngineSource.class);
+public class SelfSignedSslEngineSource implements SslEngineSource {
+	private static Logger logger = LoggerFactory.getLogger(SelfSignedSslEngineSource.class);
 
     public static final String KeyStoreType_STR = "JKS";
     private static final String PROTOCOL = "TLS";
@@ -53,7 +53,7 @@ public class GatewaySelfSignedSslEngineSource implements SslEngineSource {
      * @param sendCerts
      */
     @SuppressWarnings("static-access")
-	public GatewaySelfSignedSslEngineSource(boolean trustAllServers, boolean sendCerts, String keyalg) {
+	public SelfSignedSslEngineSource(boolean trustAllServers, boolean sendCerts, String keyalg) {
         JCEUtil.removeCryptographyRestrictions();
         this.trustAllServers = trustAllServers;
         this.sendCerts = sendCerts;
@@ -88,7 +88,7 @@ public class GatewaySelfSignedSslEngineSource implements SslEngineSource {
         initializeSSLContext();
     }
 
-    public GatewaySelfSignedSslEngineSource() {
+    public SelfSignedSslEngineSource() {
         this(false, true, KEYALG);
     }
 

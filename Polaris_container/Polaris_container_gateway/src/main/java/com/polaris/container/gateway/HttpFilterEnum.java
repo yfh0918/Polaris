@@ -6,6 +6,7 @@ import java.util.Map;
 import com.polaris.container.gateway.request.ArgsHttpRequestFilter;
 import com.polaris.container.gateway.request.CCHttpRequestFilter;
 import com.polaris.container.gateway.request.CookieHttpRequestFilter;
+import com.polaris.container.gateway.request.DegradeRequestFilter;
 import com.polaris.container.gateway.request.IpHttpRequestFilter;
 import com.polaris.container.gateway.request.PostHttpRequestFilter;
 import com.polaris.container.gateway.request.ScannerHttpRequestFilter;
@@ -21,6 +22,7 @@ import com.polaris.core.util.StringUtil;
 public enum HttpFilterEnum {
 		
 	//默认的requestFilter
+	Degrade(DegradeRequestFilter.class, "gateway.degrade", 0), 
 	WIp(WIpHttpRequestFilter.class, "gateway.ip.whitelist", 1), 
 	Ip(IpHttpRequestFilter.class, "gateway.ip.blacklist", 2), 
 	CC(CCHttpRequestFilter.class, "gateway.cc", 3),
@@ -34,8 +36,8 @@ public enum HttpFilterEnum {
 	Token(TokenHttpRequestFilter.class, "gateway.token", 11),
 
 	//responseFilter
-	Clickjack(ClickjackHttpResponseFilter.class, "gateway.click.jack", 1),
-	TokenResponse(TokenHttpResponseFilter.class, "gateway.response.token", 2);
+	Clickjack(ClickjackHttpResponseFilter.class, "gateway.click.jack", 0),
+	TokenResponse(TokenHttpResponseFilter.class, "gateway.response.token", 1);
 	
 	// 成员变量  
     private int order;  

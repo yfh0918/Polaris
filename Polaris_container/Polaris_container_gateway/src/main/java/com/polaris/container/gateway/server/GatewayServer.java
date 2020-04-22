@@ -18,7 +18,7 @@ import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.HostResolverImpl;
 import com.polaris.container.gateway.HttpFilterAdapterImpl;
-import com.polaris.container.gateway.util.GatewaySelfSignedSslEngineSource;
+import com.polaris.container.gateway.util.SelfSignedSslEngineSource;
 import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.container.util.NetUtils;
 import com.polaris.core.config.ConfClient;
@@ -90,7 +90,7 @@ public class GatewayServer {
             httpProxyServerBootstrap
                     //不验证client端证书
                     .withAuthenticateSslClients(false)
-                    .withSslEngineSource(new GatewaySelfSignedSslEngineSource());
+                    .withSslEngineSource(new SelfSignedSslEngineSource());
         } 
         //milliseconds - 40seconds
         int timeout = Integer.parseInt(ConfClient.get("connect.timeout","40000"));

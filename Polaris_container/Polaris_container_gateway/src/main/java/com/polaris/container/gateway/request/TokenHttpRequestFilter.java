@@ -34,12 +34,13 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
 
 	@Value("${gateway.token.policy}")
 	private String tokenPolicy;//#request存在token 并且属于UNCHECKED_PATHS的url,如果policy=check就检查token的有效性，如果uncheck就不检查
-	
+	private String DEFAULT_TOKEN_POLICY = "uncheck";
 	public volatile static Set<String> UNCHECKED_PATHS = new HashSet<>();
 	public volatile static Set<String> UNCHECKED_PATHS_PREFIX = new HashSet<>();
-	public volatile static Set<String> TOKEN_PATH = new HashSet<>();
+	public volatile static Set<String> TOKEN_PATHS = new HashSet<>();
 	private final static String FILE_NAME = "token.txt";
-	public final static String TOKEN_MESSAGE="认证失败，请先登录";
+	public static String TOKEN_MESSAGE_CODE=Constant.TOKEN_FAIL_CODE;
+	public static String TOKEN_MESSAGE="认证失败，请先登录";
 	public final static String DEFAULT_VALUE = "1";
 
 	static {
@@ -59,40 +60,67 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
     	if (StringUtil.isEmpty(content)) {
     		UNCHECKED_PATHS = new HashSet<>();
     		UNCHECKED_PATHS_PREFIX = new HashSet<>();
-    		TOKEN_PATH = new HashSet<>();
+    		TOKEN_PATHS = new HashSet<>();
     		return;
     	}
     	String[] contents = content.split(Constant.LINE_SEP);
     	Set<String> UNCHECKED_PATHS_TEMP = new HashSet<>();
     	Set<String> UNCHECKED_PATHS_PREFIX_TEMP = new HashSet<>();
-    	Set<String> TOKEN_PATH_TEMP = new HashSet<>();
+    	Set<String> TOKEN_PATHS_TEMP = new HashSet<>();
+    	String TOKEN_MESSAGE_CODE_TEMP = null;
+    	String TOKEN_MESSAGE_TEMP = null;
  
     	for (String conf : contents) {
     		if (StringUtil.isNotEmpty(conf) && !conf.startsWith("#")) {
     			conf = conf.replace("\n", "");
     			conf = conf.replace("\r", "");
-
 				String[] kv = PropertyUtil.getKeyValue(conf);
 
 				// 不需要验证token的uri
     			if (kv[0].equals("UNCHECKED_PATHS")) {
-    				UNCHECKED_PATHS_TEMP.add(kv[1]);
+    				if (StringUtil.isNotEmpty(kv[1])) {
+        				UNCHECKED_PATHS_TEMP.add(kv[1]);
+    				}
     			}
     			
     			// 不需要验证token的uri前缀，一般为context
     			if (kv[0].equals("UNCHECKED_PATHS_PREFIX")) {
-    				UNCHECKED_PATHS_PREFIX_TEMP.add(kv[1]);
+    				if (StringUtil.isNotEmpty(kv[1])) {
+        				UNCHECKED_PATHS_PREFIX_TEMP.add(kv[1]);
+    				}
     			}
     			
     			//tokenUrl
-    			if (kv[0].equals("TOKEN_PATH")) {
-    				TOKEN_PATH_TEMP.add(kv[1]);
+    			if (kv[0].equals("TOKEN_PATH") || kv[0].equals("TOKEN_PATHS")) {
+    				if (StringUtil.isNotEmpty(kv[1])) {
+        				TOKEN_PATHS_TEMP.add(kv[1]);
+    				}
+    			}
+    			
+    			//tokenMessageCode
+    			if (kv[0].equals("TOKEN_MESSAGE_CODE")) {
+    				if (StringUtil.isNotEmpty(kv[1])) {
+        				TOKEN_MESSAGE_CODE_TEMP = kv[1];
+    				}
+    			}
+    			
+    			//tokenMessageCode
+    			if (kv[0].equals("TOKEN_MESSAGE")) {
+    				if (StringUtil.isNotEmpty(kv[1])) {
+        				TOKEN_MESSAGE_TEMP = kv[1];
+    				}
     			}
     		}
     	}
     	UNCHECKED_PATHS_PREFIX = UNCHECKED_PATHS_PREFIX_TEMP;
     	UNCHECKED_PATHS = UNCHECKED_PATHS_TEMP;
-    	TOKEN_PATH = TOKEN_PATH_TEMP;
+    	TOKEN_PATHS = TOKEN_PATHS_TEMP;
+    	if (TOKEN_MESSAGE_CODE_TEMP != null) {
+    		TOKEN_MESSAGE_CODE = TOKEN_MESSAGE_CODE_TEMP;
+    	}
+    	if (TOKEN_MESSAGE_TEMP != null) {
+    		TOKEN_MESSAGE = TOKEN_MESSAGE_TEMP;
+    	}
     }
     
     //获取url
@@ -143,7 +171,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
 
     
     public static boolean isTokenPath(String url) {
-    	return TOKEN_PATH.contains(url);
+    	return TOKEN_PATHS.contains(url);
     }
     
 	@Override
@@ -162,7 +190,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
             boolean uncheckUrl = !checkUrlPath(TokenHttpRequestFilter.getUrl(httpRequest));
             if (uncheckUrl) {
             	//token验证策略:uncheck
-            	if ("uncheck".equals(tokenPolicy)) {
+            	if (DEFAULT_TOKEN_POLICY.equals(tokenPolicy)) {
             		return false;
             	}
             }
@@ -176,7 +204,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
                 if (uncheckUrl) {
                 	return false;
                 }
-            	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
+            	this.setResultDto(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE));
                 return true;
             }
 
@@ -185,12 +213,12 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
             	//token认证
                 Claims claims = JwtUtil.parseJWT(token);
                 if (claims == null) {
-                	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
+                	this.setResultDto(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE));
                     return true;
                 }
                 String userName = claims.getSubject();
                 if (StrUtil.isEmpty(userName)) {
-                	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
+                	this.setResultDto(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE));
                     return true;
                 }
                 
@@ -199,7 +227,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
                 httpRequest.headers().add(SystemCallUtil.key(), SystemCallUtil.value());
                 return false;
             } catch (Exception ex) {
-            	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.TOKEN_FAIL_CODE,TOKEN_MESSAGE));
+            	this.setResultDto(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE));
                 return true;
             }
 
