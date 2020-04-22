@@ -41,10 +41,10 @@ public abstract class ExtensionInitializerAbs implements ExtensionInitializer {
 		}
 	}
 	public void addFilter() {
-		String POLARIS_REQUEST_FIRST_FILTER = "PolarisRequestFirstFilter";
+		String TRACE_FILTER = "TraceFilter";
 		
 		// filter
-		servletContext.addFilter(POLARIS_REQUEST_FIRST_FILTER, new TraceFilter())
+		servletContext.addFilter(TRACE_FILTER, new TraceFilter())
 					  .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 		
 		//其他filter
