@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
@@ -32,7 +31,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
  * Description:
  * 跨域请求
  */
-@Service
 public class CorsRequestFilter extends HttpRequestFilter {
 	private static Logger logger = LoggerFactory.getLogger(CorsRequestFilter.class);
 	private final static String FILE_NAME = "cors.txt";

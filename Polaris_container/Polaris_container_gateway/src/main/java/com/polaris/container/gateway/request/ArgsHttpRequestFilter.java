@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.util.ConfUtil;
@@ -23,7 +22,6 @@ import io.netty.handler.codec.http.HttpRequest;
  * <p>
  * URL参数黑名单参数拦截
  */
-@Service
 public class ArgsHttpRequestFilter extends HttpRequestFilter {
 	private static Logger logger = LoggerFactory.getLogger(ArgsHttpRequestFilter.class);
 

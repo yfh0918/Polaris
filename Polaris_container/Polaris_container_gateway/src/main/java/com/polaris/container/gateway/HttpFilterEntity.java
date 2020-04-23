@@ -1,18 +1,25 @@
 package com.polaris.container.gateway;
 
-public class HttpFilterObject {
+public class HttpFilterEntity {
 	// 成员变量  
     private int order;  
     private String key;
     private Class<? extends HttpFilter> clazz;
-    
+    private HttpFilter filter;
 
     // 构造方法  
-    public HttpFilterObject(Class<? extends HttpFilter> clazz, String key, int order) {  
-    	this.clazz = clazz;
+    public HttpFilterEntity(HttpFilter filter, String key, int order) {  
+    	this.clazz = filter.getClass();
     	this.key = key;
-        this.order = order;   
+        this.order = order; 
+        this.filter = filter;
     }
+	public HttpFilter getFilter() {
+		return this.filter;
+	}
+	public void setFilter(HttpFilter filter) {
+		this.filter = filter;
+	}
 	public Class<? extends HttpFilter> getClazz() {
 		return this.clazz;
 	}

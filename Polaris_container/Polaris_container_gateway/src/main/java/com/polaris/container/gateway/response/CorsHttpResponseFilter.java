@@ -2,8 +2,6 @@ package com.polaris.container.gateway.response;
 
 import java.util.Map;
 
-import org.springframework.stereotype.Service;
-
 import com.polaris.container.gateway.request.CorsRequestFilter;
 
 import io.netty.handler.codec.http.HttpRequest;
@@ -15,7 +13,6 @@ import io.netty.handler.codec.http.HttpResponse;
  * Description:
  *
  */
-@Service
 public class CorsHttpResponseFilter extends HttpResponseFilter {
 	
     @Override

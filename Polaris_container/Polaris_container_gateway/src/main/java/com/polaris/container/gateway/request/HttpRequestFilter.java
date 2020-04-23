@@ -1,7 +1,5 @@
 package com.polaris.container.gateway.request;
 
-import javax.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 
 import com.polaris.container.gateway.HttpFilter;
@@ -23,7 +21,6 @@ public abstract class HttpRequestFilter extends HttpFilter  {
      * 构造函数并加入调用链
      *
      */
-	@PostConstruct
 	@Override
 	public void init() {
 		HttpRequestFilterChain.addFilter(this);

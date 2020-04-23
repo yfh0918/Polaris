@@ -155,7 +155,6 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     }
 
     //创建resoponse(中途退出错误的场合)
-    @SuppressWarnings("rawtypes")
 	private HttpResponse createResponse(HttpResponseStatus httpResponseStatus, HttpRequest originalRequest, String result, Map<String, Object> headerMap) {
         HttpResponse httpResponse;
         if (StringUtil.isNotEmpty(result)) {

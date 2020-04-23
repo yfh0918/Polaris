@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.stereotype.Service;
-
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
@@ -28,7 +26,6 @@ import io.netty.handler.codec.http.HttpRequest;
  * <p>
  * Token拦截
  */
-@Service
 public class TokenHttpRequestFilter extends HttpRequestFilter {
 
 	private static String TOKEN_POLICY_UNCHECK = "uncheck";//#request存在token 并且属于UNCHECKED_PATHS的url,如果policy=check就检查token的有效性，如果uncheck就不检查

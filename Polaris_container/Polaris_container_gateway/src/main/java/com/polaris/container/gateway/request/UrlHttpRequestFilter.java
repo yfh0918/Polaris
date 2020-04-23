@@ -5,7 +5,6 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.util.ConfUtil;
@@ -21,7 +20,6 @@ import io.netty.handler.codec.http.HttpRequest;
  *
  * URL路径黑名单拦截
  */
-@Service
 public class UrlHttpRequestFilter extends HttpRequestFilter {
 	private static Logger logger = LoggerFactory.getLogger(UrlHttpRequestFilter.class);
 

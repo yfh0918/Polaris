@@ -12,12 +12,12 @@ import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
 import org.littleshoot.proxy.impl.ThreadPoolConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.ComponentScan;
 
 import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.HostResolverImpl;
 import com.polaris.container.gateway.HttpFilterAdapterImpl;
+import com.polaris.container.gateway.HttpFilterEnum;
 import com.polaris.container.gateway.util.SelfSignedSslEngineSource;
 import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.container.util.NetUtils;
@@ -27,7 +27,6 @@ import com.polaris.core.util.SpringUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
-@ComponentScan("com.polaris.container.gateway")
 public class GatewayServer {
 	
 	private static Logger logger = LoggerFactory.getLogger(GatewayServer.class);
@@ -70,7 +69,7 @@ public class GatewayServer {
     public void start() {
 
     	//创建context
-    	SpringUtil.refresh(ConfigurationSupport.getConfiguration(GatewayServer.class));
+    	SpringUtil.refresh(ConfigurationSupport.getConfiguration());
         ThreadPoolConfiguration threadPoolConfiguration = new ThreadPoolConfiguration();
         threadPoolConfiguration.withAcceptorThreads(GatewayConstant.AcceptorThreads);
         threadPoolConfiguration.withClientToProxyWorkerThreads(GatewayConstant.ClientToProxyWorkerThreads);
@@ -132,7 +131,7 @@ public class GatewayServer {
                         return new HttpFilterAdapterImpl(originalRequest, ctx);
                     }
                 }).start();
-        
+        HttpFilterEnum.init();//初始化过滤器
         ServerListenerSupport.started();//监听启动
         logger.info("Gateway started on port(s) " + inetSocketAddress.getPort() + " with context path '/'");
         

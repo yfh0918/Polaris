@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.core.Constant;
@@ -31,7 +30,6 @@ import io.netty.handler.codec.http.HttpRequest;
  * Description:
  * 降级，针对URL
  */
-@Service
 public class DegradeRequestFilter extends HttpRequestFilter {
 	private static Logger logger = LoggerFactory.getLogger(DegradeRequestFilter.class);
 	private final static String FILE_NAME = "degrade.txt";

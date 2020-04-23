@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
 import com.alibaba.csp.sentinel.Entry;
 import com.alibaba.csp.sentinel.EntryType;
@@ -60,7 +59,6 @@ import io.netty.handler.codec.http.HttpRequest;
  * Description:
  * cc拦截
  */
-@Service
 public class CCHttpRequestFilter extends HttpRequestFilter {
 	private static Logger logger = LoggerFactory.getLogger(CCHttpRequestFilter.class);
 	private final static String FILE_NAME = "cc.txt";
