@@ -24,7 +24,8 @@ public abstract class HttpRequestFilter extends HttpFilter  {
      *
      */
 	@PostConstruct
-	protected void addFilterChain() {
+	@Override
+	public void init() {
 		HttpRequestFilterChain.addFilter(this);
 	} 
 	

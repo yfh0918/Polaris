@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.polaris.container.gateway.support.HttpRequestFilterSupport;
@@ -32,9 +31,8 @@ import io.netty.handler.codec.http.HttpRequest;
 @Service
 public class TokenHttpRequestFilter extends HttpRequestFilter {
 
-	@Value("${gateway.token.policy}")
-	private String tokenPolicy;//#request存在token 并且属于UNCHECKED_PATHS的url,如果policy=check就检查token的有效性，如果uncheck就不检查
-	private String DEFAULT_TOKEN_POLICY = "uncheck";
+	private static String TOKEN_POLICY_UNCHECK = "uncheck";//#request存在token 并且属于UNCHECKED_PATHS的url,如果policy=check就检查token的有效性，如果uncheck就不检查
+	private static String TOKEN_POLICY = TOKEN_POLICY_UNCHECK;
 	public volatile static Set<String> UNCHECKED_PATHS = new HashSet<>();
 	public volatile static Set<String> UNCHECKED_PATHS_PREFIX = new HashSet<>();
 	public volatile static Set<String> TOKEN_PATHS = new HashSet<>();
@@ -69,6 +67,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
     	Set<String> TOKEN_PATHS_TEMP = new HashSet<>();
     	String TOKEN_MESSAGE_CODE_TEMP = null;
     	String TOKEN_MESSAGE_TEMP = null;
+    	String TOKEN_POLICY_TEMP = null;
  
     	for (String conf : contents) {
     		if (StringUtil.isNotEmpty(conf) && !conf.startsWith("#")) {
@@ -110,6 +109,13 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
         				TOKEN_MESSAGE_TEMP = kv[1];
     				}
     			}
+    			
+    			//TOKEN_POLICY
+    			if (kv[0].equals("TOKEN_POLICY")) {
+    				if (StringUtil.isNotEmpty(kv[1])) {
+    					TOKEN_POLICY_TEMP = kv[1];
+    				}
+    			}
     		}
     	}
     	UNCHECKED_PATHS_PREFIX = UNCHECKED_PATHS_PREFIX_TEMP;
@@ -120,6 +126,9 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
     	}
     	if (TOKEN_MESSAGE_TEMP != null) {
     		TOKEN_MESSAGE = TOKEN_MESSAGE_TEMP;
+    	}
+    	if (TOKEN_POLICY_TEMP != null) {
+    		TOKEN_POLICY = TOKEN_POLICY_TEMP;
     	}
     }
     
@@ -174,6 +183,13 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
     	return TOKEN_PATHS.contains(url);
     }
     
+    public static boolean isUncheckPolicy() {
+    	if (TOKEN_POLICY.equals(TOKEN_POLICY_UNCHECK)) {
+    		return true;
+    	}
+    	return false;
+    }
+    
 	@Override
     public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
@@ -189,8 +205,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
             //是否为不验证的url
             boolean uncheckUrl = !checkUrlPath(TokenHttpRequestFilter.getUrl(httpRequest));
             if (uncheckUrl) {
-            	//token验证策略:uncheck
-            	if (DEFAULT_TOKEN_POLICY.equals(tokenPolicy)) {
+            	if (isUncheckPolicy()) {
             		return false;
             	}
             }
@@ -204,7 +219,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
                 if (uncheckUrl) {
                 	return false;
                 }
-            	this.setResultDto(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE));
+            	this.setResult(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
                 return true;
             }
 
@@ -213,12 +228,12 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
             	//token认证
                 Claims claims = JwtUtil.parseJWT(token);
                 if (claims == null) {
-                	this.setResultDto(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE));
+                	this.setResult(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
                     return true;
                 }
                 String userName = claims.getSubject();
                 if (StrUtil.isEmpty(userName)) {
-                	this.setResultDto(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE));
+                	this.setResult(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
                     return true;
                 }
                 
@@ -227,7 +242,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
                 httpRequest.headers().add(SystemCallUtil.key(), SystemCallUtil.value());
                 return false;
             } catch (Exception ex) {
-            	this.setResultDto(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE));
+            	this.setResult(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
                 return true;
             }
 

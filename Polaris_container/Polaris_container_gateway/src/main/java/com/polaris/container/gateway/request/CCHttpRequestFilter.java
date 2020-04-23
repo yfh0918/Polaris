@@ -259,7 +259,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         	//是否黑名单
         	if (isBlackIp && blackIpCache.get(realIp) != null){
         		String message = realIp + " access has exceeded ";
-            	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.RESULT_FAIL,message));
+            	this.setResult(HttpRequestFilterSupport.createResultDto(Constant.RESULT_FAIL,message).toJSONString());
                 hackLog(logger, realIp, "cc", message);
         		return true;
         	}
@@ -267,7 +267,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         	//cc攻击
             if (ccHack(url, realIp)) {
             	String message = httpRequest.uri() + " " + realIp + " access  has exceeded ";
-            	this.setResultDto(HttpRequestFilterSupport.createResultDto(Constant.RESULT_FAIL,message));
+            	this.setResult(HttpRequestFilterSupport.createResultDto(Constant.RESULT_FAIL,message).toJSONString());
                 hackLog(logger, realIp, "cc", message);
             	return true;
             }
@@ -294,7 +294,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
             	}
         	} catch (Exception ex) {}
         	dto.setData(dataList);
-        	this.setResultDto(dto);
+        	this.setResult(dto.toJSONString());
         	return true;
         }
         return false;

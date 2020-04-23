@@ -36,7 +36,7 @@ public class HttpRequestFilterChain extends HttpFilterChain{
         	if (StringUtil.isEmpty(key)) {
         		continue;
         	}
-        	if (GatewayConstant.OFF.equals(ConfClient.get(key))) {
+        	if (!GatewayConstant.ON.equals(ConfClient.get(key))) {
         		continue;
         	}
             boolean result = filter.doFilter(originalRequest, httpObject, channelHandlerContext);

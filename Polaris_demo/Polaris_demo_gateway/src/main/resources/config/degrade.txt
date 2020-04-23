@@ -1,1 +1,1 @@
-degrade.url=/gateway/cc/ip
+degrade.url=/gateway/cc/ip1

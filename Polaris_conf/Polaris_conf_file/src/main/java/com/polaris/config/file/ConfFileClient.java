@@ -84,7 +84,7 @@ public class ConfFileClient {
 		try {
 			return FileUtil.read(ConfReaderStrategyFactory.get().getInputStream(fileName));
         } catch (IOException e) {
-        	e.printStackTrace();
+        	//ignore
         }
 		return null;
 	}
@@ -104,15 +104,36 @@ public class ConfFileClient {
 		boolean isModified = true;
 		if (lastModifiedFileMap.containsKey(fileName)) {
 			file = lastModifiedFileMap.get(fileName);
-			if (file.lastModified() == lastModifiedTimeMap.get(fileName).longValue()) {
-				isModified = false;
+			
+			//没有发生删除
+			if (file.exists()) {
+				if (file.lastModified() == lastModifiedTimeMap.get(fileName).longValue()) {
+					isModified = false;
+				} else {
+					lastModifiedTimeMap.put(fileName, file.lastModified());
+				}
 			} else {
-				lastModifiedTimeMap.put(fileName, file.lastModified());
+				
+				//文件发生是删除
+				lastModifiedFileMap.remove(fileName);
+				lastModifiedTimeMap.remove(fileName);
 			}
+			
 		} else {
-			if (file != null) {
-	    		lastModifiedFileMap.put(fileName, file);
+			if (file != null && file.exists()) {
+				//新增
+				lastModifiedFileMap.put(fileName, file);
 				lastModifiedTimeMap.put(fileName, file.lastModified());
+	    		
+			} else {
+				File newFile = ConfReaderStrategyFactory.get().getFile(fileName);
+				if (newFile == null || !newFile.exists()) {
+					isModified = false;//传入的file和查询的file都为空，表示没有发生修改
+				} else {
+					//新增
+					lastModifiedFileMap.put(fileName, newFile);
+					lastModifiedTimeMap.put(fileName, newFile.lastModified());//否则加入
+				}
 			}
 		}
 		return isModified;

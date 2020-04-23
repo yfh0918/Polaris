@@ -1,0 +1,12 @@
+#不会解析token
+UNCHECKED_PATHS=/xx/user/isUsedByPhone
+UNCHECKED_PATHS=/xx/user/getVerifyCode
+UNCHECKED_PATHS=/xx/user/phoneLogin
+
+#需要生成网关token
+TOKEN_PATH=/xx/wechat/qrUserInfo
+TOKEN_PATH=/xx/wechat/userInfo
+TOKEN_PATH=/xx/sysuser/login
+
+#request存在token 并且属于UNCHECKED_PATHS的url,如果policy=check就检查token的有效性，如果uncheck就不检查
+TOKEN_POLICY=check

@@ -19,7 +19,7 @@ import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.container.gateway.util.RequestUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
-import com.polaris.core.pojo.Result;
+import com.polaris.core.util.StringUtil;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -66,12 +66,12 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             
             //过滤不通过的直接进入response过滤器
             if (immutablePair.left) {
-                httpResponse = createResponse(immutablePair.right.getStatus(), originalRequest, immutablePair.right.getResultDto(),immutablePair.right.getHeaderMap());
+                httpResponse = createResponse(immutablePair.right.getStatus(), originalRequest, immutablePair.right.getResult(),immutablePair.right.getHeaderMap());
             }
         } catch (Exception e) {
         	
         	//存在异常的直接进入response过滤器
-            httpResponse = createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(e), null);
+            httpResponse = createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(e).toJSONString(), null);
             logger.error("client's request failed", e);
             
         } 
@@ -92,7 +92,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     public void proxyToServerResolutionSucceeded(String serverHostAndPort,
                                                  InetSocketAddress resolvedRemoteAddress) {
         if (resolvedRemoteAddress == null) {
-            ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR), null));
+            ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR).toJSONString(), null));
         } 
     }
 
@@ -104,7 +104,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	//系统异常
         	if (((HttpResponse) httpObject).status().code() == HttpResponseStatus.BAD_GATEWAY.code()) {
                 ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, 
-                		originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR), null));
+                		originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR).toJSONString(), null));
                 return httpObject;
         	}
 
@@ -113,7 +113,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	
         	//业务异常
         	if (immutablePair.left) {
-        		ctx.writeAndFlush(createResponse(immutablePair.right.getStatus(), originalRequest, immutablePair.right.getResultDto(),immutablePair.right.getHeaderMap()));
+        		ctx.writeAndFlush(createResponse(immutablePair.right.getStatus(), originalRequest, immutablePair.right.getResult(),immutablePair.right.getHeaderMap()));
                 return httpObject;
         	}
         }
@@ -156,10 +156,10 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
 
     //创建resoponse(中途退出错误的场合)
     @SuppressWarnings("rawtypes")
-	private HttpResponse createResponse(HttpResponseStatus httpResponseStatus, HttpRequest originalRequest, Result responseDto, Map<String, Object> headerMap) {
+	private HttpResponse createResponse(HttpResponseStatus httpResponseStatus, HttpRequest originalRequest, String result, Map<String, Object> headerMap) {
         HttpResponse httpResponse;
-        if (responseDto != null) {
-        	ByteBuf buf = io.netty.buffer.Unpooled.copiedBuffer(responseDto.toJSONString(), CharsetUtil.UTF_8); 
+        if (StringUtil.isNotEmpty(result)) {
+        	ByteBuf buf = io.netty.buffer.Unpooled.copiedBuffer(result, CharsetUtil.UTF_8); 
         	httpResponse  = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, httpResponseStatus, buf);
         } else {
             httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, httpResponseStatus);

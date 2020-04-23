@@ -6,6 +6,7 @@ import java.util.Map;
 import com.polaris.container.gateway.request.ArgsHttpRequestFilter;
 import com.polaris.container.gateway.request.CCHttpRequestFilter;
 import com.polaris.container.gateway.request.CookieHttpRequestFilter;
+import com.polaris.container.gateway.request.CorsRequestFilter;
 import com.polaris.container.gateway.request.DegradeRequestFilter;
 import com.polaris.container.gateway.request.IpHttpRequestFilter;
 import com.polaris.container.gateway.request.PostHttpRequestFilter;
@@ -15,29 +16,29 @@ import com.polaris.container.gateway.request.UaHttpRequestFilter;
 import com.polaris.container.gateway.request.UrlHttpRequestFilter;
 import com.polaris.container.gateway.request.WIpHttpRequestFilter;
 import com.polaris.container.gateway.request.WUrlHttpRequestFilter;
-import com.polaris.container.gateway.response.ClickjackHttpResponseFilter;
+import com.polaris.container.gateway.response.CorsHttpResponseFilter;
 import com.polaris.container.gateway.response.TokenHttpResponseFilter;
-import com.polaris.core.util.StringUtil;
 
 public enum HttpFilterEnum {
 		
 	//默认的requestFilter
-	Degrade(DegradeRequestFilter.class, "gateway.degrade", 0), 
-	WIp(WIpHttpRequestFilter.class, "gateway.ip.whitelist", 1), 
-	Ip(IpHttpRequestFilter.class, "gateway.ip.blacklist", 2), 
-	CC(CCHttpRequestFilter.class, "gateway.cc", 3),
-	Scanner(ScannerHttpRequestFilter.class, "gateway.scanner", 4),
-	WUrl(WUrlHttpRequestFilter.class, "gateway.url.whitelist", 5),
-	Ua(UaHttpRequestFilter.class, "gateway.ua", 6),
-	Url(UrlHttpRequestFilter.class, "gateway.url.blacklist", 7),
-	Args(ArgsHttpRequestFilter.class, "gateway.args", 8),
-	Cookie(CookieHttpRequestFilter.class, "gateway.cookie", 9),
-	Post(PostHttpRequestFilter.class, "gateway.post", 10),
-	Token(TokenHttpRequestFilter.class, "gateway.token", 11),
+	Cors(CorsRequestFilter.class, "gateway.cors", 0), 
+	Degrade(DegradeRequestFilter.class, "gateway.degrade", 2), 
+	WIp(WIpHttpRequestFilter.class, "gateway.ip.whitelist", 4), 
+	Ip(IpHttpRequestFilter.class, "gateway.ip.blacklist", 6), 
+	CC(CCHttpRequestFilter.class, "gateway.cc", 8),
+	Scanner(ScannerHttpRequestFilter.class, "gateway.scanner", 10),
+	WUrl(WUrlHttpRequestFilter.class, "gateway.url.whitelist", 12),
+	Ua(UaHttpRequestFilter.class, "gateway.ua", 14),
+	Url(UrlHttpRequestFilter.class, "gateway.url.blacklist", 16),
+	Args(ArgsHttpRequestFilter.class, "gateway.args", 18),
+	Cookie(CookieHttpRequestFilter.class, "gateway.cookie", 20),
+	Post(PostHttpRequestFilter.class, "gateway.post", 22),
+	Token(TokenHttpRequestFilter.class, "gateway.token", 24),
 
 	//responseFilter
-	Clickjack(ClickjackHttpResponseFilter.class, "gateway.click.jack", 0),
-	TokenResponse(TokenHttpResponseFilter.class, "gateway.response.token", 1);
+	CorsResponse(CorsHttpResponseFilter.class, "gateway.cors", 0),
+	TokenResponse(TokenHttpResponseFilter.class, "gateway.token", 2);
 	
 	// 成员变量  
     private int order;  
@@ -45,16 +46,12 @@ public enum HttpFilterEnum {
     private Class<? extends HttpFilter> clazz;
     
 	//requestFilter
-	private static Map<String, Class<?>> filterKeyMap = new HashMap<>();
-	private static Map<Class<?>, String> filterMap = new HashMap<>();
-	private static Map<Class<?>, Integer> filterOrderMap = new HashMap<>();
+	private static Map<Class<?>, HttpFilterEnum> filterMap = new HashMap<>();
 
 	//加入默认过滤器
 	static {
 		for (HttpFilterEnum e : HttpFilterEnum.values()) {
-			filterMap.put(e.getClazz(), e.getKey());
-			filterOrderMap.put(e.getClazz(), e.getOrder());
-			filterKeyMap.put(e.getKey(), e.getClazz());
+			filterMap.put(e.getClazz(), e);
 		}
 	}
 
@@ -65,53 +62,46 @@ public enum HttpFilterEnum {
         this.order = order;   
     }
 	public Class<? extends HttpFilter> getClazz() {
-		return clazz;
+		return this.clazz;
+	}
+	public void setClazz(Class<? extends HttpFilter> clazz) {
+		this.clazz = clazz;
+	}
+	public String getKey() {
+		return this.key;
+	}
+	public void setKey(String key) {
+		this.key = key;
+	}
+	public void setOrder(Integer order) {
+		this.order = order;
+	}
+	public Integer getOrder() {
+		return order;
 	}
 	
-	//获取开关
-	public String getKey() {
-		return key;
-	}
 	public static String getKey(Class<?> clazz) {
-		
-		//循环扩展过滤器
-		String strSwitch = filterMap.get(clazz);
-		if (StringUtil.isNotEmpty(strSwitch)) {
-			return strSwitch;
+		if (filterMap.containsKey(clazz)) {
+			return filterMap.get(clazz).getKey();
 		}
 		return null;
 	}
 	
-	//获取排序
-	public Integer getOrder() {
-		return order;
-	}
+
 	public static Integer getOrder(Class<?> clazz) {
-		//有限扩展
-		Integer intOrder = filterOrderMap.get(clazz);
-		if (intOrder != null) {
-			return intOrder;
+		if (filterMap.containsKey(clazz)) {
+			return filterMap.get(clazz).getOrder();
 		}
+		
 		return -1;
 	}
 
-	public synchronized static void addOrUpdateFilter( String switchKey, Class<?> clazz, Integer order) {
-		Class<?> defautlFilterClass = filterKeyMap.get(switchKey);
-		if (defautlFilterClass != null) {
-			filterKeyMap.remove(switchKey);
-			filterMap.remove(defautlFilterClass);
-			filterOrderMap.remove(defautlFilterClass);
-		}
-		filterMap.put(clazz, switchKey);
-		filterOrderMap.put(clazz, order);
-		filterKeyMap.put(switchKey, clazz);
+	public synchronized static void replaceFilter(HttpFilterEnum eum, Class<? extends HttpFilter> clazz) {
+		filterMap.remove(eum.getClazz());
+		eum.setClazz(clazz);
+		filterMap.put(clazz, eum);
 	}
-	public synchronized static void removeFilter(String switchKey) {
-		Class<?> defautlFilterClass = filterKeyMap.get(switchKey);
-		if (defautlFilterClass != null) {
-			filterKeyMap.remove(switchKey);
-			filterMap.remove(defautlFilterClass);
-			filterOrderMap.remove(defautlFilterClass);
-		}
+	public synchronized static void removeFilter(Class<?> clazz) {
+		filterMap.remove(clazz);
 	}
 }

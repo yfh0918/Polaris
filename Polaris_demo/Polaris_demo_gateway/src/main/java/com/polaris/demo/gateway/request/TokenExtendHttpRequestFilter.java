@@ -19,7 +19,7 @@ import io.netty.handler.codec.http.HttpRequest;
 public class TokenExtendHttpRequestFilter extends HttpRequestFilter {
 
 	static {
-		HttpFilterEnum.addOrUpdateFilter(HttpFilterEnum.Token.getKey(), TokenExtendHttpRequestFilter.class,HttpFilterEnum.Token.getOrder());
+		HttpFilterEnum.replaceFilter(HttpFilterEnum.Token, TokenExtendHttpRequestFilter.class);
 	}
 	
 	@Override

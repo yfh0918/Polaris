@@ -18,7 +18,7 @@ import io.netty.handler.codec.http.HttpResponse;
 public class TokenExtendHttpResponseFilter extends HttpResponseFilter {
 	
 	static {
-		HttpFilterEnum.addOrUpdateFilter(HttpFilterEnum.TokenResponse.getKey(), TokenExtendHttpResponseFilter.class,HttpFilterEnum.TokenResponse.getOrder());
+		HttpFilterEnum.replaceFilter(HttpFilterEnum.TokenResponse, TokenExtendHttpResponseFilter.class);
     }
 	
     @Override
