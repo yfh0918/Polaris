@@ -5,7 +5,7 @@ import java.util.Map;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 
-public abstract class HttpFilter extends HttpFilterOrder implements HttpFilterInit {
+public abstract class HttpFilter extends HttpFilterOrder implements HttpFilterLifeCycle {
 	/**
      * 中途被拦截需要返回的信息
      *

@@ -26,7 +26,9 @@ public class HttpResponseFilterChain extends HttpFilterChain {
 		responseFilters.add(filter);
         Collections.sort(responseFilters, new HttpFilterCompare());
     }
-
+    public synchronized static void removeFilter(HttpResponseFilter filter) {
+    	responseFilters.remove(filter);
+    }
     public static ImmutablePair<Boolean, HttpResponseFilter> doFilter(HttpRequest originalRequest, HttpResponse httpResponse) {
         for (HttpResponseFilter filter : responseFilters) {
         	String key = HttpFilterEnum.getKey(filter.getClass());

@@ -22,9 +22,18 @@ public abstract class HttpRequestFilter extends HttpFilter  {
      *
      */
 	@Override
-	public void init() {
+	public void start() {
 		HttpRequestFilterChain.addFilter(this);
 	} 
+	
+    /**
+     * 从调用链去除过滤器
+     *
+     */
+	@Override
+	public void stop() {
+		HttpRequestFilterChain.removeFilter(this);
+	}
 	
 	/**
      * httpRequest拦截逻辑

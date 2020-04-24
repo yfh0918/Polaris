@@ -18,9 +18,18 @@ public abstract class HttpResponseFilter extends HttpFilter {
      *
      */
 	@Override
-	public void init() {
+	public void start() {
 		HttpResponseFilterChain.addFilter(this);
 	} 
+	
+    /**
+     * 从调用链去除过滤器
+     *
+     */
+	@Override
+	public void stop() {
+		HttpResponseFilterChain.removeFilter(this);
+	}
 	
 	protected abstract boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse);
 }

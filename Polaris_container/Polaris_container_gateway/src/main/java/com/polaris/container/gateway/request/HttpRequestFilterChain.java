@@ -28,6 +28,9 @@ public class HttpRequestFilterChain extends HttpFilterChain{
         requestFilters.add(filter);
         Collections.sort(requestFilters, new HttpFilterCompare());
     }
+    public synchronized static void removeFilter(HttpRequestFilter filter) {
+        requestFilters.remove(filter);
+    }
 
     public static ImmutablePair<Boolean, HttpRequestFilter> doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
         for (HttpRequestFilter filter : requestFilters) {
