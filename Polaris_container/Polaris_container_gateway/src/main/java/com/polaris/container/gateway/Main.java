@@ -4,7 +4,6 @@ import org.springframework.core.annotation.Order;
 
 import com.polaris.container.Server;
 import com.polaris.container.ServerOrder;
-import com.polaris.container.gateway.server.GatewayServer;
 
 /**
  * 入口启动类
@@ -18,7 +17,7 @@ public class Main implements Server {
      */
 	@Override
 	public void start() {
-		GatewayServer.getInstance().start();
+		MainServer.getInstance().start();
 	}
 
 

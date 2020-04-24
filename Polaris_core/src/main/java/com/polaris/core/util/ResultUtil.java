@@ -57,5 +57,12 @@ public class ResultUtil {
     		return null;
     	}
 	}
+	
+	public static Result create(String code,  String message) {
+    	Result result = new Result();
+    	result.setCode(code);
+    	result.setMessage(message);
+    	return result;
+    }
 
 }

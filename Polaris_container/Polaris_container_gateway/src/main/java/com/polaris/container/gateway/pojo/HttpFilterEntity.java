@@ -1,4 +1,6 @@
-package com.polaris.container.gateway;
+package com.polaris.container.gateway.pojo;
+
+import com.polaris.container.gateway.HttpFilter;
 
 public class HttpFilterEntity {
 	// 成员变量  

@@ -1,4 +1,4 @@
-package com.polaris.container.gateway.util;
+package com.polaris.container.gateway.request;
 
 
 import java.util.Collection;
@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
-import com.polaris.container.gateway.request.FilterType;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config.Type;
@@ -19,7 +18,7 @@ import com.polaris.core.util.StringUtil;
  * Description:
  *
  */
-public class ConfUtil {
+public class FilterTypeHelper {
     private final static Map<String, Map<String, Pattern>> confMap = new ConcurrentHashMap<>();
 
     static {

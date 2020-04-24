@@ -3,6 +3,7 @@ package com.polaris.container.gateway;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.container.gateway.request.ArgsHttpRequestFilter;
 import com.polaris.container.gateway.request.CCHttpRequestFilter;
 import com.polaris.container.gateway.request.CookieHttpRequestFilter;
@@ -82,18 +83,12 @@ public enum HttpFilterEnum {
 		addFilter(httpFilterEntity);
 	}
 	public synchronized static void addFilter(HttpFilterEntity httpFilterEntity) {
-		//add-first
 		filterMap.put(httpFilterEntity.getFilter().getClass(), httpFilterEntity);
-		
-		//start-second
 		httpFilterEntity.getFilter().start();
 	}
 	
 	public synchronized static void removeFilter(HttpFilterEntity httpFilterEntity) {
-		//remove-first
 		filterMap.remove(httpFilterEntity.getFilter().getClass());
-		
-		//stop-second
 		httpFilterEntity.getFilter().stop();
 	}
 }

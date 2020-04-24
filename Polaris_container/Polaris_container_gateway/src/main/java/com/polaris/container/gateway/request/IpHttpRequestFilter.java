@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.GatewayConstant;
-import com.polaris.container.gateway.util.ConfUtil;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -28,7 +27,7 @@ public class IpHttpRequestFilter extends HttpRequestFilter {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
             String realIp = GatewayConstant.getRealIp(httpRequest);
-            Pattern pat = ConfUtil.getPattern(FilterType.IP.name(),realIp);
+            Pattern pat = FilterTypeHelper.getPattern(FilterType.IP.name(),realIp);
             if (pat != null) {
                 hackLog(logger, GatewayConstant.getRealIp(httpRequest), FilterType.IP.name(), pat.toString());
                 return true;

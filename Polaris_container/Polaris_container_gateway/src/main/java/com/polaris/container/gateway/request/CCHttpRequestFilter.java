@@ -29,7 +29,6 @@ import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.RateLimiter;
 import com.polaris.container.gateway.GatewayConstant;
-import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config.Type;
@@ -37,6 +36,7 @@ import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.pojo.Result;
 import com.polaris.core.thread.InheritableThreadLocalExecutor;
 import com.polaris.core.util.PropertyUtil;
+import com.polaris.core.util.ResultUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.extension.cache.Cache;
 import com.polaris.extension.cache.CacheFactory;
@@ -257,7 +257,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         	//是否黑名单
         	if (isBlackIp && blackIpCache.get(realIp) != null){
         		String message = realIp + " access has exceeded ";
-            	this.setResult(HttpRequestFilterSupport.createResultDto(Constant.RESULT_FAIL,message).toJSONString());
+            	this.setResult(ResultUtil.create(Constant.RESULT_FAIL,message).toJSONString());
                 hackLog(logger, realIp, "cc", message);
         		return true;
         	}
@@ -265,7 +265,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
         	//cc攻击
             if (ccHack(url, realIp)) {
             	String message = httpRequest.uri() + " " + realIp + " access  has exceeded ";
-            	this.setResult(HttpRequestFilterSupport.createResultDto(Constant.RESULT_FAIL,message).toJSONString());
+            	this.setResult(ResultUtil.create(Constant.RESULT_FAIL,message).toJSONString());
                 hackLog(logger, realIp, "cc", message);
             	return true;
             }

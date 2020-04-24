@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.GatewayConstant;
-import com.polaris.container.gateway.util.ConfUtil;
 import com.polaris.container.gateway.util.RequestUtil;
 
 import io.netty.buffer.Unpooled;
@@ -52,7 +51,7 @@ public class PostHttpRequestFilter extends HttpRequestFilter {
                         if (kv.length == 2) {
                         	RequestUtil.setPostParameter(kv[0].trim(), kv[1].trim());
                         }
-                        for (Pattern pattern : ConfUtil.getPattern(FilterType.POST.name())) {
+                        for (Pattern pattern : FilterTypeHelper.getPattern(FilterType.POST.name())) {
                             Matcher matcher = pattern.matcher(contentBody.toLowerCase());
                             if (matcher.find()) {
                                 hackLog(logger, GatewayConstant.getRealIp(originalRequest), FilterType.POST.name(), pattern.toString());
@@ -62,7 +61,7 @@ public class PostHttpRequestFilter extends HttpRequestFilter {
                         Matcher fileMatcher = filePattern.matcher(contentBody);
                         if (fileMatcher.find()) {
                             String fileExt = fileMatcher.group(3);
-                            for (Pattern pat : ConfUtil.getPattern(FilterType.FILE.name())) {
+                            for (Pattern pat : FilterTypeHelper.getPattern(FilterType.FILE.name())) {
                                 if (pat.matcher(fileExt).matches()) {
                                     hackLog(logger, GatewayConstant.getRealIp(originalRequest), FilterType.POST.name(), filePattern.toString());
                                     return true;

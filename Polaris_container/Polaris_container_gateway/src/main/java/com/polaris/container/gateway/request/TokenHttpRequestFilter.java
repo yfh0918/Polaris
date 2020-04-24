@@ -4,13 +4,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.util.JwtUtil;
 import com.polaris.core.util.PropertyUtil;
+import com.polaris.core.util.ResultUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.SystemCallUtil;
 
@@ -216,7 +216,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
                 if (uncheckUrl) {
                 	return false;
                 }
-            	this.setResult(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
+            	this.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
                 return true;
             }
 
@@ -225,12 +225,12 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
             	//token认证
                 Claims claims = JwtUtil.parseJWT(token);
                 if (claims == null) {
-                	this.setResult(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
+                	this.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
                     return true;
                 }
                 String userName = claims.getSubject();
                 if (StrUtil.isEmpty(userName)) {
-                	this.setResult(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
+                	this.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
                     return true;
                 }
                 
@@ -239,7 +239,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
                 httpRequest.headers().add(SystemCallUtil.key(), SystemCallUtil.value());
                 return false;
             } catch (Exception ex) {
-            	this.setResult(HttpRequestFilterSupport.createResultDto(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
+            	this.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
                 return true;
             }
 

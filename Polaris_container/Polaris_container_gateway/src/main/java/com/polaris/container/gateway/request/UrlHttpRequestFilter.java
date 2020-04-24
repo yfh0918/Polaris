@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.GatewayConstant;
-import com.polaris.container.gateway.util.ConfUtil;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -35,7 +34,7 @@ public class UrlHttpRequestFilter extends HttpRequestFilter {
             } else {
                 url = httpRequest.uri();
             }
-            for (Pattern pat : ConfUtil.getPattern(FilterType.URL.name())) {
+            for (Pattern pat : FilterTypeHelper.getPattern(FilterType.URL.name())) {
                 Matcher matcher = pat.matcher(url);
                 if (matcher.find()) {
                     hackLog(logger, GatewayConstant.getRealIp(httpRequest), FilterType.URL.name(), pat.toString());

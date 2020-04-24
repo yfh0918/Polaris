@@ -1,4 +1,4 @@
-package com.polaris.container.gateway.server;
+package com.polaris.container.gateway;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -14,10 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.config.ConfigurationSupport;
-import com.polaris.container.gateway.GatewayConstant;
-import com.polaris.container.gateway.HostResolverImpl;
-import com.polaris.container.gateway.HttpFilterAdapterImpl;
-import com.polaris.container.gateway.HttpFilterEnum;
 import com.polaris.container.gateway.util.SelfSignedSslEngineSource;
 import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.container.util.NetUtils;
@@ -27,9 +23,9 @@ import com.polaris.core.util.SpringUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
-public class GatewayServer {
+public class MainServer {
 	
-	private static Logger logger = LoggerFactory.getLogger(GatewayServer.class);
+	private static Logger logger = LoggerFactory.getLogger(MainServer.class);
 	
 	/**
      * 服务器
@@ -39,7 +35,7 @@ public class GatewayServer {
 	/**
      * 私有构造方法
      */
-    private GatewayServer() {
+    private MainServer() {
     }
     
     /**
@@ -47,7 +43,7 @@ public class GatewayServer {
      *
      * @return 单实例
      */
-    public static GatewayServer getInstance() {
+    public static MainServer getInstance() {
         return Singletone.INSTANCE;
     }
 
@@ -58,7 +54,7 @@ public class GatewayServer {
         /**
          * 单实例
          */
-        private static final GatewayServer INSTANCE = new GatewayServer();
+        private static final MainServer INSTANCE = new MainServer();
     }
     
     /**

@@ -6,12 +6,12 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.util.PropertyUtil;
+import com.polaris.core.util.ResultUtil;
 import com.polaris.core.util.StringUtil;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -108,7 +108,7 @@ public class DegradeRequestFilter extends HttpRequestFilter {
             //降级URL
             String url = CCHttpRequestFilter.getUrl(httpRequest);
             if (degradeUrlSet.size() > 0 && degradeUrlSet.contains(url)) {
-            	this.setResult(HttpRequestFilterSupport.createResultDto(degradeMessageCode,degradeMessage).toJSONString());
+            	this.setResult(ResultUtil.create(degradeMessageCode,degradeMessage).toJSONString());
             	return true;
             }
         }

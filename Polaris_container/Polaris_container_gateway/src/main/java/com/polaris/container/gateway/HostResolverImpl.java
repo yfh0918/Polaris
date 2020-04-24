@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import org.littleshoot.proxy.HostResolver;
 
+import com.polaris.container.gateway.pojo.HostUpstream;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerListener;
@@ -31,17 +32,17 @@ public class HostResolverImpl implements HostResolver {
             return;
         }
         String[] contents = content.split(Constant.LINE_SEP);
-        Upstream.load(contents);
+        HostUpstream.load(contents);
         ServerStrategyProviderFactory.get().init();
     }
 
     private HostResolverImpl() {
        
     	//先获取
-    	loadUpstream(ConfHandlerProviderFactory.get(Type.EXT).get(Upstream.NAME));
+    	loadUpstream(ConfHandlerProviderFactory.get(Type.EXT).get(HostUpstream.NAME));
     	
     	//后监听
-    	ConfHandlerProviderFactory.get(Type.EXT).listen(Upstream.NAME, new ConfHandlerListener() {
+    	ConfHandlerProviderFactory.get(Type.EXT).listen(HostUpstream.NAME, new ConfHandlerListener() {
             @Override
             public void receive(String content) {
                 loadUpstream(content);
@@ -65,7 +66,7 @@ public class HostResolverImpl implements HostResolver {
     		uri = uri + GatewayConstant.SLASH;
     	}
         if (uri != null) {
-            for (Entry<String, Upstream> entry : Upstream.getContextEntrySet()) {
+            for (Entry<String, HostUpstream> entry : HostUpstream.getContextEntrySet()) {
                 if (uri.startsWith(entry.getKey()+GatewayConstant.SLASH)) {
                     return entry.getValue().getVirtualPort();
                 }
@@ -73,7 +74,7 @@ public class HostResolverImpl implements HostResolver {
         }
 
         // default
-        Upstream upstream = Upstream.getFromContext(GatewayConstant.DEFAULT);
+        HostUpstream upstream = HostUpstream.getFromContext(GatewayConstant.DEFAULT);
         if (upstream != null) {
         	return upstream.getVirtualPort();
         }
@@ -104,7 +105,7 @@ public class HostResolverImpl implements HostResolver {
         String[] address = null;
 
         //端口号
-    	Upstream upstream = Upstream.getFromVirtualPort(String.valueOf(virtualPort));
+    	HostUpstream upstream = HostUpstream.getFromVirtualPort(String.valueOf(virtualPort));
         if (upstream != null) {
             String uri = ServerStrategyProviderFactory.get().getUrl(upstream.getHost());
             if (StringUtil.isNotEmpty(uri)) {
@@ -112,7 +113,7 @@ public class HostResolverImpl implements HostResolver {
             } 
         }
         if (address == null) {
-        	upstream = Upstream.getFromContext(GatewayConstant.DEFAULT);
+        	upstream = HostUpstream.getFromContext(GatewayConstant.DEFAULT);
         	if (upstream != null) {
         		String uri = ServerStrategyProviderFactory.get().getUrl(upstream.getHost());
         		if (StringUtil.isNotEmpty(uri)) {

@@ -1,4 +1,4 @@
-package com.polaris.container.gateway;
+package com.polaris.container.gateway.pojo;
 
 import java.util.Map;
 import java.util.Set;
@@ -6,20 +6,20 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.polaris.core.util.PropertyUtil;
 
-public class Upstream {
+public class HostUpstream {
 
     public static final String NAME = "upstream.txt";
 
-    private static volatile Map<String, Upstream> contextMap = new ConcurrentHashMap<>();
-    private static volatile Map<String, Upstream> virtualPortMap = new ConcurrentHashMap<>();
+    private static volatile Map<String, HostUpstream> contextMap = new ConcurrentHashMap<>();
+    private static volatile Map<String, HostUpstream> virtualPortMap = new ConcurrentHashMap<>();
 
     public static void load(String[] contents) {
-    	Map<String, Upstream> temp_contextMap = new ConcurrentHashMap<>();
-        Map<String, Upstream> temp_virtualPortMap = new ConcurrentHashMap<>();
+    	Map<String, HostUpstream> temp_contextMap = new ConcurrentHashMap<>();
+        Map<String, HostUpstream> temp_virtualPortMap = new ConcurrentHashMap<>();
     	int port = 7000;
         for (String line : contents) {
         	line = line.replace("\n", "").replace("\r", "");
-        	Upstream upstream = Upstream.create(line, String.valueOf(port));
+        	HostUpstream upstream = HostUpstream.create(line, String.valueOf(port));
         	temp_contextMap.put(upstream.getContext(), upstream);
         	temp_virtualPortMap.put(upstream.getVirtualPort(), upstream);
             port++;
@@ -27,9 +27,9 @@ public class Upstream {
         contextMap = temp_contextMap;
         virtualPortMap = temp_virtualPortMap;
     }
-    private static Upstream create(String line, String virtualPort) {
+    private static HostUpstream create(String line, String virtualPort) {
     	String[] kv = PropertyUtil.getKeyValue(line);
-    	Upstream upstram = new Upstream();
+    	HostUpstream upstram = new HostUpstream();
     	if (kv != null) {
     		upstram.setHost(kv[1]);
     		upstram.setContext(kv[0]);
@@ -38,16 +38,16 @@ public class Upstream {
     	return upstram;
     }
     
-    public static Upstream getFromContext(String key) {
+    public static HostUpstream getFromContext(String key) {
     	return contextMap.get(key);
     }
-    public static Set<Map.Entry<String,Upstream>> getContextEntrySet() {
+    public static Set<Map.Entry<String,HostUpstream>> getContextEntrySet() {
     	return contextMap.entrySet();
     }
-    public static Upstream getFromVirtualPort(String key) {
+    public static HostUpstream getFromVirtualPort(String key) {
     	return virtualPortMap.get(key);
     }
-    public static Set<Map.Entry<String,Upstream>> getVirtualPortEntrySet() {
+    public static Set<Map.Entry<String,HostUpstream>> getVirtualPortEntrySet() {
     	return virtualPortMap.entrySet();
     }
  

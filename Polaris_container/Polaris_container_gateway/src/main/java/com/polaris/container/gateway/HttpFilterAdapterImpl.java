@@ -11,14 +11,15 @@ import org.littleshoot.proxy.impl.ProxyToServerConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.container.gateway.pojo.HostUpstream;
 import com.polaris.container.gateway.request.HttpRequestFilter;
 import com.polaris.container.gateway.request.HttpRequestFilterChain;
 import com.polaris.container.gateway.response.HttpResponseFilter;
 import com.polaris.container.gateway.response.HttpResponseFilterChain;
-import com.polaris.container.gateway.support.HttpRequestFilterSupport;
 import com.polaris.container.gateway.util.RequestUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
+import com.polaris.core.util.ResultUtil;
 import com.polaris.core.util.StringUtil;
 
 import io.netty.buffer.ByteBuf;
@@ -71,7 +72,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         } catch (Exception e) {
         	
         	//存在异常的直接进入response过滤器
-            httpResponse = createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(e).toJSONString(), null);
+            httpResponse = createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, ResultUtil.create(Constant.RESULT_FAIL,e.toString()).toJSONString(), null);
             logger.error("client's request failed", e);
             
         } 
@@ -92,7 +93,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     public void proxyToServerResolutionSucceeded(String serverHostAndPort,
                                                  InetSocketAddress resolvedRemoteAddress) {
         if (resolvedRemoteAddress == null) {
-            ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR).toJSONString(), null));
+            ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, ResultUtil.create(Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(), null));
         } 
     }
 
@@ -104,7 +105,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	//系统异常
         	if (((HttpResponse) httpObject).status().code() == HttpResponseStatus.BAD_GATEWAY.code()) {
                 ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, 
-                		originalRequest, HttpRequestFilterSupport.createResultDto(Constant.MESSAGE_GLOBAL_ERROR).toJSONString(), null));
+                		originalRequest, ResultUtil.create(Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(), null));
                 return httpObject;
         	}
 
@@ -148,7 +149,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             String serverHostAndPort = proxyToServerConnection.getServerHostAndPort();
             String virtualPort = serverHostAndPort.substring(serverHostAndPort.indexOf(":")+1);
             ServerStrategyProviderFactory.get().connectionFail(
-            		Upstream.getFromVirtualPort(virtualPort).getHost(), remoteUrl);
+            		HostUpstream.getFromVirtualPort(virtualPort).getHost(), remoteUrl);
         } catch (Exception e) {
             logger.error("connection of proxy->server is failed", e);
         } 
