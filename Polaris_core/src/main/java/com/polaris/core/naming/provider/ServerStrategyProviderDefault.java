@@ -2,10 +2,15 @@ package com.polaris.core.naming.provider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.polaris.core.util.StringUtil;
 
 public class ServerStrategyProviderDefault implements ServerStrategyProvider{
 	private static final String HTTP_PREFIX = "http://";
 	private static final String HTTPS_PREFIX = "https://";
+	private static final String IP_REXP = "([1-9]|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])(\\.(\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])){3}";  
     public static final ServerStrategyProviderDefault INSTANCE = new ServerStrategyProviderDefault();
     private static final ServerHandlerRemoteProvider INSTANCE_REMOTE = ServerHandlerRemoteProvider.INSTANCE;
     private static final ServerHandlerLocalProvider INSTANCE_LOCAL = ServerHandlerLocalProvider.INSTANCE;
@@ -25,7 +30,7 @@ public class ServerStrategyProviderDefault implements ServerStrategyProvider{
 	public String getUrl(String key) {
     	String url = null;
     	List<String> serverInfoList = parseServer(key);
-		if (isRemote(serverInfoList.get(1))) {
+		if (!isIP(serverInfoList.get(1))) {
 			url = INSTANCE_REMOTE.getUrl(key,serverInfoList);
 		}
 		return url == null ? INSTANCE_LOCAL.getUrl(key,serverInfoList) : url;
@@ -35,7 +40,7 @@ public class ServerStrategyProviderDefault implements ServerStrategyProvider{
 	public List<String> getAllUrls(String key) {
 		List<String> urls = null;
 		List<String> serverInfoList = parseServer(key);
-		if (isRemote(serverInfoList.get(1))) {
+		if (!isIP(serverInfoList.get(1))) {
 			urls = INSTANCE_REMOTE.getAllUrl(key,serverInfoList);
 		}
 		return urls == null ? INSTANCE_LOCAL.getAllUrl(key,serverInfoList) : urls;
@@ -45,7 +50,7 @@ public class ServerStrategyProviderDefault implements ServerStrategyProvider{
 	public List<String> getAllUrls(String key, boolean subscribe) {
 		List<String> urls = null;
 		List<String> serverInfoList = parseServer(key);
-		if (isRemote(serverInfoList.get(1))) {
+		if (!isIP(serverInfoList.get(1))) {
 			urls = INSTANCE_REMOTE.getAllUrl(key,serverInfoList,subscribe);
 		}
 		return urls == null ? INSTANCE_LOCAL.getAllUrl(key,serverInfoList,subscribe) : urls;
@@ -53,17 +58,12 @@ public class ServerStrategyProviderDefault implements ServerStrategyProvider{
 
     @Override
 	public boolean connectionFail(String key, String url) {
-		
 		List<String> serverInfoList = parseServer(key);
 		List<String> serverInfoList2 = parseServer(url);
-		boolean result = false;
-		if (isRemote(serverInfoList.get(1))) {
-			result = INSTANCE_REMOTE.connectionFail(serverInfoList.get(1), serverInfoList2.get(1));
-		}
-		if (!result) {
-			return INSTANCE_LOCAL.connectionFail(serverInfoList.get(1), serverInfoList2.get(1));
-		}
-		return true;
+		if (!isIP(serverInfoList.get(1))) {
+			return INSTANCE_REMOTE.connectionFail(serverInfoList.get(1), serverInfoList2.get(1));
+		} 
+		return INSTANCE_LOCAL.connectionFail(serverInfoList.get(1), serverInfoList2.get(1));
 	}
 	
     @Override
@@ -71,18 +71,15 @@ public class ServerStrategyProviderDefault implements ServerStrategyProvider{
 		INSTANCE_LOCAL.init();
 	}
 	
-	private boolean isRemote(String key) {
-		if (key.toLowerCase().startsWith("www.")) {
-			return false;
-		}
-		if (key.toLowerCase().endsWith(".com") || key.toLowerCase().endsWith(".cn")) {
-			return false;
-		}
-		if (key.contains(",") || key.contains(":")) {
-			return false;
-		}
-		return true;
-	}
+	public boolean isIP(String addr) {  
+        if(StringUtil.isEmpty(addr) || addr.length() < 7 || addr.length() > 15) {  
+            return false;  
+        }  
+        Pattern pat = Pattern.compile(IP_REXP);    
+        Matcher mat = pat.matcher(addr);    
+        boolean ipAddress = mat.find();  
+        return ipAddress;  
+    }  
 	
 	private List<String> parseServer(String serverInfo) {
 		List<String> serverList = new ArrayList<>(3);
@@ -106,5 +103,29 @@ public class ServerStrategyProviderDefault implements ServerStrategyProvider{
         return serverList;
     }
 
+	 public static void main(String[] args)   
+	    {  
+	        /** 
+	         * 符合IP地址的范围 
+	         */  
+	         String oneAddress = "10.128.36.88";  
+	         /** 
+	         * 符合IP地址的长度范围但是不符合格式 
+	         */  
+	         String twoAddress = "127.34.75";  
+	         /** 
+	         * 不符合IP地址的长度范围 
+	         */  
+	         String threeAddress = "5.0.8";  
+	         /** 
+	         * 不符合IP地址的长度范围但是不符合IP取值范围 
+	         */  
+	         String fourAddress = "255.255.255.2347";  
+	         ServerStrategyProviderDefault ipAdd = new ServerStrategyProviderDefault();  
+	         System.out.println(ipAdd.isIP(oneAddress));  
+	         System.out.println(ipAdd.isIP(twoAddress));  
+	         System.out.println(ipAdd.isIP(threeAddress));  
+	         System.out.println(ipAdd.isIP(fourAddress));  
+	    }  
 
 }
