@@ -40,7 +40,7 @@ public enum HttpFilterEnum {
 	CorsResponse(new HttpFilterEntity(new CorsHttpResponseFilter(), "gateway.cors", 0)),
 	TokenResponse(new HttpFilterEntity(new TokenHttpResponseFilter(), "gateway.token", 2));
 	
-	//requestFilter
+	//保存filterClass和HttpFilterEntity之间的映射
 	private static Map<Class<?>, HttpFilterEntity> filterMap = new HashMap<>();
 
 	//加入默认过滤器
