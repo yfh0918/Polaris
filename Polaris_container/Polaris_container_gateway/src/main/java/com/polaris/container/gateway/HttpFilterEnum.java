@@ -46,9 +46,7 @@ public enum HttpFilterEnum {
 	//加入默认过滤器
 	public static void init() {
 		for (HttpFilterEnum e : HttpFilterEnum.values()) {
-			addFilter(e.getFilterEntity().getFilter(),
-					  e.getFilterEntity().getKey(), 
-					  e.getFilterEntity().getOrder());
+			addFilter(e.getFilterEntity());
 		}
 	}
 
@@ -78,24 +76,24 @@ public enum HttpFilterEnum {
 		return -1;
 	}
 
-	public synchronized static void replaceFilter(HttpFilterEnum eum, HttpFilter filter) {
-		removeFilter(eum.getFilterEntity().getFilter().getClass());
-		addFilter(filter,eum.getFilterEntity().getKey(),eum.getFilterEntity().getOrder());
+	public synchronized static void replaceFilter(HttpFilterEntity httpFilterEntity, HttpFilter filter) {
+		removeFilter(httpFilterEntity);
+		httpFilterEntity.setFilter(filter);
+		addFilter(httpFilterEntity);
 	}
-	public synchronized static void addFilter(HttpFilter filter, String key, Integer order) {
+	public synchronized static void addFilter(HttpFilterEntity httpFilterEntity) {
 		//add-first
-		filterMap.put(filter.getClass(), new HttpFilterEntity(filter, key, order));
+		filterMap.put(httpFilterEntity.getFilter().getClass(), httpFilterEntity);
 		
 		//start-second
-		filter.start();
+		httpFilterEntity.getFilter().start();
 	}
-	public synchronized static void removeFilter(Class<? extends HttpFilter> clazz) {
+	
+	public synchronized static void removeFilter(HttpFilterEntity httpFilterEntity) {
 		//remove-first
-		HttpFilterEntity httpFilterEntity = filterMap.remove(clazz);
+		filterMap.remove(httpFilterEntity.getFilter().getClass());
 		
 		//stop-second
-		if (httpFilterEntity != null) {
-			httpFilterEntity.getFilter().stop();
-		}
+		httpFilterEntity.getFilter().stop();
 	}
 }
