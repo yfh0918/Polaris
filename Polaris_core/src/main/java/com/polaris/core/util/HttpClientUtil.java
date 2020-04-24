@@ -192,7 +192,7 @@ public class HttpClientUtil {
      * @author 
      * @create 
      */
-    public static String request(HTTPRequestParameter parameter, CloseableHttpClient... httpClient) {
+    public static String request(HTTPRequestParameter parameter, CloseableHttpClient... httpClient) throws Exception{
     	HttpUriRequest request = null;
         try {
         	
@@ -204,8 +204,8 @@ public class HttpClientUtil {
         	
         } catch (Exception ex) {
         	setHttpException(parameter.getUrl(),request.getURI().toString(),ex);
+        	throw ex;
         } 
-        return null;
     }
     
     /**
@@ -216,25 +216,29 @@ public class HttpClientUtil {
      * @author 
      * @create 
      */
-    public static String post(String orgurl, CloseableHttpClient... httpClient) {
+    public static String post(String orgurl, CloseableHttpClient... httpClient) throws Exception {
     	return post(orgurl,timeout, httpClient);
     }
-    public static String post(String orgurl, int timeout, CloseableHttpClient... httpClient) {
+    public static String post(String orgurl, int timeout, CloseableHttpClient... httpClient) throws Exception {
     	return post(orgurl,timeout, new HashMap<>(),httpClient);
     }
 
-    public static String post(String orgurl, Map<String, Object> requestParams, CloseableHttpClient... httpClient) {
+    public static String post(String orgurl, Map<String, Object> requestParams, 
+    		CloseableHttpClient... httpClient) throws Exception {
     	return post(orgurl,timeout,requestParams,httpClient);
     }
 
-    public static String post(String orgurl, int timeout, Map<String, Object> requestParams, CloseableHttpClient... httpClient) {
+    public static String post(String orgurl, int timeout, 
+    		Map<String, Object> requestParams, CloseableHttpClient... httpClient) throws Exception {
     	return post(orgurl,timeout,requestParams,null,httpClient);
     }
     
-    public static String post(String orgurl, Map<String, Object> requestParams, Map<String, String> headParams, CloseableHttpClient... httpClient) {
+    public static String post(String orgurl, Map<String, Object> requestParams, 
+    		Map<String, String> headParams, CloseableHttpClient... httpClient) throws Exception {
     	return post(orgurl, timeout, requestParams, headParams, httpClient);
     }
-    public static String post(String orgurl, int timeout, Map<String, Object> requestParams, Map<String, String> headParams, CloseableHttpClient... httpClient) {
+    public static String post(String orgurl, int timeout, Map<String, Object> requestParams, 
+    		Map<String, String> headParams, CloseableHttpClient... httpClient) throws Exception {
     	HTTPRequestParameter parameter = new HTTPRequestParameter();
     	parameter.setRequstType(RequstType.HTTP_POST);
     	parameter.setUrl(orgurl);
@@ -252,16 +256,19 @@ public class HttpClientUtil {
      * @author 
      * @create 
      */
-    public static String post(String orgurl, String body, CloseableHttpClient... httpClient) {
+    public static String post(String orgurl, String body, CloseableHttpClient... httpClient) throws Exception {
     	return post(orgurl,body,timeout,httpClient);
     }
-    public static String post(String orgurl, String body, int timeout, CloseableHttpClient... httpClient) {
+    public static String post(String orgurl, String body, int timeout, 
+    		CloseableHttpClient... httpClient) throws Exception {
     	return post(orgurl,body,timeout, null,httpClient);
     }
-    public static String post(String orgurl, String body, Map<String, String> headParams, CloseableHttpClient... httpClient) {
+    public static String post(String orgurl, String body, Map<String, String> headParams, 
+    		CloseableHttpClient... httpClient) throws Exception {
     	return post(orgurl, body, timeout, headParams, httpClient);
     }
-    public static String post(String orgurl, String body, int timeout, Map<String, String> headParams, CloseableHttpClient... httpClient) {
+    public static String post(String orgurl, String body, int timeout, 
+    		Map<String, String> headParams, CloseableHttpClient... httpClient) throws Exception {
     	HTTPRequestParameter parameter = new HTTPRequestParameter();
     	parameter.setRequstType(RequstType.HTTP_POST_BODY);
     	parameter.setUrl(orgurl);
@@ -280,16 +287,20 @@ public class HttpClientUtil {
      * @author 
      * @create 
      */
-    public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestParam, CloseableHttpClient... httpClient) {
+    public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestParam, 
+    		CloseableHttpClient... httpClient) throws Exception {
     	return postFileMultiPart(orgurl, timeout, requestParam,httpClient);
     }
-    public static String postFileMultiPart(String orgurl,int timeout, Map<String,ContentBody> requestParam, CloseableHttpClient... httpClient) {
+    public static String postFileMultiPart(String orgurl,int timeout, Map<String,ContentBody> requestParam, 
+    		CloseableHttpClient... httpClient) throws Exception {
     	return postFileMultiPart(orgurl, timeout, requestParam, null,httpClient);
     }
-    public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestContentBodys, Map<String, String> headParams, CloseableHttpClient... httpClient) {
+    public static String postFileMultiPart(String orgurl,Map<String,ContentBody> requestContentBodys, 
+    		Map<String, String> headParams, CloseableHttpClient... httpClient) throws Exception {
     	return postFileMultiPart(orgurl,timeout,requestContentBodys,headParams,httpClient);
     }
-    public static String postFileMultiPart(String orgurl,int timeout, Map<String,ContentBody> requestContentBodys, Map<String, String> headParams, CloseableHttpClient... httpClient) {
+    public static String postFileMultiPart(String orgurl,int timeout, Map<String,ContentBody> requestContentBodys, 
+    		Map<String, String> headParams, CloseableHttpClient... httpClient) throws Exception {
     	HTTPRequestParameter parameter = new HTTPRequestParameter();
     	parameter.setRequstType(RequstType.HTTP_POST_MULTIPART);
     	parameter.setUrl(orgurl);
@@ -308,22 +319,26 @@ public class HttpClientUtil {
      * @author 
      * @create 
      */
-    public static String get(String orgurl, CloseableHttpClient... httpClient) {
+    public static String get(String orgurl, CloseableHttpClient... httpClient) throws Exception {
     	return get(orgurl, timeout,httpClient);
     }
-    public static String get(String orgurl, int timeout, CloseableHttpClient... httpClient) {
+    public static String get(String orgurl, int timeout, CloseableHttpClient... httpClient) throws Exception {
     	return get(orgurl, timeout, null,httpClient);
     }
-    public static String get(String orgurl,  Map<String, Object> params, CloseableHttpClient... httpClient) {
+    public static String get(String orgurl,  Map<String, Object> params, 
+    		CloseableHttpClient... httpClient) throws Exception {
     	return get(orgurl, timeout, params, httpClient);
     }
-    public static String get(String orgurl, int timeout, Map<String, Object> params, CloseableHttpClient... httpClient) {
+    public static String get(String orgurl, int timeout, Map<String, Object> params, 
+    		CloseableHttpClient... httpClient) throws Exception {
     	return get(orgurl, timeout, params, null,httpClient);
     }
-    public static String get(String orgurl,  Map<String, Object> requestParams, Map<String, String> headParams, CloseableHttpClient... httpClient) {
+    public static String get(String orgurl,  Map<String, Object> requestParams, 
+    		Map<String, String> headParams, CloseableHttpClient... httpClient) throws Exception {
     	return get(orgurl, timeout,requestParams,headParams,httpClient);
     }
-    public static String get(String orgurl,  int timeout, Map<String, Object> requestParams, Map<String, String> headParams, CloseableHttpClient... httpClient) {
+    public static String get(String orgurl,  int timeout, Map<String, Object> requestParams, 
+    		Map<String, String> headParams, CloseableHttpClient... httpClient) throws Exception {
     	///构建request
     	HTTPRequestParameter parameter = new HTTPRequestParameter();
     	parameter.setRequstType(RequstType.HTTP_GET);
@@ -416,7 +431,7 @@ public class HttpClientUtil {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
     	System.out.println(HttpClientUtil.get("http://blog.csdn.net/catoop/article/details/38849497"));
     	System.out.println(HttpClientUtil.post("http://blog.csdn.net/catoop/article/details/38849497"));
     }

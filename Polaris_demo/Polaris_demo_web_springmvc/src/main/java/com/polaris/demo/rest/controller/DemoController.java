@@ -27,7 +27,7 @@ public class DemoController {
 	
 	@RequestMapping(value = "/test", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String uploadBase64Img(HttpServletRequest request) {
+    public String uploadBase64Img(HttpServletRequest request)throws Exception  {
 		logger.info(testProperties.getAddress1());
 		logger.info(testProperties.getPassword());
 		//logger.info(testProperties.getDigit());

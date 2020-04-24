@@ -61,7 +61,7 @@ public class DemoController {
     @POST
     @Path("/test")
     @ApiOperation(value = "获取一个订单", notes = "返回一个订单", response = String.class)
-    public String demotest(@Context HttpServletRequest request) {
+    public String demotest(@Context HttpServletRequest request) throws Exception {
     	logger.info("ssss"+ssss);
     	logger.info("hello1234");
 
