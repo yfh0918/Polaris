@@ -3,7 +3,7 @@ package com.polaris.container.gateway;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.polaris.container.gateway.pojo.FileType;
+import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
@@ -37,14 +37,14 @@ public abstract class HttpFilterHelper  {
 	}
 	
 	//创建需要处理的具体文件，比如cc.txt,ip.txt
-    public static void create(HttpFilter filter, FileType fileType){
+    public static void create(HttpFilter filter, HttpFilterFile fileType){
     	
 		//先获取
-    	load(fileType, ConfHandlerProviderFactory.get(Type.EXT).get(fileType.getFile()));
+    	load(fileType, ConfHandlerProviderFactory.get(Type.EXT).get(fileType.getName()));
     	filter.onChange(fileType);
 		
 		//后监听
-		ConfHandlerProviderFactory.get(Type.EXT).listen(fileType.getFile(), new ConfHandlerListener() {
+		ConfHandlerProviderFactory.get(Type.EXT).listen(fileType.getName(), new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
 				load(fileType, content);
@@ -52,7 +52,7 @@ public abstract class HttpFilterHelper  {
 			}
     	});
     }
-    private static void load(FileType fileType, String content) {
+    private static void load(HttpFilterFile fileType, String content) {
     	Set<String> data = new HashSet<>();
     	if  (StringUtil.isEmpty(content)) {
     		fileType.setData(data);

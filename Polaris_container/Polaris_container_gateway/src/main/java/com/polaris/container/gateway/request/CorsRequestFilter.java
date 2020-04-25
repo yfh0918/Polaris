@@ -6,7 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.pojo.FileType;
+import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -36,13 +36,13 @@ public class CorsRequestFilter extends HttpRequestFilter {
 
 	
 	@Override
-	public void onChange(FileType fileType) {
-    	if (fileType.getData() == null || fileType.getData().size() == 0) {
-    		logger.error(fileType.getFile() + " is null");
+	public void onChange(HttpFilterFile file) {
+    	if (file.getData() == null || file.getData().size() == 0) {
+    		logger.error(file.getName() + " is null");
     		return;
     	}
     	Map<String, String> tempCorsMap = new HashMap<>(); 
-    	for (String conf : fileType.getData()) {
+    	for (String conf : file.getData()) {
 			if (!conf.startsWith("#")) {
 				String[] kv = PropertyUtil.getKeyValue(conf);
 				if (kv != null && kv.length == 2) {

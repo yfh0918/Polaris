@@ -29,7 +29,7 @@ import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.RateLimiter;
 import com.polaris.container.gateway.GatewayConstant;
-import com.polaris.container.gateway.pojo.FileType;
+import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.core.Constant;
 import com.polaris.core.pojo.Result;
 import com.polaris.core.thread.InheritableThreadLocalExecutor;
@@ -113,9 +113,9 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     }
 	
 	@Override
-	public void onChange(FileType fileType) {
-    	if (fileType.getData() == null || fileType.getData().size() == 0) {
-    		logger.error(fileType.getFile() + " is null");
+	public void onChange(HttpFilterFile file) {
+    	if (file.getData() == null || file.getData().size() == 0) {
+    		logger.error(file.getName() + " is null");
     		return;
     	}
     	int blockSecondsTemp = 60;
@@ -127,7 +127,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     	String ipSavePathTemp = null;
     	
     	Set<String> tempCcSkipIp = new HashSet<>();
-    	for (String conf : fileType.getData()) {
+    	for (String conf : file.getData()) {
 			if (!conf.startsWith("#")) {
 				String[] kv = PropertyUtil.getKeyValue(conf);
 				if (kv != null && kv.length == 2) {

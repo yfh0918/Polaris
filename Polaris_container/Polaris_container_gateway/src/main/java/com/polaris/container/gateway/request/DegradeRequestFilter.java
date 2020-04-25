@@ -6,7 +6,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.pojo.FileType;
+import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.core.Constant;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.ResultUtil;
@@ -35,15 +35,15 @@ public class DegradeRequestFilter extends HttpRequestFilter {
 	private static String degradeMessage = Constant.MESSAGE_GLOBAL_ERROR;
 
 	@Override
-	public void onChange(FileType fileType) {
-    	if (fileType.getData() == null || fileType.getData().size() == 0) {
-    		logger.error(fileType.getFile() + " is null");
+	public void onChange(HttpFilterFile file) {
+    	if (file.getData() == null || file.getData().size() == 0) {
+    		logger.error(file.getName() + " is null");
     		return;
     	}
     	Set<String> tempDegradeUrlSet = new HashSet<>();
     	String tempDegradeMessageCode = null;
     	String tempDegradeMessage = null;
-    	for (String conf : fileType.getData()) {
+    	for (String conf : file.getData()) {
 			if (!conf.startsWith("#")) {
 				String[] kv = PropertyUtil.getKeyValue(conf);
 				if (kv != null && kv.length == 2) {

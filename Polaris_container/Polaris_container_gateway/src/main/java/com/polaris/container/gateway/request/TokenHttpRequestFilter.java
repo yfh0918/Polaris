@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.polaris.container.gateway.pojo.FileType;
+import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.core.Constant;
 import com.polaris.core.util.JwtUtil;
 import com.polaris.core.util.PropertyUtil;
@@ -36,8 +36,8 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
 	public final static String DEFAULT_VALUE = "1";
 
 	@Override
-	public void onChange(FileType fileType) {
-    	if (fileType.getData() == null || fileType.getData().size() == 0) {
+	public void onChange(HttpFilterFile file) {
+    	if (file.getData() == null || file.getData().size() == 0) {
     		UNCHECKED_PATHS = new HashSet<>();
     		UNCHECKED_PATHS_PREFIX = new HashSet<>();
     		TOKEN_PATHS = new HashSet<>();
@@ -49,7 +49,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
     	String TOKEN_MESSAGE_CODE_TEMP = null;
     	String TOKEN_MESSAGE_TEMP = null;
     	String TOKEN_POLICY_TEMP = null;
-    	for (String conf : fileType.getData()) {
+    	for (String conf : file.getData()) {
 			if (!conf.startsWith("#")) {
 				String[] kv = PropertyUtil.getKeyValue(conf);
 				if (kv != null && kv.length == 2) {

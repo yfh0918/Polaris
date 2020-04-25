@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.GatewayConstant;
-import com.polaris.container.gateway.pojo.FileType;
+import com.polaris.container.gateway.pojo.HttpFilterFile;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -25,8 +25,8 @@ public class WIpHttpRequestFilter extends HttpRequestFilter {
 	private Set<String> patterns = new HashSet<>();
 
 	@Override
-	public void onChange(FileType fileType) {
-		Set<String> data = fileType.getData();
+	public void onChange(HttpFilterFile file) {
+		Set<String> data = file.getData();
 		if (data != null) {
 			patterns = data;
 		}

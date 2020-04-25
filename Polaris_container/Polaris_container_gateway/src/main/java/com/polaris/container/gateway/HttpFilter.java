@@ -3,7 +3,7 @@ package com.polaris.container.gateway;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.polaris.container.gateway.pojo.FileType;
+import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -16,11 +16,11 @@ public abstract class HttpFilter implements HttpFilterLifeCycle  {
 		if (httpFilterEntity == null) {
 			return;
 		}
-		FileType[] fileTypes = httpFilterEntity.getFileTypes();
+		HttpFilterFile[] fileTypes = httpFilterEntity.getFiles();
 		if (fileTypes == null) {
 			return;
 		}
-		for (FileType fileType : fileTypes) {
+		for (HttpFilterFile fileType : fileTypes) {
 			HttpFilterHelper.create(this, fileType);
 		}
 	} 

@@ -1,7 +1,6 @@
 package com.polaris.container.gateway;
 
-import com.polaris.container.gateway.pojo.FileType;
-import com.polaris.container.gateway.pojo.FileType.Type;
+import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.container.gateway.request.ArgsHttpRequestFilter;
 import com.polaris.container.gateway.request.CCHttpRequestFilter;
@@ -22,19 +21,19 @@ import com.polaris.container.gateway.response.TokenHttpResponseFilter;
 public enum HttpFilterEnum {
 		
 	//默认的requestFilter
-	Cors(new HttpFilterEntity(new CorsRequestFilter(), "gateway.cors", 0, new FileType("cors.txt", Type.KV))), 
-	Degrade(new HttpFilterEntity(new DegradeRequestFilter(), "gateway.degrade", 2,new FileType("core.txt", Type.KV))), 
-	WIp(new HttpFilterEntity(new WIpHttpRequestFilter(), "gateway.ip.whitelist", 4,new FileType("wip.txt", Type.PATTERN))), 
-	Ip(new HttpFilterEntity(new IpHttpRequestFilter(), "gateway.ip.blacklist", 6,new FileType("ip.txt", Type.PATTERN))), 
-	CC(new HttpFilterEntity(new CCHttpRequestFilter(), "gateway.cc", 8,new FileType("cc.txt", Type.KV))),
+	Cors(new HttpFilterEntity(new CorsRequestFilter(), "gateway.cors", 0, new HttpFilterFile("cors.txt"))), 
+	Degrade(new HttpFilterEntity(new DegradeRequestFilter(), "gateway.degrade", 2,new HttpFilterFile("core.txt"))), 
+	WIp(new HttpFilterEntity(new WIpHttpRequestFilter(), "gateway.ip.whitelist", 4,new HttpFilterFile("wip.txt"))), 
+	Ip(new HttpFilterEntity(new IpHttpRequestFilter(), "gateway.ip.blacklist", 6,new HttpFilterFile("ip.txt"))), 
+	CC(new HttpFilterEntity(new CCHttpRequestFilter(), "gateway.cc", 8,new HttpFilterFile("cc.txt"))),
 	Scanner(new HttpFilterEntity(new ScannerHttpRequestFilter(), "gateway.scanner", 10)),
-	WUrl(new HttpFilterEntity(new WUrlHttpRequestFilter(), "gateway.url.whitelist", 12,new FileType("wurl.txt", Type.PATTERN))),
-	Ua(new HttpFilterEntity(new UaHttpRequestFilter(), "gateway.ua", 14,new FileType("ua.txt", Type.PATTERN))),
-	Url(new HttpFilterEntity(new UrlHttpRequestFilter(), "gateway.url.blacklist", 16,new FileType("url.txt", Type.PATTERN))),
-	Args(new HttpFilterEntity(new ArgsHttpRequestFilter(), "gateway.args", 18,new FileType("args.txt", Type.PATTERN))),
-	Cookie(new HttpFilterEntity(new CookieHttpRequestFilter(), "gateway.cookie", 20,new FileType("cookie.txt", Type.PATTERN))),
-	Post(new HttpFilterEntity(new PostHttpRequestFilter(), "gateway.post", 22,new FileType("post.txt", Type.PATTERN),new FileType("file.txt", Type.PATTERN))),
-	Token(new HttpFilterEntity(new TokenHttpRequestFilter(), "gateway.token", 24,new FileType("token.txt", Type.KV))),
+	WUrl(new HttpFilterEntity(new WUrlHttpRequestFilter(), "gateway.url.whitelist", 12,new HttpFilterFile("wurl.txt"))),
+	Ua(new HttpFilterEntity(new UaHttpRequestFilter(), "gateway.ua", 14,new HttpFilterFile("ua.txt"))),
+	Url(new HttpFilterEntity(new UrlHttpRequestFilter(), "gateway.url.blacklist", 16,new HttpFilterFile("url.txt"))),
+	Args(new HttpFilterEntity(new ArgsHttpRequestFilter(), "gateway.args", 18,new HttpFilterFile("args.txt"))),
+	Cookie(new HttpFilterEntity(new CookieHttpRequestFilter(), "gateway.cookie", 20,new HttpFilterFile("cookie.txt"))),
+	Post(new HttpFilterEntity(new PostHttpRequestFilter(), "gateway.post", 22,new HttpFilterFile("post.txt"),new HttpFilterFile("file.txt"))),
+	Token(new HttpFilterEntity(new TokenHttpRequestFilter(), "gateway.token", 24,new HttpFilterFile("token.txt"))),
 
 	//responseFilter
 	CorsResponse(new HttpFilterEntity(new CorsHttpResponseFilter(), "gateway.cors", 0)),
