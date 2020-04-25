@@ -4,6 +4,7 @@ package com.polaris.demo.gateway;
 import com.polaris.container.ServerRunner;
 import com.polaris.container.annotation.PolarisApplication;
 import com.polaris.container.gateway.HttpFilterEnum;
+import com.polaris.container.gateway.HttpFilterHelper;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.demo.gateway.request.TokenExtendHttpRequestFilter;
 import com.polaris.demo.gateway.response.TokenExtendHttpResponseFilter;
@@ -17,8 +18,8 @@ public class GatewayApplication {
     	ServerRunner.run(args,GatewayApplication.class, new ServerListener() {
     		@Override
     		public void started() {
-    			HttpFilterEnum.replaceFilter(HttpFilterEnum.Token.getFilterEntity(), new TokenExtendHttpRequestFilter());
-    			HttpFilterEnum.replaceFilter(HttpFilterEnum.TokenResponse.getFilterEntity(), new TokenExtendHttpResponseFilter());
+    			HttpFilterHelper.replaceFilter(HttpFilterEnum.Token.getFilterEntity(), new TokenExtendHttpRequestFilter());
+    			HttpFilterHelper.replaceFilter(HttpFilterEnum.TokenResponse.getFilterEntity(), new TokenExtendHttpResponseFilter());
     		}
     	});
     }

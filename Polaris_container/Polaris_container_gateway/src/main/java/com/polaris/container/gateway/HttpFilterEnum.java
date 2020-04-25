@@ -1,8 +1,7 @@
 package com.polaris.container.gateway;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.polaris.container.gateway.pojo.FileType;
+import com.polaris.container.gateway.pojo.FileType.Type;
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.container.gateway.request.ArgsHttpRequestFilter;
 import com.polaris.container.gateway.request.CCHttpRequestFilter;
@@ -23,34 +22,24 @@ import com.polaris.container.gateway.response.TokenHttpResponseFilter;
 public enum HttpFilterEnum {
 		
 	//默认的requestFilter
-	Cors(new HttpFilterEntity(new CorsRequestFilter(), "gateway.cors", 0)), 
-	Degrade(new HttpFilterEntity(new DegradeRequestFilter(), "gateway.degrade", 2)), 
-	WIp(new HttpFilterEntity(new WIpHttpRequestFilter(), "gateway.ip.whitelist", 4)), 
-	Ip(new HttpFilterEntity(new IpHttpRequestFilter(), "gateway.ip.blacklist", 6)), 
-	CC(new HttpFilterEntity(new CCHttpRequestFilter(), "gateway.cc", 8)),
+	Cors(new HttpFilterEntity(new CorsRequestFilter(), "gateway.cors", 0, new FileType("cors.txt", Type.KV))), 
+	Degrade(new HttpFilterEntity(new DegradeRequestFilter(), "gateway.degrade", 2,new FileType("core.txt", Type.KV))), 
+	WIp(new HttpFilterEntity(new WIpHttpRequestFilter(), "gateway.ip.whitelist", 4,new FileType("wip.txt", Type.PATTERN))), 
+	Ip(new HttpFilterEntity(new IpHttpRequestFilter(), "gateway.ip.blacklist", 6,new FileType("ip.txt", Type.PATTERN))), 
+	CC(new HttpFilterEntity(new CCHttpRequestFilter(), "gateway.cc", 8,new FileType("cc.txt", Type.KV))),
 	Scanner(new HttpFilterEntity(new ScannerHttpRequestFilter(), "gateway.scanner", 10)),
-	WUrl(new HttpFilterEntity(new WUrlHttpRequestFilter(), "gateway.url.whitelist", 12)),
-	Ua(new HttpFilterEntity(new UaHttpRequestFilter(), "gateway.ua", 14)),
-	Url(new HttpFilterEntity(new UrlHttpRequestFilter(), "gateway.url.blacklist", 16)),
-	Args(new HttpFilterEntity(new ArgsHttpRequestFilter(), "gateway.args", 18)),
-	Cookie(new HttpFilterEntity(new CookieHttpRequestFilter(), "gateway.cookie", 20)),
-	Post(new HttpFilterEntity(new PostHttpRequestFilter(), "gateway.post", 22)),
-	Token(new HttpFilterEntity(new TokenHttpRequestFilter(), "gateway.token", 24)),
+	WUrl(new HttpFilterEntity(new WUrlHttpRequestFilter(), "gateway.url.whitelist", 12,new FileType("wurl.txt", Type.PATTERN))),
+	Ua(new HttpFilterEntity(new UaHttpRequestFilter(), "gateway.ua", 14,new FileType("ua.txt", Type.PATTERN))),
+	Url(new HttpFilterEntity(new UrlHttpRequestFilter(), "gateway.url.blacklist", 16,new FileType("url.txt", Type.PATTERN))),
+	Args(new HttpFilterEntity(new ArgsHttpRequestFilter(), "gateway.args", 18,new FileType("args.txt", Type.PATTERN))),
+	Cookie(new HttpFilterEntity(new CookieHttpRequestFilter(), "gateway.cookie", 20,new FileType("cookie.txt", Type.PATTERN))),
+	Post(new HttpFilterEntity(new PostHttpRequestFilter(), "gateway.post", 22,new FileType("post.txt", Type.PATTERN),new FileType("file.txt", Type.PATTERN))),
+	Token(new HttpFilterEntity(new TokenHttpRequestFilter(), "gateway.token", 24,new FileType("token.txt", Type.KV))),
 
 	//responseFilter
-	CorsResponse(new HttpFilterEntity(new CorsHttpResponseFilter(), "gateway.cors", 0)),
-	TokenResponse(new HttpFilterEntity(new TokenHttpResponseFilter(), "gateway.token", 2));
+	CorsResponse(new HttpFilterEntity(new CorsHttpResponseFilter(), "gateway.cors", 0,new FileType("cors.txt", Type.KV))),
+	TokenResponse(new HttpFilterEntity(new TokenHttpResponseFilter(), "gateway.token", 2,new FileType("token.txt", Type.KV)));
 	
-	//保存filterClass和HttpFilterEntity之间的映射
-	private static Map<Class<?>, HttpFilterEntity> filterMap = new HashMap<>();
-
-	//加入默认过滤器
-	public static void init() {
-		for (HttpFilterEnum e : HttpFilterEnum.values()) {
-			addFilter(e.getFilterEntity());
-		}
-	}
-
     // 构造方法  
 	private HttpFilterEntity filterEntity;
     private HttpFilterEnum(HttpFilterEntity filterEntity) {  
@@ -61,34 +50,5 @@ public enum HttpFilterEnum {
 	}
 	public void setFilterEntity(HttpFilterEntity filterEntity) {
 		this.filterEntity = filterEntity;
-	}
-	
-	public static String getKey(Class<?> clazz) {
-		if (filterMap.containsKey(clazz)) {
-			return filterMap.get(clazz).getKey();
-		}
-		return null;
-	}
-	
-	public static Integer getOrder(Class<?> clazz) {
-		if (filterMap.containsKey(clazz)) {
-			return filterMap.get(clazz).getOrder();
-		}
-		return -1;
-	}
-
-	public synchronized static void replaceFilter(HttpFilterEntity httpFilterEntity, HttpFilter filter) {
-		removeFilter(httpFilterEntity);
-		httpFilterEntity.setFilter(filter);
-		addFilter(httpFilterEntity);
-	}
-	public synchronized static void addFilter(HttpFilterEntity httpFilterEntity) {
-		filterMap.put(httpFilterEntity.getFilter().getClass(), httpFilterEntity);
-		httpFilterEntity.getFilter().start();
-	}
-	
-	public synchronized static void removeFilter(HttpFilterEntity httpFilterEntity) {
-		filterMap.remove(httpFilterEntity.getFilter().getClass());
-		httpFilterEntity.getFilter().stop();
 	}
 }

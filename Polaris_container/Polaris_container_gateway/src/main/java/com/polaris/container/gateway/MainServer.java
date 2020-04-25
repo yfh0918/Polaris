@@ -127,7 +127,7 @@ public class MainServer {
                         return new HttpFilterAdapterImpl(originalRequest, ctx);
                     }
                 }).start();
-        HttpFilterEnum.init();//初始化过滤器
+        HttpFilterHelper.init();//初始化过滤器
         ServerListenerSupport.started();//监听启动
         logger.info("Gateway started on port(s) " + inetSocketAddress.getPort() + " with context path '/'");
         

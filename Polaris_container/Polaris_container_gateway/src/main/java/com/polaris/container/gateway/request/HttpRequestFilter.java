@@ -3,6 +3,7 @@ package com.polaris.container.gateway.request;
 import org.slf4j.Logger;
 
 import com.polaris.container.gateway.HttpFilter;
+import com.polaris.container.gateway.pojo.HttpFilterEntity;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -22,8 +23,9 @@ public abstract class HttpRequestFilter extends HttpFilter  {
      *
      */
 	@Override
-	public void start() {
-		HttpRequestFilterChain.addFilter(this);
+	public void start(HttpFilterEntity httpFilterEntity) {
+		super.start(httpFilterEntity);
+		HttpRequestFilterChain.addFilter(httpFilterEntity);
 	} 
 	
     /**
@@ -31,8 +33,9 @@ public abstract class HttpRequestFilter extends HttpFilter  {
      *
      */
 	@Override
-	public void stop() {
-		HttpRequestFilterChain.removeFilter(this);
+	public void stop(HttpFilterEntity httpFilterEntity) {
+		super.stop(httpFilterEntity);
+		HttpRequestFilterChain.removeFilter(httpFilterEntity);
 	}
 	
 	/**

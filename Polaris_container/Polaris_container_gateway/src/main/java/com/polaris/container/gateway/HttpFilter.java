@@ -1,38 +1,32 @@
 package com.polaris.container.gateway;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.polaris.container.gateway.pojo.FileType;
+import com.polaris.container.gateway.pojo.HttpFilterEntity;
 
-import io.netty.handler.codec.http.HttpResponseStatus;
-
-public abstract class HttpFilter extends HttpFilterOrder implements HttpFilterLifeCycle {
-	/**
-     * 中途被拦截需要返回的信息
+public abstract class HttpFilter extends HttpFilterResult implements HttpFilterLifeCycle  {
+	protected HttpFilterEntity httpFilterEntity;
+	
+	@Override
+	public void start(HttpFilterEntity httpFilterEntity) {
+		this.httpFilterEntity = httpFilterEntity;
+		if (httpFilterEntity == null) {
+			return;
+		}
+		FileType[] fileTypes = httpFilterEntity.getFileTypes();
+		if (fileTypes == null) {
+			return;
+		}
+		for (FileType fileType : fileTypes) {
+			HttpFilterHelper.create(fileType);
+		}
+	} 
+	
+    /**
+     * 获取entity对象
      *
      */
-	private String result;
-	public String getResult() {
-		return result;
-	}
-
-	public void setResult(String result) {
-		this.result = result;
-	}
+	public HttpFilterEntity getHttpFilterEntity() {
+    	return httpFilterEntity;
+    }
 	
-	private HttpResponseStatus status = HttpResponseStatus.FORBIDDEN;
-	public HttpResponseStatus getStatus() {
-		return status;
-	}
-	public void setStatus(HttpResponseStatus status) {
-		this.status = status;
-	}
-	
-	private Map<String, Object> headerMap = new HashMap<>();
-	public Map<String, Object> getHeaderMap() {
-		return headerMap;
-	}
-	public void putHeaderValue(String key, Object value) {
-		this.headerMap.put(key, value);
-	}
-
 }

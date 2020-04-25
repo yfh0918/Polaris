@@ -7,7 +7,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.HttpFilterChain;
 import com.polaris.container.gateway.HttpFilterCompare;
-import com.polaris.container.gateway.HttpFilterEnum;
+import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.core.config.ConfClient;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -24,18 +24,22 @@ import jodd.util.StringUtil;
  */
 public class HttpRequestFilterChain extends HttpFilterChain{
 
-    public synchronized static void addFilter(HttpRequestFilter filter) {
-        requestFilters.add(filter);
+    public synchronized static void addFilter(HttpFilterEntity httpFilterEntity) {
+        requestFilters.add((HttpRequestFilter)httpFilterEntity.getFilter());
         Collections.sort(requestFilters, new HttpFilterCompare());
     }
-    public synchronized static void removeFilter(HttpRequestFilter filter) {
-        requestFilters.remove(filter);
+    public synchronized static void removeFilter(HttpFilterEntity httpFilterEntity) {
+        requestFilters.remove(httpFilterEntity.getFilter());
     }
 
     public static ImmutablePair<Boolean, HttpRequestFilter> doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
         for (HttpRequestFilter filter : requestFilters) {
         	//判断
-        	String key = HttpFilterEnum.getKey(filter.getClass());
+        	HttpFilterEntity httpFilterEntity = filter.getHttpFilterEntity();
+        	if (httpFilterEntity == null) {
+        		continue;
+        	}
+        	String key = httpFilterEntity.getKey();
         	if (StringUtil.isEmpty(key)) {
         		continue;
         	}

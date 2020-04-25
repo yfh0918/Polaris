@@ -1,6 +1,7 @@
 package com.polaris.container.gateway.response;
 
 import com.polaris.container.gateway.HttpFilter;
+import com.polaris.container.gateway.pojo.HttpFilterEntity;
 
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
@@ -18,8 +19,9 @@ public abstract class HttpResponseFilter extends HttpFilter {
      *
      */
 	@Override
-	public void start() {
-		HttpResponseFilterChain.addFilter(this);
+	public void start(HttpFilterEntity httpFilterEntity) {
+		super.start(httpFilterEntity);
+		HttpResponseFilterChain.addFilter(httpFilterEntity);
 	} 
 	
     /**
@@ -27,8 +29,9 @@ public abstract class HttpResponseFilter extends HttpFilter {
      *
      */
 	@Override
-	public void stop() {
-		HttpResponseFilterChain.removeFilter(this);
+	public void stop(HttpFilterEntity httpFilterEntity) {
+		super.stop(httpFilterEntity);
+		HttpResponseFilterChain.removeFilter(httpFilterEntity);
 	}
 	
 	protected abstract boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse);

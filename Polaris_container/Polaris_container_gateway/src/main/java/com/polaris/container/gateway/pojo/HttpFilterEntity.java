@@ -7,12 +7,14 @@ public class HttpFilterEntity {
     private int order;  
     private String key;
     private HttpFilter filter;
+    private FileType[] fileTypes;
 
     // 构造方法  
-    public HttpFilterEntity(HttpFilter filter, String key, int order) {  
+    public HttpFilterEntity(HttpFilter filter, String key, int order, FileType... fileTypes) {  
     	this.key = key;
         this.order = order; 
         this.filter = filter;
+        this.fileTypes = fileTypes;
     }
 	public HttpFilter getFilter() {
 		return this.filter;
@@ -31,5 +33,14 @@ public class HttpFilterEntity {
 	}
 	public Integer getOrder() {
 		return order;
+	}
+	public FileType[] getFileTypes() {
+		return fileTypes;
+	}
+	public void setFileTypes(FileType... fileTypes) {
+		this.fileTypes = fileTypes;
+	}
+	public void setOrder(int order) {
+		this.order = order;
 	}
 }

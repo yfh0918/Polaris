@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.GatewayConstant;
+import com.polaris.container.gateway.HttpFilterHelper;
 import com.polaris.container.gateway.util.RequestUtil;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -37,10 +38,10 @@ public class CookieHttpRequestFilter extends HttpRequestFilter {
                     if (kv.length == 2) {
                     	RequestUtil.setCookie(kv[0].trim(), kv[1].trim());
                     }
-                    for (Pattern pat : FilterTypeHelper.getPattern(FilterType.COOKIE.name())) {
+                    for (Pattern pat : HttpFilterHelper.getPattern(httpFilterEntity)) {
                         Matcher matcher = pat.matcher(cookie.toLowerCase());
                         if (matcher.find()) {
-                            hackLog(logger, GatewayConstant.getRealIp(httpRequest), FilterType.COOKIE.name(), pat.toString());
+                            hackLog(logger, GatewayConstant.getRealIp(httpRequest), CookieHttpRequestFilter.class.getSimpleName(), pat.toString());
                             return true;
                         }
                     }
