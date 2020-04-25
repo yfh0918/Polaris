@@ -115,7 +115,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
 	@Override
 	public void onChange(HttpFilterFile file) {
     	if (file.getData() == null || file.getData().size() == 0) {
-    		logger.error(file.getName() + " is null");
+    		ccSkipIp = new HashSet<>();
     		return;
     	}
     	int blockSecondsTemp = 60;

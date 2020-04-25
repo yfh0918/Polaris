@@ -1,5 +1,9 @@
 package com.polaris.container.gateway;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,6 +13,9 @@ import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
+import com.polaris.core.config.reader.ConfReaderStrategy;
+import com.polaris.core.config.reader.ConfReaderStrategyDefault;
+import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.StringUtil;
 
 public abstract class HttpFilterHelper  {
@@ -37,25 +44,55 @@ public abstract class HttpFilterHelper  {
 	}
 	
 	//创建需要处理的具体文件，比如cc.txt,ip.txt
-    public static void create(HttpFilter filter, HttpFilterFile fileType){
+    public static void load(HttpFilter filter, HttpFilterFile file){
     	
 		//先获取
-    	load(fileType, ConfHandlerProviderFactory.get(Type.EXT).get(fileType.getName()));
-    	filter.onChange(fileType);
+    	String content = ConfHandlerProviderFactory.get(Type.EXT).get(file.getName());
+    	
+    	//获取不到-从本地文件系统获取
+    	if (StringUtil.isEmpty(content)) {
+    		ConfReaderStrategy reader = ConfReaderStrategyDefault.INSTANCE;
+    		InputStream is = null;
+    		try {
+    			
+    			//从path获取
+        		File contentFile = reader.getFile(file.getName());
+        		if (contentFile != null) {
+        			is = new FileInputStream(contentFile);
+        		} else {
+        			
+        			//从classpath获取
+        			is = reader.getInputStream(file.getName());
+        		}
+        		if (is != null) {
+        			content = FileUtil.read(is);
+        		}
+    		} catch (IOException ex) {
+    		} finally {
+    			if (is != null) {
+    				try {
+						is.close();
+					} catch (IOException e) {
+					}
+    			}
+    		}
+    	}
+    	load(file, content);
+    	filter.onChange(file);
 		
 		//后监听
-		ConfHandlerProviderFactory.get(Type.EXT).listen(fileType.getName(), new ConfHandlerListener() {
+		ConfHandlerProviderFactory.get(Type.EXT).listen(file.getName(), new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
-				load(fileType, content);
-				filter.onChange(fileType);
+				load(file, content);
+				filter.onChange(file);
 			}
     	});
     }
-    private static void load(HttpFilterFile fileType, String content) {
+    private static void load(HttpFilterFile file, String content) {
     	Set<String> data = new HashSet<>();
     	if  (StringUtil.isEmpty(content)) {
-    		fileType.setData(data);
+    		file.setData(data);
     	} else {
         	String[] contents = content.split(Constant.LINE_SEP);
         	for (String conf : contents) {
@@ -65,7 +102,7 @@ public abstract class HttpFilterHelper  {
         			data.add(conf);
         		}
         	}
-        	fileType.setData(data);
+        	file.setData(data);
     	}
     }
 }

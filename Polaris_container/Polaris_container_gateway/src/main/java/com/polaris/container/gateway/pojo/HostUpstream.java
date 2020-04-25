@@ -8,7 +8,7 @@ import com.polaris.core.util.PropertyUtil;
 
 public class HostUpstream {
 
-    public static final String NAME = "upstream.txt";
+    public static final String NAME = "gw_upstream.txt";
 
     private static volatile Map<String, HostUpstream> contextMap = new ConcurrentHashMap<>();
     private static volatile Map<String, HostUpstream> virtualPortMap = new ConcurrentHashMap<>();

@@ -37,7 +37,7 @@ public class DegradeRequestFilter extends HttpRequestFilter {
 	@Override
 	public void onChange(HttpFilterFile file) {
     	if (file.getData() == null || file.getData().size() == 0) {
-    		logger.error(file.getName() + " is null");
+    		degradeUrlSet = new HashSet<>();
     		return;
     	}
     	Set<String> tempDegradeUrlSet = new HashSet<>();
