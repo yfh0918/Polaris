@@ -4,10 +4,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.polaris.container.gateway.pojo.FileType;
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfHandlerListener;
-import com.polaris.core.config.Config.Type;
-import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.util.JwtUtil;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.ResultUtil;
@@ -33,88 +31,73 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
 	public volatile static Set<String> UNCHECKED_PATHS = new HashSet<>();
 	public volatile static Set<String> UNCHECKED_PATHS_PREFIX = new HashSet<>();
 	public volatile static Set<String> TOKEN_PATHS = new HashSet<>();
-	private final static String FILE_NAME = "token.txt";
 	public static String TOKEN_MESSAGE_CODE=Constant.TOKEN_FAIL_CODE;
 	public static String TOKEN_MESSAGE="认证失败，请先登录";
 	public final static String DEFAULT_VALUE = "1";
 
-	static {
-		//先获取
-		loadFile(ConfHandlerProviderFactory.get(Type.EXT).get(FILE_NAME));
-		
-		//后监听
-		ConfHandlerProviderFactory.get(Type.EXT).listen(FILE_NAME, new ConfHandlerListener() {
-			@Override
-			public void receive(String content) {
-				loadFile(content);
-			}
-    	});
-    }
-    
-    private static void loadFile(String content) {
-    	if (StringUtil.isEmpty(content)) {
+	@Override
+	public void onChange(FileType fileType) {
+    	if (fileType.getData() == null || fileType.getData().size() == 0) {
     		UNCHECKED_PATHS = new HashSet<>();
     		UNCHECKED_PATHS_PREFIX = new HashSet<>();
     		TOKEN_PATHS = new HashSet<>();
     		return;
     	}
-    	String[] contents = content.split(Constant.LINE_SEP);
     	Set<String> UNCHECKED_PATHS_TEMP = new HashSet<>();
     	Set<String> UNCHECKED_PATHS_PREFIX_TEMP = new HashSet<>();
     	Set<String> TOKEN_PATHS_TEMP = new HashSet<>();
     	String TOKEN_MESSAGE_CODE_TEMP = null;
     	String TOKEN_MESSAGE_TEMP = null;
     	String TOKEN_POLICY_TEMP = null;
- 
-    	for (String conf : contents) {
-    		if (StringUtil.isNotEmpty(conf) && !conf.startsWith("#")) {
-    			conf = conf.replace("\n", "");
-    			conf = conf.replace("\r", "");
+    	for (String conf : fileType.getData()) {
+			if (!conf.startsWith("#")) {
 				String[] kv = PropertyUtil.getKeyValue(conf);
-
-				// 不需要验证token的uri
-    			if (kv[0].equals("UNCHECKED_PATHS")) {
-    				if (StringUtil.isNotEmpty(kv[1])) {
-        				UNCHECKED_PATHS_TEMP.add(kv[1]);
-    				}
-    			}
-    			
-    			// 不需要验证token的uri前缀，一般为context
-    			if (kv[0].equals("UNCHECKED_PATHS_PREFIX")) {
-    				if (StringUtil.isNotEmpty(kv[1])) {
-        				UNCHECKED_PATHS_PREFIX_TEMP.add(kv[1]);
-    				}
-    			}
-    			
-    			//tokenUrl
-    			if (kv[0].equals("TOKEN_PATH") || kv[0].equals("TOKEN_PATHS")) {
-    				if (StringUtil.isNotEmpty(kv[1])) {
-        				TOKEN_PATHS_TEMP.add(kv[1]);
-    				}
-    			}
-    			
-    			//tokenMessageCode
-    			if (kv[0].equals("TOKEN_MESSAGE_CODE")) {
-    				if (StringUtil.isNotEmpty(kv[1])) {
-        				TOKEN_MESSAGE_CODE_TEMP = kv[1];
-    				}
-    			}
-    			
-    			//tokenMessageCode
-    			if (kv[0].equals("TOKEN_MESSAGE")) {
-    				if (StringUtil.isNotEmpty(kv[1])) {
-        				TOKEN_MESSAGE_TEMP = kv[1];
-    				}
-    			}
-    			
-    			//TOKEN_POLICY
-    			if (kv[0].equals("TOKEN_POLICY")) {
-    				if (StringUtil.isNotEmpty(kv[1])) {
-    					TOKEN_POLICY_TEMP = kv[1];
-    				}
-    			}
-    		}
+				if (kv != null && kv.length == 2) {
+					// 不需要验证token的uri
+	    			if (kv[0].equals("UNCHECKED_PATHS")) {
+	    				if (StringUtil.isNotEmpty(kv[1])) {
+	        				UNCHECKED_PATHS_TEMP.add(kv[1]);
+	    				}
+	    			}
+	    			
+	    			// 不需要验证token的uri前缀，一般为context
+	    			if (kv[0].equals("UNCHECKED_PATHS_PREFIX")) {
+	    				if (StringUtil.isNotEmpty(kv[1])) {
+	        				UNCHECKED_PATHS_PREFIX_TEMP.add(kv[1]);
+	    				}
+	    			}
+	    			
+	    			//tokenUrl
+	    			if (kv[0].equals("TOKEN_PATH") || kv[0].equals("TOKEN_PATHS")) {
+	    				if (StringUtil.isNotEmpty(kv[1])) {
+	        				TOKEN_PATHS_TEMP.add(kv[1]);
+	    				}
+	    			}
+	    			
+	    			//tokenMessageCode
+	    			if (kv[0].equals("TOKEN_MESSAGE_CODE")) {
+	    				if (StringUtil.isNotEmpty(kv[1])) {
+	        				TOKEN_MESSAGE_CODE_TEMP = kv[1];
+	    				}
+	    			}
+	    			
+	    			//tokenMessageCode
+	    			if (kv[0].equals("TOKEN_MESSAGE")) {
+	    				if (StringUtil.isNotEmpty(kv[1])) {
+	        				TOKEN_MESSAGE_TEMP = kv[1];
+	    				}
+	    			}
+	    			
+	    			//TOKEN_POLICY
+	    			if (kv[0].equals("TOKEN_POLICY")) {
+	    				if (StringUtil.isNotEmpty(kv[1])) {
+	    					TOKEN_POLICY_TEMP = kv[1];
+	    				}
+	    			}
+				}
+			}
     	}
+
     	UNCHECKED_PATHS_PREFIX = UNCHECKED_PATHS_PREFIX_TEMP;
     	UNCHECKED_PATHS = UNCHECKED_PATHS_TEMP;
     	TOKEN_PATHS = TOKEN_PATHS_TEMP;

@@ -6,10 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.core.Constant;
-import com.polaris.core.config.ConfHandlerListener;
-import com.polaris.core.config.Config.Type;
-import com.polaris.core.config.provider.ConfHandlerProviderFactory;
+import com.polaris.container.gateway.pojo.FileType;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -33,42 +30,27 @@ import io.netty.handler.codec.http.HttpResponseStatus;
  */
 public class CorsRequestFilter extends HttpRequestFilter {
 	private static Logger logger = LoggerFactory.getLogger(CorsRequestFilter.class);
-	private final static String FILE_NAME = "cors.txt";
 	private static Map<String, String> corsMap = new HashMap<>(); 
 	private final String DEFAULT_COSR_BODY = "OPTIONS,HEAD,GET,POST";
 	private final String CORS_BODY_KEY="Access-Control-Response";
 
-	static {
-		
-		//先获取
-		loadFile(ConfHandlerProviderFactory.get(Type.EXT).get(FILE_NAME));
-		
-		//后监听
-		ConfHandlerProviderFactory.get(Type.EXT).listen(FILE_NAME, new ConfHandlerListener() {
-			@Override
-			public void receive(String content) {
-				loadFile(content);
-			}
-    	});
-    }
-    
-    private static void loadFile(String content) {
-    	if (StringUtil.isEmpty(content)) {
-    		logger.error(FILE_NAME + " is null");
+	
+	@Override
+	public void onChange(FileType fileType) {
+    	if (fileType.getData() == null || fileType.getData().size() == 0) {
+    		logger.error(fileType.getFile() + " is null");
     		return;
     	}
-    	String[] contents = content.split(Constant.LINE_SEP);
     	Map<String, String> tempCorsMap = new HashMap<>(); 
-    	
-    	for (String conf : contents) {
-    		if (StringUtil.isNotEmpty(conf) && !conf.startsWith("#")) {
-    			conf = conf.replace("\n", "");
-    			conf = conf.replace("\r", "");
+    	for (String conf : fileType.getData()) {
+			if (!conf.startsWith("#")) {
 				String[] kv = PropertyUtil.getKeyValue(conf);
-				if (StringUtil.isNotEmpty(kv[1])) {
-					tempCorsMap.put(kv[0], kv[1]);
+				if (kv != null && kv.length == 2) {
+					if (StringUtil.isNotEmpty(kv[1])) {
+						tempCorsMap.put(kv[0], kv[1]);
+					}
 				}
-    		}
+			}
     	}
     	corsMap = tempCorsMap;
     }

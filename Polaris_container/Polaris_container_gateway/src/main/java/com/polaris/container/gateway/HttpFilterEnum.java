@@ -37,8 +37,8 @@ public enum HttpFilterEnum {
 	Token(new HttpFilterEntity(new TokenHttpRequestFilter(), "gateway.token", 24,new FileType("token.txt", Type.KV))),
 
 	//responseFilter
-	CorsResponse(new HttpFilterEntity(new CorsHttpResponseFilter(), "gateway.cors", 0,new FileType("cors.txt", Type.KV))),
-	TokenResponse(new HttpFilterEntity(new TokenHttpResponseFilter(), "gateway.token", 2,new FileType("token.txt", Type.KV)));
+	CorsResponse(new HttpFilterEntity(new CorsHttpResponseFilter(), "gateway.cors", 0)),
+	TokenResponse(new HttpFilterEntity(new TokenHttpResponseFilter(), "gateway.token", 2));
 	
     // 构造方法  
 	private HttpFilterEntity filterEntity;

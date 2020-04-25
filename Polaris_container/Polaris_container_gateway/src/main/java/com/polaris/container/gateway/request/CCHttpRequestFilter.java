@@ -7,7 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -30,11 +29,11 @@ import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.RateLimiter;
 import com.polaris.container.gateway.GatewayConstant;
-import com.polaris.container.gateway.HttpFilterHelper;
-import com.polaris.container.gateway.pojo.HttpFilterEntity;
+import com.polaris.container.gateway.pojo.FileType;
 import com.polaris.core.Constant;
 import com.polaris.core.pojo.Result;
 import com.polaris.core.thread.InheritableThreadLocalExecutor;
+import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.ResultUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.extension.cache.Cache;
@@ -114,14 +113,9 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     }
 	
 	@Override
-	public void start(HttpFilterEntity httpFilterEntity) {
-		super.start(httpFilterEntity);
-		loadFile(HttpFilterHelper.getKV(httpFilterEntity));
-	}
-    
-    private void loadFile(Map<String, Set<String>> dataMap) {
-    	if (dataMap == null || dataMap.size() == 0) {
-    		logger.error(httpFilterEntity.getFileTypes()[0].getFile() + " is null");
+	public void onChange(FileType fileType) {
+    	if (fileType.getData() == null || fileType.getData().size() == 0) {
+    		logger.error(fileType.getFile() + " is null");
     		return;
     	}
     	int blockSecondsTemp = 60;
@@ -133,75 +127,74 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     	String ipSavePathTemp = null;
     	
     	Set<String> tempCcSkipIp = new HashSet<>();
-    	for (Map.Entry<String, Set<String>> entry : dataMap.entrySet()) {
-    		
-    		if (entry.getValue() != null && entry.getValue().size() > 0) {
-    			for (String value : entry.getValue()) {
-    				// skip.ip
-    				if (entry.getKey().equals("cc.skip.ip")) {
-    					try {
-    						String[] ips = value.split(",");
-    						for (String ip : ips) {
-    							tempCcSkipIp.add(ip);
-    						}
-    					} catch (Exception ex) {
-    					}
-    				}
-    				// ip.rate
-    				if (entry.getKey().equals("cc.ip.rate")) {
-    					try {
-    						String[] rates = value.split(",");
-    						if (rates.length == 1) {
-    							IP_RATE = new int[]{Integer.parseInt(rates[0]),60};
-    						} else {
-    							IP_RATE = new int[]{Integer.parseInt(rates[0]),Integer.parseInt(rates[1])};
-    						}
-    					} catch (Exception ex) {
-    					}
-    				}
-    				// all.rate
-    				if (entry.getKey().equals("cc.all.rate")) {
-    					try {
-    						ALL_RATE = Integer.parseInt(value);
-    					} catch (Exception ex) {
-    					}
-    				}
-    				// all.rate
-    				if (entry.getKey().equals("cc.all.timeout")) {
-    					try {
-    						int_all_timeout_temp = Integer.parseInt(value);
-    					} catch (Exception ex) {
-    					}
-    				}
-    				// 被禁止IP的时间-seconds
-    				if (entry.getKey().equals("cc.ip.block")) {
-    					try {
-    						isBlackIpTemp = Boolean.parseBoolean(value);
-    					} catch (Exception ex) {
-    					}
-    				}
-    				if (entry.getKey().equals("cc.ip.block.seconds")) {
-    					try {
-    	    				blockSecondsTemp = Integer.parseInt(value);
-    					} catch (Exception ex) {
-    					}
-    				}
-    				
-    				// 被禁止IP的是否持久化
-    				if (entry.getKey().equals("cc.ip.persistent")) {
-    					try {
-    						ipPersistentTemp = Boolean.parseBoolean(value);
-    					} catch (Exception ex) {
-    					}
-    				}
-    				
-    				// 持久化地址
-    				if (entry.getKey().equals("cc.ip.persistent.path")) {
-    					ipSavePathTemp = value;
-    				}
-    			}
-    		}
-
+    	for (String conf : fileType.getData()) {
+			if (!conf.startsWith("#")) {
+				String[] kv = PropertyUtil.getKeyValue(conf);
+				if (kv != null && kv.length == 2) {
+		    		// skip.ip
+					if (kv[0].equals("cc.skip.ip")) {
+						try {
+							String[] ips = kv[1].split(",");
+							for (String ip : ips) {
+								tempCcSkipIp.add(ip);
+							}
+						} catch (Exception ex) {
+						}
+					}
+					// ip.rate
+					if (kv[0].equals("cc.ip.rate")) {
+						try {
+							String[] rates = kv[1].split(",");
+							if (rates.length == 1) {
+								IP_RATE = new int[]{Integer.parseInt(rates[0]),60};
+							} else {
+								IP_RATE = new int[]{Integer.parseInt(rates[0]),Integer.parseInt(rates[1])};
+							}
+						} catch (Exception ex) {
+						}
+					}
+					// all.rate
+					if (kv[0].equals("cc.all.rate")) {
+						try {
+							ALL_RATE = Integer.parseInt(kv[1]);
+						} catch (Exception ex) {
+						}
+					}
+					// all.rate
+					if (kv[0].equals("cc.all.timeout")) {
+						try {
+							int_all_timeout_temp = Integer.parseInt(kv[1]);
+						} catch (Exception ex) {
+						}
+					}
+					// 被禁止IP的时间-seconds
+					if (kv[0].equals("cc.ip.block")) {
+						try {
+							isBlackIpTemp = Boolean.parseBoolean(kv[1]);
+						} catch (Exception ex) {
+						}
+					}
+					if (kv[0].equals("cc.ip.block.seconds")) {
+						try {
+		    				blockSecondsTemp = Integer.parseInt(kv[1]);
+						} catch (Exception ex) {
+						}
+					}
+					
+					// 被禁止IP的是否持久化
+					if (kv[0].equals("cc.ip.persistent")) {
+						try {
+							ipPersistentTemp = Boolean.parseBoolean(kv[1]);
+						} catch (Exception ex) {
+						}
+					}
+					
+					// 持久化地址
+					if (kv[0].equals("cc.ip.persistent.path")) {
+						ipSavePathTemp = kv[1];
+					}
+				}
+	    	}
     	}
     	
     	//无需验证的IP

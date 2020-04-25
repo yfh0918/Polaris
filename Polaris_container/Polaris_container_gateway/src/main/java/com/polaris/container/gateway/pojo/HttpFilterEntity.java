@@ -13,14 +13,15 @@ public class HttpFilterEntity {
     public HttpFilterEntity(HttpFilter filter, String key, int order, FileType... fileTypes) {  
     	this.key = key;
         this.order = order; 
-        this.filter = filter;
         this.fileTypes = fileTypes;
+        this.setFilter(filter);
     }
 	public HttpFilter getFilter() {
 		return this.filter;
 	}
 	public void setFilter(HttpFilter filter) {
 		this.filter = filter;
+		this.filter.setHttpFilterEntity(this);
 	}
 	public String getKey() {
 		return this.key;
