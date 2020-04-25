@@ -1,10 +1,10 @@
-package org.littleshoot.proxy.impl;
+package com.polaris.container.gateway.proxy.impl;
 
-import static org.littleshoot.proxy.impl.ConnectionState.AWAITING_CHUNK;
-import static org.littleshoot.proxy.impl.ConnectionState.AWAITING_INITIAL;
-import static org.littleshoot.proxy.impl.ConnectionState.AWAITING_PROXY_AUTHENTICATION;
-import static org.littleshoot.proxy.impl.ConnectionState.DISCONNECT_REQUESTED;
-import static org.littleshoot.proxy.impl.ConnectionState.NEGOTIATING_CONNECT;
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.AWAITING_CHUNK;
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.AWAITING_INITIAL;
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.AWAITING_PROXY_AUTHENTICATION;
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.DISCONNECT_REQUESTED;
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.NEGOTIATING_CONNECT;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -24,15 +24,15 @@ import java.util.regex.Pattern;
 import javax.net.ssl.SSLSession;
 
 import org.apache.commons.lang3.StringUtils;
-import org.littleshoot.proxy.ActivityTracker;
-import org.littleshoot.proxy.FlowContext;
-import org.littleshoot.proxy.FullFlowContext;
-import org.littleshoot.proxy.HttpFilters;
-import org.littleshoot.proxy.HttpFiltersAdapter;
-import org.littleshoot.proxy.ProxyAuthenticator;
-import org.littleshoot.proxy.SslEngineSource;
 
 import com.google.common.io.BaseEncoding;
+import com.polaris.container.gateway.proxy.ActivityTracker;
+import com.polaris.container.gateway.proxy.FlowContext;
+import com.polaris.container.gateway.proxy.FullFlowContext;
+import com.polaris.container.gateway.proxy.HttpFilters;
+import com.polaris.container.gateway.proxy.HttpFiltersAdapter;
+import com.polaris.container.gateway.proxy.ProxyAuthenticator;
+import com.polaris.container.gateway.proxy.SslEngineSource;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

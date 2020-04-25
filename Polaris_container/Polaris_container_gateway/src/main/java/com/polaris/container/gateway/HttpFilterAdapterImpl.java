@@ -5,13 +5,13 @@ import java.net.InetSocketAddress;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.littleshoot.proxy.HttpFiltersAdapter;
-import org.littleshoot.proxy.impl.ClientToProxyConnection;
-import org.littleshoot.proxy.impl.ProxyToServerConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.pojo.HostUpstream;
+import com.polaris.container.gateway.proxy.HttpFiltersAdapter;
+import com.polaris.container.gateway.proxy.impl.ClientToProxyConnection;
+import com.polaris.container.gateway.proxy.impl.ProxyToServerConnection;
 import com.polaris.container.gateway.request.HttpRequestFilter;
 import com.polaris.container.gateway.request.HttpRequestFilterChain;
 import com.polaris.container.gateway.response.HttpResponseFilter;

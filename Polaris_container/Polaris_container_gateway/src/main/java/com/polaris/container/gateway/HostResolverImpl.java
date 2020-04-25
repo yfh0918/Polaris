@@ -4,9 +4,8 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Map.Entry;
 
-import org.littleshoot.proxy.HostResolver;
-
 import com.polaris.container.gateway.pojo.HostUpstream;
+import com.polaris.container.gateway.proxy.HostResolver;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfHandlerListener;

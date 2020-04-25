@@ -1,4 +1,4 @@
-package com.polaris.container.gateway.util;
+package com.polaris.container.gateway.proxy.extras;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,10 +16,11 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import org.joda.time.DateTime;
-import org.littleshoot.proxy.SslEngineSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.container.gateway.proxy.SslEngineSource;
+import com.polaris.container.gateway.util.JCEUtil;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.StringUtil;
 
@@ -34,8 +35,8 @@ import net.lightbody.bmp.mitm.keys.RSAKeyGenerator;
  * Description:
  *
  */
-public class SelfSignedSslEngineSource implements SslEngineSource {
-	private static Logger logger = LoggerFactory.getLogger(SelfSignedSslEngineSource.class);
+public class SelfSignedSslEngineSourceExt implements SslEngineSource {
+	private static Logger logger = LoggerFactory.getLogger(SelfSignedSslEngineSourceExt.class);
 
     public static final String KeyStoreType_STR = "JKS";
     private static final String PROTOCOL = "TLS";
@@ -53,7 +54,7 @@ public class SelfSignedSslEngineSource implements SslEngineSource {
      * @param sendCerts
      */
     @SuppressWarnings("static-access")
-	public SelfSignedSslEngineSource(boolean trustAllServers, boolean sendCerts, String keyalg) {
+	public SelfSignedSslEngineSourceExt(boolean trustAllServers, boolean sendCerts, String keyalg) {
         JCEUtil.removeCryptographyRestrictions();
         this.trustAllServers = trustAllServers;
         this.sendCerts = sendCerts;
@@ -88,7 +89,7 @@ public class SelfSignedSslEngineSource implements SslEngineSource {
         initializeSSLContext();
     }
 
-    public SelfSignedSslEngineSource() {
+    public SelfSignedSslEngineSourceExt() {
         this(false, true, KEYALG);
     }
 

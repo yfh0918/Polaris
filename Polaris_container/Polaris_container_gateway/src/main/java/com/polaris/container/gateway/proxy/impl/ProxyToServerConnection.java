@@ -1,11 +1,11 @@
-package org.littleshoot.proxy.impl;
+package com.polaris.container.gateway.proxy.impl;
 
-import static org.littleshoot.proxy.impl.ConnectionState.AWAITING_CHUNK;
-import static org.littleshoot.proxy.impl.ConnectionState.AWAITING_CONNECT_OK;
-import static org.littleshoot.proxy.impl.ConnectionState.AWAITING_INITIAL;
-import static org.littleshoot.proxy.impl.ConnectionState.CONNECTING;
-import static org.littleshoot.proxy.impl.ConnectionState.DISCONNECTED;
-import static org.littleshoot.proxy.impl.ConnectionState.HANDSHAKING;
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.AWAITING_CHUNK;
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.AWAITING_CONNECT_OK;
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.AWAITING_INITIAL;
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.CONNECTING;
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.DISCONNECTED;
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.HANDSHAKING;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -17,17 +17,16 @@ import java.util.concurrent.RejectedExecutionException;
 import javax.net.ssl.SSLProtocolException;
 import javax.net.ssl.SSLSession;
 
-import org.littleshoot.proxy.ActivityTracker;
-import org.littleshoot.proxy.ChainedProxy;
-import org.littleshoot.proxy.ChainedProxyAdapter;
-import org.littleshoot.proxy.ChainedProxyManager;
-import org.littleshoot.proxy.FullFlowContext;
-import org.littleshoot.proxy.HttpFilters;
-import org.littleshoot.proxy.MitmManager;
-import org.littleshoot.proxy.TransportProtocol;
-import org.littleshoot.proxy.UnknownTransportProtocolException;
-
 import com.google.common.net.HostAndPort;
+import com.polaris.container.gateway.proxy.ActivityTracker;
+import com.polaris.container.gateway.proxy.ChainedProxy;
+import com.polaris.container.gateway.proxy.ChainedProxyAdapter;
+import com.polaris.container.gateway.proxy.ChainedProxyManager;
+import com.polaris.container.gateway.proxy.FullFlowContext;
+import com.polaris.container.gateway.proxy.HttpFilters;
+import com.polaris.container.gateway.proxy.MitmManager;
+import com.polaris.container.gateway.proxy.TransportProtocol;
+import com.polaris.container.gateway.proxy.UnknownTransportProtocolException;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;

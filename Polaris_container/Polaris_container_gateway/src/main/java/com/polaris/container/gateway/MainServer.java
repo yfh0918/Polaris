@@ -3,18 +3,18 @@ package com.polaris.container.gateway;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-import org.littleshoot.proxy.ActivityTrackerAdapter;
-import org.littleshoot.proxy.FlowContext;
-import org.littleshoot.proxy.HttpFilters;
-import org.littleshoot.proxy.HttpFiltersSourceAdapter;
-import org.littleshoot.proxy.HttpProxyServerBootstrap;
-import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
-import org.littleshoot.proxy.impl.ThreadPoolConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.config.ConfigurationSupport;
-import com.polaris.container.gateway.util.SelfSignedSslEngineSource;
+import com.polaris.container.gateway.proxy.ActivityTrackerAdapter;
+import com.polaris.container.gateway.proxy.FlowContext;
+import com.polaris.container.gateway.proxy.HttpFilters;
+import com.polaris.container.gateway.proxy.HttpFiltersSourceAdapter;
+import com.polaris.container.gateway.proxy.HttpProxyServerBootstrap;
+import com.polaris.container.gateway.proxy.extras.SelfSignedSslEngineSourceExt;
+import com.polaris.container.gateway.proxy.impl.DefaultHttpProxyServer;
+import com.polaris.container.gateway.proxy.impl.ThreadPoolConfiguration;
 import com.polaris.container.listener.ServerListenerSupport;
 import com.polaris.container.util.NetUtils;
 import com.polaris.core.config.ConfClient;
@@ -85,7 +85,7 @@ public class MainServer {
             httpProxyServerBootstrap
                     //不验证client端证书
                     .withAuthenticateSslClients(false)
-                    .withSslEngineSource(new SelfSignedSslEngineSource());
+                    .withSslEngineSource(new SelfSignedSslEngineSourceExt());
         } 
         //milliseconds - 40seconds
         int timeout = Integer.parseInt(ConfClient.get("connect.timeout","40000"));
