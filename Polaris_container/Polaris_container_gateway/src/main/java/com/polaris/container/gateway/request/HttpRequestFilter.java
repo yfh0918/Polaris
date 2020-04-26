@@ -24,7 +24,7 @@ public abstract class HttpRequestFilter extends HttpFilter  {
 	@Override
 	public void start() {
 		super.start();
-		HttpRequestFilterChain.addFilter(httpFilterEntity);
+		HttpRequestFilterChain.INSTANCE.add(this);
 	} 
 	
     /**
@@ -34,7 +34,7 @@ public abstract class HttpRequestFilter extends HttpFilter  {
 	@Override
 	public void stop() {
 		super.stop();
-		HttpRequestFilterChain.removeFilter(httpFilterEntity);
+		HttpRequestFilterChain.INSTANCE.remove(this);
 	}
 	
 	/**

@@ -1,6 +1,8 @@
 package com.polaris.container.gateway.response;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
@@ -20,16 +22,24 @@ import jodd.util.StringUtil;
  * Description:
  *
  */
-public class HttpResponseFilterChain extends HttpFilterChain {
+public class HttpResponseFilterChain implements HttpFilterChain<HttpResponseFilter> {
+    protected List<HttpResponseFilter> responseFilters = new CopyOnWriteArrayList<>();
+    
+    public static HttpResponseFilterChain INSTANCE = new HttpResponseFilterChain();
+    private HttpResponseFilterChain() {}
 
-    public synchronized static void addFilter(HttpFilterEntity httpFilterEntity) {
-		responseFilters.add((HttpResponseFilter)httpFilterEntity.getFilter());
+    @Override
+    public void add(HttpResponseFilter filter) {
+		responseFilters.add(filter);
         Collections.sort(responseFilters, new HttpFilterCompare());
     }
-    public synchronized static void removeFilter(HttpFilterEntity httpFilterEntity) {
-    	responseFilters.remove(httpFilterEntity.getFilter());
+    
+    @Override
+    public void remove(HttpResponseFilter filter) {
+    	responseFilters.remove(filter);
     }
-    public static ImmutablePair<Boolean, HttpResponseFilter> doFilter(HttpRequest originalRequest, HttpResponse httpResponse) {
+    
+    public ImmutablePair<Boolean, HttpResponseFilter> doFilter(HttpRequest originalRequest, HttpResponse httpResponse) {
         for (HttpResponseFilter filter : responseFilters) {
         	HttpFilterEntity httpFilterEntity = filter.getHttpFilterEntity();
         	if (httpFilterEntity == null) {

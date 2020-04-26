@@ -20,7 +20,7 @@ public abstract class HttpResponseFilter extends HttpFilter {
 	@Override
 	public void start() {
 		super.start();
-		HttpResponseFilterChain.addFilter(httpFilterEntity);
+		HttpResponseFilterChain.INSTANCE.add(this);
 	} 
 	
     /**
@@ -30,7 +30,7 @@ public abstract class HttpResponseFilter extends HttpFilter {
 	@Override
 	public void stop() {
 		super.stop();
-		HttpResponseFilterChain.removeFilter(httpFilterEntity);
+		HttpResponseFilterChain.INSTANCE.remove(this);
 	}
 	
 	protected abstract boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse);

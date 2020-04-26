@@ -1,6 +1,8 @@
 package com.polaris.container.gateway.request;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
@@ -22,17 +24,24 @@ import jodd.util.StringUtil;
  * <p>
  * 拦截器链
  */
-public class HttpRequestFilterChain extends HttpFilterChain{
+public class HttpRequestFilterChain implements HttpFilterChain<HttpRequestFilter>{
+    protected List<HttpRequestFilter> requestFilters = new CopyOnWriteArrayList<>();
+    
+    public static HttpRequestFilterChain INSTANCE = new HttpRequestFilterChain();
+    private HttpRequestFilterChain() {}
 
-    public synchronized static void addFilter(HttpFilterEntity httpFilterEntity) {
-        requestFilters.add((HttpRequestFilter)httpFilterEntity.getFilter());
+    @Override
+    public void add(HttpRequestFilter filter) {
+        requestFilters.add(filter);
         Collections.sort(requestFilters, new HttpFilterCompare());
     }
-    public synchronized static void removeFilter(HttpFilterEntity httpFilterEntity) {
-        requestFilters.remove(httpFilterEntity.getFilter());
+    
+    @Override
+    public void remove(HttpRequestFilter filter) {
+        requestFilters.remove(filter);
     }
 
-    public static ImmutablePair<Boolean, HttpRequestFilter> doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
+    public ImmutablePair<Boolean, HttpRequestFilter> doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
         for (HttpRequestFilter filter : requestFilters) {
         	//判断
         	HttpFilterEntity httpFilterEntity = filter.getHttpFilterEntity();

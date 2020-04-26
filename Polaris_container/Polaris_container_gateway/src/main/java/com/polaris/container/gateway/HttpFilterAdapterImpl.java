@@ -62,7 +62,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	}
         	
         	//进入request过滤器
-            ImmutablePair<Boolean, HttpRequestFilter> immutablePair = HttpRequestFilterChain.doFilter(originalRequest, httpObject, ctx);
+            ImmutablePair<Boolean, HttpRequestFilter> immutablePair = HttpRequestFilterChain.INSTANCE.doFilter(originalRequest, httpObject, ctx);
             
             //过滤不通过的直接进入response过滤器
             if (immutablePair.left) {
@@ -106,7 +106,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	}
 
         	//response调用链
-        	ImmutablePair<Boolean, HttpResponseFilter> immutablePair = HttpResponseFilterChain.doFilter(originalRequest, (HttpResponse) httpObject);
+        	ImmutablePair<Boolean, HttpResponseFilter> immutablePair = HttpResponseFilterChain.INSTANCE.doFilter(originalRequest, (HttpResponse) httpObject);
         	
         	//业务异常
         	if (immutablePair.left) {
