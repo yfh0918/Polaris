@@ -1,6 +1,5 @@
 package com.polaris.container.gateway.request;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -8,7 +7,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.HttpFilterChain;
-import com.polaris.container.gateway.HttpFilterCompare;
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.core.config.ConfClient;
 
@@ -24,22 +22,12 @@ import jodd.util.StringUtil;
  * <p>
  * 拦截器链
  */
-public class HttpRequestFilterChain implements HttpFilterChain<HttpRequestFilter>{
+public class HttpRequestFilterChain extends HttpFilterChain<HttpRequestFilter>{
     protected List<HttpRequestFilter> requestFilters = new CopyOnWriteArrayList<>();
     
     public static HttpRequestFilterChain INSTANCE = new HttpRequestFilterChain();
     private HttpRequestFilterChain() {}
 
-    @Override
-    public void add(HttpRequestFilter filter) {
-        requestFilters.add(filter);
-        Collections.sort(requestFilters, new HttpFilterCompare());
-    }
-    
-    @Override
-    public void remove(HttpRequestFilter filter) {
-        requestFilters.remove(filter);
-    }
 
     public ImmutablePair<Boolean, HttpRequestFilter> doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
         for (HttpRequestFilter filter : requestFilters) {

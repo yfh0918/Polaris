@@ -1,14 +1,9 @@
 package com.polaris.container.gateway.response;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.container.gateway.HttpFilterChain;
-import com.polaris.container.gateway.HttpFilterCompare;
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.core.config.ConfClient;
 
@@ -22,25 +17,13 @@ import jodd.util.StringUtil;
  * Description:
  *
  */
-public class HttpResponseFilterChain implements HttpFilterChain<HttpResponseFilter> {
-    protected List<HttpResponseFilter> responseFilters = new CopyOnWriteArrayList<>();
+public class HttpResponseFilterChain extends HttpFilterChain<HttpResponseFilter> {
     
     public static HttpResponseFilterChain INSTANCE = new HttpResponseFilterChain();
     private HttpResponseFilterChain() {}
 
-    @Override
-    public void add(HttpResponseFilter filter) {
-		responseFilters.add(filter);
-        Collections.sort(responseFilters, new HttpFilterCompare());
-    }
-    
-    @Override
-    public void remove(HttpResponseFilter filter) {
-    	responseFilters.remove(filter);
-    }
-    
     public ImmutablePair<Boolean, HttpResponseFilter> doFilter(HttpRequest originalRequest, HttpResponse httpResponse) {
-        for (HttpResponseFilter filter : responseFilters) {
+        for (HttpResponseFilter filter : filters) {
         	HttpFilterEntity httpFilterEntity = filter.getHttpFilterEntity();
         	if (httpFilterEntity == null) {
         		continue;
