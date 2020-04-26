@@ -6,16 +6,17 @@ import java.util.Set;
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.core.Constant;
+import com.polaris.core.config.ConfEndPoint;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.config.reader.ConfReaderStrategyDefault;
 import com.polaris.core.util.StringUtil;
 
-public abstract class HttpFilterHelper  {
+public class HttpFilterHelper  implements ConfEndPoint{
 	
-	//初始化所有的filter
-	public static void init() {
+	@Override
+	public void init() {
 		for (HttpFilterEnum e : HttpFilterEnum.values()) {
 			addFilter(e.getFilterEntity());
 		}
