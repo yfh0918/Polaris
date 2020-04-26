@@ -9,7 +9,7 @@ import com.polaris.core.config.provider.ConfCompositeProvider;
 
 /**
 *
-* 类名称：MainSupport
+* 类名称：ServerRunner
 * 类描述：
 * 创建人：yufenghua
 * 创建时间：2018年5月9日 上午8:55:18
@@ -20,8 +20,6 @@ import com.polaris.core.config.provider.ConfCompositeProvider;
 *
 */
 public abstract class ServerRunner {
-	
-	private static Banner.Mode bannerMode = Banner.Mode.CONSOLE;
 	
     /**
     * startServer
@@ -51,6 +49,14 @@ public abstract class ServerRunner {
     	ServerFactory.getServer().start();
     }
     
+    /**
+    * 设置banner模式
+    * @param 
+    * @return 
+    * @Exception 
+    * @since 
+    */
+	private static Banner.Mode bannerMode = Banner.Mode.CONSOLE;
     public static void setBannerMode(Banner.Mode inputBannerMode) {
     	bannerMode = inputBannerMode;
     }
