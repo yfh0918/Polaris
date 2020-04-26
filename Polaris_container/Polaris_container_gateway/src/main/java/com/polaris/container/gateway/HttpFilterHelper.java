@@ -15,6 +15,7 @@ import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.config.reader.ConfReaderStrategy;
 import com.polaris.core.config.reader.ConfReaderStrategyDefault;
+import com.polaris.core.util.FileStrategyUtil;
 import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -51,32 +52,10 @@ public abstract class HttpFilterHelper  {
     	
     	//获取不到-从本地文件系统获取
     	if (StringUtil.isEmpty(content)) {
-    		ConfReaderStrategy reader = ConfReaderStrategyDefault.INSTANCE;
-    		InputStream is = null;
-    		try {
-    			
-    			//从path获取
-        		File contentFile = reader.getFile(file.getName());
-        		if (contentFile != null) {
-        			is = new FileInputStream(contentFile);
-        		} else {
-        			
-        			//从classpath获取
-        			is = reader.getInputStream(file.getName());
-        		}
-        		if (is != null) {
-        			content = FileUtil.read(is);
-        		}
-    		} catch (IOException ex) {
-    		} finally {
-    			if (is != null) {
-    				try {
-						is.close();
-					} catch (IOException e) {
-					}
-    			}
-    		}
+    		content = FileStrategyUtil.getFileContent(file.getName());
     	}
+    	
+    	//load
     	load(file, content);
     	filter.onChange(file);
 		
