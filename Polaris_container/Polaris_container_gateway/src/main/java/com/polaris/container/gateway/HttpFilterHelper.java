@@ -1,22 +1,15 @@
 package com.polaris.container.gateway;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
+import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
-import com.polaris.core.config.reader.ConfReaderStrategy;
 import com.polaris.core.config.reader.ConfReaderStrategyDefault;
-import com.polaris.core.util.FileStrategyUtil;
-import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.StringUtil;
 
 public abstract class HttpFilterHelper  {
@@ -52,7 +45,7 @@ public abstract class HttpFilterHelper  {
     	
     	//获取不到-从本地文件系统获取
     	if (StringUtil.isEmpty(content)) {
-    		content = FileStrategyUtil.getFileContent(file.getName());
+    		content = ConfReaderStrategyDefault.INSTANCE.getContents(file.getName());
     	}
     	
     	//load

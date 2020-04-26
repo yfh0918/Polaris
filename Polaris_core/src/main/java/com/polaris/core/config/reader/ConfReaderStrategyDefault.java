@@ -17,6 +17,39 @@ public class ConfReaderStrategyDefault implements ConfReaderStrategy {
 	private ConfReaderStrategyDefault() {}
 
 	@Override
+	public String getContents (String fileN) {
+		try (InputStream in = getInputStream_0(fileN)) {
+			if (in != null) {
+				return FileUtil.read(in);
+		    }
+	    } catch (IOException ex) {
+	    	ex.printStackTrace();
+	    }
+		try (InputStream in = getInputStream_1(fileN)) {
+			if (in != null) {
+				return FileUtil.read(in);
+		    }
+	    } catch (IOException ex) {
+	    	ex.printStackTrace();
+	    }
+		try (InputStream in = getInputStream_2(fileN)) {
+			if (in != null) {
+				return FileUtil.read(in);
+		    }
+	    } catch (IOException ex) {
+	    	ex.printStackTrace();
+	    }
+		try (InputStream in = getInputStream_3(fileN)) {
+			if (in != null) {
+				return FileUtil.read(in);
+		    }
+	    } catch (IOException ex) {
+	    	ex.printStackTrace();
+	    }
+		return null;
+	}
+
+	@Override
 	public Properties getProperties (String fileName) {
 		
 		//no suffix
