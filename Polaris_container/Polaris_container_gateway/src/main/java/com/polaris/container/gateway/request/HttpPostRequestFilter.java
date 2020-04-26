@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.GatewayConstant;
+import com.polaris.container.gateway.HttpFilterConstant;
 import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.container.gateway.util.RequestUtil;
 
@@ -26,8 +26,8 @@ import io.netty.handler.codec.http.HttpRequest;
  * Description:
  *
  */
-public class PostHttpRequestFilter extends HttpRequestFilter {
-	private static Logger logger = LoggerFactory.getLogger(PostHttpRequestFilter.class);
+public class HttpPostRequestFilter extends HttpRequestFilter {
+	private static Logger logger = LoggerFactory.getLogger(HttpPostRequestFilter.class);
     private static Pattern filePattern = Pattern.compile("Content-Disposition: form-data;(.+)filename=\"(.+)\\.(.*)\"");
     private Set<Pattern> patterns0 = new HashSet<>();
     private Set<Pattern> patterns1 = new HashSet<>();
@@ -66,9 +66,9 @@ public class PostHttpRequestFilter extends HttpRequestFilter {
             if (httpObject instanceof HttpContent) {
                 HttpContent httpContent = (HttpContent) httpObject;
                 String contentBody = null;
-                List<String> headerValues = GatewayConstant.getHeaderValues(originalRequest, "Content-Type");
+                List<String> headerValues = HttpFilterConstant.getHeaderValues(originalRequest, "Content-Type");
                 if (headerValues.size() > 0 && headerValues.get(0) != null) {
-                    if (GatewayConstant.getHeaderValues(originalRequest, "Content-Type") != null && headerValues.get(0).startsWith("multipart/form-data")) {
+                    if (HttpFilterConstant.getHeaderValues(originalRequest, "Content-Type") != null && headerValues.get(0).startsWith("multipart/form-data")) {
                         contentBody = new String(Unpooled.copiedBuffer(httpContent.content()).array());
                     } else {
                         try {
@@ -87,7 +87,7 @@ public class PostHttpRequestFilter extends HttpRequestFilter {
                         for (Pattern pattern : patterns0) {
                             Matcher matcher = pattern.matcher(contentBody.toLowerCase());
                             if (matcher.find()) {
-                                hackLog(logger, GatewayConstant.getRealIp(originalRequest), PostHttpRequestFilter.class.getSimpleName(), pattern.toString());
+                                hackLog(logger, HttpFilterConstant.getRealIp(originalRequest), HttpPostRequestFilter.class.getSimpleName(), pattern.toString());
                                 return true;
                             }
                         }
@@ -96,7 +96,7 @@ public class PostHttpRequestFilter extends HttpRequestFilter {
                             String fileExt = fileMatcher.group(3);
                             for (Pattern pat : patterns1) {
                                 if (pat.matcher(fileExt).matches()) {
-                                    hackLog(logger, GatewayConstant.getRealIp(originalRequest), PostHttpRequestFilter.class.getSimpleName(), filePattern.toString());
+                                    hackLog(logger, HttpFilterConstant.getRealIp(originalRequest), HttpPostRequestFilter.class.getSimpleName(), filePattern.toString());
                                     return true;
                                 }
                             }

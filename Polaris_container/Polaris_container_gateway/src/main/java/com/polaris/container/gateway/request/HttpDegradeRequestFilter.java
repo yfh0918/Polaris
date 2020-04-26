@@ -28,8 +28,8 @@ import io.netty.handler.codec.http.HttpRequest;
  * Description:
  * 降级，针对URL
  */
-public class DegradeRequestFilter extends HttpRequestFilter {
-	private static Logger logger = LoggerFactory.getLogger(DegradeRequestFilter.class);
+public class HttpDegradeRequestFilter extends HttpRequestFilter {
+	private static Logger logger = LoggerFactory.getLogger(HttpDegradeRequestFilter.class);
 	private static Set<String> degradeUrlSet = new HashSet<>();
 	private static String degradeMessageCode = Constant.RESULT_FAIL;
 	private static String degradeMessage = Constant.MESSAGE_GLOBAL_ERROR;
@@ -87,7 +87,7 @@ public class DegradeRequestFilter extends HttpRequestFilter {
             HttpRequest httpRequest = (HttpRequest)httpObject;
 
             //降级URL
-            String url = CCHttpRequestFilter.getUrl(httpRequest);
+            String url = HttpCCRequestFilter.getUrl(httpRequest);
             if (degradeUrlSet.size() > 0 && degradeUrlSet.contains(url)) {
             	this.setResult(ResultUtil.create(degradeMessageCode,degradeMessage).toJSONString());
             	return true;

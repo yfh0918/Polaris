@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
-import com.polaris.container.gateway.request.TokenHttpRequestFilter;
+import com.polaris.container.gateway.request.HttpTokenRequestFilter;
 import com.polaris.core.util.JwtUtil;
 import com.polaris.core.util.ResultUtil;
 import com.polaris.core.util.StringUtil;
@@ -21,13 +21,13 @@ import io.netty.handler.codec.http.HttpResponseStatus;
  * Description:
  *
  */
-public class TokenHttpResponseFilter extends HttpResponseFilter {
-	private static Logger logger = LoggerFactory.getLogger(TokenHttpResponseFilter.class);
+public class HttpTokenResponseFilter extends HttpResponseFilter {
+	private static Logger logger = LoggerFactory.getLogger(HttpTokenResponseFilter.class);
     @Override
     public boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse) {
     	try {
-        	String url = TokenHttpRequestFilter.getUrl(originalRequest);
-        	if (TokenHttpRequestFilter.isTokenPath(url)) {
+        	String url = HttpTokenRequestFilter.getUrl(originalRequest);
+        	if (HttpTokenRequestFilter.isTokenPath(url)) {
         		String jwtInfo = httpResponse.headers().get(JwtUtil.JWT_KEY);
          		if (StringUtil.isNotEmpty(jwtInfo)) {
         			Map<String, Object> requestDto =  JSONObject.parseObject(JwtUtil.decode(jwtInfo));

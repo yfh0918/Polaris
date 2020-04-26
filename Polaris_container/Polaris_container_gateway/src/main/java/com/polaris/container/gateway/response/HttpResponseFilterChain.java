@@ -2,7 +2,7 @@ package com.polaris.container.gateway.response;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import com.polaris.container.gateway.GatewayConstant;
+import com.polaris.container.gateway.HttpFilterConstant;
 import com.polaris.container.gateway.HttpFilterChain;
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.core.config.ConfClient;
@@ -32,7 +32,7 @@ public class HttpResponseFilterChain extends HttpFilterChain<HttpResponseFilter>
         	if (StringUtil.isEmpty(key)) {
         		continue;
         	}
-        	if (!GatewayConstant.ON.equals(ConfClient.get(key))) {
+        	if (!HttpFilterConstant.ON.equals(ConfClient.get(key))) {
         		continue;
         	}
             boolean result = filter.doFilter(originalRequest, httpResponse);

@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.GatewayConstant;
+import com.polaris.container.gateway.HttpFilterConstant;
 import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.container.gateway.util.RequestUtil;
 
@@ -24,8 +24,8 @@ import io.netty.handler.codec.http.HttpRequest;
  * <p>
  * URL参数黑名单参数拦截
  */
-public class ArgsHttpRequestFilter extends HttpRequestFilter {
-	private static Logger logger = LoggerFactory.getLogger(ArgsHttpRequestFilter.class);
+public class HttpArgsRequestFilter extends HttpRequestFilter {
+	private static Logger logger = LoggerFactory.getLogger(HttpArgsRequestFilter.class);
 	private Set<Pattern> patterns = new HashSet<>();
 
 	@Override
@@ -64,7 +64,7 @@ public class ArgsHttpRequestFilter extends HttpRequestFilter {
                             for (Pattern pat : patterns) {
                                 Matcher matcher = pat.matcher(kv[1].toLowerCase());
                                 if (matcher.find()) {
-                                    hackLog(logger, GatewayConstant.getRealIp(httpRequest), ArgsHttpRequestFilter.class.getSimpleName(), pat.toString());
+                                    hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), HttpArgsRequestFilter.class.getSimpleName(), pat.toString());
                                     return true;
                                 }
                             }

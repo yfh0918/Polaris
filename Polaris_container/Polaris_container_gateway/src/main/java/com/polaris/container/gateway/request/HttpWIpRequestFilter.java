@@ -6,7 +6,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.GatewayConstant;
+import com.polaris.container.gateway.HttpFilterConstant;
 import com.polaris.container.gateway.pojo.HttpFilterFile;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -20,8 +20,8 @@ import io.netty.handler.codec.http.HttpRequest;
  *
  * IP白名单拦截
  */
-public class WIpHttpRequestFilter extends HttpRequestFilter {
-	private static Logger logger = LoggerFactory.getLogger(WIpHttpRequestFilter.class);
+public class HttpWIpRequestFilter extends HttpRequestFilter {
+	private static Logger logger = LoggerFactory.getLogger(HttpWIpRequestFilter.class);
 	private Set<String> patterns = new HashSet<>();
 
 	@Override
@@ -42,9 +42,9 @@ public class WIpHttpRequestFilter extends HttpRequestFilter {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
-            String ip = GatewayConstant.getRealIp(httpRequest);
+            String ip = HttpFilterConstant.getRealIp(httpRequest);
             if (patterns.contains(ip)) {
-                hackLog(logger, GatewayConstant.getRealIp(httpRequest), WIpHttpRequestFilter.class.getSimpleName(), "white ip");
+                hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), HttpWIpRequestFilter.class.getSimpleName(), "white ip");
             	return true;
             }
         }

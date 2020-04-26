@@ -24,7 +24,7 @@ import io.netty.handler.codec.http.HttpRequest;
  * <p>
  * Token拦截
  */
-public class TokenHttpRequestFilter extends HttpRequestFilter {
+public class HttpTokenRequestFilter extends HttpRequestFilter {
 
 	private static String TOKEN_POLICY_UNCHECK = "uncheck";//#request存在token 并且属于UNCHECKED_PATHS的url,如果policy=check就检查token的有效性，如果uncheck就不检查
 	private static String TOKEN_POLICY = TOKEN_POLICY_UNCHECK;
@@ -183,7 +183,7 @@ public class TokenHttpRequestFilter extends HttpRequestFilter {
             }
 
             //是否为不验证的url
-            boolean uncheckUrl = !checkUrlPath(TokenHttpRequestFilter.getUrl(httpRequest));
+            boolean uncheckUrl = !checkUrlPath(HttpTokenRequestFilter.getUrl(httpRequest));
             if (uncheckUrl) {
             	if (isUncheckPolicy()) {
             		return false;

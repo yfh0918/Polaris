@@ -17,8 +17,8 @@ import io.netty.handler.codec.http.HttpRequest;
 /**
  * @author:Tom.Yu Description:
  */
-public class HostResolverImpl implements HostResolver {
-    private volatile static HostResolverImpl singleton;
+public class HttpFilterHostResolver implements HostResolver {
+    public static HttpFilterHostResolver INSTANCE = new HttpFilterHostResolver();
 
     private void loadUpstream(String content) {
         if (StringUtil.isEmpty(content)) {
@@ -29,7 +29,7 @@ public class HostResolverImpl implements HostResolver {
         ServerStrategyProviderFactory.get().init();
     }
 
-    private HostResolverImpl() {
+    private HttpFilterHostResolver() {
        
     	//先获取
     	loadUpstream(ConfHandlerProviderFactory.get(Type.EXT).get(HostUpstream.NAME));
@@ -41,17 +41,6 @@ public class HostResolverImpl implements HostResolver {
                 loadUpstream(content);
             }
         });
-    }
-
-    public static HostResolverImpl getSingleton() {
-        if (singleton == null) {
-            synchronized (HostResolverImpl.class) {
-                if (singleton == null) {
-                    singleton = new HostResolverImpl();
-                }
-            }
-        }
-        return singleton;
     }
 
     @Override
@@ -66,15 +55,15 @@ public class HostResolverImpl implements HostResolver {
         if (upstream != null) {
             String uri = ServerStrategyProviderFactory.get().getUrl(upstream.getHost());
             if (StringUtil.isNotEmpty(uri)) {
-                address = uri.split(GatewayConstant.COLON);
+                address = uri.split(HttpFilterConstant.COLON);
             } 
         }
         if (address == null) {
-        	upstream = HostUpstream.getFromContext(GatewayConstant.DEFAULT);
+        	upstream = HostUpstream.getFromContext(HttpFilterConstant.DEFAULT);
         	if (upstream != null) {
         		String uri = ServerStrategyProviderFactory.get().getUrl(upstream.getHost());
         		if (StringUtil.isNotEmpty(uri)) {
-                    address = uri.split(GatewayConstant.COLON);
+                    address = uri.split(HttpFilterConstant.COLON);
                 } 
         	}
         }
@@ -84,6 +73,6 @@ public class HostResolverImpl implements HostResolver {
             }
             return new InetSocketAddress(address[0], Integer.parseInt(address[1]));
         }
-        throw new UnknownHostException(host + GatewayConstant.COLON + virtualPort);
+        throw new UnknownHostException(host + HttpFilterConstant.COLON + virtualPort);
     }
 }

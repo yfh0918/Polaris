@@ -6,7 +6,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.GatewayConstant;
+import com.polaris.container.gateway.HttpFilterConstant;
 import com.polaris.container.gateway.pojo.HttpFilterFile;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -20,8 +20,8 @@ import io.netty.handler.codec.http.HttpRequest;
  *
  * IP黑名单拦截
  */
-public class IpHttpRequestFilter extends HttpRequestFilter {
-	private static Logger logger = LoggerFactory.getLogger(IpHttpRequestFilter.class);
+public class HttpIpRequestFilter extends HttpRequestFilter {
+	private static Logger logger = LoggerFactory.getLogger(HttpIpRequestFilter.class);
 	private Set<String> patterns = new HashSet<>();
 
 	@Override
@@ -37,9 +37,9 @@ public class IpHttpRequestFilter extends HttpRequestFilter {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
-            String realIp = GatewayConstant.getRealIp(httpRequest);
+            String realIp = HttpFilterConstant.getRealIp(httpRequest);
             if (patterns.contains(realIp)) {
-                hackLog(logger, GatewayConstant.getRealIp(httpRequest), IpHttpRequestFilter.class.getSimpleName(), "black ip");
+                hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), HttpIpRequestFilter.class.getSimpleName(), "black ip");
                 return true;
             }
         }

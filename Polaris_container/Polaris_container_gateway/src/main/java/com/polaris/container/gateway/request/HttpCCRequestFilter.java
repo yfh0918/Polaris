@@ -28,7 +28,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.RateLimiter;
-import com.polaris.container.gateway.GatewayConstant;
+import com.polaris.container.gateway.HttpFilterConstant;
 import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.core.Constant;
 import com.polaris.core.pojo.Result;
@@ -57,8 +57,8 @@ import io.netty.handler.codec.http.HttpRequest;
  * Description:
  * cc拦截
  */
-public class CCHttpRequestFilter extends HttpRequestFilter {
-	private static Logger logger = LoggerFactory.getLogger(CCHttpRequestFilter.class);
+public class HttpCCRequestFilter extends HttpRequestFilter {
+	private static Logger logger = LoggerFactory.getLogger(HttpCCRequestFilter.class);
 	
     //控制总的流量
 	public static volatile RateLimiter totalRateLimiter;
@@ -221,7 +221,7 @@ public class CCHttpRequestFilter extends HttpRequestFilter {
     public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
-            String realIp = GatewayConstant.getRealIp((DefaultHttpRequest) httpObject);
+            String realIp = HttpFilterConstant.getRealIp((DefaultHttpRequest) httpObject);
             
             //控制总流量，超标直接返回
             HttpRequest httpRequest = (HttpRequest)httpObject;

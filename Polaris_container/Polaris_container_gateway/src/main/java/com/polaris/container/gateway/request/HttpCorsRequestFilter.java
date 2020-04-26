@@ -28,8 +28,8 @@ import io.netty.handler.codec.http.HttpResponseStatus;
  * Description:
  * 跨域请求
  */
-public class CorsRequestFilter extends HttpRequestFilter {
-	private static Logger logger = LoggerFactory.getLogger(CorsRequestFilter.class);
+public class HttpCorsRequestFilter extends HttpRequestFilter {
+	private static Logger logger = LoggerFactory.getLogger(HttpCorsRequestFilter.class);
 	private static Map<String, String> corsMap = new HashMap<>(); 
 	private final String DEFAULT_COSR_BODY = "OPTIONS,HEAD,GET,POST";
 	private final String CORS_BODY_KEY="Access-Control-Response";

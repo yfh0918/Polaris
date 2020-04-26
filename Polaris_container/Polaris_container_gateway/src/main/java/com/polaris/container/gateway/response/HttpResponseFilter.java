@@ -33,5 +33,9 @@ public abstract class HttpResponseFilter extends HttpFilter {
 		HttpResponseFilterChain.INSTANCE.remove(this);
 	}
 	
+    /**
+     * 调用response过滤
+     *
+     */
 	protected abstract boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse);
 }

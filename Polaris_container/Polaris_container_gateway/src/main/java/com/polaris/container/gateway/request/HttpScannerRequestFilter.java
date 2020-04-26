@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.GatewayConstant;
+import com.polaris.container.gateway.HttpFilterConstant;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -18,8 +18,8 @@ import io.netty.handler.codec.http.HttpRequest;
  * Description:
  *
  */
-public class ScannerHttpRequestFilter extends HttpRequestFilter {
-	private static Logger logger = LoggerFactory.getLogger(ScannerHttpRequestFilter.class);
+public class HttpScannerRequestFilter extends HttpRequestFilter {
+	private static Logger logger = LoggerFactory.getLogger(HttpScannerRequestFilter.class);
 
     @Override
     public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
@@ -50,19 +50,19 @@ public class ScannerHttpRequestFilter extends HttpRequestFilter {
             Matcher matcher3 = pattern3.matcher(httpRequest.uri());
 
             if (acunetixAspect || acunetixAspectPassword || acunetixAspectQueries) {
-                hackLog(logger, GatewayConstant.getRealIp(httpRequest), "scanner", "Acunetix Web Vulnerability");
+                hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), "scanner", "Acunetix Web Vulnerability");
                 return true;
             } else if (xScanMemo || xRequestMemo || xRequestManagerMemo || xWIPP) {
-                hackLog(logger, GatewayConstant.getRealIp(httpRequest), "scanner", "HP WebInspect");
+                hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), "scanner", "HP WebInspect");
                 return true;
             } else if (matcher1.find()) {
-                hackLog(logger, GatewayConstant.getRealIp(httpRequest), "scanner", "Appscan");
+                hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), "scanner", "Appscan");
                 return true;
             } else if (matcher2) {
-                hackLog(logger, GatewayConstant.getRealIp(httpRequest), "scanner", "Bugscan");
+                hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), "scanner", "Bugscan");
                 return true;
             } else if (matcher3.find()) {
-                hackLog(logger, GatewayConstant.getRealIp(httpRequest), "scanner", "Netsparker");
+                hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), "scanner", "Netsparker");
                 return true;
             }
         }

@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.GatewayConstant;
+import com.polaris.container.gateway.HttpFilterConstant;
 import com.polaris.container.gateway.pojo.HttpFilterFile;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -20,10 +20,10 @@ import io.netty.handler.codec.http.HttpRequest;
  *
  * Description:
  *
+ * URL路径黑名单拦截
  */
-public class WUrlHttpRequestFilter extends HttpRequestFilter {
-	private static Logger logger = LoggerFactory.getLogger(WUrlHttpRequestFilter.class);
-
+public class HttpUrlRequestFilter extends HttpRequestFilter {
+	private static Logger logger = LoggerFactory.getLogger(HttpUrlRequestFilter.class);
 	private Set<Pattern> patterns = new HashSet<>();
 
 	@Override
@@ -39,11 +39,6 @@ public class WUrlHttpRequestFilter extends HttpRequestFilter {
 	}
 	
     @Override
-    public boolean isBlacklist() {
-        return false;
-    }
-
-    @Override
     public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
@@ -58,7 +53,7 @@ public class WUrlHttpRequestFilter extends HttpRequestFilter {
             for (Pattern pat : patterns) {
                 Matcher matcher = pat.matcher(url);
                 if (matcher.find()) {
-                    hackLog(logger, GatewayConstant.getRealIp(httpRequest), WUrlHttpRequestFilter.class.getSimpleName(), pat.toString());
+                    hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), HttpUrlRequestFilter.class.getSimpleName(), pat.toString());
                     return true;
                 }
             }

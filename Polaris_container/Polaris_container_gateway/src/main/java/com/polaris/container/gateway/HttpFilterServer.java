@@ -23,9 +23,9 @@ import com.polaris.core.util.SpringUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
-public class MainServer {
+public class HttpFilterServer {
 	
-	private static Logger logger = LoggerFactory.getLogger(MainServer.class);
+	private static Logger logger = LoggerFactory.getLogger(HttpFilterServer.class);
 	
 	/**
      * 服务器
@@ -35,7 +35,7 @@ public class MainServer {
 	/**
      * 私有构造方法
      */
-    private MainServer() {
+    private HttpFilterServer() {
     }
     
     /**
@@ -43,7 +43,7 @@ public class MainServer {
      *
      * @return 单实例
      */
-    public static MainServer getInstance() {
+    public static HttpFilterServer getInstance() {
         return Singletone.INSTANCE;
     }
 
@@ -54,7 +54,7 @@ public class MainServer {
         /**
          * 单实例
          */
-        private static final MainServer INSTANCE = new MainServer();
+        private static final HttpFilterServer INSTANCE = new HttpFilterServer();
     }
     
     /**
@@ -67,18 +67,18 @@ public class MainServer {
     	//创建context
     	SpringUtil.refresh(ConfigurationSupport.getConfiguration());
         ThreadPoolConfiguration threadPoolConfiguration = new ThreadPoolConfiguration();
-        threadPoolConfiguration.withAcceptorThreads(GatewayConstant.AcceptorThreads);
-        threadPoolConfiguration.withClientToProxyWorkerThreads(GatewayConstant.ClientToProxyWorkerThreads);
-        threadPoolConfiguration.withProxyToServerWorkerThreads(GatewayConstant.ProxyToServerWorkerThreads);
+        threadPoolConfiguration.withAcceptorThreads(HttpFilterConstant.AcceptorThreads);
+        threadPoolConfiguration.withClientToProxyWorkerThreads(HttpFilterConstant.ClientToProxyWorkerThreads);
+        threadPoolConfiguration.withProxyToServerWorkerThreads(HttpFilterConstant.ProxyToServerWorkerThreads);
 
         InetSocketAddress inetSocketAddress = new InetSocketAddress(Integer.parseInt(ConfClient.get("server.port")));
         httpProxyServerBootstrap = DefaultHttpProxyServer.bootstrap()
                 .withAddress(inetSocketAddress);
-        boolean proxy_tls = GatewayConstant.ON.equals(ConfClient.get("server.tls"));
+        boolean proxy_tls = HttpFilterConstant.ON.equals(ConfClient.get("server.tls"));
         
         //反向代理模式
         logger.info("反向代理模式开启");
-        httpProxyServerBootstrap.withServerResolver(HostResolverImpl.getSingleton());
+        httpProxyServerBootstrap.withServerResolver(HttpFilterHostResolver.INSTANCE);
 
         if (proxy_tls) {
             logger.info("开启TLS支持");
@@ -100,14 +100,14 @@ public class MainServer {
                                                           HttpRequest httpRequest) {
 
                     	//如何设置真实IP
-                        List<String> headerValues = GatewayConstant.getHeaderValues(httpRequest, GatewayConstant.X_Real_IP);
-                        List<String> headerValues2 = GatewayConstant.getHeaderValues(httpRequest, GatewayConstant.X_Forwarded_For);
+                        List<String> headerValues = HttpFilterConstant.getHeaderValues(httpRequest, HttpFilterConstant.X_Real_IP);
+                        List<String> headerValues2 = HttpFilterConstant.getHeaderValues(httpRequest, HttpFilterConstant.X_Forwarded_For);
                         if (headerValues.size() == 0) {
                         	if (headerValues2 != null && headerValues2.size() > 0) {
-                        		httpRequest.headers().add(GatewayConstant.X_Real_IP, headerValues2.get(0));
+                        		httpRequest.headers().add(HttpFilterConstant.X_Real_IP, headerValues2.get(0));
                         	} else {
                         		String remoteAddress = flowContext.getClientAddress().getAddress().getHostAddress();
-                                httpRequest.headers().add(GatewayConstant.X_Real_IP, remoteAddress);
+                                httpRequest.headers().add(HttpFilterConstant.X_Real_IP, remoteAddress);
                         	}
                         }
 
@@ -118,7 +118,7 @@ public class MainServer {
                             xff.append(headerValues2.get(0)).append(", ");
                         }
                         xff.append(NetUtils.getLocalHost());
-                        httpRequest.headers().set(GatewayConstant.X_Forwarded_For, xff.toString());
+                        httpRequest.headers().set(HttpFilterConstant.X_Forwarded_For, xff.toString());
                     }
                 })
                 .withFiltersSource(new HttpFiltersSourceAdapter() {
@@ -127,7 +127,7 @@ public class MainServer {
                         return new HttpFilterAdapterImpl(originalRequest, ctx);
                     }
                 }).start();
-        ServerListenerSupport.started();//监听启动
+        ServerListenerSupport.started();
         logger.info("Gateway started on port(s) " + inetSocketAddress.getPort() + " with context path '/'");
         
         // add shutdown hook to stop server

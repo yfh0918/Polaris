@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.base.Splitter;
-import com.polaris.container.gateway.GatewayConstant;
+import com.polaris.container.gateway.HttpFilterConstant;
 import com.polaris.core.util.PropertyUtil;
 
 public class HostUpstream {
@@ -45,15 +45,15 @@ public class HostUpstream {
         if (upstream != null) {
         	return upstream;
         }
-        upstream = getFromContext(GatewayConstant.DEFAULT);
+        upstream = getFromContext(HttpFilterConstant.DEFAULT);
         if (upstream != null) {
         	return upstream;
         }
         throw new NullPointerException("url is not corrected");
     }
     public static String getContextFromUri(String uri) {
-    	List<String> contextList = Splitter.on(GatewayConstant.SLASH).omitEmptyStrings().splitToList(uri);
-		return GatewayConstant.SLASH + contextList.get(0);
+    	List<String> contextList = Splitter.on(HttpFilterConstant.SLASH).omitEmptyStrings().splitToList(uri);
+		return HttpFilterConstant.SLASH + contextList.get(0);
     }
 
 	private String context;
