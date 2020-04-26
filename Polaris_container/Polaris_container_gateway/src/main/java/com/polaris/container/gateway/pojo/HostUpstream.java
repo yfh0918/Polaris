@@ -1,10 +1,11 @@
 package com.polaris.container.gateway.pojo;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.google.common.base.Splitter;
 import com.polaris.container.gateway.GatewayConstant;
 import com.polaris.core.util.PropertyUtil;
 
@@ -40,22 +41,17 @@ public class HostUpstream {
     }
     
     public static HostUpstream getFromUri(String uri) {
-    	if (!uri.substring(1).contains(GatewayConstant.SLASH)) {
-    		uri = uri + GatewayConstant.SLASH;
-    	}
-        if (uri != null) {
-            for (Entry<String, HostUpstream> entry : HostUpstream.getContextEntrySet()) {
-                if (uri.startsWith(entry.getKey()+GatewayConstant.SLASH)) {
-                    return entry.getValue();
-                }
-            }
-        }
-        HostUpstream upstream = HostUpstream.getFromContext(GatewayConstant.DEFAULT);
+        HostUpstream upstream = getFromContext(getContextFromUri(uri));
         if (upstream != null) {
         	return upstream;
         }
         throw new NullPointerException("url is not corrected");
     }
+    public static String getContextFromUri(String uri) {
+    	List<String> contextList = Splitter.on(GatewayConstant.SLASH).omitEmptyStrings().splitToList(uri);
+		return GatewayConstant.SLASH + contextList.get(0);
+    }
+
 	private String context;
 	private String host;
 	public String getContext() {
