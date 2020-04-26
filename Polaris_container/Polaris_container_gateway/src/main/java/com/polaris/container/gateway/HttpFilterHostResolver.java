@@ -4,11 +4,8 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 import com.polaris.container.gateway.pojo.HostUpstream;
+import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.container.gateway.proxy.HostResolver;
-import com.polaris.core.Constant;
-import com.polaris.core.config.ConfHandlerListener;
-import com.polaris.core.config.Config.Type;
-import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
 import com.polaris.core.util.StringUtil;
 
@@ -17,34 +14,23 @@ import io.netty.handler.codec.http.HttpRequest;
 /**
  * @author:Tom.Yu Description:
  */
-public class HttpFilterHostResolver implements HostResolver {
+public class HttpFilterHostResolver implements HostResolver ,HttpFilterEvent{
     public static HttpFilterHostResolver INSTANCE = new HttpFilterHostResolver();
-
-    private void loadUpstream(String content) {
-        if (StringUtil.isEmpty(content)) {
-            return;
-        }
-        String[] contents = content.split(Constant.LINE_SEP);
-        HostUpstream.load(contents);
-        ServerStrategyProviderFactory.get().init();
-    }
-
     private HttpFilterHostResolver() {
-       
-    	//先获取
-    	loadUpstream(ConfHandlerProviderFactory.get(Type.EXT).get(HostUpstream.NAME));
-    	
-    	//后监听
-    	ConfHandlerProviderFactory.get(Type.EXT).listen(HostUpstream.NAME, new ConfHandlerListener() {
-            @Override
-            public void receive(String content) {
-                loadUpstream(content);
-            }
-        });
+    	HttpFilterHelper.INSTANCE.load(this, new HttpFilterFile(HostUpstream.NAME));
     }
 
     @Override
-    public InetSocketAddress resolve(String host, int virtualPort,HttpRequest originalRequest)
+    public void onChange(HttpFilterFile file) {
+    	if (file.getData() == null || file.getData().size() == 0) {
+            return;
+        }
+        HostUpstream.load(file.getData());
+        ServerStrategyProviderFactory.get().init();
+    }
+
+    @Override
+    public InetSocketAddress resolve(String host, int port, HttpRequest originalRequest)
             throws UnknownHostException {
     	
     	//元素0:ip  元素1:port
@@ -73,6 +59,6 @@ public class HttpFilterHostResolver implements HostResolver {
             }
             return new InetSocketAddress(address[0], Integer.parseInt(address[1]));
         }
-        throw new UnknownHostException(host + HttpFilterConstant.COLON + virtualPort);
+        throw new UnknownHostException(host + HttpFilterConstant.COLON + port);
     }
 }

@@ -33,7 +33,7 @@ public class HttpFilterHelper {
 	}
 	
 	//创建需要处理的具体文件，比如cc.txt,ip.txt
-    public void load(HttpFilter filter, HttpFilterFile file){
+    public void load(HttpFilterEvent httpFilterEvent, HttpFilterFile file){
     	
 		//先获取
     	String content = ConfHandlerProviderFactory.get(Type.EXT).get(file.getName());
@@ -45,14 +45,14 @@ public class HttpFilterHelper {
     	
     	//load
     	load(file, content);
-    	filter.onChange(file);
+    	httpFilterEvent.onChange(file);
 		
 		//后监听
 		ConfHandlerProviderFactory.get(Type.EXT).listen(file.getName(), new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
 				load(file, content);
-				filter.onChange(file);
+				httpFilterEvent.onChange(file);
 			}
     	});
     }

@@ -14,7 +14,7 @@ public class HostUpstream {
     public static final String NAME = "gw_upstream.txt";
     private static volatile Map<String, HostUpstream> contextMap = new ConcurrentHashMap<>();
 
-    public static void load(String[] contents) {
+    public static void load(Set<String> contents) {
     	Map<String, HostUpstream> temp_contextMap = new ConcurrentHashMap<>();
         for (String line : contents) {
         	line = line.replace("\n", "").replace("\r", "");
