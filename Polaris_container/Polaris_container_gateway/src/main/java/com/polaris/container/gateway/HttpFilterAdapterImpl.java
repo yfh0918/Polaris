@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.container.gateway.pojo.HostUpstream;
 import com.polaris.container.gateway.proxy.HttpFiltersAdapter;
 import com.polaris.container.gateway.proxy.impl.ClientToProxyConnection;
 import com.polaris.container.gateway.proxy.impl.ProxyToServerConnection;
@@ -141,8 +142,8 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             String remoteIp = proxyToServerConnection.getRemoteAddress().getAddress().getHostAddress();
             int remotePort = proxyToServerConnection.getRemoteAddress().getPort();
             String remoteUrl = remoteIp + ":" + remotePort;
-            String serverHostAndPort = proxyToServerConnection.getServerHostAndPort();
-            ServerStrategyProviderFactory.get().connectionFail(serverHostAndPort, remoteUrl);
+            String uri = proxyToServerConnection.getInitialRequest().uri();
+            ServerStrategyProviderFactory.get().connectionFail(HostUpstream.getFromUri(uri).getHost(), remoteUrl);
         } catch (Exception e) {
             logger.error("connection of proxy->server is failed", e);
         } 
