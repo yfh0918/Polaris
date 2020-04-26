@@ -3,7 +3,7 @@ package com.polaris.container.gateway.proxy;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
-import org.littleshoot.dnssec4j.VerifiedAddressFactory;
+import com.polaris.container.gateway.dnssec4j.VerifiedAddressFactory;
 
 public class DnsSecServerResolver implements HostResolver {
     @Override
