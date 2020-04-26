@@ -45,6 +45,10 @@ public class HostUpstream {
         if (upstream != null) {
         	return upstream;
         }
+        upstream = getFromContext(GatewayConstant.DEFAULT);
+        if (upstream != null) {
+        	return upstream;
+        }
         throw new NullPointerException("url is not corrected");
     }
     public static String getContextFromUri(String uri) {
