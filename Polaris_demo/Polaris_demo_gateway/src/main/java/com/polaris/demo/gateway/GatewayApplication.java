@@ -18,8 +18,8 @@ public class GatewayApplication {
     	ServerRunner.run(args,GatewayApplication.class, new ServerListener() {
     		@Override
     		public void started() {
-    			HttpFilterHelper.replaceFilter(HttpFilterEnum.Token.getFilterEntity(), new TokenExtendHttpRequestFilter());
-    			HttpFilterHelper.replaceFilter(HttpFilterEnum.TokenResponse.getFilterEntity(), new TokenExtendHttpResponseFilter());
+    			HttpFilterHelper.INSTANCE.replaceFilter(HttpFilterEnum.Token.getFilterEntity(), new TokenExtendHttpRequestFilter());
+    			HttpFilterHelper.INSTANCE.replaceFilter(HttpFilterEnum.TokenResponse.getFilterEntity(), new TokenExtendHttpResponseFilter());
     		}
     	});
     }

@@ -21,7 +21,7 @@ public abstract class HttpFilter implements HttpFilterLifeCycle ,HttpFilterEvent
 			return;
 		}
 		for (HttpFilterFile fileType : fileTypes) {
-			HttpFilterHelper.load(this, fileType);
+			HttpFilterHelper.INSTANCE.load(this, fileType);
 		}
 	} 
 	

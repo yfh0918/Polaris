@@ -6,7 +6,7 @@ public class HttpFilterInit implements ConfEndPoint {
 	@Override
 	public void init() {
 		for (HttpFilterEnum e : HttpFilterEnum.values()) {
-			HttpFilterHelper.addFilter(e.getFilterEntity());
+			HttpFilterHelper.INSTANCE.addFilter(e.getFilterEntity());
 		}
 	}
 }
