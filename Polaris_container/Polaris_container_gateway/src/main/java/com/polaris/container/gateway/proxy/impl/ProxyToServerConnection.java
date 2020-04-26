@@ -84,7 +84,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private final String serverHostAndPort;
     private volatile ChainedProxy chainedProxy;
     private final Queue<ChainedProxy> availableChainedProxies;
-    private HttpRequest initialHttpRequest;
+    private HttpRequest originalRequest;
 
     /**
      * The filters to apply to response/chunks received from server.
@@ -190,7 +190,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         this.availableChainedProxies = availableChainedProxies;
         this.trafficHandler = globalTrafficShapingHandler;
         this.currentFilters = initialFilters;
-        this.initialHttpRequest = initialHttpRequest;
+        this.originalRequest = initialHttpRequest;
         // Report connection status to HttpFilters
         currentFilters.proxyToServerConnectionQueued();
 
@@ -830,13 +830,13 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
             try {
                 if (this.remoteAddress == null) {
                     hostAndPort = serverHostAndPort;
-                    this.remoteAddress = addressFor(serverHostAndPort, proxyServer,initialHttpRequest);
+                    this.remoteAddress = addressFor(serverHostAndPort, proxyServer,originalRequest);
                 } else if (this.remoteAddress.isUnresolved()) {
                     // filter returned an unresolved address, so resolve it using the proxy server's resolver
                     hostAndPort = HostAndPort.fromParts(this.remoteAddress.getHostName(), this.remoteAddress.getPort()).toString();
                     
                     this.remoteAddress = proxyServer.getServerResolver().resolve(this.remoteAddress.getHostName(),
-                            this.remoteAddress.getPort(),initialHttpRequest);
+                            this.remoteAddress.getPort(),originalRequest);
                 }
             } catch (UnknownHostException e) {
                 // unable to resolve the hostname to an IP address. notify the filters of the failure before allowing the
