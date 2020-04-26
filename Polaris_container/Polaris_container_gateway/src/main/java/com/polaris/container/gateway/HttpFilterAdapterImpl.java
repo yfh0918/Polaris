@@ -8,7 +8,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.pojo.HostUpstream;
 import com.polaris.container.gateway.proxy.HttpFiltersAdapter;
 import com.polaris.container.gateway.proxy.impl.ClientToProxyConnection;
 import com.polaris.container.gateway.proxy.impl.ProxyToServerConnection;
@@ -59,7 +58,6 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	//request init
         	if (httpObject instanceof HttpRequest) {
         		RequestUtil.remove();
-        		HostResolverImpl.getSingleton().convertHost((HttpRequest) httpObject);
         	}
         	
         	//进入request过滤器
@@ -83,9 +81,6 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     
     @Override
     public HttpResponse proxyToServerRequest(HttpObject httpObject) {
-    	if (httpObject instanceof HttpRequest) {
-    		HostResolverImpl.getSingleton().reConvertHost((HttpRequest) httpObject);
-    	}
         return null;
     }
     
@@ -147,9 +142,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             int remotePort = proxyToServerConnection.getRemoteAddress().getPort();
             String remoteUrl = remoteIp + ":" + remotePort;
             String serverHostAndPort = proxyToServerConnection.getServerHostAndPort();
-            String virtualPort = serverHostAndPort.substring(serverHostAndPort.indexOf(":")+1);
-            ServerStrategyProviderFactory.get().connectionFail(
-            		HostUpstream.getFromVirtualPort(virtualPort).getHost(), remoteUrl);
+            ServerStrategyProviderFactory.get().connectionFail(serverHostAndPort, remoteUrl);
         } catch (Exception e) {
             logger.error("connection of proxy->server is failed", e);
         } 

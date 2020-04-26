@@ -84,6 +84,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private final String serverHostAndPort;
     private volatile ChainedProxy chainedProxy;
     private final Queue<ChainedProxy> availableChainedProxies;
+    private HttpRequest initialHttpRequest;
 
     /**
      * The filters to apply to response/chunks received from server.
@@ -168,7 +169,8 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
                 chainedProxies.poll(),
                 chainedProxies,
                 initialFilters,
-                globalTrafficShapingHandler);
+                globalTrafficShapingHandler,
+                initialHttpRequest);
     }
 
     private ProxyToServerConnection(
@@ -178,7 +180,8 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
             ChainedProxy chainedProxy,
             Queue<ChainedProxy> availableChainedProxies,
             HttpFilters initialFilters,
-            GlobalTrafficShapingHandler globalTrafficShapingHandler)
+            GlobalTrafficShapingHandler globalTrafficShapingHandler,
+            HttpRequest initialHttpRequest)
             throws UnknownHostException {
         super(DISCONNECTED, proxyServer, true);
         this.clientConnection = clientConnection;
@@ -187,7 +190,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         this.availableChainedProxies = availableChainedProxies;
         this.trafficHandler = globalTrafficShapingHandler;
         this.currentFilters = initialFilters;
-
+        this.initialHttpRequest = initialHttpRequest;
         // Report connection status to HttpFilters
         currentFilters.proxyToServerConnectionQueued();
 
@@ -827,12 +830,13 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
             try {
                 if (this.remoteAddress == null) {
                     hostAndPort = serverHostAndPort;
-                    this.remoteAddress = addressFor(serverHostAndPort, proxyServer);
+                    this.remoteAddress = addressFor(serverHostAndPort, proxyServer,initialHttpRequest);
                 } else if (this.remoteAddress.isUnresolved()) {
                     // filter returned an unresolved address, so resolve it using the proxy server's resolver
                     hostAndPort = HostAndPort.fromParts(this.remoteAddress.getHostName(), this.remoteAddress.getPort()).toString();
+                    
                     this.remoteAddress = proxyServer.getServerResolver().resolve(this.remoteAddress.getHostName(),
-                            this.remoteAddress.getPort());
+                            this.remoteAddress.getPort(),initialHttpRequest);
                 }
             } catch (UnknownHostException e) {
                 // unable to resolve the hostname to an IP address. notify the filters of the failure before allowing the
@@ -946,7 +950,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      * @throws UnknownHostException if hostAndPort could not be resolved, or if the input string could not be parsed into
      *          a host and port.
      */
-    public static InetSocketAddress addressFor(String hostAndPort, DefaultHttpProxyServer proxyServer)
+    public static InetSocketAddress addressFor(String hostAndPort, DefaultHttpProxyServer proxyServer,HttpRequest initialHttpRequest)
             throws UnknownHostException {
         HostAndPort parsedHostAndPort;
         try {
@@ -958,7 +962,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         String host = parsedHostAndPort.getHost();
         int port = parsedHostAndPort.getPortOrDefault(80);
 
-        return proxyServer.getServerResolver().resolve(host, port);
+        return proxyServer.getServerResolver().resolve(host, port,initialHttpRequest);
     }
 
     /***************************************************************************
