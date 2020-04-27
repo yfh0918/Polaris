@@ -14,10 +14,10 @@ import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.config.reader.ConfReaderStrategyDefault;
 import com.polaris.core.util.StringUtil;
 
-public class HttpFilterReader {
-	private static Logger logger = LoggerFactory.getLogger(HttpFilterReader.class);
-	public static HttpFilterReader INSTANCE = new HttpFilterReader();
-	private HttpFilterReader() {};
+public class HttpFilterFileReader {
+	private static Logger logger = LoggerFactory.getLogger(HttpFilterFileReader.class);
+	public static HttpFilterFileReader INSTANCE = new HttpFilterFileReader();
+	private HttpFilterFileReader() {};
 	
     public void readFile(HttpFilterCallback callback, HttpFilterFile file){
     	

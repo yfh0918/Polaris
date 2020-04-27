@@ -1,16 +1,16 @@
 package com.polaris.container.gateway;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
+import com.polaris.container.gateway.pojo.HttpFilterFile;
 
-import io.netty.handler.codec.http.HttpResponseStatus;
-
-public abstract class HttpFilter implements HttpFilterLifeCycle ,HttpFilterCallback {
+public abstract class HttpFilter extends HttpFilterMessage 
+								 implements HttpFilterLifeCycle ,HttpFilterCallback {
 	protected HttpFilterEntity httpFilterEntity;
 	
+    /**
+     * 启动过滤器
+     *
+     */
 	@Override
 	public void start() {
 		if (httpFilterEntity == null) {
@@ -22,7 +22,7 @@ public abstract class HttpFilter implements HttpFilterLifeCycle ,HttpFilterCallb
 		}
 		for (HttpFilterFile file : files) {
 			if (file.getData() == null) {
-				HttpFilterReader.INSTANCE.readFile(this, file);
+				HttpFilterFileReader.INSTANCE.readFile(this, file);
 			}
 		}
 	} 
@@ -34,37 +34,12 @@ public abstract class HttpFilter implements HttpFilterLifeCycle ,HttpFilterCallb
 	public HttpFilterEntity getHttpFilterEntity() {
     	return httpFilterEntity;
     }
+	
+    /**
+     * 设定entity对象
+     *
+     */
 	public void setHttpFilterEntity(HttpFilterEntity httpFilterEntity) {
     	this.httpFilterEntity = httpFilterEntity;
     }
-	
-	
-	/**
-     * 中途被拦截需要返回的信息
-     *
-     */
-	private String result;
-	public String getResult() {
-		return result;
-	}
-
-	public void setResult(String result) {
-		this.result = result;
-	}
-	
-	private HttpResponseStatus status = HttpResponseStatus.FORBIDDEN;
-	public HttpResponseStatus getStatus() {
-		return status;
-	}
-	public void setStatus(HttpResponseStatus status) {
-		this.status = status;
-	}
-	
-	private Map<String, Object> headerMap = new HashMap<>();
-	public Map<String, Object> getHeaderMap() {
-		return headerMap;
-	}
-	public void putHeaderValue(String key, Object value) {
-		this.headerMap.put(key, value);
-	}
 }
