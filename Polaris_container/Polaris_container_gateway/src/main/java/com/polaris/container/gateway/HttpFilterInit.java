@@ -8,5 +8,6 @@ public class HttpFilterInit implements ConfEndPoint {
 		for (HttpFilterEnum e : HttpFilterEnum.values()) {
 			HttpFilterHelper.INSTANCE.addFilter(e.getFilterEntity());
 		}
+		HttpFilterHelper.INSTANCE.addHostResolver();
 	}
 }

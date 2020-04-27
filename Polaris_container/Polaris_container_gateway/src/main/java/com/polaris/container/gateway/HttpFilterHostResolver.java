@@ -14,12 +14,23 @@ import io.netty.handler.codec.http.HttpRequest;
 /**
  * @author:Tom.Yu Description:
  */
-public class HttpFilterHostResolver implements HostResolver ,HttpFilterCallback{
+public class HttpFilterHostResolver implements HttpFilterLifeCycle, HostResolver ,HttpFilterCallback{
     public static HttpFilterHostResolver INSTANCE = new HttpFilterHostResolver();
-    private HttpFilterHostResolver() {
+    private HttpFilterHostResolver() {}
+    
+    /**
+     * 启动HostResolver
+     *
+     */
+	@Override
+	public void start() {
     	HttpFilterFileReader.INSTANCE.readFile(this, new HttpFilterFile(HostUpstream.NAME));
-    }
+	}
 
+    /**
+     * 配置更新回调
+     *
+     */
     @Override
     public void onChange(HttpFilterFile file) {
         HostUpstream.create(file.getData());
