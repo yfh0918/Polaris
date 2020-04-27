@@ -22,7 +22,7 @@ public class HttpFilterHostResolver implements HostResolver ,HttpFilterCallback{
 
     @Override
     public void onChange(HttpFilterFile file) {
-        HostUpstream.load(file.getData());
+        HostUpstream.create(file.getData());
         ServerStrategyProviderFactory.get().init();
     }
 

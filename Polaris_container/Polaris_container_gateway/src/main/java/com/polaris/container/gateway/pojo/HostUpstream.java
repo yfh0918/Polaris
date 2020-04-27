@@ -14,23 +14,19 @@ public class HostUpstream {
     public static final String NAME = "gw_upstream.txt";
     private static volatile Map<String, HostUpstream> contextMap = new ConcurrentHashMap<>();
 
-    public static void load(Set<String> contents) {
+    public static void create(Set<String> contents) {
     	Map<String, HostUpstream> temp_contextMap = new ConcurrentHashMap<>();
         for (String line : contents) {
         	line = line.replace("\n", "").replace("\r", "");
-        	HostUpstream upstream = HostUpstream.create(line);
+        	String[] kv = PropertyUtil.getKeyValue(line);
+        	HostUpstream upstream = new HostUpstream();
+        	if (kv != null) {
+        		upstream.setHost(kv[1]);
+        		upstream.setContext(kv[0]);
+            }
         	temp_contextMap.put(upstream.getContext(), upstream);
         }
         contextMap = temp_contextMap;
-    }
-    private static HostUpstream create(String line) {
-    	String[] kv = PropertyUtil.getKeyValue(line);
-    	HostUpstream upstram = new HostUpstream();
-    	if (kv != null) {
-    		upstram.setHost(kv[1]);
-    		upstram.setContext(kv[0]);
-        }
-    	return upstram;
     }
     
     public static HostUpstream getFromContext(String key) {

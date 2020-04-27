@@ -44,12 +44,10 @@ import io.netty.util.CharsetUtil;
 public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
 	private static Logger logger = LoggerFactory.getLogger(HttpFilterAdapterImpl.class);
 
-    //构造过滤器适配器
     public HttpFilterAdapterImpl(HttpRequest originalRequest, ChannelHandlerContext ctx) {
         super(originalRequest, ctx);
     }
 
-    //处理所有的request请求
     @Override
     public HttpResponse clientToProxyRequest(HttpObject httpObject) {
     	
@@ -69,20 +67,12 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
                 httpResponse = createResponse(immutablePair.right.getStatus(), originalRequest, immutablePair.right.getResult(),immutablePair.right.getHeaderMap());
             }
         } catch (Exception e) {
-        	
-        	//存在异常的直接进入response过滤器
             httpResponse = createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, ResultUtil.create(Constant.RESULT_FAIL,e.toString()).toJSONString(), null);
             logger.error("client's request failed", e);
-            
         } 
         
         //返回
         return httpResponse;
-    }
-    
-    @Override
-    public HttpResponse proxyToServerRequest(HttpObject httpObject) {
-        return null;
     }
     
     @Override
@@ -93,7 +83,6 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         } 
     }
 
-    //进入resoponse过滤器
     @Override
     public HttpObject proxyToClientResponse(HttpObject httpObject) {
         if (httpObject instanceof HttpResponse) {
@@ -117,7 +106,6 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         return httpObject;
     }
 
-    //下游的服务器连接成功
     @Override
     public void proxyToServerConnectionSucceeded(final ChannelHandlerContext serverCtx) {
         ChannelPipeline pipeline = serverCtx.pipeline();
@@ -131,7 +119,6 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         super.proxyToServerConnectionSucceeded(serverCtx);    
     }
     
-    //下游服务器连接失败
     @Override
     public void proxyToServerConnectionFailed() {
         try {
@@ -149,7 +136,6 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         } 
     }
 
-    //创建resoponse(中途退出错误的场合)
 	private HttpResponse createResponse(HttpResponseStatus httpResponseStatus, HttpRequest originalRequest, String result, Map<String, Object> headerMap) {
         HttpResponse httpResponse;
         if (StringUtil.isNotEmpty(result)) {
