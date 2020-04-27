@@ -22,7 +22,7 @@ public abstract class HttpFilter implements HttpFilterLifeCycle ,HttpFilterCallb
 		}
 		for (HttpFilterFile file : files) {
 			if (file.getData() == null) {
-				HttpFilterHelper.INSTANCE.loadFile(this, file);
+				HttpFilterReader.INSTANCE.readFile(this, file);
 			}
 		}
 	} 

@@ -17,7 +17,7 @@ import io.netty.handler.codec.http.HttpRequest;
 public class HttpFilterHostResolver implements HostResolver ,HttpFilterCallback{
     public static HttpFilterHostResolver INSTANCE = new HttpFilterHostResolver();
     private HttpFilterHostResolver() {
-    	HttpFilterHelper.INSTANCE.loadFile(this, new HttpFilterFile(HostUpstream.NAME));
+    	HttpFilterReader.INSTANCE.readFile(this, new HttpFilterFile(HostUpstream.NAME));
     }
 
     @Override
