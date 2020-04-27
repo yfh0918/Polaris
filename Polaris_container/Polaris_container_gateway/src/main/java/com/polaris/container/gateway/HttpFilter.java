@@ -16,13 +16,13 @@ public abstract class HttpFilter implements HttpFilterLifeCycle ,HttpFilterCallb
 		if (httpFilterEntity == null) {
 			return;
 		}
-		HttpFilterFile[] fileTypes = httpFilterEntity.getFiles();
-		if (fileTypes == null) {
+		HttpFilterFile[] files = httpFilterEntity.getFiles();
+		if (files == null) {
 			return;
 		}
-		for (HttpFilterFile fileType : fileTypes) {
-			if (fileType.getData() == null) {
-				HttpFilterHelper.INSTANCE.loadFile(this, fileType);
+		for (HttpFilterFile file : files) {
+			if (file.getData() == null) {
+				HttpFilterHelper.INSTANCE.loadFile(this, file);
 			}
 		}
 	} 
