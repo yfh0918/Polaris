@@ -28,11 +28,13 @@ public class HttpFilterHelper {
 	}
 	//外部调用-新增filter
 	public void addFilter(HttpFilterEntity httpFilterEntity) {
+		logger.info("add filter:{}",httpFilterEntity.getFilter().getClass().getSimpleName());
 		httpFilterEntity.getFilter().start();
 	}
 	
 	//外部调用-删除filter
 	public void removeFilter(HttpFilterEntity httpFilterEntity) {
+		logger.info("remove filter:{}",httpFilterEntity.getFilter().getClass().getSimpleName());
 		httpFilterEntity.getFilter().stop();
 	}
 	
