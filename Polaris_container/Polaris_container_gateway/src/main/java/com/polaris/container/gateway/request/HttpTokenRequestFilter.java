@@ -37,12 +37,6 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
 
 	@Override
 	public void onChange(HttpFilterFile file) {
-    	if (file.getData() == null || file.getData().size() == 0) {
-    		UNCHECKED_PATHS = new HashSet<>();
-    		UNCHECKED_PATHS_PREFIX = new HashSet<>();
-    		TOKEN_PATHS = new HashSet<>();
-    		return;
-    	}
     	Set<String> UNCHECKED_PATHS_TEMP = new HashSet<>();
     	Set<String> UNCHECKED_PATHS_PREFIX_TEMP = new HashSet<>();
     	Set<String> TOKEN_PATHS_TEMP = new HashSet<>();

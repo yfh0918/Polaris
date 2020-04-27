@@ -1,5 +1,6 @@
 package com.polaris.container.gateway.pojo;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class HttpFilterFile {
@@ -19,6 +20,10 @@ public class HttpFilterFile {
 		return data;
 	}
 	public void setData(Set<String> data) {
-		this.data = data;
+		if (data == null) {
+			data = new LinkedHashSet<>();
+		} else {
+			this.data = data;
+		}
 	}
 }

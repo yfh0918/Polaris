@@ -1,6 +1,6 @@
 package com.polaris.container.gateway.request;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -22,14 +22,11 @@ import io.netty.handler.codec.http.HttpRequest;
  */
 public class HttpIpRequestFilter extends HttpRequestFilter {
 	private static Logger logger = LoggerFactory.getLogger(HttpIpRequestFilter.class);
-	private Set<String> patterns = new HashSet<>();
+	private Set<String> patterns = new LinkedHashSet<>();
 
 	@Override
 	public void onChange(HttpFilterFile file) {
-		Set<String> data = file.getData();
-		if (data != null) {
-			patterns = data;
-		}
+		patterns = file.getData();
 	}
 	
     @Override

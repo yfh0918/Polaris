@@ -36,10 +36,6 @@ public class HttpDegradeRequestFilter extends HttpRequestFilter {
 
 	@Override
 	public void onChange(HttpFilterFile file) {
-    	if (file.getData() == null || file.getData().size() == 0) {
-    		degradeUrlSet = new HashSet<>();
-    		return;
-    	}
     	Set<String> tempDegradeUrlSet = new HashSet<>();
     	String tempDegradeMessageCode = null;
     	String tempDegradeMessage = null;

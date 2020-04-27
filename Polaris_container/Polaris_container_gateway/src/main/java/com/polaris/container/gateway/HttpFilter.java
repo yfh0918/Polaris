@@ -8,7 +8,7 @@ import com.polaris.container.gateway.pojo.HttpFilterEntity;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 
-public abstract class HttpFilter implements HttpFilterLifeCycle ,HttpFilterEvent {
+public abstract class HttpFilter implements HttpFilterLifeCycle ,HttpFilterCallback {
 	protected HttpFilterEntity httpFilterEntity;
 	
 	@Override
@@ -21,7 +21,7 @@ public abstract class HttpFilter implements HttpFilterLifeCycle ,HttpFilterEvent
 			return;
 		}
 		for (HttpFilterFile fileType : fileTypes) {
-			HttpFilterHelper.INSTANCE.load(this, fileType);
+			HttpFilterHelper.INSTANCE.loadFile(this, fileType);
 		}
 	} 
 	

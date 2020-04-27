@@ -37,10 +37,6 @@ public class HttpCorsRequestFilter extends HttpRequestFilter {
 	
 	@Override
 	public void onChange(HttpFilterFile file) {
-    	if (file.getData() == null || file.getData().size() == 0) {
-    		corsMap = new HashMap<>();
-    		return;
-    	}
     	Map<String, String> tempCorsMap = new HashMap<>(); 
     	for (String conf : file.getData()) {
 			if (!conf.startsWith("#")) {

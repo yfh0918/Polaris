@@ -37,23 +37,17 @@ public class HttpPostRequestFilter extends HttpRequestFilter {
 		
 		//0-file
 		if (file == httpFilterEntity.getFiles()[0]) {
-			Set<String> data = file.getData();
 			Set<Pattern> tempPatterns = new HashSet<>();
-			if (data != null) {
-				for (String conf : data) {
-					tempPatterns.add(Pattern.compile(conf));
-				}
+			for (String conf : file.getData()) {
+				tempPatterns.add(Pattern.compile(conf));
 			}
 			patterns0 = tempPatterns;
 			
 		} else {
 			//1-file
-			Set<String> data = file.getData();
 			Set<Pattern> tempPatterns = new HashSet<>();
-			if (data != null) {
-				for (String conf : data) {
-					tempPatterns.add(Pattern.compile(conf));
-				}
+			for (String conf : file.getData()) {
+				tempPatterns.add(Pattern.compile(conf));
 			}
 			patterns1 = tempPatterns;
 		}

@@ -1,7 +1,10 @@
 package com.polaris.container.gateway;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.container.gateway.pojo.HttpFilterFile;
@@ -13,6 +16,7 @@ import com.polaris.core.config.reader.ConfReaderStrategyDefault;
 import com.polaris.core.util.StringUtil;
 
 public class HttpFilterHelper {
+	private static Logger logger = LoggerFactory.getLogger(HttpFilterHelper.class);
 	public static HttpFilterHelper INSTANCE = new HttpFilterHelper();
 	private HttpFilterHelper() {};
 	
@@ -33,7 +37,7 @@ public class HttpFilterHelper {
 	}
 	
 	//创建需要处理的具体文件，比如cc.txt,ip.txt
-    public void load(HttpFilterEvent httpFilterEvent, HttpFilterFile file){
+    public void loadFile(HttpFilterCallback callback, HttpFilterFile file){
     	
 		//先获取
     	String content = ConfHandlerProviderFactory.get(Type.EXT).get(file.getName());
@@ -45,19 +49,21 @@ public class HttpFilterHelper {
     	
     	//load
     	load(file, content);
-    	httpFilterEvent.onChange(file);
+    	callback.onChange(file);
+		logger.info("file:{} type:{} is added",file.getName(),Type.EXT);
 		
 		//后监听
 		ConfHandlerProviderFactory.get(Type.EXT).listen(file.getName(), new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
 				load(file, content);
-				httpFilterEvent.onChange(file);
+				callback.onChange(file);
+				logger.info("file:{} type:{} is updated",file.getName(),Type.EXT);
 			}
     	});
     }
     private void load(HttpFilterFile file, String content) {
-    	Set<String> data = new HashSet<>();
+    	Set<String> data = new LinkedHashSet<>();
     	if  (StringUtil.isEmpty(content)) {
     		file.setData(data);
     	} else {

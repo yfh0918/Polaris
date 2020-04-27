@@ -114,10 +114,6 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
 	
 	@Override
 	public void onChange(HttpFilterFile file) {
-    	if (file.getData() == null || file.getData().size() == 0) {
-    		ccSkipIp = new HashSet<>();
-    		return;
-    	}
     	int blockSecondsTemp = 60;
     	boolean isBlackIpTemp = false;
     	int[] IP_RATE = {10,60};

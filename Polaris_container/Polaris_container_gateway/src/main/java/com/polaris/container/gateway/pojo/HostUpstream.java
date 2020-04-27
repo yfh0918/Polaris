@@ -49,7 +49,7 @@ public class HostUpstream {
         if (upstream != null) {
         	return upstream;
         }
-        throw new NullPointerException("url is not corrected");
+        return null;
     }
     public static String getContextFromUri(String uri) {
     	List<String> contextList = Splitter.on(HttpFilterConstant.SLASH).omitEmptyStrings().splitToList(uri);

@@ -28,12 +28,9 @@ public class HttpUrlRequestFilter extends HttpRequestFilter {
 
 	@Override
 	public void onChange(HttpFilterFile file) {
-		Set<String> data = file.getData();
 		Set<Pattern> tempPatterns = new HashSet<>();
-		if (data != null) {
-			for (String conf : data) {
-				tempPatterns.add(Pattern.compile(conf));
-			}
+		for (String conf : file.getData()) {
+			tempPatterns.add(Pattern.compile(conf));
 		}
 		patterns = tempPatterns;
 	}

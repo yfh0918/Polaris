@@ -1,12 +1,9 @@
 package com.polaris.container.gateway.request;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import com.polaris.container.gateway.HttpFilterConstant;
 import com.polaris.container.gateway.HttpFilterChain;
+import com.polaris.container.gateway.HttpFilterConstant;
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.core.config.ConfClient;
 
@@ -23,14 +20,13 @@ import jodd.util.StringUtil;
  * 拦截器链
  */
 public class HttpRequestFilterChain extends HttpFilterChain<HttpRequestFilter>{
-    protected List<HttpRequestFilter> requestFilters = new CopyOnWriteArrayList<>();
     
     public static HttpRequestFilterChain INSTANCE = new HttpRequestFilterChain();
     private HttpRequestFilterChain() {}
 
 
     public ImmutablePair<Boolean, HttpRequestFilter> doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
-        for (HttpRequestFilter filter : requestFilters) {
+        for (HttpRequestFilter filter : filters) {
         	//判断
         	HttpFilterEntity httpFilterEntity = filter.getHttpFilterEntity();
         	if (httpFilterEntity == null) {
