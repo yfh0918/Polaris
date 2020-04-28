@@ -98,7 +98,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
     private static final Pattern HTTP_SCHEME = Pattern.compile("^http://.*", Pattern.CASE_INSENSITIVE);
 
     /**
-     * Keep track of all ProxyToServerConnections by host+port.
+     * Keep track of all ProxyToServerConnections by host+port+context.
      */
     private final Map<String, ProxyToServerConnection> serverConnectionsByHostAndPort = new ConcurrentHashMap<String, ProxyToServerConnection>();
 
