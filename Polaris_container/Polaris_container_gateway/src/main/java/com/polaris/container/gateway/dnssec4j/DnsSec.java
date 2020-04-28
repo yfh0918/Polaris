@@ -29,6 +29,7 @@ import org.xbill.DNS.Type;
 /**
  * DNSSEC resolver and validator.
  */
+@SuppressWarnings("unchecked")
 public class DnsSec {
 
     private static final Logger log = LoggerFactory.getLogger(DnsSec.class);
@@ -161,7 +162,7 @@ public class DnsSec {
             for (final RRset answerSet : answer) {
                 System.out.println("\n;; DNSKEYset that signs the RRset to chase:");
                 //System.out.println(set);
-                final Iterator<Record> rrIter = answerSet.rrs();
+				final Iterator<Record> rrIter = answerSet.rrs();
                 while (rrIter.hasNext()) {
                     final Record rec = rrIter.next();
                     System.out.println(rec);

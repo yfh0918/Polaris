@@ -1,25 +1,22 @@
 package com.polaris.container.gateway.proxy.impl;
 
-import io.netty.bootstrap.ChannelFactory;
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.ServerChannel;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.ChannelGroupFuture;
-import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.channel.udt.nio.NioUdtProvider;
-import io.netty.handler.traffic.GlobalTrafficShapingHandler;
-import io.netty.util.concurrent.GlobalEventExecutor;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.InetSocketAddress;
+import java.util.Collection;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.net.ssl.SSLEngine;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.barchart.udt.nio.SelectorProviderUDT;
 import com.polaris.container.gateway.proxy.ActivityTracker;
 import com.polaris.container.gateway.proxy.ChainedProxyManager;
 import com.polaris.container.gateway.proxy.DefaultHostResolver;
@@ -36,17 +33,21 @@ import com.polaris.container.gateway.proxy.SslEngineSource;
 import com.polaris.container.gateway.proxy.TransportProtocol;
 import com.polaris.container.gateway.proxy.UnknownTransportProtocolException;
 
-import javax.net.ssl.SSLEngine;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.InetSocketAddress;
-import java.util.Collection;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFactory;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.ServerChannel;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.ChannelGroupFuture;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.traffic.GlobalTrafficShapingHandler;
+import io.netty.util.concurrent.GlobalEventExecutor;
 
 /**
  * <p>
@@ -533,7 +534,12 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
                 break;
             case UDT:
                 LOG.info("Proxy listening with UDT transport");
-                serverBootstrap.channelFactory(NioUdtProvider.BYTE_ACCEPTOR)
+                serverBootstrap.channelFactory(new ChannelFactory<ServerChannel>() {
+                    @Override
+                    public ServerChannel newChannel() {
+                        return new NioServerSocketChannel(SelectorProviderUDT.STREAM);
+                    }
+                })
                         .option(ChannelOption.SO_BACKLOG, 10)
                         .option(ChannelOption.SO_REUSEADDR, true);
                 break;

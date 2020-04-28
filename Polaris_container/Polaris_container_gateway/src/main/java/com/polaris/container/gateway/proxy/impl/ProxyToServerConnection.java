@@ -482,6 +482,9 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     public HttpRequest getInitialRequest() {
         return initialRequest;
     }
+    public HttpRequest getOriginalRequest() {
+    	return originalRequest;
+    }
 
     @Override
     protected HttpFilters getHttpFiltersFromProxyServer(HttpRequest httpRequest) {

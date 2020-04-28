@@ -21,6 +21,7 @@ import org.slf4j.spi.LocationAwareLogger;
  * to Logger is provided.
  * </p>
  */
+@SuppressWarnings({ "rawtypes" })
 class ProxyConnectionLogger {
     private final ProxyConnection connection;
     private final LogDispatch dispatch;

@@ -5,6 +5,7 @@ import io.netty.util.concurrent.Future;
 /**
  * Represents a phase in a {@link ConnectionFlow}.
  */
+@SuppressWarnings({ "rawtypes" })
 abstract class ConnectionFlowStep {
     private final ProxyConnectionLogger LOG;
     private final ProxyConnection connection;

@@ -1,15 +1,5 @@
 package com.polaris.container.gateway.proxy.impl;
 
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.udt.nio.NioUdtProvider;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.polaris.container.gateway.proxy.HttpProxyServer;
-import com.polaris.container.gateway.proxy.TransportProtocol;
-import com.polaris.container.gateway.proxy.UnknownTransportProtocolException;
-
 import java.nio.channels.spi.SelectorProvider;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -17,6 +7,16 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.barchart.udt.nio.SelectorProviderUDT;
+import com.polaris.container.gateway.proxy.HttpProxyServer;
+import com.polaris.container.gateway.proxy.TransportProtocol;
+import com.polaris.container.gateway.proxy.UnknownTransportProtocolException;
+
+import io.netty.channel.EventLoopGroup;
 
 /**
  * Manages thread pools for one or more proxy server instances. When servers are created, they must register with the
@@ -85,7 +85,7 @@ public class ServerGroup {
         // allow the proxy to operate without UDT support. this allows clients that do not use UDT to exclude the barchart
         // dependency completely.
         if (ProxyUtils.isUdtAvailable()) {
-            TRANSPORT_PROTOCOL_SELECTOR_PROVIDERS.put(TransportProtocol.UDT, NioUdtProvider.BYTE_PROVIDER);
+            TRANSPORT_PROTOCOL_SELECTOR_PROVIDERS.put(TransportProtocol.UDT, SelectorProviderUDT.STREAM);
         } else {
             log.debug("UDT provider not found on classpath. UDT transport will not be available.");
         }
