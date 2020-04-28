@@ -286,7 +286,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
         }
         LOG.debug("Finding ProxyToServerConnection serverHostAndPort for: {}", serverHostAndPort);
         String httpRequestContxt = HostUpstream.getContextFromUri(httpRequest.uri());
-        LOG.debug("Finding ProxyToServerConnection context for: {}", httpRequestContxt);
+        LOG.debug("Finding ProxyToServerConnection httpRequestContxt for: {}", httpRequestContxt);
         currentServerConnection = isMitming() || isTunneling() ?
                 this.currentServerConnection
                 : this.serverConnectionsMap.get(serverHostAndPort + httpRequestContxt);
@@ -295,11 +295,11 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
         if (ProxyUtils.isCONNECT(httpRequest)) {
             LOG.debug(
                     "Not reusing existing ProxyToServerConnection because request is a CONNECT for: {}",
-                    serverHostAndPort);
+                    serverHostAndPort + httpRequestContxt);
             newConnectionRequired = true;
         } else if (currentServerConnection == null) {
             LOG.debug("Didn't find existing ProxyToServerConnection for: {}",
-                    serverHostAndPort);
+            		serverHostAndPort + httpRequestContxt);
             newConnectionRequired = true;
         }
 
@@ -309,9 +309,9 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
                         proxyServer,
                         this,
                         serverHostAndPort,
+                        httpRequestContxt,
                         currentFilters,
                         httpRequest,
-                        httpRequestContxt,
                         globalTrafficShapingHandler);
                 if (currentServerConnection == null) {
                     LOG.debug("Unable to create server connection, probably no chained proxies available");

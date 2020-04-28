@@ -83,13 +83,11 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private volatile InetSocketAddress remoteAddress;
     private volatile InetSocketAddress localAddress;
     private final String serverHostAndPort;
+    private final String httpRequestContxt;
     private volatile ChainedProxy chainedProxy;
     private final Queue<ChainedProxy> availableChainedProxies;
     
-    /**
-     * httpRequestContxt
-     */
-    private String httpRequestContxt;
+
 
     /**
      * The filters to apply to response/chunks received from server.
@@ -153,9 +151,9 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     static ProxyToServerConnection create(DefaultHttpProxyServer proxyServer,
                                           ClientToProxyConnection clientConnection,
                                           String serverHostAndPort,
+                                          String httpRequestContxt,
                                           HttpFilters initialFilters,
                                           HttpRequest initialHttpRequest,
-                                          String httpRequestContxt,
                                           GlobalTrafficShapingHandler globalTrafficShapingHandler)
             throws UnknownHostException {
         Queue<ChainedProxy> chainedProxies = new ConcurrentLinkedQueue<ChainedProxy>();
@@ -172,33 +170,34 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         return new ProxyToServerConnection(proxyServer,
                 clientConnection,
                 serverHostAndPort,
+                httpRequestContxt,
                 chainedProxies.poll(),
                 chainedProxies,
                 initialFilters,
                 globalTrafficShapingHandler,
-                initialHttpRequest,
-                httpRequestContxt);
+                initialHttpRequest
+                );
     }
 
     private ProxyToServerConnection(
             DefaultHttpProxyServer proxyServer,
             ClientToProxyConnection clientConnection,
             String serverHostAndPort,
+            String httpRequestContxt,
             ChainedProxy chainedProxy,
             Queue<ChainedProxy> availableChainedProxies,
             HttpFilters initialFilters,
             GlobalTrafficShapingHandler globalTrafficShapingHandler,
-            HttpRequest initialHttpRequest,
-            String httpRequestContxt)
+            HttpRequest initialHttpRequest)
             throws UnknownHostException {
         super(DISCONNECTED, proxyServer, true);
         this.clientConnection = clientConnection;
         this.serverHostAndPort = serverHostAndPort;
+        this.httpRequestContxt = httpRequestContxt;
         this.chainedProxy = chainedProxy;
         this.availableChainedProxies = availableChainedProxies;
         this.trafficHandler = globalTrafficShapingHandler;
         this.currentFilters = initialFilters;
-        this.httpRequestContxt = httpRequestContxt;
         // Report connection status to HttpFilters
         currentFilters.proxyToServerConnectionQueued();
 
