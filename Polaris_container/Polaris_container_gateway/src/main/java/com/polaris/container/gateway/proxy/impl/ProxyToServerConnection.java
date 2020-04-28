@@ -17,6 +17,7 @@ import java.util.concurrent.RejectedExecutionException;
 import javax.net.ssl.SSLProtocolException;
 import javax.net.ssl.SSLSession;
 
+import com.barchart.udt.nio.SelectorProviderUDT;
 import com.google.common.net.HostAndPort;
 import com.polaris.container.gateway.proxy.ActivityTracker;
 import com.polaris.container.gateway.proxy.ChainedProxy;
@@ -86,9 +87,9 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private final Queue<ChainedProxy> availableChainedProxies;
     
     /**
-     * create's initialHttpRequest
+     * originalUri
      */
-    private HttpRequest originalRequest;
+    private String originalUri;
 
     /**
      * The filters to apply to response/chunks received from server.
@@ -194,7 +195,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         this.availableChainedProxies = availableChainedProxies;
         this.trafficHandler = globalTrafficShapingHandler;
         this.currentFilters = initialFilters;
-        this.originalRequest = initialHttpRequest;
+        this.originalUri = initialHttpRequest.uri();
         // Report connection status to HttpFilters
         currentFilters.proxyToServerConnectionQueued();
 
@@ -486,8 +487,8 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     public HttpRequest getInitialRequest() {
         return initialRequest;
     }
-    public HttpRequest getOriginalRequest() {
-    	return originalRequest;
+    public String getOriginalUri() {
+    	return originalUri;
     }
 
     @Override
@@ -615,14 +616,18 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
                         }
                     });
                     break;
-                /* http协议无需UDT
                 case UDT:
                     LOG.debug("Connecting to server with UDT");
-                    cb.channelFactory(NioUdtProvider.BYTE_CONNECTOR)
-                            .option(ChannelOption.SO_REUSEADDR, true);
+                    cb.channelFactory(new io.netty.channel.ChannelFactory<Channel>() {
+                        @Override
+                        public Channel newChannel() {
+                            return new NioSocketChannel(SelectorProviderUDT.STREAM);
+                        }
+                    })
+                    .option(ChannelOption.SO_REUSEADDR, true);
                     
                     break;
-                */
+                
                 default:
                     throw new UnknownTransportProtocolException(transportProtocol);
             }
@@ -837,13 +842,13 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
             try {
                 if (this.remoteAddress == null) {
                     hostAndPort = serverHostAndPort;
-                    this.remoteAddress = addressFor(serverHostAndPort, proxyServer,originalRequest);
+                    this.remoteAddress = addressFor(serverHostAndPort, proxyServer);
                 } else if (this.remoteAddress.isUnresolved()) {
                     // filter returned an unresolved address, so resolve it using the proxy server's resolver
                     hostAndPort = HostAndPort.fromParts(this.remoteAddress.getHostName(), this.remoteAddress.getPort()).toString();
                     
                     this.remoteAddress = proxyServer.getServerResolver().resolve(this.remoteAddress.getHostName(),
-                            this.remoteAddress.getPort(),originalRequest);
+                            this.remoteAddress.getPort(),originalUri);
                 }
             } catch (UnknownHostException e) {
                 // unable to resolve the hostname to an IP address. notify the filters of the failure before allowing the
@@ -957,7 +962,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      * @throws UnknownHostException if hostAndPort could not be resolved, or if the input string could not be parsed into
      *          a host and port.
      */
-    public static InetSocketAddress addressFor(String hostAndPort, DefaultHttpProxyServer proxyServer,HttpRequest initialHttpRequest)
+    private InetSocketAddress addressFor(String hostAndPort, DefaultHttpProxyServer proxyServer)
             throws UnknownHostException {
         HostAndPort parsedHostAndPort;
         try {
@@ -969,7 +974,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         String host = parsedHostAndPort.getHost();
         int port = parsedHostAndPort.getPortOrDefault(80);
 
-        return proxyServer.getServerResolver().resolve(host, port,initialHttpRequest);
+        return proxyServer.getServerResolver().resolve(host, port, originalUri);
     }
 
     /***************************************************************************

@@ -100,7 +100,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
     /**
      * Keep track of all ProxyToServerConnections by host+port+context.
      */
-    private final Map<String, ProxyToServerConnection> serverConnectionsByHostAndPort = new ConcurrentHashMap<String, ProxyToServerConnection>();
+    private final Map<String, ProxyToServerConnection> serverConnectionsMap = new ConcurrentHashMap<String, ProxyToServerConnection>();
 
     /**
      * Keep track of how many servers are currently in the process of
@@ -289,7 +289,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
         LOG.debug("Finding ProxyToServerConnection context for: {}", context);
         currentServerConnection = isMitming() || isTunneling() ?
                 this.currentServerConnection
-                : this.serverConnectionsByHostAndPort.get(serverHostAndPort + context);
+                : this.serverConnectionsMap.get(serverHostAndPort + context);
 
         boolean newConnectionRequired = false;
         if (ProxyUtils.isCONNECT(httpRequest)) {
@@ -323,8 +323,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
                     }
                 }
                 // Remember the connection for later
-                serverConnectionsByHostAndPort.put(serverHostAndPort + context,
-                        currentServerConnection);
+                serverConnectionsMap.put(serverHostAndPort + context,currentServerConnection);
             } catch (UnknownHostException uhe) {
                 LOG.info("Bad Host {}", httpRequest.uri());
                 boolean keepAlive = writeBadGateway(httpRequest);
@@ -546,8 +545,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
     @Override
     protected void disconnected() {
         super.disconnected();
-        for (ProxyToServerConnection serverConnection : serverConnectionsByHostAndPort
-                .values()) {
+        for (ProxyToServerConnection serverConnection : serverConnectionsMap.values()) {
             serverConnection.disconnect();
         }
         recordClientDisconnected();
@@ -611,7 +609,6 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
             Throwable cause) {
         resumeReadingIfNecessary();
         HttpRequest initialRequest = serverConnection.getInitialRequest();
-        HttpRequest originalRequest = serverConnection.getOriginalRequest();
         try {
             boolean retrying = serverConnection.connectionFailed(cause);
             if (retrying) {
@@ -624,21 +621,21 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
                         serverConnection.getRemoteAddress(),
                         lastStateBeforeFailure,
                         cause);
-                connectionFailedUnrecoverably(originalRequest, initialRequest, serverConnection);
+                connectionFailedUnrecoverably(initialRequest, serverConnection);
                 return false;
             }
         } catch (UnknownHostException uhe) {
-            connectionFailedUnrecoverably(originalRequest, initialRequest, serverConnection);
+            connectionFailedUnrecoverably(initialRequest, serverConnection);
             return false;
         }
     }
 
-    private void connectionFailedUnrecoverably(HttpRequest originalRequest, HttpRequest initialRequest, ProxyToServerConnection serverConnection) {
+    private void connectionFailedUnrecoverably(HttpRequest initialRequest, ProxyToServerConnection serverConnection) {
         // the connection to the server failed, so disconnect the server and remove the ProxyToServerConnection from the
         // map of open server connections
         serverConnection.disconnect();
-        String context = HostUpstream.getContextFromUri(originalRequest.uri());
-        this.serverConnectionsByHostAndPort.remove(serverConnection.getServerHostAndPort() + context);
+        String context = HostUpstream.getContextFromUri(serverConnection.getOriginalUri());
+        this.serverConnectionsMap.remove(serverConnection.getServerHostAndPort() + context);
 
         boolean keepAlive = writeBadGateway(initialRequest);
         if (keepAlive) {
@@ -684,7 +681,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
     @Override
     synchronized protected void becameSaturated() {
         super.becameSaturated();
-        for (ProxyToServerConnection serverConnection : serverConnectionsByHostAndPort
+        for (ProxyToServerConnection serverConnection : serverConnectionsMap
                 .values()) {
             synchronized (serverConnection) {
                 if (this.isSaturated()) {
@@ -701,8 +698,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
     @Override
     synchronized protected void becameWritable() {
         super.becameWritable();
-        for (ProxyToServerConnection serverConnection : serverConnectionsByHostAndPort
-                .values()) {
+        for (ProxyToServerConnection serverConnection : serverConnectionsMap.values()) {
             synchronized (serverConnection) {
                 if (!this.isSaturated()) {
                     serverConnection.resumeReading();
@@ -733,8 +729,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
     synchronized protected void serverBecameWriteable(
             ProxyToServerConnection serverConnection) {
         boolean anyServersSaturated = false;
-        for (ProxyToServerConnection otherServerConnection : serverConnectionsByHostAndPort
-                .values()) {
+        for (ProxyToServerConnection otherServerConnection : serverConnectionsMap.values()) {
             if (otherServerConnection.isSaturated()) {
                 anyServersSaturated = true;
                 break;

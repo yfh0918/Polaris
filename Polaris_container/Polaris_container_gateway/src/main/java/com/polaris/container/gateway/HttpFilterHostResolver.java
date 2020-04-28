@@ -9,8 +9,6 @@ import com.polaris.container.gateway.proxy.HostResolver;
 import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
 import com.polaris.core.util.StringUtil;
 
-import io.netty.handler.codec.http.HttpRequest;
-
 /**
  * @author:Tom.Yu Description:
  */
@@ -38,18 +36,18 @@ public class HttpFilterHostResolver implements HttpFilterLifeCycle, HostResolver
     }
 
     @Override
-    public InetSocketAddress resolve(String host, int port, HttpRequest originalRequest)
+    public InetSocketAddress resolve(String host, int port, String uri)
             throws UnknownHostException {
     	
     	//元素0:ip  元素1:port
         String[] address = null;
 
         //端口号
-    	HostUpstream upstream = HostUpstream.getFromUri(originalRequest.uri());
+    	HostUpstream upstream = HostUpstream.getFromUri(uri);
         if (upstream != null) {
-            String uri = ServerStrategyProviderFactory.get().getUrl(upstream.getHost());
-            if (StringUtil.isNotEmpty(uri)) {
-                address = uri.split(HttpFilterConstant.COLON);
+            String url = ServerStrategyProviderFactory.get().getUrl(upstream.getHost());
+            if (StringUtil.isNotEmpty(url)) {
+                address = url.split(HttpFilterConstant.COLON);
                 if (address.length == 1) {
                     return new InetSocketAddress(address[0], 80);
                 }
