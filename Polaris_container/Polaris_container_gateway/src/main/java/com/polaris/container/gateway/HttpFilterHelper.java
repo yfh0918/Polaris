@@ -27,9 +27,5 @@ public class HttpFilterHelper {
 		logger.info("remove filter:{}",httpFilterEntity.getFilter().getClass().getSimpleName());
 		httpFilterEntity.getFilter().stop();
 	}
-	//外部调用-新增HostResolver
-	public void addHostResolver() {
-		logger.info("add hostResolver:{}",HttpFilterHostResolver.class.getSimpleName());
-		HttpFilterHostResolver.INSTANCE.start();
-	}
+
 }

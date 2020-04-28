@@ -12,19 +12,12 @@ import com.polaris.core.util.StringUtil;
 /**
  * @author:Tom.Yu Description:
  */
-public class HttpFilterHostResolver implements HttpFilterLifeCycle, HostResolver ,HttpFilterCallback{
+public class HttpFilterHostResolver implements HostResolver ,HttpFilterCallback{
     public static HttpFilterHostResolver INSTANCE = new HttpFilterHostResolver();
-    private HttpFilterHostResolver() {}
-    
-    /**
-     * 启动HostResolver
-     *
-     */
-	@Override
-	public void start() {
+    private HttpFilterHostResolver() {
     	HttpFilterFileReader.INSTANCE.readFile(this, new HttpFilterFile(HostUpstream.NAME));
-	}
-
+    }
+    
     /**
      * 配置更新回调
      *
