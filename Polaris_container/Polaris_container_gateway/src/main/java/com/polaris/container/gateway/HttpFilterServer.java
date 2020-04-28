@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.container.config.ConfigurationSupport;
 import com.polaris.container.gateway.proxy.ActivityTrackerAdapter;
+import com.polaris.container.gateway.proxy.DefaultHostResolver;
+import com.polaris.container.gateway.proxy.DnsSecServerResolver;
 import com.polaris.container.gateway.proxy.FlowContext;
 import com.polaris.container.gateway.proxy.HttpFilters;
 import com.polaris.container.gateway.proxy.HttpFiltersSourceAdapter;
@@ -77,8 +79,20 @@ public class HttpFilterServer {
         boolean proxy_tls = HttpFilterConstant.ON.equals(ConfClient.get("server.tls"));
         
         //反向代理模式
-        logger.info("反向代理模式开启");
-        httpProxyServerBootstrap.withServerResolver(HttpFilterHostResolver.INSTANCE);
+        String proxy_type = ConfClient.get("server.proxy.type",HttpFilterConstant.REVERSE_PROXY);
+        if (HttpFilterConstant.REVERSE_PROXY.equals(proxy_type)) {
+            logger.info("反向代理模式开启");
+            httpProxyServerBootstrap.withServerResolver(HttpFilterHostResolver.INSTANCE);
+        } else if (HttpFilterConstant.CONNECT_PROXY.equals(proxy_type)) {
+            logger.info("Connect模式开启");
+        	httpProxyServerBootstrap.withServerResolver(new DefaultHostResolver());
+        } else if (HttpFilterConstant.CONNECT_PROXY.equals(proxy_type)) {
+            logger.info("DNS模式开启");
+        	httpProxyServerBootstrap.withServerResolver(new DnsSecServerResolver());
+        } else {
+            logger.info("反向代理模式开启");
+            httpProxyServerBootstrap.withServerResolver(HttpFilterHostResolver.INSTANCE);
+        }
 
         if (proxy_tls) {
             logger.info("开启TLS支持");

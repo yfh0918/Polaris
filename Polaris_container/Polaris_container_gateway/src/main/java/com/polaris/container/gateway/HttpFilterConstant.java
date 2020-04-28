@@ -38,6 +38,10 @@ public class HttpFilterConstant {
     
     public static final String COLON = ":";
     public static final String SLASH = "/";
+    
+    public static final String REVERSE_PROXY = "reverseProxy";//反向代理，采用context来区分
+    public static final String CONNECT_PROXY = "connectProxy";//connect连接方式
+    public static final String DNS_PROXY = "dnsProxy";//DNS代理
 
     public static String getRealIp(HttpRequest httpRequest) {
 	    List<String> headerValues = getHeaderValues(httpRequest, X_Real_IP);
