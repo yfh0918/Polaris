@@ -6,7 +6,7 @@ import java.util.ServiceLoader;
 
 import com.polaris.core.naming.ServerClient;
 
-public abstract class ServerListenerSupport {
+public abstract class ServerListenerHelper {
 	
 	private static List<ServerListener> serverListenerList = new ArrayList<>();
 	

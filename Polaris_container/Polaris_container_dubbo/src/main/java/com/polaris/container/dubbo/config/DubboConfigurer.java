@@ -18,7 +18,7 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.util.ReflectionUtils.MethodCallback;
 
 import com.polaris.container.config.ConfigurationExtension;
-import com.polaris.container.config.ConfigurationSupport;
+import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.ReflectionUtil;
 import com.polaris.core.util.StringUtil;
@@ -56,7 +56,7 @@ public class DubboConfigurer implements ConfigurationExtension{
 				Class<?>[] classArray = new Class[scanBasePackageClassList.size()];
 				memberValues.put("scanBasePackageClasses", scanBasePackageClassList.toArray(classArray));
 			} else {
-				memberValues.put("scanBasePackageClasses", ConfigurationSupport.getClasses());
+				memberValues.put("scanBasePackageClasses", ConfigurationHelper.getClasses());
 			}
 			
 			//multipleConfig

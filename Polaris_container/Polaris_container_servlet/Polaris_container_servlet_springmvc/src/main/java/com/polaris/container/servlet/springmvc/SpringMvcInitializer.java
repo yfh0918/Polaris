@@ -13,7 +13,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-import com.polaris.container.config.ConfigurationSupport;
+import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.container.servlet.ServletOrder;
 import com.polaris.container.servlet.initializer.ExtensionInitializerAbs;
 import com.polaris.core.util.SpringUtil;
@@ -72,7 +72,7 @@ public class SpringMvcInitializer extends  ExtensionInitializerAbs {
 		
 		@Override
 		protected Class<?>[] getRootConfigClasses() {
-			return ConfigurationSupport.getConfiguration(SpringMvcInnerInitializer.class);
+			return ConfigurationHelper.getConfiguration(SpringMvcInnerInitializer.class);
 		}
 
 		@Override

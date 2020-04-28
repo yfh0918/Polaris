@@ -3,7 +3,7 @@ package com.polaris.container.jetty.listener;
 import org.eclipse.jetty.util.component.AbstractLifeCycle.AbstractLifeCycleListener;
 import org.eclipse.jetty.util.component.LifeCycle;
 
-import com.polaris.container.listener.ServerListenerSupport;
+import com.polaris.container.listener.ServerListenerHelper;
 
 /**
  * Class Name : ServerHandler
@@ -27,7 +27,7 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 启动中
 	 */
 	public void lifeCycleStarting(LifeCycle event) {
-		ServerListenerSupport.starting();
+		ServerListenerHelper.starting();
 	}
 	
 	/**
@@ -35,7 +35,7 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 启动结束
 	 */
     public void lifeCycleStarted(LifeCycle event) {
-		ServerListenerSupport.started();
+		ServerListenerHelper.started();
     }
     
 	/**
@@ -43,7 +43,7 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 异常
 	 */
     public void lifeCycleFailure(LifeCycle event,Throwable cause) {
-		ServerListenerSupport.failure();
+		ServerListenerHelper.failure();
     }
     
 	/**
@@ -51,7 +51,7 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 结束中
 	 */
    public void lifeCycleStopping(LifeCycle event) {
-       ServerListenerSupport.stopping();
+       ServerListenerHelper.stopping();
    }
    
 	/**
@@ -59,7 +59,7 @@ public class ServerHandlerListerner extends AbstractLifeCycleListener{
 	 * 结束
 	 */
     public void lifeCycleStopped(LifeCycle event) {
-		ServerListenerSupport.stopped();
+		ServerListenerHelper.stopped();
     }
     
 }

@@ -7,8 +7,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextStoppedEvent;
 
-import com.polaris.container.config.ConfigurationSupport;
-import com.polaris.container.listener.ServerListenerSupport;
+import com.polaris.container.config.ConfigurationHelper;
+import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
@@ -58,13 +58,13 @@ public class SpringbootServer {
     	System.setProperty(Constant.SERVER_SPRING_CONTEXT, serverContext);
     	
     	//启动应用
-    	ConfigurationSupport.addConfiguration(SpringbootConfiguration.class);
-    	SpringApplication springApplication = new SpringApplication(ConfigurationSupport.getConfiguration());
+    	ConfigurationHelper.addConfiguration(SpringbootConfiguration.class);
+    	SpringApplication springApplication = new SpringApplication(ConfigurationHelper.getConfiguration());
         springApplication.addListeners(new ApplicationListener<ContextRefreshedEvent>() {
 
 			@Override
 			public void onApplicationEvent(ContextRefreshedEvent event) {
-				ServerListenerSupport.started();
+				ServerListenerHelper.started();
 			}
         	
         });
@@ -73,12 +73,12 @@ public class SpringbootServer {
 
 			@Override
 			public void onApplicationEvent(ContextStoppedEvent event) {
-				ServerListenerSupport.stopped();
+				ServerListenerHelper.stopped();
 			}
         	
         });
         springApplication.setBannerMode(Banner.Mode.OFF);
-        ConfigurableApplicationContext context = springApplication.run(ConfigurationSupport.getArgs());
+        ConfigurableApplicationContext context = springApplication.run(ConfigurationHelper.getArgs());
         SpringUtil.setApplicationContext(context);
     }
     

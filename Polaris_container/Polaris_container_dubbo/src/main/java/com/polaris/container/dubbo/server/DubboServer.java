@@ -5,8 +5,8 @@ import java.util.concurrent.CountDownLatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.config.ConfigurationSupport;
-import com.polaris.container.listener.ServerListenerSupport;
+import com.polaris.container.config.ConfigurationHelper;
+import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
 
@@ -47,10 +47,10 @@ public class DubboServer {
     public void start() {
 
     	//创建context
-    	SpringUtil.refresh(ConfigurationSupport.getConfiguration());
+    	SpringUtil.refresh(ConfigurationHelper.getConfiguration());
     	
     	//监听
-    	ServerListenerSupport.started();
+    	ServerListenerHelper.started();
     	
     	// add shutdown hook to stop server
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -58,7 +58,7 @@ public class DubboServer {
                 try {
                 	
                 	//监听
-                	ServerListenerSupport.stopped();
+                	ServerListenerHelper.stopped();
                 	logger.info("Dubbo stopped on port(s) " + ConfClient.get("dubbo.protocol.port"));
                 } catch (Exception e) {
                     logger.error("failed to stop dubbo.", e);

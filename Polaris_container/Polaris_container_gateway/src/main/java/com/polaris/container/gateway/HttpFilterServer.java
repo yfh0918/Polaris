@@ -6,7 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.config.ConfigurationSupport;
+import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.container.gateway.proxy.ActivityTrackerAdapter;
 import com.polaris.container.gateway.proxy.FlowContext;
 import com.polaris.container.gateway.proxy.HttpFilters;
@@ -15,7 +15,7 @@ import com.polaris.container.gateway.proxy.HttpProxyServerBootstrap;
 import com.polaris.container.gateway.proxy.extras.SelfSignedSslEngineSourceExt;
 import com.polaris.container.gateway.proxy.impl.DefaultHttpProxyServer;
 import com.polaris.container.gateway.proxy.impl.ThreadPoolConfiguration;
-import com.polaris.container.listener.ServerListenerSupport;
+import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.container.util.NetUtils;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
@@ -65,7 +65,7 @@ public class HttpFilterServer {
     public void start() {
 
     	//创建context
-    	SpringUtil.refresh(ConfigurationSupport.getConfiguration());
+    	SpringUtil.refresh(ConfigurationHelper.getConfiguration());
         ThreadPoolConfiguration threadPoolConfiguration = new ThreadPoolConfiguration();
         threadPoolConfiguration.withAcceptorThreads(HttpFilterConstant.AcceptorThreads);
         threadPoolConfiguration.withClientToProxyWorkerThreads(HttpFilterConstant.ClientToProxyWorkerThreads);
@@ -123,14 +123,14 @@ public class HttpFilterServer {
                         return new HttpFilterAdapterImpl(originalRequest, ctx);
                     }
                 }).start();
-        ServerListenerSupport.started();
+        ServerListenerHelper.started();
         logger.info("Gateway started on port(s) " + inetSocketAddress.getPort() + " with context path '/'");
         
         // add shutdown hook to stop server
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
-                	ServerListenerSupport.stopped();
+                	ServerListenerHelper.stopped();
                 	logger.info("Gateway stopped on port(s) " + inetSocketAddress.getPort() + " with context path '/'");
                 } catch (Exception e) {
                     logger.error("failed to stop gateway.", e);

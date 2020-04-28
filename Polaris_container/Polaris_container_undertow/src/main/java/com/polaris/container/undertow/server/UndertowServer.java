@@ -10,7 +10,7 @@ import javax.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.listener.ServerListenerSupport;
+import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 
@@ -184,7 +184,7 @@ public class UndertowServer {
             this.undertow.start();
             
             //server listener start
-            ServerListenerSupport.started();
+            ServerListenerHelper.started();
 
             //log
             logger.info("Undertow started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
@@ -195,7 +195,7 @@ public class UndertowServer {
             Runtime.getRuntime().addShutdownHook(new Thread() {
                 public void run() {
                     try {
-                    	ServerListenerSupport.stopped();
+                    	ServerListenerHelper.stopped();
                     	manager.stop();
                     	manager.undeploy();
                     	undertow.stop();

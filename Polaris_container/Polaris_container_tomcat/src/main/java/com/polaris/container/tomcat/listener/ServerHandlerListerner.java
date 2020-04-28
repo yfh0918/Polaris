@@ -4,7 +4,7 @@ import org.apache.catalina.Lifecycle;
 import org.apache.catalina.LifecycleEvent;
 import org.apache.catalina.LifecycleListener;
 
-import com.polaris.container.listener.ServerListenerSupport;
+import com.polaris.container.listener.ServerListenerHelper;
 
 /**
  * Class Name : ServerHandler
@@ -24,13 +24,13 @@ public class ServerHandlerListerner implements LifecycleListener{
 		// Process the event that has occurred
         if (event.getType().equals(Lifecycle.CONFIGURE_START_EVENT)) {
         } else if (event.getType().equals(Lifecycle.BEFORE_START_EVENT)) {
-        	ServerListenerSupport.starting();
+        	ServerListenerHelper.starting();
         } else if (event.getType().equals(Lifecycle.AFTER_START_EVENT)) {
-			ServerListenerSupport.started();
+			ServerListenerHelper.started();
         } else if (event.getType().equals(Lifecycle.BEFORE_STOP_EVENT)) {
-			ServerListenerSupport.stopping();
+			ServerListenerHelper.stopping();
         } else if (event.getType().equals(Lifecycle.AFTER_STOP_EVENT)) {
-			ServerListenerSupport.stopped();
+			ServerListenerHelper.stopped();
         } else if (event.getType().equals(Lifecycle.AFTER_DESTROY_EVENT)) {
         }
 		

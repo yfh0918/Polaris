@@ -11,7 +11,7 @@ import com.polaris.core.config.value.SpringAutoUpdateConfigChangeListener;
 import com.polaris.core.config.value.SpringPlaceholderConfigurer;
 import com.polaris.core.config.value.SpringValueProcessor;
 
-abstract public class ConfigurationSupport {
+abstract public class ConfigurationHelper {
 
 	private static List<Class<?>> configClassList = new ArrayList<>();
 	private static String[] args;

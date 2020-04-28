@@ -10,7 +10,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
-import com.polaris.container.config.ConfigurationSupport;
+import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.provider.ConfCompositeProvider;
 import com.polaris.core.util.SpringUtil;
@@ -33,7 +33,7 @@ public class ClaimApp {
 
     public static void main(String[] args) {
     	ConfCompositeProvider.INSTANCE.init();
-        SpringUtil.refresh(ConfigurationSupport.getConfiguration());
+        SpringUtil.refresh(ConfigurationHelper.getConfiguration());
         ClaimApp app = SpringUtil.getBean(ClaimApp.class);
         app.deployDiagram();//载入流程（即使重复调用，也不会重复载入）
 //    	app.startWorkflow();//启动流程

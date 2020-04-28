@@ -2,9 +2,9 @@ package com.polaris.container;
 
 import com.polaris.container.banner.Banner;
 import com.polaris.container.banner.PolarisBannerPrinter;
-import com.polaris.container.config.ConfigurationSupport;
+import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.container.listener.ServerListener;
-import com.polaris.container.listener.ServerListenerSupport;
+import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.core.config.provider.ConfCompositeProvider;
 
 /**
@@ -40,10 +40,10 @@ public abstract class ServerRunner {
     	ConfCompositeProvider.INSTANCE.init();
     	
 		//载入配置类
-		ConfigurationSupport.init(args, configClass);		
+		ConfigurationHelper.init(args, configClass);		
     	
     	//载入监听器
-    	ServerListenerSupport.init(args, serverListeners);
+    	ServerListenerHelper.init(args, serverListeners);
     	
     	//启动
     	ServerFactory.getServer().start();
