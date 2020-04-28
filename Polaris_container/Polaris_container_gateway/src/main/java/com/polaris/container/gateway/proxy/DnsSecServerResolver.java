@@ -4,7 +4,6 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
 import com.polaris.container.gateway.dnssec4j.VerifiedAddressFactory;
-import com.polaris.container.gateway.proxy.impl.ProxyToServerConnection;
 
 public class DnsSecServerResolver implements HostResolver {
     @Override

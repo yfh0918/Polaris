@@ -4,8 +4,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
-import com.polaris.container.gateway.proxy.impl.ProxyToServerConnection;
-
 /**
  * Default implementation of {@link HostResolver} that just uses
  * {@link InetAddress#getByName(String)}.
