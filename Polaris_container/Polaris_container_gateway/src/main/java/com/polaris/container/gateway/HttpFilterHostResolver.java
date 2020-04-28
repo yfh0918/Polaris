@@ -36,14 +36,14 @@ public class HttpFilterHostResolver implements HttpFilterLifeCycle, HostResolver
     }
 
     @Override
-    public InetSocketAddress resolve(String host, int port, String uri)
+    public InetSocketAddress resolve(String host, int port, String context)
             throws UnknownHostException {
     	
     	//元素0:ip  元素1:port
         String[] address = null;
 
         //端口号
-    	HostUpstream upstream = HostUpstream.getFromUri(uri);
+    	HostUpstream upstream = HostUpstream.getFromContext(context);
         if (upstream != null) {
             String url = ServerStrategyProviderFactory.get().getUrl(upstream.getHost());
             if (StringUtil.isNotEmpty(url)) {

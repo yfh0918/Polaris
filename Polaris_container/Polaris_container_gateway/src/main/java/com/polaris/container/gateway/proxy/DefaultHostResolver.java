@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
  */
 public class DefaultHostResolver implements HostResolver {
     @Override
-    public InetSocketAddress resolve(String host, int port, String uri)
+    public InetSocketAddress resolve(String host, int port, String context)
             throws UnknownHostException {
         InetAddress addr = InetAddress.getByName(host);
         return new InetSocketAddress(addr, port);

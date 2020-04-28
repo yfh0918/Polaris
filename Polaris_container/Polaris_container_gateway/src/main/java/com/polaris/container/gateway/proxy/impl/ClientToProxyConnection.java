@@ -98,7 +98,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
     private static final Pattern HTTP_SCHEME = Pattern.compile("^http://.*", Pattern.CASE_INSENSITIVE);
 
     /**
-     * Keep track of all ProxyToServerConnections by host+port+context.
+     * Keep track of all ProxyToServerConnections by host+port+httpRequestContxt.
      */
     private final Map<String, ProxyToServerConnection> serverConnectionsMap = new ConcurrentHashMap<String, ProxyToServerConnection>();
 
@@ -285,11 +285,11 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
             }
         }
         LOG.debug("Finding ProxyToServerConnection serverHostAndPort for: {}", serverHostAndPort);
-        String context = HostUpstream.getContextFromUri(httpRequest.uri());
-        LOG.debug("Finding ProxyToServerConnection context for: {}", context);
+        String httpRequestContxt = HostUpstream.getContextFromUri(httpRequest.uri());
+        LOG.debug("Finding ProxyToServerConnection context for: {}", httpRequestContxt);
         currentServerConnection = isMitming() || isTunneling() ?
                 this.currentServerConnection
-                : this.serverConnectionsMap.get(serverHostAndPort + context);
+                : this.serverConnectionsMap.get(serverHostAndPort + httpRequestContxt);
 
         boolean newConnectionRequired = false;
         if (ProxyUtils.isCONNECT(httpRequest)) {
@@ -311,6 +311,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
                         serverHostAndPort,
                         currentFilters,
                         httpRequest,
+                        httpRequestContxt,
                         globalTrafficShapingHandler);
                 if (currentServerConnection == null) {
                     LOG.debug("Unable to create server connection, probably no chained proxies available");
@@ -323,7 +324,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
                     }
                 }
                 // Remember the connection for later
-                serverConnectionsMap.put(serverHostAndPort + context,currentServerConnection);
+                serverConnectionsMap.put(serverHostAndPort + httpRequestContxt,currentServerConnection);
             } catch (UnknownHostException uhe) {
                 LOG.info("Bad Host {}", httpRequest.uri());
                 boolean keepAlive = writeBadGateway(httpRequest);
@@ -634,7 +635,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
         // the connection to the server failed, so disconnect the server and remove the ProxyToServerConnection from the
         // map of open server connections
         serverConnection.disconnect();
-        String context = HostUpstream.getContextFromUri(serverConnection.getOriginalUri());
+        String context = HostUpstream.getContextFromUri(serverConnection.getHttpRequestContext());
         this.serverConnectionsMap.remove(serverConnection.getServerHostAndPort() + context);
 
         boolean keepAlive = writeBadGateway(initialRequest);

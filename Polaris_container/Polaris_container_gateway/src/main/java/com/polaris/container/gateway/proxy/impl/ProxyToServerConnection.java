@@ -87,9 +87,9 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private final Queue<ChainedProxy> availableChainedProxies;
     
     /**
-     * originalUri
+     * httpRequestContxt
      */
-    private String originalUri;
+    private String httpRequestContxt;
 
     /**
      * The filters to apply to response/chunks received from server.
@@ -155,6 +155,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
                                           String serverHostAndPort,
                                           HttpFilters initialFilters,
                                           HttpRequest initialHttpRequest,
+                                          String httpRequestContxt,
                                           GlobalTrafficShapingHandler globalTrafficShapingHandler)
             throws UnknownHostException {
         Queue<ChainedProxy> chainedProxies = new ConcurrentLinkedQueue<ChainedProxy>();
@@ -175,7 +176,8 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
                 chainedProxies,
                 initialFilters,
                 globalTrafficShapingHandler,
-                initialHttpRequest);
+                initialHttpRequest,
+                httpRequestContxt);
     }
 
     private ProxyToServerConnection(
@@ -186,7 +188,8 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
             Queue<ChainedProxy> availableChainedProxies,
             HttpFilters initialFilters,
             GlobalTrafficShapingHandler globalTrafficShapingHandler,
-            HttpRequest initialHttpRequest)
+            HttpRequest initialHttpRequest,
+            String httpRequestContxt)
             throws UnknownHostException {
         super(DISCONNECTED, proxyServer, true);
         this.clientConnection = clientConnection;
@@ -195,7 +198,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         this.availableChainedProxies = availableChainedProxies;
         this.trafficHandler = globalTrafficShapingHandler;
         this.currentFilters = initialFilters;
-        this.originalUri = initialHttpRequest.uri();
+        this.httpRequestContxt = httpRequestContxt;
         // Report connection status to HttpFilters
         currentFilters.proxyToServerConnectionQueued();
 
@@ -487,8 +490,8 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     public HttpRequest getInitialRequest() {
         return initialRequest;
     }
-    public String getOriginalUri() {
-    	return originalUri;
+    public String getHttpRequestContext() {
+    	return httpRequestContxt;
     }
 
     @Override
@@ -848,7 +851,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
                     hostAndPort = HostAndPort.fromParts(this.remoteAddress.getHostName(), this.remoteAddress.getPort()).toString();
                     
                     this.remoteAddress = proxyServer.getServerResolver().resolve(this.remoteAddress.getHostName(),
-                            this.remoteAddress.getPort(),originalUri);
+                            this.remoteAddress.getPort(),httpRequestContxt);
                 }
             } catch (UnknownHostException e) {
                 // unable to resolve the hostname to an IP address. notify the filters of the failure before allowing the
@@ -974,7 +977,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         String host = parsedHostAndPort.getHost();
         int port = parsedHostAndPort.getPortOrDefault(80);
 
-        return proxyServer.getServerResolver().resolve(host, port, originalUri);
+        return proxyServer.getServerResolver().resolve(host, port, httpRequestContxt);
     }
 
     /***************************************************************************

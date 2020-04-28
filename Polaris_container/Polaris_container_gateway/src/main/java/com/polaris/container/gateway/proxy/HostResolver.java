@@ -7,6 +7,6 @@ import java.net.UnknownHostException;
  * Resolves host and port into an InetSocketAddress.
  */
 public interface HostResolver {
-    public InetSocketAddress resolve(String host, int port, String uri)
+    public InetSocketAddress resolve(String host, int port, String context)
             throws UnknownHostException;
 }
