@@ -84,6 +84,10 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private final String serverHostAndPort;
     private volatile ChainedProxy chainedProxy;
     private final Queue<ChainedProxy> availableChainedProxies;
+    
+    /**
+     * create's initialHttpRequest
+     */
     private HttpRequest originalRequest;
 
     /**
