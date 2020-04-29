@@ -49,10 +49,7 @@ public class HostUpstream {
     }
     public static String getContextFromUri(String uri) {
     	List<String> contextList = Splitter.on(HttpFilterConstant.SLASH).omitEmptyStrings().splitToList(uri);
-    	if (contextList.size() == 0) {
-    		return HttpFilterConstant.SLASH;
-    	}
-		return HttpFilterConstant.SLASH + contextList.get(0);
+    	return contextList.size() == 0 ? HttpFilterConstant.SLASH : HttpFilterConstant.SLASH + contextList.get(0);
     }
 
 	private String context;

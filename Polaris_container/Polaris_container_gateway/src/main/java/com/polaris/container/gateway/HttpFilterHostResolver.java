@@ -31,16 +31,11 @@ public class HttpFilterHostResolver implements HostResolver ,HttpFilterCallback{
     @Override
     public InetSocketAddress resolve(String host, int port, String context)
             throws UnknownHostException {
-    	
-    	//元素0:ip  元素1:port
-        String[] address = null;
-
-        //端口号
     	HostUpstream upstream = HostUpstream.getFromContext(context);
         if (upstream != null) {
             String url = ServerStrategyProviderFactory.get().getUrl(upstream.getHost());
             if (StringUtil.isNotEmpty(url)) {
-                address = url.split(HttpFilterConstant.COLON);
+            	String[] address = url.split(HttpFilterConstant.COLON);
                 if (address.length == 1) {
                     return new InetSocketAddress(address[0], 80);
                 }

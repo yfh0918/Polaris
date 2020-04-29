@@ -1,7 +1,5 @@
-package com.polaris.container.gateway;
+package com.polaris.container.gateway.pojo;
 
-import com.polaris.container.gateway.pojo.HttpFilterFile;
-import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.container.gateway.request.HttpArgsRequestFilter;
 import com.polaris.container.gateway.request.HttpCCRequestFilter;
 import com.polaris.container.gateway.request.HttpCookieRequestFilter;
@@ -18,7 +16,7 @@ import com.polaris.container.gateway.request.HttpWUrlRequestFilter;
 import com.polaris.container.gateway.response.HttpCorsResponseFilter;
 import com.polaris.container.gateway.response.HttpTokenResponseFilter;
 
-public enum HttpFilterEnum {
+public enum HttpFilterEntityEnum {
 		
 	//默认的requestFilter
 	Cors(new HttpFilterEntity(new HttpCorsRequestFilter(), "gateway.cors", 0, new HttpFilterFile("gw_cors.txt"))), 
@@ -41,7 +39,7 @@ public enum HttpFilterEnum {
 	
     // 构造方法  
 	private HttpFilterEntity filterEntity;
-    private HttpFilterEnum(HttpFilterEntity filterEntity) {  
+    private HttpFilterEntityEnum(HttpFilterEntity filterEntity) {  
     	this.filterEntity = filterEntity;
     }
 	public HttpFilterEntity getFilterEntity() {
