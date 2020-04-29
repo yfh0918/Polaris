@@ -63,7 +63,7 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
     //控制总的流量
 	public static volatile RateLimiter totalRateLimiter;
 	public static volatile int int_all_rate = 0;
-	public static volatile int int_all_timeout=30;//最大等待30秒返回
+	public static volatile int int_all_timeout=3;//最大等待3秒返回
 	
 	//无需验证的IP
 	public static volatile Set<String> ccSkipIp = new HashSet<>();
@@ -118,7 +118,7 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
     	boolean isBlackIpTemp = false;
     	int[] IP_RATE = {10,60};
     	int ALL_RATE = 300;
-    	int int_all_timeout_temp = 30;
+    	int int_all_timeout_temp = 3;
     	boolean ipPersistentTemp = false;
     	String ipSavePathTemp = null;
     	
