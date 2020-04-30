@@ -41,7 +41,7 @@ public class HttpDegradeRequestFilter extends HttpRequestFilter {
     	String tempDegradeMessageCode = null;
     	String tempDegradeMessage = null;
     	for (String conf : file.getData()) {
-    		KeyValuePair kv = PropertyUtil.getKeyValue(conf);
+    		KeyValuePair kv = PropertyUtil.getKVPair(conf);
 			if (kv != null) {
 				// degrade.url
     			if (kv.getKey().equals("degrade.url")) {

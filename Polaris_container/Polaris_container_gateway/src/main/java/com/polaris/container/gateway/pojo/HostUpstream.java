@@ -18,7 +18,7 @@ public class HostUpstream {
     public static void create(Set<String> contents) {
     	Map<String, HostUpstream> temp_contextMap = new ConcurrentHashMap<>();
         for (String line : contents) {
-        	KeyValuePair kv = PropertyUtil.getKeyValue(line);
+        	KeyValuePair kv = PropertyUtil.getKVPair(line);
         	HostUpstream upstream = new HostUpstream();
         	if (kv != null) {
         		upstream.setContext(kv.getKey());

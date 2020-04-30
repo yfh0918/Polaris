@@ -40,7 +40,7 @@ public class HttpCorsRequestFilter extends HttpRequestFilter {
 	public void onChange(HttpFilterFile file) {
     	Map<String, String> tempCorsMap = new HashMap<>(); 
     	for (String conf : file.getData()) {
-    		KeyValuePair kv = PropertyUtil.getKeyValue(conf);
+    		KeyValuePair kv = PropertyUtil.getKVPair(conf);
 			if (kv != null) {
 				if (StringUtil.isNotEmpty(kv.getValue())) {
 					tempCorsMap.put(kv.getKey(), kv.getValue());

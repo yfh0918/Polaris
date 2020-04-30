@@ -45,7 +45,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
     	String TOKEN_MESSAGE_TEMP = null;
     	String TOKEN_POLICY_TEMP = null;
     	for (String conf : file.getData()) {
-			KeyValuePair kv = PropertyUtil.getKeyValue(conf);
+			KeyValuePair kv = PropertyUtil.getKVPair(conf);
 			if (kv != null) {
 				// 不需要验证token的uri
     			if (kv.getKey().equals("UNCHECKED_PATHS")) {
@@ -120,7 +120,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
             	String strParameter = uri.substring(index + 1);
             	String[] parameters = strParameter.split("&");
             	for (String parameter : parameters) {
-            		KeyValuePair kv = PropertyUtil.getKeyValue(parameter);
+            		KeyValuePair kv = PropertyUtil.getKVPair(parameter);
             		parameterMap.put(kv.getKey(), kv.getValue());
             	}
             }

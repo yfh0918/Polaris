@@ -125,7 +125,7 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
     	
     	Set<String> tempCcSkipIp = new HashSet<>();
     	for (String conf : file.getData()) {
-    		KeyValuePair kv = PropertyUtil.getKeyValue(conf);
+    		KeyValuePair kv = PropertyUtil.getKVPair(conf);
 			if (kv != null) {
 	    		// skip.ip
 				if (kv.getKey().equals("cc.skip.ip")) {

@@ -105,7 +105,7 @@ public abstract class PropertyUtil {
 	* @Exception 
 	* @since 
 	*/
-	public static KeyValuePair getKeyValue(String line) {
+	public static KeyValuePair getKVPair(String line) {
 		if (line == null || line.startsWith("#")) {
 			return null;
 		}
