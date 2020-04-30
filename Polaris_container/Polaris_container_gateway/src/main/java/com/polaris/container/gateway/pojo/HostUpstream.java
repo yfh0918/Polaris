@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.base.Splitter;
 import com.polaris.container.gateway.HttpFilterConstant;
+import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.util.PropertyUtil;
 
 public class HostUpstream {
@@ -17,12 +18,11 @@ public class HostUpstream {
     public static void create(Set<String> contents) {
     	Map<String, HostUpstream> temp_contextMap = new ConcurrentHashMap<>();
         for (String line : contents) {
-        	line = line.replace("\n", "").replace("\r", "");
-        	String[] kv = PropertyUtil.getKeyValue(line);
+        	KeyValuePair kv = PropertyUtil.getKeyValue(line);
         	HostUpstream upstream = new HostUpstream();
         	if (kv != null) {
-        		upstream.setHost(kv[1]);
-        		upstream.setContext(kv[0]);
+        		upstream.setContext(kv.getKey());
+        		upstream.setHost(kv.getValue());
             }
         	temp_contextMap.put(upstream.getContext(), upstream);
         }

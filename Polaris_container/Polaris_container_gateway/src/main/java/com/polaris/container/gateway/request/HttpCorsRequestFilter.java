@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.pojo.HttpFilterFile;
+import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -39,12 +40,10 @@ public class HttpCorsRequestFilter extends HttpRequestFilter {
 	public void onChange(HttpFilterFile file) {
     	Map<String, String> tempCorsMap = new HashMap<>(); 
     	for (String conf : file.getData()) {
-			if (!conf.startsWith("#")) {
-				String[] kv = PropertyUtil.getKeyValue(conf);
-				if (kv != null && kv.length == 2) {
-					if (StringUtil.isNotEmpty(kv[1])) {
-						tempCorsMap.put(kv[0], kv[1]);
-					}
+    		KeyValuePair kv = PropertyUtil.getKeyValue(conf);
+			if (kv != null) {
+				if (StringUtil.isNotEmpty(kv.getValue())) {
+					tempCorsMap.put(kv.getKey(), kv.getValue());
 				}
 			}
     	}

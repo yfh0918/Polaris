@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.core.Constant;
+import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.ResultUtil;
 import com.polaris.core.util.StringUtil;
@@ -40,29 +41,27 @@ public class HttpDegradeRequestFilter extends HttpRequestFilter {
     	String tempDegradeMessageCode = null;
     	String tempDegradeMessage = null;
     	for (String conf : file.getData()) {
-			if (!conf.startsWith("#")) {
-				String[] kv = PropertyUtil.getKeyValue(conf);
-				if (kv != null && kv.length == 2) {
-					// degrade.url
-	    			if (kv[0].equals("degrade.url")) {
-	    				if (StringUtil.isNotEmpty(kv[1])) {
-	    					tempDegradeUrlSet.add(kv[1]);
-	    				}
-	    				
-	    			}
-	    			// degrade.message
-	    			if (kv[0].equals("degrade.message.code")) {
-	    				if (StringUtil.isNotEmpty(kv[1])) {
-	    					tempDegradeMessageCode = kv[1];
-	    				}
-	    			}
-	    			// degrade.message
-	    			if (kv[0].equals("degrade.message")) {
-	    				if (StringUtil.isNotEmpty(kv[1])) {
-	    					tempDegradeMessage = kv[1];
-	    				}
-	    			}
-				}
+    		KeyValuePair kv = PropertyUtil.getKeyValue(conf);
+			if (kv != null) {
+				// degrade.url
+    			if (kv.getKey().equals("degrade.url")) {
+    				if (StringUtil.isNotEmpty(kv.getValue())) {
+    					tempDegradeUrlSet.add(kv.getValue());
+    				}
+    				
+    			}
+    			// degrade.message
+    			if (kv.getKey().equals("degrade.message.code")) {
+    				if (StringUtil.isNotEmpty(kv.getValue())) {
+    					tempDegradeMessageCode = kv.getValue();
+    				}
+    			}
+    			// degrade.message
+    			if (kv.getKey().equals("degrade.message")) {
+    				if (StringUtil.isNotEmpty(kv.getValue())) {
+    					tempDegradeMessage = kv.getValue();
+    				}
+    			}
 			}
     	}
     	if (tempDegradeMessageCode != null) {

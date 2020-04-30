@@ -3,6 +3,8 @@ package com.polaris.container.gateway;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.polaris.core.pojo.KeyValuePair;
+
 import io.netty.handler.codec.http.HttpResponseStatus;
 
 /**
@@ -35,4 +37,23 @@ public class HttpFilterMessage {
 	public void putHeaderValue(String key, Object value) {
 		this.headerMap.put(key, value);
 	}
+	
+	public static HttpFilterMessage of(String result,KeyValuePair... kvPairs) {
+		return of(result,null,kvPairs);
+	}
+	public static HttpFilterMessage of(String result,HttpResponseStatus status,KeyValuePair... kvPairs) {
+		HttpFilterMessage message = new HttpFilterMessage();
+		if (status != null) {
+			message.setStatus(status);
+		}
+		if (kvPairs != null) {
+			for (KeyValuePair pair : kvPairs) {
+				message.putHeaderValue(pair.getKey(),pair.getValue());
+			}
+		}
+		message.setResult(result);
+		return message;
+	}
+	
+	
 }

@@ -58,10 +58,13 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	}
             ImmutablePair<Boolean, HttpRequestFilter> immutablePair = HttpRequestFilterChain.INSTANCE.doFilter(originalRequest, httpObject, ctx);
             if (immutablePair.left) {
-                httpResponse = createResponse(immutablePair.right.getStatus(), originalRequest, immutablePair.right.getResult(),immutablePair.right.getHeaderMap());
+                httpResponse = createResponse(originalRequest, immutablePair.right);
             }
         } catch (Exception e) {
-            httpResponse = createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, ResultUtil.create(Constant.RESULT_FAIL,e.toString()).toJSONString(), null);
+            httpResponse = createResponse(originalRequest, 
+            		HttpFilterMessage.of(
+            				ResultUtil.create(Constant.RESULT_FAIL,e.toString()).toJSONString(),
+            				HttpResponseStatus.BAD_GATEWAY));
             logger.error("client's request failed", e);
         } 
         
@@ -72,7 +75,11 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     public void proxyToServerResolutionSucceeded(String serverHostAndPort,
                                                  InetSocketAddress resolvedRemoteAddress) {
         if (resolvedRemoteAddress == null) {
-            ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, originalRequest, ResultUtil.create(Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(), null));
+            ctx.writeAndFlush(createResponse(originalRequest, 
+            		HttpFilterMessage.of(
+            				ResultUtil.create(
+            						Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(),
+            						HttpResponseStatus.BAD_GATEWAY)));
         } 
     }
 
@@ -81,15 +88,18 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         if (httpObject instanceof HttpResponse) {
         	
         	if (((HttpResponse) httpObject).status().code() == HttpResponseStatus.BAD_GATEWAY.code()) {
-                ctx.writeAndFlush(createResponse(HttpResponseStatus.BAD_GATEWAY, 
-                		originalRequest, ResultUtil.create(Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(), null));
+                ctx.writeAndFlush(createResponse(originalRequest, 
+                		HttpFilterMessage.of(
+                				ResultUtil.create(
+                						Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(),
+                						HttpResponseStatus.BAD_GATEWAY)));
                 return httpObject;
         	}
 
         	ImmutablePair<Boolean, HttpResponseFilter> immutablePair = HttpResponseFilterChain.INSTANCE.doFilter(originalRequest, (HttpResponse) httpObject);
         	
         	if (immutablePair.left) {
-        		ctx.writeAndFlush(createResponse(immutablePair.right.getStatus(), originalRequest, immutablePair.right.getResult(),immutablePair.right.getHeaderMap()));
+        		ctx.writeAndFlush(createResponse(originalRequest, immutablePair.right));
                 return httpObject;
         	}
         }
@@ -126,19 +136,19 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         } 
     }
 
-	private HttpResponse createResponse(HttpResponseStatus httpResponseStatus, HttpRequest originalRequest, String result, Map<String, Object> headerMap) {
+	private HttpResponse createResponse(HttpRequest originalRequest, HttpFilterMessage message) {
         HttpResponse httpResponse;
-        if (StringUtil.isNotEmpty(result)) {
-        	ByteBuf buf = io.netty.buffer.Unpooled.copiedBuffer(result, CharsetUtil.UTF_8); 
-        	httpResponse  = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, httpResponseStatus, buf);
+        if (StringUtil.isNotEmpty(message.getResult())) {
+        	ByteBuf buf = io.netty.buffer.Unpooled.copiedBuffer(message.getResult(), CharsetUtil.UTF_8); 
+        	httpResponse  = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, message.getStatus(), buf);
         } else {
-            httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, httpResponseStatus);
+            httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, message.getStatus());
         }
         HttpHeaders httpHeaders=new DefaultHttpHeaders();
         httpHeaders.add("Transfer-Encoding","chunked");
     	httpHeaders.set("Content-Type", "application/json");
-    	if (headerMap != null) {
-    		for (Map.Entry<String, Object> entry : headerMap.entrySet()) {
+    	if (message.getHeaderMap() != null) {
+    		for (Map.Entry<String, Object> entry : message.getHeaderMap().entrySet()) {
     			httpHeaders.set(entry.getKey(), entry.getValue());
     		}
     	}

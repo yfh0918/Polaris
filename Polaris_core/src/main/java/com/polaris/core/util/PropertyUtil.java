@@ -15,6 +15,8 @@ import org.springframework.core.CollectionFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
+import com.polaris.core.pojo.KeyValuePair;
+
 public abstract class PropertyUtil {
 	
 	public static Properties getProperties(String fileContent) {
@@ -103,14 +105,17 @@ public abstract class PropertyUtil {
 	* @Exception 
 	* @since 
 	*/
-	public static String[] getKeyValue(String line) {
+	public static KeyValuePair getKeyValue(String line) {
+		if (line == null || line.startsWith("#")) {
+			return null;
+		}
 		if (StringUtil.isNotEmpty(line)) {
 			String[] keyvalue = line.split("=");
 			if (keyvalue.length == 0) {
-				return new String[] {"",""};
+				return null;
 			}
 			if (keyvalue.length == 1) {
-				return new String[] {keyvalue[0].trim(),""};
+				return KeyValuePair.of(keyvalue[0].trim(),"");
 			}
 			String value = "";
 			for (int index = 0; index < keyvalue.length; index++) {
@@ -122,7 +127,7 @@ public abstract class PropertyUtil {
 					}
 				}
 			}
-			return new String[] {keyvalue[0].trim(),value};
+			return KeyValuePair.of(keyvalue[0].trim(),value);
 		}
 		return null;
 	}
