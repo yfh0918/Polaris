@@ -10,7 +10,7 @@ import com.polaris.core.pojo.ServerHost;
 
 public class ServerStrategyProviderDefault implements ServerStrategyProvider{
     public static final ServerStrategyProviderDefault INSTANCE = new ServerStrategyProviderDefault();
-    private static final ServerHandler INSTANCE_REMOTE = ServerHandlerRemoteProvider.INSTANCE;
+    private static final ServerHandler INSTANCE_REMOTE = ServerHandlerProvider.INSTANCE;
     private static final ServerHandlerLocal INSTANCE_LOCAL = ServerHandlerLocalProvider.INSTANCE;
     private ServerStrategyProviderDefault() {}
     

@@ -10,13 +10,13 @@ import com.polaris.core.naming.ServerHandler;
 import com.polaris.core.pojo.Server;
 
 @SuppressWarnings("rawtypes")
-public class ServerHandlerRemoteProvider implements ServerHandler{
+public class ServerHandlerProvider implements ServerHandler{
 	private static final ServiceLoader<ServerHandler> serviceLoader = ServiceLoader.load(ServerHandler.class);
 	private static List<OrderWrapper> discoveryHandlerList = new ArrayList<OrderWrapper>();
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	private static ServerHandler handler = getHandler();
-    public static final ServerHandlerRemoteProvider INSTANCE = new ServerHandlerRemoteProvider();
-    private ServerHandlerRemoteProvider() {}
+    public static final ServerHandlerProvider INSTANCE = new ServerHandlerProvider();
+    private ServerHandlerProvider() {}
 	
 	//初始化
 	private static ServerHandler getHandler() {
