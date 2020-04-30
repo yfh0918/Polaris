@@ -34,6 +34,7 @@ import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.ServerHandler;
 import com.polaris.core.naming.ServerHandlerOrder;
+import com.polaris.core.pojo.Server;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
@@ -103,8 +104,8 @@ public class EurekaServer implements ServerHandler {
 	}
 	
 	@Override
-	public String getUrl(String key) {
-		if (StringUtil.isEmpty(key)) {
+	public Server getServer(String serviceName) {
+		if (StringUtil.isEmpty(serviceName)) {
 			return null;
 		}
 		if (eurekaClient == null) {
@@ -127,23 +128,17 @@ public class EurekaServer implements ServerHandler {
 		//负载均衡
 		InstanceInfo serverInfo = getServerInfoFromRobbin(ConfClient.getAppName());
 		if (serverInfo == null) {
-			serverInfo = eurekaClient.getNextServerFromEureka(key, false);
+			serverInfo = eurekaClient.getNextServerFromEureka(serviceName, false);
 		}
 		if (serverInfo != null) {
-		    String realServerName = serverInfo.getIPAddr() + ":" + serverInfo.getPort();
-		    return realServerName;
+		    return Server.of(serverInfo.getIPAddr(), serverInfo.getPort());
 		}
 		return null;
 	}
 	
 	@Override
-	public List<String> getAllUrls(String key) {
-		return getAllUrls(key, true);
-	}
-
-	@Override
-	public List<String> getAllUrls(String key, boolean subscribe) {
-		if (StringUtil.isEmpty(key)) {
+	public List<Server> getServerList(String serviceName) {
+		if (StringUtil.isEmpty(serviceName)) {
 			return null;
 		}
 		if (eurekaClient == null) {
@@ -162,15 +157,15 @@ public class EurekaServer implements ServerHandler {
 			return null;
 		}
 		
-		List<InstanceInfo> serverInfos = eurekaClient.getInstancesByVipAddress(key,false);
+		List<InstanceInfo> serverInfos = eurekaClient.getInstancesByVipAddress(serviceName,false);
 		if (serverInfos == null) {
 			return null;
 		}
-		List<String> urlList = new ArrayList<>(serverInfos.size());
+		List<Server> serverList = new ArrayList<>(serverInfos.size());
 		for (InstanceInfo serverInfo : serverInfos) {
-			urlList.add(serverInfo.getIPAddr() + ":" + serverInfo.getPort());
+			serverList.add(Server.of(serverInfo.getIPAddr(), serverInfo.getPort()));
 		}
-		return urlList;
+		return serverList;
 	}
 
 	@Override

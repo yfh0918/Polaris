@@ -13,6 +13,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.core.pojo.Server;
 import com.polaris.core.util.WeightedRoundRobinScheduling;
 
 public class ServerHandlerLocalCheckTask implements Runnable {
@@ -30,9 +31,9 @@ public class ServerHandlerLocalCheckTask implements Runnable {
         try {
             for (Map.Entry<String, WeightedRoundRobinScheduling> entry : serverMap.entrySet()) {
                 WeightedRoundRobinScheduling weightedRoundRobinScheduling = entry.getValue();
-                List<WeightedRoundRobinScheduling.Server> delServers = new ArrayList<>();
+                List<Server> delServers = new ArrayList<>();
                 CloseableHttpResponse httpResponse = null;
-                for (WeightedRoundRobinScheduling.Server server : weightedRoundRobinScheduling.unhealthilyServers) {
+                for (Server server : weightedRoundRobinScheduling.unhealthilyServers) {
                     HttpGet request = new HttpGet("http://" + server.getIp() + ":" + server.getPort());
                     try {
                         httpResponse = (CloseableHttpResponse) client.execute(request);

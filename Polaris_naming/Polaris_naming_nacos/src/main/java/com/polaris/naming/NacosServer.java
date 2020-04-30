@@ -15,6 +15,7 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.ServerHandler;
 import com.polaris.core.naming.ServerHandlerOrder;
+import com.polaris.core.pojo.Server;
 import com.polaris.core.util.StringUtil;
 
 @Order(ServerHandlerOrder.NACOS)
@@ -43,8 +44,8 @@ public class NacosServer implements ServerHandler {
 	}
 	
 	@Override
-	public String getUrl(String key) {
-		if (StringUtil.isEmpty(key)) {
+	public Server getServer(String serviceName) {
+		if (StringUtil.isEmpty(serviceName)) {
 			return null;
 		}
 		//判断是否可以获取有效URL
@@ -67,9 +68,9 @@ public class NacosServer implements ServerHandler {
 	        	groupName = ConfClient.getGroup();
 			}
 
-			instance = naming.selectOneHealthyInstance(key, groupName);
+			instance = naming.selectOneHealthyInstance(serviceName, groupName);
 			if (instance != null) {
-				return instance.toInetAddr();
+				return Server.of(instance.getIp(), instance.getPort(), new Double(instance.getWeight()).intValue());
 			}
 		} catch (Exception e) {
 		}
@@ -77,14 +78,9 @@ public class NacosServer implements ServerHandler {
 	}
 	
 	@Override
-	public List<String> getAllUrls(String key) {
-		return getAllUrls(key, true);
-	}
-
-	@Override
-	public List<String> getAllUrls(String key, boolean subscribe) {
+	public List<Server> getServerList(String serviceName) {
 		
-		if (StringUtil.isEmpty(key)) {
+		if (StringUtil.isEmpty(serviceName)) {
 			return null;
 		}
 
@@ -108,17 +104,17 @@ public class NacosServer implements ServerHandler {
 	        	groupName = ConfClient.getGroup();
 			}
 
-			instances = naming.selectInstances(key, groupName, true, subscribe);
+			instances = naming.selectInstances(serviceName, groupName, true, false);
 
-			List<String> urls = new ArrayList<>();
+			List<Server> serverList = new ArrayList<>();
 			if (instances != null && instances.size() > 0) {
 				for (Instance instance : instances) {
 					if (instance.isHealthy()) {
-						urls.add(instance.toInetAddr());
+						serverList.add(Server.of(instance.getIp(), instance.getPort(), new Double(instance.getWeight()).intValue()));
 					}
 				}
 			}
-			return urls;
+			return serverList;
 		} catch (Exception e) {
 		}
 		return null;

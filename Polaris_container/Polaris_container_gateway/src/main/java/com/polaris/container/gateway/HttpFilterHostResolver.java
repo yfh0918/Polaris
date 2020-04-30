@@ -33,7 +33,7 @@ public class HttpFilterHostResolver implements HostResolver ,HttpFilterCallback{
             throws UnknownHostException {
     	HostUpstream upstream = HostUpstream.getFromContext(context);
         if (upstream != null) {
-            String url = ServerStrategyProviderFactory.get().getUrl(upstream.getHost());
+            String url = ServerStrategyProviderFactory.get().getRealIpUrl(upstream.getHost());
             if (StringUtil.isNotEmpty(url)) {
             	String[] address = url.split(HttpFilterConstant.COLON);
                 if (address.length == 1) {

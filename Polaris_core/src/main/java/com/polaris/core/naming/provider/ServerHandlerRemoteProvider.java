@@ -7,10 +7,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.polaris.core.OrderWrapper;
 import com.polaris.core.naming.ServerHandler;
-import com.polaris.core.util.StringUtil;
+import com.polaris.core.pojo.Server;
 
 @SuppressWarnings("rawtypes")
-public class ServerHandlerRemoteProvider {
+public class ServerHandlerRemoteProvider implements ServerHandler{
 	private static final ServiceLoader<ServerHandler> serviceLoader = ServiceLoader.load(ServerHandler.class);
 	private static List<OrderWrapper> discoveryHandlerList = new ArrayList<OrderWrapper>();
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
@@ -32,7 +32,7 @@ public class ServerHandlerRemoteProvider {
     	return handler;
     }
     
-    //注册
+	@Override
     public boolean register(String ip, int port) {
     	if (handler != null) {
     		return handler.register(ip, port);
@@ -40,7 +40,7 @@ public class ServerHandlerRemoteProvider {
     	return false;
     }
     
-    //反注册
+    @Override
     public boolean deregister(String ip, int port) {
     	if (handler != null) {
     		return handler.deregister(ip, port);
@@ -48,37 +48,20 @@ public class ServerHandlerRemoteProvider {
     	return false;
     }
     
-	public String getUrl(String key, List<String> serverInfoList) {
+    @Override
+	public Server getServer(String serviceName) {
 		if (handler != null) {
-			String url = handler.getUrl(serverInfoList.get(1));
-			if (StringUtil.isNotEmpty(url)) {
-				return serverInfoList.get(0) + url + serverInfoList.get(2);
-			}
+			return handler.getServer(serviceName);
 		}
 		return null;
 	}
 
-	public List<String> getAllUrl(String key, List<String> serverInfoList) {
-		return getAllUrl(key, serverInfoList ,true);
-	}
-	
-	public List<String> getAllUrl(String key, List<String> serverInfoList, boolean subscribe) {
+	@Override
+	public List<Server> getServerList(String serviceName) {
 		if (handler != null) {
-			List<String> urls = handler.getAllUrls(serverInfoList.get(1),subscribe);
-			for (int i0 = 0; i0 < urls.size(); i0++) {
-				String value = serverInfoList.get(0) + urls.get(i0) + serverInfoList.get(2);
-				urls.set(i0, value);
-			}
-			return urls;			
+			return handler.getServerList(serviceName);
 		}
 		return null;
-	}
-
-	public boolean connectionFail(String key, String host) {
-		if (handler != null) {
-			return handler.connectionFail(key, host);
-		}
-		return false;
 	}
 
 }

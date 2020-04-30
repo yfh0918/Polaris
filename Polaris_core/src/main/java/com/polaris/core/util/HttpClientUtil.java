@@ -352,7 +352,7 @@ public class HttpClientUtil {
     //获取uri
     private static HttpUriRequest getHttpUriRequest( 
     		HTTPRequestParameter parameter) throws Exception {
-    	String url = ServerStrategyProviderFactory.get().getUrl(parameter.getUrl());
+    	String url = ServerStrategyProviderFactory.get().getRealIpUrl(parameter.getUrl());
     	LOGGER.info(url);
     	HttpRequestBase request = null;
 

@@ -8,22 +8,30 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.naming.ServerHandlerLocal;
+import com.polaris.core.pojo.Server;
 import com.polaris.core.util.WeightedRoundRobinScheduling;
-import com.polaris.core.util.WeightedRoundRobinScheduling.Server;
 
-public class ServerHandlerLocalProvider {
+public class ServerHandlerLocalProvider implements ServerHandlerLocal{
     private Map<String, WeightedRoundRobinScheduling> serverMap = new ConcurrentHashMap<>();
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = null;
 
     public static ServerHandlerLocalProvider INSTANCE = new ServerHandlerLocalProvider();
     private ServerHandlerLocalProvider() {}
     
-    public String getUrl(String key, List<String> serverInfoList) {
-    	key = serverInfoList.get(1);
-    	
-    	String[] serversInfo = key.split(",");
+    @Override
+    public Server getServer(String serviceName) {
+    	String[] serversInfo = serviceName.split(",");
     	if (serversInfo.length == 1) {
-    		return serverInfoList.get(0)+ key + serverInfoList.get(2);
+    		String[] si = serversInfo[0].split(":");
+            if (si.length == 2) {
+                Server server = new Server(si[0], Integer.valueOf(si[1]), 1);
+                return server;
+            } else if (si.length == 3) {
+	            Server server = new Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2]));
+	            return server;
+            }
+    		return null;
     	}
     	
     	//初期化定时器
@@ -38,68 +46,70 @@ public class ServerHandlerLocalProvider {
 			}
 		}
 
-    	WeightedRoundRobinScheduling wrrs = serverMap.get(key);
+    	WeightedRoundRobinScheduling wrrs = serverMap.get(serviceName);
     	if (wrrs == null) {
-    		synchronized(key.intern()){
-    			wrrs = serverMap.get(key);
+    		synchronized(serviceName.intern()){
+    			wrrs = serverMap.get(serviceName);
     			if (wrrs == null) {
-    				List<WeightedRoundRobinScheduling.Server> serverList = new ArrayList<>();
+    				List<Server> serverList = new ArrayList<>();
     				for (String serverInfo : serversInfo) {
     					String[] si = serverInfo.split(":");
     					
     					// ip:port
     		            if (si.length == 2) {
-     		                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), 1);
+     		                Server server = new Server(si[0], Integer.valueOf(si[1]), 1);
     		                serverList.add(server);
     		            } else if (si.length == 3) {
-     		                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2]));
+     		                Server server = new Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2]));
     		                serverList.add(server);
     		            }
     		        }
     				wrrs = new WeightedRoundRobinScheduling(serverList);
-    				serverMap.put(key, wrrs);
+    				serverMap.put(serviceName, wrrs);
     			}
     		}
     	}
     	Server server = wrrs.getServer();
-    	return serverInfoList.get(0)+ server.getIp() + ":" + server.getPort() + serverInfoList.get(2);
+    	return server;
     }
     
-	protected List<String> getAllUrl(String key,List<String> serverInfoList) {
-		return getAllUrl(key,serverInfoList,true);
-	}
-	
-    public List<String> getAllUrl(String key,List<String> serverInfoList, boolean subscribe) {
-    	List<String> urlList = new ArrayList<>();
-		String[] ips = serverInfoList.get(1).split(",");
+    @Override
+    public List<Server> getServerList(String seviceName) {
+		String[] ips = seviceName.split(",");
+		List<Server> serverList = new ArrayList<>();
 		for (int i0 = 0; i0 < ips.length; i0++) {
-			urlList.add(serverInfoList.get(0) + ips[i0] + serverInfoList.get(2));
+			String[] si = ips[i0].split(":");
+            if (si.length == 2) {
+                Server server = new Server(si[0], Integer.valueOf(si[1]), 1);
+                serverList.add(server);
+            } else if (si.length == 3) {
+	            Server server = new Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2]));
+	            serverList.add(server);
+            }
 		}
-		return urlList;
+		return serverList;
 
     }
     
-    public boolean connectionFail(String key, String host) {
+    @Override
+    public void connectionFail(String serviceName, Server server) {
     	
     	//只有单个url直接返回
-    	if (key.split(",").length == 1) {
-    		return true;
+    	if (serviceName.split(",").length == 1) {
+    		return;
     	}
     	
     	//多个URL
-    	WeightedRoundRobinScheduling weightedRoundRobinScheduling = serverMap.get(key);
-    	
-    	//只有一个有效服务地址，即使链接失败也不移除
+    	WeightedRoundRobinScheduling weightedRoundRobinScheduling = serverMap.get(serviceName);
     	if (weightedRoundRobinScheduling.healthilyServers.size() > 1) {
-    		String[] si = host.split(":");
-            weightedRoundRobinScheduling.unhealthilyServers.add(weightedRoundRobinScheduling.getServer(si[0], Integer.parseInt(si[1])));
-            weightedRoundRobinScheduling.healthilyServers.remove(weightedRoundRobinScheduling.getServer(si[0], Integer.parseInt(si[1])));
+            weightedRoundRobinScheduling.unhealthilyServers.add(weightedRoundRobinScheduling.getServer(server.getIp(), server.getPort()));
+            weightedRoundRobinScheduling.healthilyServers.remove(weightedRoundRobinScheduling.getServer(server.getIp(), server.getPort()));
     	}
-    	return true;
+    	return;
     }
     
+    @Override
     public void init() {
     	serverMap.clear();
     }
-
 }

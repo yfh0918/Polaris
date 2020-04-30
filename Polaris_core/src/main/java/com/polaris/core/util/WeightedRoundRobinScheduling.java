@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.polaris.core.pojo.Server;
+
 /**
  * @author:Tom.Yu
  *
@@ -39,9 +41,9 @@ public class WeightedRoundRobinScheduling {
         int w = 0;
         for (int i = 0, len = serverList.size(); i < len - 1; i++) {
             if (w == 0) {
-                w = gcd(serverList.get(i).weight, serverList.get(i + 1).weight);
+                w = gcd(serverList.get(i).getWeight(), serverList.get(i + 1).getWeight());
             } else {
-                w = gcd(w, serverList.get(i + 1).weight);
+                w = gcd(w, serverList.get(i + 1).getWeight());
             }
         }
         return w;
@@ -54,9 +56,9 @@ public class WeightedRoundRobinScheduling {
         int w = 0;
         for (int i = 0, len = serverList.size(); i < len - 1; i++) {
             if (w == 0) {
-                w = Math.max(serverList.get(i).weight, serverList.get(i + 1).weight);
+                w = Math.max(serverList.get(i).getWeight(), serverList.get(i + 1).getWeight());
             } else {
-                w = Math.max(w, serverList.get(i + 1).weight);
+                w = Math.max(w, serverList.get(i + 1).getWeight());
             }
         }
         return w;
@@ -83,7 +85,7 @@ public class WeightedRoundRobinScheduling {
                             return null;
                     }
                 }
-                if (healthilyServers.get(currentIndex).weight >= currentWeight) {
+                if (healthilyServers.get(currentIndex).getWeight() >= currentWeight) {
                     return healthilyServers.get(currentIndex);
                 }
             }
@@ -118,46 +120,4 @@ public class WeightedRoundRobinScheduling {
     }
 
 
-    public static class Server {
-        String ip;
-        int port;
-        int weight;
-
-        public Server(String ip, int port, int weight) {
-            super();
-            this.ip = ip;
-            this.port = port;
-            this.weight = weight;
-        }
-
-        public String getIp() {
-            return ip;
-        }
-
-        public void setIp(String ip) {
-            this.ip = ip;
-        }
-
-        public int getPort() {
-            return port;
-        }
-
-        public void setPort(int port) {
-            this.port = port;
-        }
-
-        public int getWeight() {
-            return weight;
-        }
-
-        public void setWeight(int weight) {
-            this.weight = weight;
-        }
-        
-        @Override
-        public String toString() {
-        	return this.ip + ":" + this.port;
-        }
-
-    }
 }

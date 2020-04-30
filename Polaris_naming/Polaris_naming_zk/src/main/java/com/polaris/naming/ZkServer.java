@@ -21,9 +21,9 @@ import org.springframework.core.annotation.Order;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.ServerHandler;
 import com.polaris.core.naming.ServerHandlerOrder;
+import com.polaris.core.pojo.Server;
 import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.WeightedRoundRobinScheduling;
-import com.polaris.core.util.WeightedRoundRobinScheduling.Server;
 
 @Order(ServerHandlerOrder.ZK)
 public class ZkServer implements ServerHandler {
@@ -51,32 +51,26 @@ public class ZkServer implements ServerHandler {
 	}
 
 	@Override
-	public String getUrl(String key) {
+	public Server getServer(String serviceName) {
 		
 		//get curator
 		CuratorFramework curator = getCurator();
-		String childNodePathCache = getPath(key);
+		String childNodePathCache = getPath(serviceName);
 
         //childData：设置缓存节点的数据状态
 		ZkCache zkCache = getZkCache(curator, childNodePathCache);
 		if (zkCache == null || zkCache.getWeight() == null) {
 			return null;
 		}
-		Server server = zkCache.getWeight().getServer();
-    	return server == null?null:server.toString();
-	}
-	
-	@Override
-	public List<String> getAllUrls(String key) {
-		return getAllUrls(key, true);
+		return zkCache.getWeight().getServer();
 	}
 
 	@Override
-	public List<String> getAllUrls(String key, boolean subscribe) {
+	public List<Server> getServerList(String serviceName) {
 		
 		//get curator
 		CuratorFramework curator = getCurator();
-		String childNodePathCache = getPath(key);
+		String childNodePathCache = getPath(serviceName);
 		
 		//childData：设置缓存节点的数据状态
 		ZkCache zkCache = getZkCache(curator, childNodePathCache);
@@ -86,11 +80,11 @@ public class ZkServer implements ServerHandler {
 				
 		//获取所有子节点
         List<ChildData> childDataList = zkCache.getCache().getCurrentData();
-        List<String> childList = new ArrayList<>();
+        List<Server> childList = new ArrayList<>();
         for(ChildData cd : childDataList){
         	String data = new String(cd.getData());
         	String[] datas = data.split(":");
-    		childList.add(datas[0]+":"+datas[1]);
+    		childList.add(Server.of(datas[0], Integer.parseInt(datas[1]),Integer.parseInt(datas[2])));
         }
         return childList;
 	}
@@ -183,16 +177,16 @@ public class ZkServer implements ServerHandler {
 				        childrenCache.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);
 
 				        //获取所有子节点
-						List<WeightedRoundRobinScheduling.Server> serverList = new ArrayList<>();
+						List<Server> serverList = new ArrayList<>();
 						List<ChildData> childDataList = childrenCache.getCurrentData();
 				        for(ChildData cd : childDataList){
 				        	String serverInfo = new String(cd.getData());
 							String[] si = serverInfo.split(":");
 				            if (si.length == 2) {
-					                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), 1);
+					                Server server = new Server(si[0], Integer.valueOf(si[1]), 1);
 				                serverList.add(server);
 				            } else if (si.length == 3) {
-					                WeightedRoundRobinScheduling.Server server = new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2]));
+					                Server server = new Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2]));
 				                serverList.add(server);
 				            }
 				        }
@@ -203,7 +197,7 @@ public class ZkServer implements ServerHandler {
 				               if(event.getType().equals(PathChildrenCacheEvent.Type.CHILD_ADDED)){
 				            	   String serverInfo = new String(event.getData().getData());
 				            	   String[] si = serverInfo.split(":");
-				            	   wrrs.add(new WeightedRoundRobinScheduling.Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2])));
+				            	   wrrs.add(new Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2])));
 				               }else if(event.getType().equals(PathChildrenCacheEvent.Type.CHILD_REMOVED)){
 				            	   String serverInfo = new String(event.getData().getData());
 				            	   String[] si = serverInfo.split(":");

@@ -23,7 +23,7 @@ abstract public class CronScheduledBusinessTask implements Runnable {
 		try {
 			
 			//get cluster ip list
-            List<String> list = ServerStrategyProviderFactory.get().getAllUrls(ConfClient.getAppName(), false);
+            List<String> list = ServerStrategyProviderFactory.get().getRealIpUrlList(ConfClient.getAppName());
             if (list == null || list.size() == 0) {
             	taskExecute();
             	return;

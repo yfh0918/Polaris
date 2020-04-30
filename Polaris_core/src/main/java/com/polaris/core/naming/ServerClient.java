@@ -9,7 +9,6 @@ import com.polaris.core.util.StringUtil;
 public abstract class ServerClient {
 
 	public static boolean register() {
-		//注册中心
 		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {
 			String port = ConfClient.get(Constant.SERVER_PORT_NAME);
 			if (StringUtil.isEmpty(port)) {
@@ -22,7 +21,6 @@ public abstract class ServerClient {
 	}
 	
 	public static boolean unRegister() {
-		//注册中心
 		if (Constant.SWITCH_ON.equals(ConfClient.get(Constant.NAME_REGISTRY_SWITCH, Constant.SWITCH_ON))) {
 			String port = ConfClient.get(Constant.SERVER_PORT_NAME);
 			if (StringUtil.isEmpty(port)) {
