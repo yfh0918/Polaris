@@ -30,12 +30,15 @@ public class HttpFilterMessage {
 		this.status = status;
 	}
 	
-	private Map<String, Object> headerMap = new HashMap<>();
-	public Map<String, Object> getHeaderMap() {
-		return headerMap;
+	private Map<String, Object> header = new HashMap<>();
+	public Map<String, Object> getHeader() {
+		return header;
 	}
-	public void putHeaderValue(String key, Object value) {
-		this.headerMap.put(key, value);
+	public void putHeader(String key, Object value) {
+		this.header.put(key, value);
+	}
+	public void putHeader(KeyValuePair pair) {
+		putHeader(pair.getKey(),pair.getValue());
 	}
 	
 	public static HttpFilterMessage of(String result,KeyValuePair... kvPairs) {
@@ -48,7 +51,7 @@ public class HttpFilterMessage {
 		}
 		if (kvPairs != null) {
 			for (KeyValuePair pair : kvPairs) {
-				message.putHeaderValue(pair.getKey(),pair.getValue());
+				message.putHeader(pair.getKey(),pair.getValue());
 			}
 		}
 		message.setResult(result);

@@ -147,8 +147,8 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         HttpHeaders httpHeaders=new DefaultHttpHeaders();
         httpHeaders.add("Transfer-Encoding","chunked");
     	httpHeaders.set("Content-Type", "application/json");
-    	if (message.getHeaderMap() != null) {
-    		for (Map.Entry<String, Object> entry : message.getHeaderMap().entrySet()) {
+    	if (message.getHeader() != null) {
+    		for (Map.Entry<String, Object> entry : message.getHeader().entrySet()) {
     			httpHeaders.set(entry.getKey(), entry.getValue());
     		}
     	}

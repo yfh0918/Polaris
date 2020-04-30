@@ -33,9 +33,9 @@ public class HttpTokenResponseFilter extends HttpResponseFilter {
         			Map<String, Object> requestDto =  JSONObject.parseObject(JwtUtil.decode(jwtInfo));
         			if (requestDto != null) {
         				String token = JwtUtil.createJWT(requestDto);
-        				this.putHeaderValue(JwtUtil.JWT_KEY, jwtInfo);
+        				this.putHeader(JwtUtil.JWT_KEY, jwtInfo);
         				for (Map.Entry<String, String> headerEntry : httpResponse.headers().entries()) {
-        					this.putHeaderValue(headerEntry.getKey(),headerEntry.getValue());
+        					this.putHeader(headerEntry.getKey(),headerEntry.getValue());
         				}
             			this.setResult(ResultUtil.success(token).toJSONString());
             			this.setStatus(HttpResponseStatus.OK);
