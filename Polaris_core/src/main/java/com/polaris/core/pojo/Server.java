@@ -5,7 +5,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Server {
 
 	private String ip;
-	private Integer port = 80;
+	private Integer port = 80;//default
 	private Integer weight = 1;//default
 	public String getIp() {
 		return ip;
