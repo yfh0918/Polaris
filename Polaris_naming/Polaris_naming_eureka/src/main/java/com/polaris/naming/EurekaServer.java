@@ -169,17 +169,17 @@ public class EurekaServer implements ServerHandler {
 	}
 
 	@Override
-	public boolean register(String ip, int port) {
+	public boolean register(Server server) {
     	if (StringUtil.isEmpty(ConfClient.getNamingRegistryAddress())) {
     		return false;
     	}
-    	iniEurekaServer(ip,port, "true");
-        waitForRegistrationWithEureka(ip,port);
+    	iniEurekaServer(server.getIp(),server.getPort(), "true");
+        waitForRegistrationWithEureka(server.getIp(),server.getPort());
         return true;
 	}
 
 	@Override
-	public boolean deregister(String ip, int port) {
+	public boolean deregister(Server server) {
 		if (eurekaClient == null) {
 			return false;
 		}

@@ -2,18 +2,9 @@ package com.polaris.core.naming.provider;
 
 import java.util.List;
 
-import com.polaris.core.naming.ServerHandlerLocal;
+import com.polaris.core.naming.ServerHandler;
 
-public interface ServerStrategyProvider extends ServerHandlerLocal{
-	
-	/**
-	* 连接失败需要特殊处理
-	* @param 
-	* @return 
-	* @Exception 
-	* @since 
-	*/
-	void connectionFail(String serviceNameUrl, String realIpUrl);
+public interface ServerStrategyProvider extends ServerHandler{
 	
 	/**
 	* 获取真实的IP+url

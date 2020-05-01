@@ -3,6 +3,7 @@ package com.polaris.core.naming;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
+import com.polaris.core.pojo.Server;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
@@ -15,7 +16,7 @@ public abstract class ServerClient {
 				return false;
 			}
 			String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
-			return ServerStrategyProviderFactory.get().register(registerIp, Integer.parseInt(port));
+			return ServerStrategyProviderFactory.get().register(Server.of(registerIp, Integer.parseInt(port)));
 		}
 		return false;
 	}
@@ -27,7 +28,7 @@ public abstract class ServerClient {
 				return false;
 			}
 			String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
-        	return ServerStrategyProviderFactory.get().deregister(registerIp, Integer.parseInt(port));
+        	return ServerStrategyProviderFactory.get().deregister(Server.of(registerIp, Integer.parseInt(port)));
 		}
 		return false;
 	}

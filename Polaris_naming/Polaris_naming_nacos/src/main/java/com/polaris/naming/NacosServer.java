@@ -121,10 +121,12 @@ public class NacosServer implements ServerHandler {
 	}
 
 	@Override
-	public boolean register(String ip, int port) {
+	public boolean register(Server server) {
 		if (naming == null) {
 			return false;
 		}
+		String ip = server.getIp();
+		int port = server.getPort();
 		 try {
 			Instance instance = new Instance();
 	        instance.setIp(ip);
@@ -146,7 +148,7 @@ public class NacosServer implements ServerHandler {
 	}
 
 	@Override
-	public boolean deregister(String ip, int port) {
+	public boolean deregister(Server server) {
 		if (naming == null) {
 			return false;
 		}
@@ -157,87 +159,12 @@ public class NacosServer implements ServerHandler {
 	        	groupName = ConfClient.getGroup();
 			}
 
-			naming.deregisterInstance(ConfClient.getAppName(), groupName, ip, port);
+			naming.deregisterInstance(ConfClient.getAppName(), groupName, server.getIp(), server.getPort());
 			return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return false;
 		}
 	}
-	
-	public static void main( String[] args ) throws Exception
-    {
-//		Properties properties = new Properties();
-//        properties.setProperty(PropertyKeyConst.SERVER_ADDR, "127.0.0.1:8848");
-//		NamingService naming = NamingFactory.createNamingService(properties);
-//		for (int i0 = 0; i0 < 1000; i0++) {
-//			Instance instance = naming.selectOneHealthyInstance("mwclg-sso");
-//			System.out.println(instance.toInetAddr());
-//		}
-//		NacosServerDiscovery ddd = new NacosServerDiscovery();
-//		String key1="polaris-demo";
-//		String key2="polaris-demo&group=xxx";
-//		String key3="polaris-demo&clusters=yyyy1";
-//		String key4="polaris-demo&group=xxx&clusters=yyyy1,yyyy2";
-//		String[] keyinfo1 = ddd.getKeyInfo(key1);
-//		System.out.println(keyinfo1[0]);
-//		System.out.println(keyinfo1[1]);
-//		System.out.println(ddd.getClusters(keyinfo1[2]));
-//		String[] keyinfo2 = ddd.getKeyInfo(key2);
-//		System.out.println(keyinfo2[0]);
-//		System.out.println(keyinfo2[1]);
-//		System.out.println(ddd.getClusters(keyinfo2[2]));
-//		String[] keyinfo3 = ddd.getKeyInfo(key3);
-//		System.out.println(keyinfo3[0]);
-//		System.out.println(keyinfo3[1]);
-//		System.out.println(ddd.getClusters(keyinfo3[2]));
-//		String[] keyinfo4 = ddd.getKeyInfo(key4);
-//		System.out.println(keyinfo4[0]);
-//		System.out.println(keyinfo4[1]);
-//		System.out.println(ddd.getClusters(keyinfo4[2]));
-    }
-	
-//	//key: polaris-demo&group=xxx&clusters=yyyy1,yyyy2
-//	//key: polaris-demo&group=xxx
-//	//key: polaris-demo&clusters=yyyy1
-//	//key: polaris-demo
-//	private String[] getKeyInfo(String key) {
-//		String[] keyInfo = key.split("&");
-//		if (keyInfo.length == 1) {
-//			return new String[] {keyInfo[0],com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP,""};
-//		} else if (keyInfo.length == 2) {
-//			if (StringUtil.isEmpty(keyInfo[1])) {
-//				String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-//				String clusters = "";
-//				return new String[] {keyInfo[0],group,clusters};
-//			}
-//			if (keyInfo[1].indexOf("group") > -1) {
-//				return new String[] {keyInfo[0],ConfHandlerSupport.getKeyValue(keyInfo[1])[1],""};
-//			}
-//			if (keyInfo[1].indexOf("clusters") > -1) {
-//				String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-//				return new String[] {keyInfo[0],group, ConfHandlerSupport.getKeyValue(keyInfo[1])[1]};
-//			}
-//			return new String[] {keyInfo[0],"",""};
-//		} else {
-//			String group = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-//			if (StringUtil.isNotEmpty(keyInfo[1]) && keyInfo[1].indexOf("group") > -1) {
-//				group = ConfHandlerSupport.getKeyValue(keyInfo[1])[1];
-//			}
-//			String clusters = "";
-//			if (StringUtil.isNotEmpty(keyInfo[2]) && keyInfo[2].indexOf("clusters") > -1) {
-//				clusters = ConfHandlerSupport.getKeyValue(keyInfo[2])[1];
-//			}
-//			return new String[] {keyInfo[0],group,clusters};
-//		}
-//	}
-	
-
-//	private List<String> getClusters(String value) {
-//		if (StringUtil.isEmpty(value)) {
-//			return new ArrayList<>();
-//		}
-//		return Arrays.asList(value.split(","));
-//	}
 	
 }

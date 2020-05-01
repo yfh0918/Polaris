@@ -33,17 +33,17 @@ public class ServerHandlerProvider implements ServerHandler{
     }
     
 	@Override
-    public boolean register(String ip, int port) {
+    public boolean register(Server server) {
     	if (handler != null) {
-    		return handler.register(ip, port);
+    		return handler.register(server);
     	}
     	return false;
     }
     
     @Override
-    public boolean deregister(String ip, int port) {
+    public boolean deregister(Server server) {
     	if (handler != null) {
-    		return handler.deregister(ip, port);
+    		return handler.deregister(server);
 		}
     	return false;
     }

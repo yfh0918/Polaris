@@ -90,8 +90,9 @@ public class ZkServer implements ServerHandler {
 	}
 
 	@Override
-	public boolean register(String ip, int port) {
-		
+	public boolean register(Server server) {
+		String ip = server.getIp();
+		int port = server.getPort();
 		//get curator
 		CuratorFramework curator = getCurator();
 		
@@ -115,7 +116,7 @@ public class ZkServer implements ServerHandler {
 	}
 
 	@Override
-	public boolean deregister(String ip, int port) {
+	public boolean deregister(Server server) {
 		for (ZkCache zkCache : zkCacheMap.values()) {
 			try {
 				zkCache.getCache().close();

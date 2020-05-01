@@ -8,7 +8,6 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.pojo.HostUpstream;
 import com.polaris.container.gateway.proxy.HttpFiltersAdapter;
 import com.polaris.container.gateway.proxy.impl.ClientToProxyConnection;
 import com.polaris.container.gateway.proxy.impl.ProxyToServerConnection;
@@ -19,6 +18,7 @@ import com.polaris.container.gateway.response.HttpResponseFilterChain;
 import com.polaris.container.gateway.util.RequestUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
+import com.polaris.core.pojo.Server;
 import com.polaris.core.util.ResultUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -128,9 +128,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             ProxyToServerConnection proxyToServerConnection = (ProxyToServerConnection) field.get(clientToProxyConnection);
             String remoteIp = proxyToServerConnection.getRemoteAddress().getAddress().getHostAddress();
             int remotePort = proxyToServerConnection.getRemoteAddress().getPort();
-            String remoteUrl = remoteIp + ":" + remotePort;
-            String uri = proxyToServerConnection.getInitialRequest().uri();
-            ServerStrategyProviderFactory.get().connectionFail(HostUpstream.getFromUri(uri).getHost(), remoteUrl);
+            ServerStrategyProviderFactory.get().onConnectionFail(Server.of(remoteIp, remotePort));
         } catch (Exception e) {
             logger.error("connection of proxy->server is failed", e);
         } 

@@ -24,7 +24,7 @@ public interface ServerHandler {
 	* @Exception 
 	* @since 
 	*/
-	boolean register(String ip, int port);
+	default boolean register(Server server) {return false;}
 	
 	/**
 	* 从注册中心删除
@@ -33,7 +33,7 @@ public interface ServerHandler {
 	* @Exception 
 	* @since 
 	*/
-	boolean deregister(String ip, int port);
+	default boolean deregister(Server server) {return false;}
 	
 	/**
 	* 根据注册的服务名称获取真实的IP，由注册中心实现实现了负载均衡
@@ -52,5 +52,14 @@ public interface ServerHandler {
 	* @since 
 	*/
 	default List<Server> getServerList(String serviceName) {return null;}
+	
+	/**
+	* IP连接失败
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
+	default void onConnectionFail(Server server) {}
 
 }

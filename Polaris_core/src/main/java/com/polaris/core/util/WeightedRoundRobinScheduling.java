@@ -1,6 +1,7 @@
 package com.polaris.core.util;
 
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,8 +117,17 @@ public class WeightedRoundRobinScheduling {
     		return;
     	}
     	healthilyServers.remove(server);
+    	unhealthilyServers.remove(server);
     	serversMap.remove(server.getIp() + "_" + server.getPort());
     }
-
-
+    
+    public Collection<Server> getServers() {
+    	return serversMap.values();
+    }
+    
+    public void clear() {
+    	healthilyServers.clear();
+    	unhealthilyServers.clear();
+    	serversMap.clear();
+    }
 }

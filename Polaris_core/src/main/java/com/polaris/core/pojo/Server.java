@@ -43,12 +43,20 @@ public class Server {
 	/**
 	 * Creates a new {@link Sever} for the given elements.
 	 *
-	 * @param ip
-	 * @param port
+	 * @param ipAndPort
 	 * @return
 	 */
-	public static Server of(String ip) {
-		return new Server(ip);
+	public static Server of(String ipAndPort) {
+		String[] si = ipAndPort.split(":");
+		Server server = null;
+		if (si.length == 1) {
+			server = new Server(si[0], 80, 1);
+		} else if (si.length == 2) {
+            server = new Server(si[0], Integer.valueOf(si[1]), 1);
+        } else if (si.length == 3) {
+            server = new Server(si[0], Integer.valueOf(si[1]), Integer.valueOf(si[2]));
+        } 
+		return server;
 	}
 	public static Server of(String ip, Integer port) {
 		return new Server(ip, port);
@@ -60,6 +68,11 @@ public class Server {
 	@Override
 	public String toString() {
 		return ip+":"+port;
+	}
+	
+	@Override
+	public int hashCode() {
+		return port * ip.hashCode();
 	}
 	
 	@Override

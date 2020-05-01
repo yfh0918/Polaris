@@ -51,6 +51,8 @@ import org.slf4j.LoggerFactory;
 import com.polaris.core.GlobalContext;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
+import com.polaris.core.pojo.Server;
+import com.polaris.core.pojo.ServerHost;
  
 /**
  * HttpClient工具类
@@ -203,7 +205,7 @@ public class HttpClientUtil {
         	return getHttpUriResponse(getHttpClient(httpClient),request);
         	
         } catch (Exception ex) {
-        	setHttpException(parameter.getUrl(),request.getURI().toString(),ex);
+        	setHttpException(request.getURI().toString(),ex);
         	throw ex;
         } 
     }
@@ -413,8 +415,9 @@ public class HttpClientUtil {
     }
     
     //错误处理
-    private static void setHttpException(String orgurl, String url, Exception ex) {
-    	ServerStrategyProviderFactory.get().connectionFail(orgurl, url);
+    private static void setHttpException(String url, Exception ex) {
+    	String ipAndPort = ServerHost.of(url).getServiceName();
+    	ServerStrategyProviderFactory.get().onConnectionFail(Server.of(ipAndPort));
     	if (LOGGER.isDebugEnabled()) {
         	LOGGER.debug("ERROR:",ex);
     	}
