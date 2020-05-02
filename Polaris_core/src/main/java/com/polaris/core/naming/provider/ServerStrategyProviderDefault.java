@@ -24,14 +24,27 @@ public class ServerStrategyProviderDefault implements ServerStrategyProvider{
     }
     
     @Override
+	public Server getServer(String serviceName) {
+		if (!ServerHost.isIp(serviceName)) {
+			return INSTANCE_REMOTE.getServer(serviceName);
+		} else {
+			return INSTANCE_LOCAL.getServer(serviceName);
+		}
+	}
+    
+    @Override
+	public List<Server> getServerList(String serviceName) {
+		if (!ServerHost.isIp(serviceName)) {
+			return INSTANCE_REMOTE.getServerList(serviceName);
+		} else {
+			return INSTANCE_LOCAL.getServerList(serviceName);
+		}
+	}
+    
+    @Override
 	public String getRealIpUrl(String serviceNameUrl) {
     	ServerHost serverHost = ServerHost.of(serviceNameUrl);
-    	Server server = null;
-		if (!ServerHost.isIp(serverHost)) {
-			server = INSTANCE_REMOTE.getServer(serverHost.getServiceName());
-		} else {
-			server = INSTANCE_LOCAL.getServer(serverHost.getServiceName());
-		}
+    	Server server = getServer(serverHost.getServiceName());
 		if (server != null) {
 			return serverHost.getPrefix() + server.toString()+ serverHost.getUri();
 		}
@@ -41,12 +54,7 @@ public class ServerStrategyProviderDefault implements ServerStrategyProvider{
     @Override
 	public List<String> getRealIpUrlList(String serviceNameUrl) {
     	ServerHost serverHost = ServerHost.of(serviceNameUrl);
-    	List<Server> serverList = null;
-		if (!ServerHost.isIp(serverHost)) {
-			serverList = INSTANCE_REMOTE.getServerList(serverHost.getServiceName());
-		} else {
-			serverList = INSTANCE_LOCAL.getServerList(serverHost.getServiceName());
-		}
+    	List<Server> serverList = getServerList(serverHost.getServiceName());
 		if (serverList != null && serverList.size() > 0) {
 			List<String> urlList = new ArrayList<>();
 			for (Server server : serverList) {

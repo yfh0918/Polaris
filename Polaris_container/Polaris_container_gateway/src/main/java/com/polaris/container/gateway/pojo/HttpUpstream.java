@@ -10,34 +10,34 @@ import com.polaris.container.gateway.HttpFilterConstant;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.util.PropertyUtil;
 
-public class HostUpstream {
+public class HttpUpstream {
 
     public static final String NAME = "gw_upstream.txt";
-    private static volatile Map<String, HostUpstream> contextMap = new ConcurrentHashMap<>();
+    private static volatile Map<String, HttpUpstream> contextMap = new ConcurrentHashMap<>();
 
     public static void create(Set<String> contents) {
-    	Map<String, HostUpstream> temp_contextMap = new ConcurrentHashMap<>();
+    	Map<String, HttpUpstream> temp_contextMap = new ConcurrentHashMap<>();
         for (String line : contents) {
         	KeyValuePair kv = PropertyUtil.getKVPair(line);
-        	HostUpstream upstream = new HostUpstream();
+        	HttpUpstream upstream = new HttpUpstream();
         	if (kv != null) {
         		upstream.setContext(kv.getKey());
-        		upstream.setHost(kv.getValue());
+        		upstream.setServiceName(kv.getValue());
             }
         	temp_contextMap.put(upstream.getContext(), upstream);
         }
         contextMap = temp_contextMap;
     }
     
-    public static HostUpstream getFromContext(String key) {
+    public static HttpUpstream getFromContext(String key) {
     	return contextMap.get(key);
     }
-    public static Set<Map.Entry<String,HostUpstream>> getContextEntrySet() {
+    public static Set<Map.Entry<String,HttpUpstream>> getContextEntrySet() {
     	return contextMap.entrySet();
     }
     
-    public static HostUpstream getFromUri(String uri) {
-        HostUpstream upstream = getFromContext(getContextFromUri(uri));
+    public static HttpUpstream getFromUri(String uri) {
+        HttpUpstream upstream = getFromContext(getContextFromUri(uri));
         if (upstream != null) {
         	return upstream;
         }
@@ -53,17 +53,22 @@ public class HostUpstream {
     }
 
 	private String context;
-	private String host;
+	private String serviceName;
+
 	public String getContext() {
 		return context;
 	}
+
 	public void setContext(String context) {
 		this.context = context;
 	}
-	public String getHost() {
-		return host;
+
+	public String getServiceName() {
+		return serviceName;
 	}
-	public void setHost(String host) {
-		this.host = host;
+
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
 	}
+	
 }

@@ -26,7 +26,7 @@ import javax.net.ssl.SSLSession;
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.io.BaseEncoding;
-import com.polaris.container.gateway.pojo.HostUpstream;
+import com.polaris.container.gateway.pojo.HttpUpstream;
 import com.polaris.container.gateway.proxy.ActivityTracker;
 import com.polaris.container.gateway.proxy.FlowContext;
 import com.polaris.container.gateway.proxy.FullFlowContext;
@@ -285,7 +285,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
             }
         }
         LOG.debug("Finding ProxyToServerConnection serverHostAndPort for: {}", serverHostAndPort);
-        String httpRequestContxt = HostUpstream.getContextFromUri(httpRequest.uri());
+        String httpRequestContxt = HttpUpstream.getContextFromUri(httpRequest.uri());
         LOG.debug("Finding ProxyToServerConnection httpRequestContxt for: {}", httpRequestContxt);
         currentServerConnection = isMitming() || isTunneling() ?
                 this.currentServerConnection
@@ -635,7 +635,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
         // the connection to the server failed, so disconnect the server and remove the ProxyToServerConnection from the
         // map of open server connections
         serverConnection.disconnect();
-        String context = HostUpstream.getContextFromUri(serverConnection.getHttpRequestContext());
+        String context = HttpUpstream.getContextFromUri(serverConnection.getHttpRequestContext());
         this.serverConnectionsMap.remove(serverConnection.getServerHostAndPort() + context);
 
         boolean keepAlive = writeBadGateway(initialRequest);

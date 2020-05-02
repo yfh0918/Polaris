@@ -53,17 +53,16 @@ public class ServerHost {
 		}
         return serverHost;
     }
-	public static boolean isIp(ServerHost serverHost) {
-		String addr = serverHost.getServiceName();
+	public static boolean isIp(String serviceName) {
 		//example 192.168.1.1,192.168.2.2
-		if (addr.contains(",")) {
+		if (serviceName.contains(",")) {
 			return true;
 		}
-		if(StringUtil.isEmpty(addr) || addr.length() < 7 || addr.length() > 15) {  
+		if(StringUtil.isEmpty(serviceName) || serviceName.length() < 7 || serviceName.length() > 15) {  
             return false;  
         }  
         Pattern pat = Pattern.compile(IP_REXP);    
-        Matcher mat = pat.matcher(addr);    
+        Matcher mat = pat.matcher(serviceName);    
         boolean ipAddress = mat.find();  
         return ipAddress; 
 	}
