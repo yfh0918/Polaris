@@ -35,6 +35,7 @@ public class ServerHandlerLocalProvider implements ServerHandler{
     			oldServiceNameSet.add(oldServiceName);
     			removeOldServer(oldServiceNameSet);
     		}
+    		return server;
     	}
     	
     	//初期化定时器
@@ -48,7 +49,6 @@ public class ServerHandlerLocalProvider implements ServerHandler{
 				}
 			}
 		}
-		Set<String> oldServiceNameSet = new HashSet<>();
     	WeightedRoundRobinScheduling wrrs = serviceNameMap.get(serviceName);
     	if (wrrs == null) {
     		synchronized(serviceName.intern()){
@@ -63,12 +63,14 @@ public class ServerHandlerLocalProvider implements ServerHandler{
     		        }
     				
     				//删除old
+    				Set<String> oldServiceNameSet = new HashSet<>();
     				for (Server server : serverList) {
     					String oldServiceName = serverMap.get(server);
     					if (oldServiceName != null) {
     						oldServiceNameSet.add(oldServiceName);
     					}
     				}
+    		    	removeOldServer(oldServiceNameSet);
     				
     				//新增new
     				wrrs = new WeightedRoundRobinScheduling(serverList);
@@ -79,7 +81,6 @@ public class ServerHandlerLocalProvider implements ServerHandler{
     			}
     		}
     	}
-    	removeOldServer(oldServiceNameSet);
     	Server server = wrrs.getServer();
     	return server;
     }
