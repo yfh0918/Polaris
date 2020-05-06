@@ -22,11 +22,11 @@ import io.netty.handler.codec.http.HttpRequest;
  */
 public class HttpWIpRequestFilter extends HttpRequestFilter {
 	private static Logger logger = LoggerFactory.getLogger(HttpWIpRequestFilter.class);
-	private Set<String> patterns = new LinkedHashSet<>();
+	private Set<String> ipSet = new LinkedHashSet<>();
 
 	@Override
 	public void onChange(HttpFilterFile file) {
-		patterns = file.getData();
+		ipSet = file.getData();
 	}
 	
     @Override
@@ -40,7 +40,7 @@ public class HttpWIpRequestFilter extends HttpRequestFilter {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
             String ip = HttpFilterConstant.getRealIp(httpRequest);
-            if (patterns.contains(ip)) {
+            if (ipSet.contains(ip)) {
                 hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), HttpWIpRequestFilter.class.getSimpleName(), "white ip");
             	return true;
             }

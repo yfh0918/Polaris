@@ -46,47 +46,35 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
     	String TOKEN_POLICY_TEMP = null;
     	for (String conf : file.getData()) {
 			KeyValuePair kv = PropertyUtil.getKVPair(conf);
-			if (kv != null) {
+			if (kv != null && StringUtil.isNotEmpty(kv.getValue())) {
 				// 不需要验证token的uri
     			if (kv.getKey().equals("UNCHECKED_PATHS")) {
-    				if (StringUtil.isNotEmpty(kv.getValue())) {
-        				UNCHECKED_PATHS_TEMP.add(kv.getValue());
-    				}
+    				UNCHECKED_PATHS_TEMP.add(kv.getValue());
     			}
     			
     			// 不需要验证token的uri前缀，一般为context
     			if (kv.getKey().equals("UNCHECKED_PATHS_PREFIX")) {
-    				if (StringUtil.isNotEmpty(kv.getValue())) {
-        				UNCHECKED_PATHS_PREFIX_TEMP.add(kv.getValue());
-    				}
+    				UNCHECKED_PATHS_PREFIX_TEMP.add(kv.getValue());
     			}
     			
     			//tokenUrl
     			if (kv.getKey().equals("TOKEN_PATH") || kv.getKey().equals("TOKEN_PATHS")) {
-    				if (StringUtil.isNotEmpty(kv.getValue())) {
-        				TOKEN_PATHS_TEMP.add(kv.getValue());
-    				}
+    				TOKEN_PATHS_TEMP.add(kv.getValue());
     			}
     			
     			//tokenMessageCode
     			if (kv.getKey().equals("TOKEN_MESSAGE_CODE")) {
-    				if (StringUtil.isNotEmpty(kv.getValue())) {
-        				TOKEN_MESSAGE_CODE_TEMP = kv.getValue();
-    				}
+    				TOKEN_MESSAGE_CODE_TEMP = kv.getValue();
     			}
     			
     			//tokenMessageCode
     			if (kv.getKey().equals("TOKEN_MESSAGE")) {
-    				if (StringUtil.isNotEmpty(kv.getValue())) {
-        				TOKEN_MESSAGE_TEMP = kv.getValue();
-    				}
+    				TOKEN_MESSAGE_TEMP = kv.getValue();
     			}
     			
     			//TOKEN_POLICY
     			if (kv.getKey().equals("TOKEN_POLICY")) {
-    				if (StringUtil.isNotEmpty(kv.getValue())) {
-    					TOKEN_POLICY_TEMP = kv.getValue();
-    				}
+					TOKEN_POLICY_TEMP = kv.getValue();
     			}
 			}
     	}

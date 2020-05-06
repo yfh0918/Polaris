@@ -42,25 +42,18 @@ public class HttpDegradeRequestFilter extends HttpRequestFilter {
     	String tempDegradeMessage = null;
     	for (String conf : file.getData()) {
     		KeyValuePair kv = PropertyUtil.getKVPair(conf);
-			if (kv != null) {
+			if (kv != null && StringUtil.isNotEmpty(kv.getValue())) {
 				// degrade.url
     			if (kv.getKey().equals("degrade.url")) {
-    				if (StringUtil.isNotEmpty(kv.getValue())) {
-    					tempDegradeUrlSet.add(kv.getValue());
-    				}
-    				
+					tempDegradeUrlSet.add(kv.getValue());
     			}
     			// degrade.message
     			if (kv.getKey().equals("degrade.message.code")) {
-    				if (StringUtil.isNotEmpty(kv.getValue())) {
-    					tempDegradeMessageCode = kv.getValue();
-    				}
+					tempDegradeMessageCode = kv.getValue();
     			}
     			// degrade.message
     			if (kv.getKey().equals("degrade.message")) {
-    				if (StringUtil.isNotEmpty(kv.getValue())) {
-    					tempDegradeMessage = kv.getValue();
-    				}
+					tempDegradeMessage = kv.getValue();
     			}
 			}
     	}

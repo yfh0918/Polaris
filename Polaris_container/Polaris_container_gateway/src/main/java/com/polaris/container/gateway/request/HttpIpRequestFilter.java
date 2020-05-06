@@ -22,11 +22,11 @@ import io.netty.handler.codec.http.HttpRequest;
  */
 public class HttpIpRequestFilter extends HttpRequestFilter {
 	private static Logger logger = LoggerFactory.getLogger(HttpIpRequestFilter.class);
-	private Set<String> patterns = new LinkedHashSet<>();
+	private Set<String> ipSet = new LinkedHashSet<>();
 
 	@Override
 	public void onChange(HttpFilterFile file) {
-		patterns = file.getData();
+		ipSet = file.getData();
 	}
 	
     @Override
@@ -35,7 +35,7 @@ public class HttpIpRequestFilter extends HttpRequestFilter {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
             String realIp = HttpFilterConstant.getRealIp(httpRequest);
-            if (patterns.contains(realIp)) {
+            if (ipSet.contains(realIp)) {
                 hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), HttpIpRequestFilter.class.getSimpleName(), "black ip");
                 return true;
             }
