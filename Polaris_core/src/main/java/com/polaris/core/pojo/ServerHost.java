@@ -55,7 +55,8 @@ public class ServerHost {
     }
 	public static boolean isIp(String serviceName) {
 		//example 192.168.1.1,192.168.2.2
-		if (serviceName.contains(",")) {
+		//example 192.169.2.2:8081
+		if (serviceName.contains(",") || serviceName.contains(":")) {
 			return true;
 		}
 		if(StringUtil.isEmpty(serviceName) || serviceName.length() < 7 || serviceName.length() > 15) {  
