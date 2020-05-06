@@ -30,7 +30,11 @@ public class HttpUpstream {
     }
     
     public static HttpUpstream getFromContext(String key) {
-    	return contextMap.get(key);
+    	HttpUpstream upstream =  contextMap.get(key);
+    	if (upstream == null) {
+    		upstream = contextMap.get(HttpFilterConstant.DEFAULT);
+    	}
+    	return upstream;
     }
     public static Set<Map.Entry<String,HttpUpstream>> getContextEntrySet() {
     	return contextMap.entrySet();
@@ -38,10 +42,6 @@ public class HttpUpstream {
     
     public static HttpUpstream getFromUri(String uri) {
         HttpUpstream upstream = getFromContext(getContextFromUri(uri));
-        if (upstream != null) {
-        	return upstream;
-        }
-        upstream = getFromContext(HttpFilterConstant.DEFAULT);
         if (upstream != null) {
         	return upstream;
         }
@@ -54,21 +54,16 @@ public class HttpUpstream {
 
 	private String context;
 	private String serviceName;
-
 	public String getContext() {
 		return context;
 	}
-
 	public void setContext(String context) {
 		this.context = context;
 	}
-
 	public String getServiceName() {
 		return serviceName;
 	}
-
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
 	}
-	
 }
