@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import com.polaris.container.gateway.pojo.HttpFilterFile;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
-import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.config.reader.ConfReaderStrategyDefault;
 import com.polaris.core.util.StringUtil;
@@ -22,7 +21,7 @@ public class HttpFilterFileReader {
     public void readFile(HttpFilterCallback callback, HttpFilterFile file){
     	
 		//先获取
-    	String content = ConfHandlerProviderFactory.get(Type.EXT).get(file.getName());
+    	String content = ConfHandlerProviderFactory.get(file.getType()).get(file.getName());
     	
     	//获取不到-从本地文件系统获取
     	if (StringUtil.isEmpty(content)) {
@@ -32,15 +31,15 @@ public class HttpFilterFileReader {
     	//load
     	loadFile(file, content);
     	callback.onChange(file);
-		logger.info("file:{} type:{} is added",file.getName(),Type.EXT);
+		logger.info("file:{} type:{} is added",file.getName(),file.getType());
 		
 		//后监听
-		ConfHandlerProviderFactory.get(Type.EXT).listen(file.getName(), new ConfHandlerListener() {
+		ConfHandlerProviderFactory.get(file.getType()).listen(file.getName(), new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
 				loadFile(file, content);
 				callback.onChange(file);
-				logger.info("file:{} type:{} is updated",file.getName(),Type.EXT);
+				logger.info("file:{} type:{} is updated",file.getName(),file.getType());
 			}
     	});
     }
