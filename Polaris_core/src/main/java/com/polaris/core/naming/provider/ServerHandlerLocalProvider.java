@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Splitter;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.ServerHandler;
 import com.polaris.core.pojo.Server;
@@ -24,9 +25,11 @@ public class ServerHandlerLocalProvider implements ServerHandler{
     
     @Override
     public Server getServer(String serviceName) {
-    	String[] serversInfo = serviceName.split(",");
-    	if (serversInfo.length == 1) {
-    		Server server = Server.of(serversInfo[0]);
+    	List<String> serversInfo = Splitter.on(",").omitEmptyStrings().splitToList(serviceName);
+    	if (serversInfo.size() == 0) {
+    		return null;
+    	} else if (serversInfo.size() == 1) {
+    		Server server = Server.of(serversInfo.get(0));
     		
     		//删除old
     		String oldServiceName = serverMap.get(server);
@@ -99,16 +102,15 @@ public class ServerHandlerLocalProvider implements ServerHandler{
     
     @Override
     public List<Server> getServerList(String serviceName) {
-		String[] ips = serviceName.split(",");
+		List<String> ips = Splitter.on(",").omitEmptyStrings().splitToList(serviceName);
 		List<Server> serverList = new ArrayList<>();
-		for (int i0 = 0; i0 < ips.length; i0++) {
-			Server server = Server.of(ips[0]);
+		for (String ipAndPort : ips ) {
+			Server server = Server.of(ipAndPort);
 			if (server != null) {
 				serverList.add(server);
 			}
 		}
 		return serverList;
-
     }
     
     @Override
