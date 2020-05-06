@@ -9,6 +9,7 @@ public class ServerHost {
 	private static final String HTTP_PREFIX = "http://";
 	private static final String HTTPS_PREFIX = "https://";
 	private static final String IP_REXP = "([1-9]|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])(\\.(\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])){3}";  
+	private static final Pattern IP_PAT = Pattern.compile(IP_REXP);    
 
 	private String prefix;
 	private String serviceName;
@@ -54,17 +55,25 @@ public class ServerHost {
         return serverHost;
     }
 	public static boolean isIp(String serviceName) {
-		//example 192.168.1.1,192.168.2.2
-		//example 192.169.2.2:8081
-		if (serviceName.contains(",") || serviceName.contains(":")) {
-			return true;
+		//example 192.168.1.1,192.168.2.2 (多IP用,隔离)
+		for (String ipAndPort : serviceName.split(",")) {
+			try {
+				//example 192.169.2.2:8081 or 192.169.2.2:8081:1
+				Server server = Server.of(ipAndPort);
+				if (server == null) {
+					return false;
+				}
+				if(StringUtil.isEmpty(server.getIp()) || server.getIp().length() < 7 || server.getIp().length() > 15) {  
+		            return false;  
+		        }  
+		        Matcher mat = IP_PAT.matcher(server.getIp());    
+		        if (!mat.find()) {
+		        	return false;
+		        }
+			} catch (Exception ex) {
+				return false;
+			}
 		}
-		if(StringUtil.isEmpty(serviceName) || serviceName.length() < 7 || serviceName.length() > 15) {  
-            return false;  
-        }  
-        Pattern pat = Pattern.compile(IP_REXP);    
-        Matcher mat = pat.matcher(serviceName);    
-        boolean ipAddress = mat.find();  
-        return ipAddress; 
+		return true;
 	}
 }
