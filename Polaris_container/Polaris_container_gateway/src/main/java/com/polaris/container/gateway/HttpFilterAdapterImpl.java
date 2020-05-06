@@ -75,14 +75,18 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     public void proxyToServerResolutionSucceeded(String serverHostAndPort,
                                                  InetSocketAddress resolvedRemoteAddress) {
         if (resolvedRemoteAddress == null) {
-            ctx.writeAndFlush(createResponse(originalRequest, 
-            		HttpFilterMessage.of(
-            				ResultUtil.create(
-            						Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(),
-            						HttpResponseStatus.BAD_GATEWAY)));
+        	if (ctx.channel().isWritable()) {
+                ctx.writeAndFlush(createResponse(originalRequest, 
+                		HttpFilterMessage.of(
+                				ResultUtil.create(
+                						Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(),
+                						HttpResponseStatus.BAD_GATEWAY)));
+        	}
         } 
     }
 
+    
+    
     @Override
     public HttpObject proxyToClientResponse(HttpObject httpObject) {
         if (httpObject instanceof HttpResponse) {
@@ -109,7 +113,6 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     @Override
     public void proxyToServerConnectionSucceeded(final ChannelHandlerContext serverCtx) {
         ChannelPipeline pipeline = serverCtx.pipeline();
-        //当没有修改getMaximumResponseBufferSizeInBytes中buffer默认的大小时,下面两个handler是不存在的
         if (pipeline.get("inflater") != null) {
             pipeline.remove("inflater");
         }

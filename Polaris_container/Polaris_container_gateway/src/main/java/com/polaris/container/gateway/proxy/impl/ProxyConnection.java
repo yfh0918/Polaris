@@ -62,7 +62,7 @@ import com.polaris.container.gateway.proxy.HttpFilters;
  *            {@link HttpResponse} or {@link HttpRequest}.
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-abstract class ProxyConnection<I extends HttpObject> extends
+public abstract class ProxyConnection<I extends HttpObject> extends
         SimpleChannelInboundHandler<Object> {
     protected final ProxyConnectionLogger LOG = new ProxyConnectionLogger(this);
 
