@@ -24,7 +24,7 @@ public class HttpFilterHostResolver implements HostResolver ,HttpFilterCallback{
      */
     @Override
     public void onChange(HttpFilterFile file) {
-        HttpUpstream.create(file.getData());
+        HttpUpstream.load(file.getData());
     }
 
     @Override
