@@ -27,14 +27,15 @@ import io.netty.handler.codec.http.HttpRequest;
  */
 public class HttpTokenRequestFilter extends HttpRequestFilter {
 
-	private static String TOKEN_POLICY_UNCHECK = "uncheck";//#request存在token 并且属于UNCHECKED_PATHS的url,如果policy=check就检查token的有效性，如果uncheck就不检查
-	private static String TOKEN_POLICY = TOKEN_POLICY_UNCHECK;
+	private static String TOKEN_POLICY_DEFAULT_VALUE = "uncheck";//#request存在token 并且属于UNCHECKED_PATHS的url,如果policy=check就检查token的有效性，如果uncheck就不检查
+	private static String TOKEN_POLICY = TOKEN_POLICY_DEFAULT_VALUE;
 	public volatile static Set<String> UNCHECKED_PATHS = new HashSet<>();
 	public volatile static Set<String> UNCHECKED_PATHS_PREFIX = new HashSet<>();
 	public volatile static Set<String> TOKEN_PATHS = new HashSet<>();
-	public static String TOKEN_MESSAGE_CODE=Constant.TOKEN_FAIL_CODE;
-	public static String TOKEN_MESSAGE="认证失败，请先登录";
-	public final static String DEFAULT_VALUE = "1";
+	public static String TOKEN_MESSAGE_CODE_DEFAULT_VALUE=Constant.TOKEN_FAIL_CODE;
+	public static String TOKEN_MESSAGE_CODE=TOKEN_MESSAGE_CODE_DEFAULT_VALUE;
+	public static String TOKEN_MESSAGE_DEFAULT_VALUE="认证失败，请先登录";
+	public static String TOKEN_MESSAGE=TOKEN_MESSAGE_DEFAULT_VALUE;
 
 	@Override
 	public void onChange(HttpFilterFile file) {
@@ -84,12 +85,18 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
     	TOKEN_PATHS = TOKEN_PATHS_TEMP;
     	if (TOKEN_MESSAGE_CODE_TEMP != null) {
     		TOKEN_MESSAGE_CODE = TOKEN_MESSAGE_CODE_TEMP;
+    	} else {
+    		TOKEN_MESSAGE_CODE = TOKEN_MESSAGE_CODE_DEFAULT_VALUE;
     	}
     	if (TOKEN_MESSAGE_TEMP != null) {
     		TOKEN_MESSAGE = TOKEN_MESSAGE_TEMP;
+    	} else {
+    		TOKEN_MESSAGE = TOKEN_MESSAGE_DEFAULT_VALUE;
     	}
     	if (TOKEN_POLICY_TEMP != null) {
     		TOKEN_POLICY = TOKEN_POLICY_TEMP;
+    	} else {
+    		TOKEN_POLICY = TOKEN_POLICY_DEFAULT_VALUE;
     	}
     }
     
@@ -145,7 +152,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
     }
     
     public static boolean isUncheckPolicy() {
-    	if (TOKEN_POLICY.equals(TOKEN_POLICY_UNCHECK)) {
+    	if (TOKEN_POLICY.equals(TOKEN_POLICY_DEFAULT_VALUE)) {
     		return true;
     	}
     	return false;
@@ -173,7 +180,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
             
             //认证
             String token = httpRequest.headers().get(Constant.TOKEN_ID);
-            httpRequest.headers().set(Constant.TOKEN_ID, DEFAULT_VALUE);
+            httpRequest.headers().set(Constant.TOKEN_ID, "1");
 
             //没有token需要验证url是否放过
             if (StringUtil.isEmpty(token)) {
