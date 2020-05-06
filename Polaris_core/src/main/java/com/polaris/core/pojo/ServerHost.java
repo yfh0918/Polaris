@@ -3,6 +3,7 @@ package com.polaris.core.pojo;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Splitter;
 import com.polaris.core.util.StringUtil;
 
 public class ServerHost {
@@ -56,7 +57,7 @@ public class ServerHost {
     }
 	public static boolean isIp(String serviceName) {
 		//example 192.168.1.1,192.168.2.2 (多IP用,隔离)
-		for (String ipAndPort : serviceName.split(",")) {
+		for (String ipAndPort : Splitter.on(",").omitEmptyStrings().splitToList(serviceName)) {
 			try {
 				//example 192.169.2.2:8081 or 192.169.2.2:8081:1
 				Server server = Server.of(ipAndPort);
