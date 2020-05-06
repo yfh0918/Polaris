@@ -1455,6 +1455,6 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
         } else {
             return new FlowContext(this);
         }
-    }
+    } 
 
 }

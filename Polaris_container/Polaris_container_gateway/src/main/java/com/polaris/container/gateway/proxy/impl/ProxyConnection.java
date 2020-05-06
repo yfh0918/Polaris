@@ -836,5 +836,13 @@ public abstract class ProxyConnection<I extends HttpObject> extends
 
         protected abstract void responseWritten(HttpResponse httpResponse);
     }
+    
+    /**
+     *
+     * @return
+     */
+    public Channel getChannel() {
+        return channel;
+    }
 
 }

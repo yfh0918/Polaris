@@ -1035,7 +1035,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
                 LOG.warn("Error while invoking ActivityTracker on request", t);
             }
 
-            currentFilters.proxyToServerRequestSending();
+            currentFilters.proxyToServerRequestSending(flowContext, httpRequest);
         }
 
         @Override
@@ -1045,7 +1045,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         @Override
         protected void contentWritten(HttpContent httpContent) {
             if (httpContent instanceof LastHttpContent) {
-                currentFilters.proxyToServerRequestSent();
+                currentFilters.proxyToServerRequestSent((LastHttpContent)httpContent);
             }
         }
     };

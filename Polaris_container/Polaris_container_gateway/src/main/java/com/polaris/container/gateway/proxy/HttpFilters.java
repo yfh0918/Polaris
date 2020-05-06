@@ -105,14 +105,19 @@ public interface HttpFilters {
     HttpResponse proxyToServerRequest(HttpObject httpObject);
 
     /**
+     * @param flowContext
+     *            provides contextual information about the flow
+     * @param httpRequest
      * Informs filter that proxy to server request is being sent.
      */
-    void proxyToServerRequestSending();
+    void proxyToServerRequestSending(FullFlowContext flowContext,
+    		HttpRequest httpRequest);
 
     /**
+     * @param lastHttpContent
      * Informs filter that the HTTP request, including any content, has been sent.
      */
-    void proxyToServerRequestSent();
+    void proxyToServerRequestSent(LastHttpContent lastHttpContent);
 
     /**
      * Filters responses on their way from the server to the proxy.
