@@ -180,7 +180,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
             
             //认证
             String token = httpRequest.headers().get(Constant.TOKEN_ID);
-            httpRequest.headers().set(Constant.TOKEN_ID, "1");
+            httpRequest.headers().set(Constant.TOKEN_ID, Constant.TOKEN_ID);
 
             //没有token需要验证url是否放过
             if (StringUtil.isEmpty(token)) {
