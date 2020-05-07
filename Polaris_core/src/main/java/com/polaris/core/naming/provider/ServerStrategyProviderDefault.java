@@ -25,20 +25,20 @@ public class ServerStrategyProviderDefault implements ServerStrategyProvider{
     
     @Override
 	public Server getServer(String serviceName) {
-		if (!ServerHost.isIp(serviceName)) {
-			return INSTANCE_REMOTE.getServer(serviceName);
-		} else {
+		Server server = INSTANCE_REMOTE.getServer(serviceName);
+		if (server == null) {
 			return INSTANCE_LOCAL.getServer(serviceName);
-		}
+		} 
+		return server;
 	}
     
     @Override
 	public List<Server> getServerList(String serviceName) {
-		if (!ServerHost.isIp(serviceName)) {
-			return INSTANCE_REMOTE.getServerList(serviceName);
-		} else {
-			return INSTANCE_LOCAL.getServerList(serviceName);
-		}
+    	List<Server> serverList = INSTANCE_REMOTE.getServerList(serviceName);
+    	if (serverList == null || serverList.size() == 0) {
+    		return INSTANCE_LOCAL.getServerList(serviceName);
+    	}
+    	return serverList;
 	}
     
     @Override
