@@ -45,18 +45,16 @@ public class HttpFilterFileReader {
     }
     private void loadFile(HttpFilterFile file, String content) {
     	Set<String> data = new LinkedHashSet<>();
-    	if  (StringUtil.isEmpty(content)) {
-    		file.setData(data);
-    	} else {
+    	if  (StringUtil.isNotEmpty(content)) {
         	String[] contents = content.split(Constant.LINE_SEP);
         	for (String conf : contents) {
         		if (StringUtil.isNotEmpty(conf)) {
-        			conf = conf.replace("\n", "").trim();
-        			conf = conf.replace("\r", "").trim();
+        			conf = conf.replace(Constant.NEW_LINE, Constant.EMPTY).trim();
+        			conf = conf.replace(Constant.RETURN, Constant.EMPTY).trim();
         			data.add(conf);
         		}
         	}
-        	file.setData(data);
     	}
+    	file.setData(data);
     }
 }

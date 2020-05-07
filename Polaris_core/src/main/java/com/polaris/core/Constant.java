@@ -117,4 +117,8 @@ public class Constant {
 	public static final String SYSTEM_CALL_ENCRYPT_VALUE = "system.call.encrypt.value";
 	public static final String SYSTEM_CALL_ENCRYPT_VALUE_DEFAULT = "polaris-system-call-001";
 	
+	public static final String NEW_LINE="\n";
+	public static final String RETURN ="\r";
+	public static final String EMPTY = "";
+	
 }
