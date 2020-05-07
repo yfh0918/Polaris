@@ -136,6 +136,11 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      * Limits bandwidth when throttling is enabled.
      */
     private volatile GlobalTrafficShapingHandler trafficHandler;
+    
+    /**
+     * flowContext
+     */
+    private volatile FullFlowContext flowContext;
 
     /**
      * Create a new ProxyToServerConnection.
@@ -198,8 +203,9 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         this.availableChainedProxies = availableChainedProxies;
         this.trafficHandler = globalTrafficShapingHandler;
         this.currentFilters = initialFilters;
+        this.flowContext = new FullFlowContext(clientConnection,this);
         // Report connection status to HttpFilters
-        currentFilters.proxyToServerConnectionQueued();
+        currentFilters.proxyToServerConnectionQueued(flowContext);
 
         setupConnectionParameters();
     }
@@ -237,7 +243,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
             httpResponse = substituteResponse;
         }
 
-        currentFilters.serverToProxyResponseReceiving();
+        currentFilters.serverToProxyResponseReceiving(flowContext);
 
         rememberCurrentResponse(httpResponse);
         respondWith(httpResponse);
@@ -245,7 +251,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         if (ProxyUtils.isChunked(httpResponse)) {
             return AWAITING_CHUNK;
         } else {
-            currentFilters.serverToProxyResponseReceived();
+            currentFilters.serverToProxyResponseReceived(flowContext);
 
             return AWAITING_INITIAL;
         }
@@ -376,24 +382,24 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     protected void become(ConnectionState newState) {
         // Report connection status to HttpFilters
         if (getCurrentState() == DISCONNECTED && newState == CONNECTING) {
-            currentFilters.proxyToServerConnectionStarted();
+            currentFilters.proxyToServerConnectionStarted(flowContext);
         } else if (getCurrentState() == CONNECTING) {
             if (newState == HANDSHAKING) {
-                currentFilters.proxyToServerConnectionSSLHandshakeStarted();
+                currentFilters.proxyToServerConnectionSSLHandshakeStarted(flowContext);
             } else if (newState == AWAITING_INITIAL) {
-                currentFilters.proxyToServerConnectionSucceeded(ctx);
+                currentFilters.proxyToServerConnectionSucceeded(flowContext);
             } else if (newState == DISCONNECTED) {
-                currentFilters.proxyToServerConnectionFailed();
+                currentFilters.proxyToServerConnectionFailed(flowContext);
             }
         } else if (getCurrentState() == HANDSHAKING) {
             if (newState == AWAITING_INITIAL) {
-                currentFilters.proxyToServerConnectionSucceeded(ctx);
+                currentFilters.proxyToServerConnectionSucceeded(flowContext);
             } else if (newState == DISCONNECTED) {
-                currentFilters.proxyToServerConnectionFailed();
+                currentFilters.proxyToServerConnectionFailed(flowContext);
             }
         } else if (getCurrentState() == AWAITING_CHUNK
                 && newState != AWAITING_CHUNK) {
-            currentFilters.serverToProxyResponseReceived();
+            currentFilters.serverToProxyResponseReceived(flowContext);
         }
 
         super.become(newState);
@@ -837,7 +843,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
             this.transportProtocol = TransportProtocol.TCP;
 
             // Report DNS resolution to HttpFilters
-            this.remoteAddress = this.currentFilters.proxyToServerResolutionStarted(serverHostAndPort);
+            this.remoteAddress = this.currentFilters.proxyToServerResolutionStarted(flowContext,serverHostAndPort);
 
             // save the hostname and port of the unresolved address in hostAndPort, in case name resolution fails
             String hostAndPort = null;
@@ -855,12 +861,12 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
             } catch (UnknownHostException e) {
                 // unable to resolve the hostname to an IP address. notify the filters of the failure before allowing the
                 // exception to bubble up.
-                this.currentFilters.proxyToServerResolutionFailed(hostAndPort);
+                this.currentFilters.proxyToServerResolutionFailed(flowContext,hostAndPort);
 
                 throw e;
             }
 
-            this.currentFilters.proxyToServerResolutionSucceeded(serverHostAndPort, this.remoteAddress);
+            this.currentFilters.proxyToServerResolutionSucceeded(flowContext,serverHostAndPort, this.remoteAddress);
 
 
             this.localAddress = proxyServer.getLocalAddress();
@@ -988,8 +994,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private final BytesReadMonitor bytesReadMonitor = new BytesReadMonitor() {
         @Override
         protected void bytesRead(int numberOfBytes) {
-            FullFlowContext flowContext = new FullFlowContext(clientConnection,
-                    ProxyToServerConnection.this);
             for (ActivityTracker tracker : proxyServer
                     .getActivityTrackers()) {
                 tracker.bytesReceivedFromServer(flowContext, numberOfBytes);
@@ -1000,8 +1004,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private ResponseReadMonitor responseReadMonitor = new ResponseReadMonitor() {
         @Override
         protected void responseRead(HttpResponse httpResponse) {
-            FullFlowContext flowContext = new FullFlowContext(clientConnection,
-                    ProxyToServerConnection.this);
             for (ActivityTracker tracker : proxyServer
                     .getActivityTrackers()) {
                 tracker.responseReceivedFromServer(flowContext, httpResponse);
@@ -1012,8 +1014,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private BytesWrittenMonitor bytesWrittenMonitor = new BytesWrittenMonitor() {
         @Override
         protected void bytesWritten(int numberOfBytes) {
-            FullFlowContext flowContext = new FullFlowContext(clientConnection,
-                    ProxyToServerConnection.this);
             for (ActivityTracker tracker : proxyServer
                     .getActivityTrackers()) {
                 tracker.bytesSentToServer(flowContext, numberOfBytes);
@@ -1024,8 +1024,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private RequestWrittenMonitor requestWrittenMonitor = new RequestWrittenMonitor() {
         @Override
         protected void requestWriting(HttpRequest httpRequest) {
-            FullFlowContext flowContext = new FullFlowContext(clientConnection,
-                    ProxyToServerConnection.this);
             try {
                 for (ActivityTracker tracker : proxyServer
                         .getActivityTrackers()) {
@@ -1045,7 +1043,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         @Override
         protected void contentWritten(HttpContent httpContent) {
             if (httpContent instanceof LastHttpContent) {
-                currentFilters.proxyToServerRequestSent((LastHttpContent)httpContent);
+                currentFilters.proxyToServerRequestSent(flowContext, (LastHttpContent)httpContent);
             }
         }
     };

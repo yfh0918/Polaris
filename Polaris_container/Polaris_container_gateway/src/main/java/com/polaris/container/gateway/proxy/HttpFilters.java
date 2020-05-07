@@ -1,11 +1,14 @@
 package com.polaris.container.gateway.proxy;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.*;
-
 import java.net.InetSocketAddress;
 
 import com.polaris.container.gateway.proxy.impl.ProxyUtils;
+
+import io.netty.handler.codec.http.HttpContent;
+import io.netty.handler.codec.http.HttpObject;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.LastHttpContent;
 
 /**
  * <p>
@@ -110,14 +113,13 @@ public interface HttpFilters {
      * @param httpRequest
      * Informs filter that proxy to server request is being sent.
      */
-    void proxyToServerRequestSending(FullFlowContext flowContext,
-    		HttpRequest httpRequest);
+    void proxyToServerRequestSending(FullFlowContext flowContext, HttpRequest httpRequest);
 
     /**
      * @param lastHttpContent
      * Informs filter that the HTTP request, including any content, has been sent.
      */
-    void proxyToServerRequestSent(LastHttpContent lastHttpContent);
+    void proxyToServerRequestSent(FullFlowContext flowContext, LastHttpContent lastHttpContent);
 
     /**
      * Filters responses on their way from the server to the proxy.
@@ -141,12 +143,12 @@ public interface HttpFilters {
     /**
      * Informs filter that server to proxy response is being received.
      */
-    void serverToProxyResponseReceiving();
+    void serverToProxyResponseReceiving(FullFlowContext flowContext);
 
     /**
      * Informs filter that server to proxy response has been received.
      */
-    void serverToProxyResponseReceived();
+    void serverToProxyResponseReceived(FullFlowContext flowContext);
 
     /**
      * Filters responses on their way from the proxy to the client.
@@ -161,7 +163,7 @@ public interface HttpFilters {
     /**
      * Informs filter that proxy to server connection is in queue.
      */
-    void proxyToServerConnectionQueued();
+    void proxyToServerConnectionQueued(FullFlowContext flowContext);
 
     /**
      * Filter DNS resolution from proxy to server.
@@ -171,7 +173,7 @@ public interface HttpFilters {
      * @return alternative address resolution. Returning null will let normal
      *         DNS resolution continue.
      */
-    InetSocketAddress proxyToServerResolutionStarted(
+    InetSocketAddress proxyToServerResolutionStarted(FullFlowContext flowContext,
             String resolvingServerHostAndPort);
 
     /**
@@ -179,7 +181,7 @@ public interface HttpFilters {
      *
      * @param hostAndPort hostname and port the proxy failed to resolve
      */
-    void proxyToServerResolutionFailed(String hostAndPort);
+    void proxyToServerResolutionFailed(FullFlowContext flowContext, String hostAndPort);
 
     /**
      * Informs filter that proxy to server DNS resolution has happened.
@@ -189,29 +191,29 @@ public interface HttpFilters {
      * @param resolvedRemoteAddress
      *            Address it was proxyToServerResolutionSucceeded to
      */
-    void proxyToServerResolutionSucceeded(String serverHostAndPort,
+    void proxyToServerResolutionSucceeded(FullFlowContext flowContext,String serverHostAndPort,
             InetSocketAddress resolvedRemoteAddress);
 
     /**
      * Informs filter that proxy to server connection is initiating.
      */
-    void proxyToServerConnectionStarted();
+    void proxyToServerConnectionStarted(FullFlowContext flowContext);
 
     /**
      * Informs filter that proxy to server ssl handshake is initiating.
      */
-    void proxyToServerConnectionSSLHandshakeStarted();
+    void proxyToServerConnectionSSLHandshakeStarted(FullFlowContext flowContext);
 
     /**
      * Informs filter that proxy to server connection has failed.
      */
-    void proxyToServerConnectionFailed();
+    void proxyToServerConnectionFailed(FullFlowContext flowContext);
 
     /**
      * Informs filter that proxy to server connection has succeeded.
      *
      * @param serverCtx the {@link io.netty.channel.ChannelHandlerContext} used to connect to the server
      */
-    void proxyToServerConnectionSucceeded(ChannelHandlerContext serverCtx);
+    void proxyToServerConnectionSucceeded(FullFlowContext flowContext);
 
 }

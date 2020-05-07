@@ -41,12 +41,11 @@ public class HttpFiltersAdapter implements HttpFilters {
     }
 
     @Override
-    public void proxyToServerRequestSending(FullFlowContext flowContext,
-    		HttpRequest httpRequest) {
+    public void proxyToServerRequestSending(FullFlowContext flowContext,HttpRequest httpRequest) {
     }
 
     @Override
-    public void proxyToServerRequestSent(LastHttpContent lastHttpContent) {
+    public void proxyToServerRequestSent(FullFlowContext flowContext, LastHttpContent lastHttpContent) {
     }
 
     @Override
@@ -59,11 +58,11 @@ public class HttpFiltersAdapter implements HttpFilters {
     }
 
     @Override
-    public void serverToProxyResponseReceiving() {
+    public void serverToProxyResponseReceiving(FullFlowContext flowContext) {
     }
 
     @Override
-    public void serverToProxyResponseReceived() {
+    public void serverToProxyResponseReceived(FullFlowContext flowContext) {
     }
 
     @Override
@@ -72,37 +71,37 @@ public class HttpFiltersAdapter implements HttpFilters {
     }
 
     @Override
-    public void proxyToServerConnectionQueued() {
+    public void proxyToServerConnectionQueued(FullFlowContext flowContext) {
     }
 
     @Override
-    public InetSocketAddress proxyToServerResolutionStarted(
+    public InetSocketAddress proxyToServerResolutionStarted(FullFlowContext flowContext,
             String resolvingServerHostAndPort) {
         return null;
     }
 
     @Override
-    public void proxyToServerResolutionFailed(String hostAndPort) {
+    public void proxyToServerResolutionFailed(FullFlowContext flowContext, String hostAndPort) {
     }
 
     @Override
-    public void proxyToServerResolutionSucceeded(String serverHostAndPort,
+    public void proxyToServerResolutionSucceeded(FullFlowContext flowContext,String serverHostAndPort,
             InetSocketAddress resolvedRemoteAddress) {
     }
 
     @Override
-    public void proxyToServerConnectionStarted() {
+    public void proxyToServerConnectionStarted(FullFlowContext flowContext) {
     }
 
     @Override
-    public void proxyToServerConnectionSSLHandshakeStarted() {
+    public void proxyToServerConnectionSSLHandshakeStarted(FullFlowContext flowContext) {
     }
 
     @Override
-    public void proxyToServerConnectionFailed() {
+    public void proxyToServerConnectionFailed(FullFlowContext flowContext) {
     }
 
     @Override
-    public void proxyToServerConnectionSucceeded(ChannelHandlerContext serverCtx) {
+    public void proxyToServerConnectionSucceeded(FullFlowContext flowContext) {
     }
 }

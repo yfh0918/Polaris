@@ -1,6 +1,5 @@
 package com.polaris.container.gateway;
 
-import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.util.Map;
 
@@ -10,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.proxy.FullFlowContext;
 import com.polaris.container.gateway.proxy.HttpFiltersAdapter;
-import com.polaris.container.gateway.proxy.impl.ClientToProxyConnection;
 import com.polaris.container.gateway.proxy.impl.ProxyToServerConnection;
 import com.polaris.container.gateway.request.HttpRequestFilter;
 import com.polaris.container.gateway.request.HttpRequestFilterChain;
@@ -35,8 +33,6 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.util.CharsetUtil;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 
 /**
  * @author:Tom.Yu
@@ -75,7 +71,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     }
     
     @Override
-    public void proxyToServerResolutionSucceeded(String serverHostAndPort,
+    public void proxyToServerResolutionSucceeded(FullFlowContext flowContext,String serverHostAndPort,
                                                  InetSocketAddress resolvedRemoteAddress) {
         if (resolvedRemoteAddress == null) {
         	if (ctx.channel().isWritable()) {
@@ -88,6 +84,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         } 
     }
 
+    /*
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
     public void proxyToServerRequestSending(FullFlowContext flowContext, HttpRequest httpRequest) {
@@ -107,6 +104,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             }
         });
     }
+    */
     
     @Override
     public HttpObject proxyToClientResponse(HttpObject httpObject) {
@@ -132,30 +130,23 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     }
 
     @Override
-    public void proxyToServerConnectionSucceeded(final ChannelHandlerContext serverCtx) {
-        ChannelPipeline pipeline = serverCtx.pipeline();
+    public void proxyToServerConnectionSucceeded(FullFlowContext flowContext) {
+        ChannelPipeline pipeline = ctx.pipeline();
         if (pipeline.get("inflater") != null) {
             pipeline.remove("inflater");
         }
         if (pipeline.get("aggregator") != null) {
             pipeline.remove("aggregator");
         }
-        super.proxyToServerConnectionSucceeded(serverCtx);    
+        super.proxyToServerConnectionSucceeded(flowContext);    
     }
     
     @Override
-    public void proxyToServerConnectionFailed() {
-        try {
-   		 	ClientToProxyConnection clientToProxyConnection = (ClientToProxyConnection) ctx.handler();
-            Field field = ClientToProxyConnection.class.getDeclaredField("currentServerConnection");
-            field.setAccessible(true);
-            ProxyToServerConnection proxyToServerConnection = (ProxyToServerConnection) field.get(clientToProxyConnection);
-            String remoteIp = proxyToServerConnection.getRemoteAddress().getAddress().getHostAddress();
-            int remotePort = proxyToServerConnection.getRemoteAddress().getPort();
-            ServerStrategyProviderFactory.get().onConnectionFail(Server.of(remoteIp, remotePort));
-        } catch (Exception e) {
-            logger.error("connection of proxy->server is failed", e);
-        } 
+    public void proxyToServerConnectionFailed(FullFlowContext flowContext) {
+    	ProxyToServerConnection proxyToServerConnection = flowContext.getServerConnection();
+        String remoteIp = proxyToServerConnection.getRemoteAddress().getAddress().getHostAddress();
+        int remotePort = proxyToServerConnection.getRemoteAddress().getPort();
+        ServerStrategyProviderFactory.get().onConnectionFail(Server.of(remoteIp, remotePort));
     }
 
 	private HttpResponse createResponse(HttpRequest originalRequest, HttpFilterMessage message) {
