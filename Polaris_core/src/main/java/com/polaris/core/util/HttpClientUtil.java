@@ -363,7 +363,9 @@ public class HttpClientUtil {
     		URIBuilder builder = new URIBuilder(url);
             if (parameter.getRequestParams() != null) {
                 for(Entry<String,Object> param : parameter.getRequestParams().entrySet()){
-                	builder.addParameter(param.getKey(), param.getValue().toString());
+                	if (param.getValue() != null) {
+                    	builder.addParameter(param.getKey(), param.getValue().toString());
+                	}
                 }
 
             }
@@ -377,7 +379,9 @@ public class HttpClientUtil {
         		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
         		if (parameter.getRequestParams() != null) {
                     for(Entry<String,Object> param : parameter.getRequestParams().entrySet()){
-                    	nvps.add(new BasicNameValuePair(param.getKey(), param.getValue().toString()));
+                    	if (param.getValue() != null) {
+                        	nvps.add(new BasicNameValuePair(param.getKey(), param.getValue().toString()));
+                    	}
                     }
         		}
                 httpost.setEntity(new UrlEncodedFormEntity(nvps, UTF8));
@@ -390,7 +394,9 @@ public class HttpClientUtil {
         	} else if (parameter.getRequstType() == RequstType.HTTP_POST_MULTIPART){
         		MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
                 for(Entry<String,ContentBody> param : parameter.getRequestContentBodys().entrySet()){
-                	multipartEntityBuilder.addPart(param.getKey(), param.getValue());
+                	if (param.getValue() != null) {
+                    	multipartEntityBuilder.addPart(param.getKey(), param.getValue());
+                	}
                 }
                 HttpEntity reqEntity = multipartEntityBuilder.build();
                 httpost.setEntity(reqEntity);
