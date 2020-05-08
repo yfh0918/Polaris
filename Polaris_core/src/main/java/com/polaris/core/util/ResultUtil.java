@@ -1,6 +1,9 @@
 package com.polaris.core.util;
 
+import java.util.List;
+
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.polaris.core.Constant;
 import com.polaris.core.pojo.Result;
@@ -63,6 +66,26 @@ public class ResultUtil {
     	result.setCode(code);
     	result.setMessage(message);
     	return result;
+    }
+	
+	public static <T> List<T> toList(Result result, Class<T> clazz) {
+		return toList(result, clazz, Constant.RESULT_SUCCESS);
+    }
+	public static <T> List<T> toList(Result result, Class<T> clazz, String successCode) {
+		if (result != null && result.getCode().equals(successCode) && result.getData() != null) {
+	        List<T> ts = (List<T>) JSONArray.parseArray(result.getData().toString(), clazz);
+	        return ts;
+		}
+		return null;
+    }
+	public static <T> T toObject(Result result, Class<T> clazz) {
+		return toObject(result, clazz, Constant.RESULT_SUCCESS);
+	}
+	public static <T> T toObject(Result result, Class<T> clazz, String successCode) {
+		if (result != null && result.getCode().equals(successCode) && result.getData() != null) {
+			return JSON.parseObject(result.getData().toString(), clazz);
+		}
+		return null;
     }
 
 }
