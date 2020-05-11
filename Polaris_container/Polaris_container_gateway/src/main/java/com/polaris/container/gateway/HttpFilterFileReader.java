@@ -18,7 +18,7 @@ public class HttpFilterFileReader {
 	public static HttpFilterFileReader INSTANCE = new HttpFilterFileReader();
 	private HttpFilterFileReader() {};
 	
-    public void readFile(HttpFilterCallback callback, HttpFilterFile file){
+    public void readFile(HttpFilterFileListener listener, HttpFilterFile file){
     	
 		//先获取
     	String content = ConfHandlerProviderFactory.get(file.getType()).get(file.getName());
@@ -30,7 +30,7 @@ public class HttpFilterFileReader {
     	
     	//load
     	loadFile(file, content);
-    	callback.onChange(file);
+    	listener.onChange(file);
 		logger.info("file:{} type:{} is added",file.getName(),file.getType());
 		
 		//后监听
@@ -38,7 +38,7 @@ public class HttpFilterFileReader {
 			@Override
 			public void receive(String content) {
 				loadFile(file, content);
-				callback.onChange(file);
+				listener.onChange(file);
 				logger.info("file:{} type:{} is updated",file.getName(),file.getType());
 			}
     	});

@@ -12,7 +12,7 @@ import com.polaris.core.pojo.Server;
 /**
  * @author:Tom.Yu Description:
  */
-public class HttpFilterHostResolver implements HostResolver ,HttpFilterCallback{
+public class HttpFilterHostResolver implements HostResolver ,HttpFilterFileListener{
     public static HttpFilterHostResolver INSTANCE = new HttpFilterHostResolver();
     private HttpFilterHostResolver() {
     	HttpFilterFileReader.INSTANCE.readFile(this, new HttpFilterFile(HttpUpstream.NAME));

@@ -4,7 +4,7 @@ import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.container.gateway.pojo.HttpFilterFile;
 
 public abstract class HttpFilter extends HttpFilterMessage 
-								 implements HttpFilterLifeCycle ,HttpFilterCallback {
+								 implements HttpFilterLifeCycle ,HttpFilterFileListener {
 	protected HttpFilterEntity httpFilterEntity;
 	
     /**
