@@ -1,2 +1,3 @@
-/paygateway=Polaris_demo_web_springmvc
-default=Polaris_demo_web_springmvc
+/paygateway=127.0.0.1:8082
+/paycatt=127.0.0.1:8083
+default=127.0.0.1:8082
