@@ -20,7 +20,7 @@ public abstract class HttpFilterResolverFactory {
         	return new DnsSecServerResolver();
         } else {
             logger.info("反向代理模式开启");
-            return HttpFilterHostResolver.INSTANCE;
+            return HttpFilterContextResolver.INSTANCE;
         }
 	}
 }

@@ -12,9 +12,9 @@ import com.polaris.core.pojo.Server;
 /**
  * @author:Tom.Yu Description:
  */
-public class HttpFilterHostResolver implements HostResolver ,HttpFilterFileListener{
-    public static HttpFilterHostResolver INSTANCE = new HttpFilterHostResolver();
-    private HttpFilterHostResolver() {
+public class HttpFilterContextResolver implements HostResolver ,HttpFilterFileListener{
+    public static HttpFilterContextResolver INSTANCE = new HttpFilterContextResolver();
+    private HttpFilterContextResolver() {
     	HttpFilterFileReader.INSTANCE.readFile(this, new HttpFilterFile(HttpUpstream.NAME));
     }
     
