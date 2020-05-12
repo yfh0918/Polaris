@@ -52,8 +52,23 @@ public class HttpUpstream {
     	return contextList.size() == 0 ? HttpFilterConstant.SLASH : HttpFilterConstant.SLASH + contextList.get(0);
     }
 
-	private String context;
-	private String serviceName;
+	private String host;//例如:localhost, 127.0.0.1, 0.0.0.0, 192.168.1.1，aiaaifa.com等
+    private Integer port;//网关的监听端口号，例如：8081
+	private String context;//context，从requst的uri获取，没有为[/]
+	private String serviceName;//反向代理的服务名称，可以是IP+port 或者 为注册中心或者DNS的名称
+    public String getHost() {
+		return host;
+	}
+	public void setHost(String host) {
+		this.host = host;
+	}
+	public Integer getPort() {
+		return port;
+	}
+	public void setPort(Integer port) {
+		this.port = port;
+	}
+	
 	public String getContext() {
 		return context;
 	}
