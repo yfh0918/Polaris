@@ -10,12 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>Polaris_demo_gateway</artifactId>
 
-    <properties>
-        <io.dropwizard.metrics>3.1.2</io.dropwizard.metrics>
-        <maven.deploy.skip>true</maven.deploy.skip>
-    </properties>
-
-
     <dependencies>
         <dependency>
             <groupId>com.polaris</groupId>
@@ -29,7 +23,7 @@
     </dependencies>
 
 
-<build>
+	<build>
 	  <plugins>
 		<plugin>
 	  		<groupId>org.apache.maven.plugins</groupId>
@@ -38,5 +32,5 @@
 	  </plugins>
 	  
 	  <finalName>Polaris_demo_gateway</finalName>
-  </build>
+    </build>
 </project>
