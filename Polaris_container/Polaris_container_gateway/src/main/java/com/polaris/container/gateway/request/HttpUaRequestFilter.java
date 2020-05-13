@@ -11,9 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.HttpConstant;
 import com.polaris.container.gateway.pojo.HttpFile;
-import com.polaris.container.gateway.pojo.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFilterMessage;
 
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 
@@ -38,7 +37,7 @@ public class HttpUaRequestFilter extends HttpRequestFilter {
 	}
 	
     @Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext channelHandlerContext) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpFilterMessage httpMessage) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;

@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.polaris.container.gateway.pojo.HttpFile;
-import com.polaris.container.gateway.pojo.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFilterMessage;
 import com.polaris.core.Constant;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.util.JwtUtil;
@@ -16,7 +16,6 @@ import com.polaris.core.util.SystemCallUtil;
 
 import cn.hutool.core.util.StrUtil;
 import io.jsonwebtoken.Claims;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 
@@ -160,7 +159,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
     }
     
 	@Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext channelHandlerContext) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpFilterMessage httpMessage) {
         if (httpObject instanceof HttpRequest) {
         	
             //获取request

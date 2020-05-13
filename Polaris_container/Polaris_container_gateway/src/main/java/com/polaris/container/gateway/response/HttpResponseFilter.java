@@ -1,10 +1,6 @@
 package com.polaris.container.gateway.response;
 
 import com.polaris.container.gateway.HttpFilter;
-import com.polaris.container.gateway.pojo.HttpMessage;
-
-import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
 
 /**
  * @author:Tom.Yu
@@ -34,9 +30,4 @@ public abstract class HttpResponseFilter extends HttpFilter {
 		HttpResponseFilterChain.INSTANCE.remove(this);
 	}
 	
-    /**
-     * 调用response过滤
-     *
-     */
-	protected abstract boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse, HttpMessage httpMessage);
 }

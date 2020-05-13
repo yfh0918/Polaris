@@ -12,11 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.HttpConstant;
 import com.polaris.container.gateway.pojo.HttpFile;
-import com.polaris.container.gateway.pojo.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFilterMessage;
 import com.polaris.container.gateway.util.RequestUtil;
 
 import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
@@ -56,7 +55,7 @@ public class HttpPostRequestFilter extends HttpRequestFilter {
 		
 	}
     @Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext ctx) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpFilterMessage httpMessage) {
         if (originalRequest.method().name().equals("POST")) {
             if (httpObject instanceof HttpContent) {
                 HttpContent httpContent = (HttpContent) httpObject;

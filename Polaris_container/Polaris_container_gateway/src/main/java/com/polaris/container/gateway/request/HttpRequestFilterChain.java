@@ -3,9 +3,8 @@ package com.polaris.container.gateway.request;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import com.polaris.container.gateway.HttpFilterChain;
-import com.polaris.container.gateway.pojo.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFilterMessage;
 
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 
@@ -22,11 +21,11 @@ public class HttpRequestFilterChain extends HttpFilterChain<HttpRequestFilter>{
     private HttpRequestFilterChain() {}
 
 
-    public ImmutablePair<Boolean, HttpMessage> doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
-    	HttpMessage httpMessage = new HttpMessage();
+    public ImmutablePair<Boolean, HttpFilterMessage> doFilter(HttpRequest originalRequest, HttpObject httpObject) {
+    	HttpFilterMessage httpMessage = new HttpFilterMessage();
     	for (HttpRequestFilter filter : filters) {
         	if (!skip(filter)) {
-                boolean result = filter.doFilter(originalRequest, httpObject, httpMessage, channelHandlerContext);
+                boolean result = filter.doFilter(originalRequest, httpObject, httpMessage);
                 
                 //不走hostResolver
                 if (!httpMessage.isRunHostResolver()) {

@@ -11,7 +11,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
  * 中途被拦截需要返回的信息
  *
  */
-public class HttpMessage {
+public class HttpFilterMessage {
 
     /**
      * 是否走hostResolver
@@ -57,11 +57,11 @@ public class HttpMessage {
 		putHeader(pair.getKey(),pair.getValue());
 	}
 	
-	public static HttpMessage of(String result,KeyValuePair... kvPairs) {
+	public static HttpFilterMessage of(String result,KeyValuePair... kvPairs) {
 		return of(result,null,kvPairs);
 	}
-	public static HttpMessage of(String result,HttpResponseStatus status,KeyValuePair... kvPairs) {
-		HttpMessage message = new HttpMessage();
+	public static HttpFilterMessage of(String result,HttpResponseStatus status,KeyValuePair... kvPairs) {
+		HttpFilterMessage message = new HttpFilterMessage();
 		if (status != null) {
 			message.setStatus(status);
 		}

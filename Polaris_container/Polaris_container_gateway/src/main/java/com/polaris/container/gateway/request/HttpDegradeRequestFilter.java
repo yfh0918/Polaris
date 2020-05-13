@@ -7,14 +7,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.pojo.HttpFile;
-import com.polaris.container.gateway.pojo.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFilterMessage;
 import com.polaris.core.Constant;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.ResultUtil;
 import com.polaris.core.util.StringUtil;
 
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 
@@ -68,7 +67,7 @@ public class HttpDegradeRequestFilter extends HttpRequestFilter {
     }
     
 	@Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext channelHandlerContext) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpFilterMessage httpMessage) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             

@@ -3,11 +3,6 @@ package com.polaris.container.gateway.request;
 import org.slf4j.Logger;
 
 import com.polaris.container.gateway.HttpFilter;
-import com.polaris.container.gateway.pojo.HttpMessage;
-
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.HttpObject;
-import io.netty.handler.codec.http.HttpRequest;
 
 /**
  * @author:Tom.Yu
@@ -38,15 +33,6 @@ public abstract class HttpRequestFilter extends HttpFilter  {
 		HttpRequestFilterChain.INSTANCE.remove(this);
 	}
 	
-	/**
-     * httpRequest拦截逻辑
-     *
-     * @param originalRequest original request
-     * @param httpObject      http请求
-     * @return true:正则匹配成功,false:正则匹配失败
-     */
-	protected abstract boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext channelHandlerContext);
-
     /**
      * 是否是黑名单
      *

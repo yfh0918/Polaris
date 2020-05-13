@@ -30,7 +30,7 @@ import com.google.common.io.Files;
 import com.google.common.util.concurrent.RateLimiter;
 import com.polaris.container.gateway.HttpConstant;
 import com.polaris.container.gateway.pojo.HttpFile;
-import com.polaris.container.gateway.pojo.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFilterMessage;
 import com.polaris.core.Constant;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.pojo.Result;
@@ -42,7 +42,6 @@ import com.polaris.extension.cache.Cache;
 import com.polaris.extension.cache.CacheFactory;
 
 import cn.hutool.core.io.FileUtil;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
@@ -215,7 +214,7 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
     }
     
 	@Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext channelHandlerContext) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpFilterMessage httpMessage) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             String realIp = HttpConstant.getRealIp((DefaultHttpRequest) httpObject);
@@ -257,7 +256,7 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
         return false;
     }
 	
-	private boolean viewBlackLog(String url, HttpMessage httpMessage) {
+	private boolean viewBlackLog(String url, HttpFilterMessage httpMessage) {
         if (url.equals("/gateway/cc/ip")) {
         	@SuppressWarnings("rawtypes")
 			Result<List> dto = new Result<>();

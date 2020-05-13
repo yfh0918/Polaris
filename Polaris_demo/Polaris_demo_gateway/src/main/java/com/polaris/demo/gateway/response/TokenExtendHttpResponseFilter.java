@@ -1,10 +1,10 @@
 package com.polaris.demo.gateway.response;
 
-import com.polaris.container.gateway.pojo.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFilterMessage;
 import com.polaris.container.gateway.response.HttpResponseFilter;
 
+import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponse;
 
 /**
  * @author:Tom.Yu
@@ -15,7 +15,7 @@ import io.netty.handler.codec.http.HttpResponse;
 public class TokenExtendHttpResponseFilter extends HttpResponseFilter {
 	
     @Override
-    public boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse, HttpMessage httpMessage) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpFilterMessage httpMessage) {
         return false;
     }
 }

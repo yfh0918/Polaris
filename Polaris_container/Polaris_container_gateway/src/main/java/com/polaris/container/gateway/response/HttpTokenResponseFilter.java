@@ -6,12 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
-import com.polaris.container.gateway.pojo.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFilterMessage;
 import com.polaris.container.gateway.request.HttpTokenRequestFilter;
 import com.polaris.core.util.JwtUtil;
 import com.polaris.core.util.ResultUtil;
 import com.polaris.core.util.StringUtil;
 
+import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -25,7 +26,8 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 public class HttpTokenResponseFilter extends HttpResponseFilter {
 	private static Logger logger = LoggerFactory.getLogger(HttpTokenResponseFilter.class);
     @Override
-    public boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse, HttpMessage httpMessage) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpFilterMessage httpMessage) {
+    	HttpResponse httpResponse = (HttpResponse)httpObject;
     	try {
         	String url = HttpTokenRequestFilter.getUrl(originalRequest);
         	if (HttpTokenRequestFilter.isTokenPath(url)) {
