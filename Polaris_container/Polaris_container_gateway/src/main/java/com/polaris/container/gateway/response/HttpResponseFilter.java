@@ -1,7 +1,7 @@
 package com.polaris.container.gateway.response;
 
 import com.polaris.container.gateway.HttpFilter;
-import com.polaris.container.gateway.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpMessage;
 
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;

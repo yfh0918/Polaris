@@ -2,7 +2,7 @@ package com.polaris.container.gateway.response;
 
 import java.util.Map;
 
-import com.polaris.container.gateway.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpMessage;
 import com.polaris.container.gateway.request.HttpCorsRequestFilter;
 
 import io.netty.handler.codec.http.HttpRequest;

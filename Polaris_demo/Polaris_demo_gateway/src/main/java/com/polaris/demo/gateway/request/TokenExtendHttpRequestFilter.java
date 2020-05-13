@@ -1,6 +1,6 @@
 package com.polaris.demo.gateway.request;
 
-import com.polaris.container.gateway.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpMessage;
 import com.polaris.container.gateway.request.HttpRequestFilter;
 
 import io.netty.channel.ChannelHandlerContext;

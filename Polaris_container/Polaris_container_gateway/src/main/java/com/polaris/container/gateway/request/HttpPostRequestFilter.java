@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.HttpConstant;
-import com.polaris.container.gateway.HttpMessage;
 import com.polaris.container.gateway.pojo.HttpFile;
+import com.polaris.container.gateway.pojo.HttpMessage;
 import com.polaris.container.gateway.util.RequestUtil;
 
 import io.netty.buffer.Unpooled;

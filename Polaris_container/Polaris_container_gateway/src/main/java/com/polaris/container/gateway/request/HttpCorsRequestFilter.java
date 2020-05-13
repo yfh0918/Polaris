@@ -6,8 +6,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.HttpMessage;
 import com.polaris.container.gateway.pojo.HttpFile;
+import com.polaris.container.gateway.pojo.HttpMessage;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;

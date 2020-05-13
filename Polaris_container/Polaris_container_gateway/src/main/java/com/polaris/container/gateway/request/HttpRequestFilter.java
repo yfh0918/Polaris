@@ -3,7 +3,7 @@ package com.polaris.container.gateway.request;
 import org.slf4j.Logger;
 
 import com.polaris.container.gateway.HttpFilter;
-import com.polaris.container.gateway.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpMessage;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;

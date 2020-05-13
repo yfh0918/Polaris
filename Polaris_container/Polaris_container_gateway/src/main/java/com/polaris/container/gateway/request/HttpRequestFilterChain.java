@@ -3,7 +3,7 @@ package com.polaris.container.gateway.request;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import com.polaris.container.gateway.HttpFilterChain;
-import com.polaris.container.gateway.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpMessage;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.container.gateway.pojo.HttpMessage;
 import com.polaris.container.gateway.proxy.FullFlowContext;
 import com.polaris.container.gateway.proxy.HttpFiltersAdapter;
 import com.polaris.container.gateway.proxy.impl.ProxyToServerConnection;

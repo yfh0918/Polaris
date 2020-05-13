@@ -1,4 +1,4 @@
-package com.polaris.container.gateway;
+package com.polaris.container.gateway.pojo;
 
 import java.util.HashMap;
 import java.util.Map;
