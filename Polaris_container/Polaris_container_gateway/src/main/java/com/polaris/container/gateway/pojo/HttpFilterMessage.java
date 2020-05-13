@@ -14,11 +14,11 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 public class HttpFilterMessage {
 
     /**
-     * 是否走hostResolver
+     * 是否直接退出filter调用链
      *
-     * false:直接ctx.writeAndFlush退出， true : 默认操作
+     * true:直接ctx.writeAndFlush退出， false : 默认操作
      */
-	private boolean runHostResolver = true;
+	private boolean exit = false;
 	
 	private String result;
 	public String getResult() {
@@ -39,12 +39,12 @@ public class HttpFilterMessage {
 	
 	private Map<String, Object> header = new HashMap<>();
 
-	public boolean isRunHostResolver() {
-		return runHostResolver;
+	public boolean isExit() {
+		return exit;
 	}
 
-	public void setRunHostResolver(boolean runHostResolver) {
-		this.runHostResolver = runHostResolver;
+	public void setExit(boolean exit) {
+		this.exit = exit;
 	}
 
 	public Map<String, Object> getHeader() {

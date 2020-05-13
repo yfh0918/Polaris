@@ -58,7 +58,7 @@ public class HttpWUrlRequestFilter extends HttpRequestFilter {
                 if (matcher.find()) {
                     hackLog(logger, HttpConstant.getRealIp(httpRequest), HttpWUrlRequestFilter.class.getSimpleName(), pat.toString());
                     if (url.startsWith("/favicon.ico")) {
-                    	httpMessage.setRunHostResolver(false);
+                    	httpMessage.setExit(true);
                     	httpMessage.setStatus(HttpResponseStatus.OK);
                     }
                     return true;

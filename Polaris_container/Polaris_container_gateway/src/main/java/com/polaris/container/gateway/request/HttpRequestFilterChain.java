@@ -27,12 +27,12 @@ public class HttpRequestFilterChain extends HttpFilterChain<HttpRequestFilter>{
         	if (!skip(filter)) {
                 boolean result = filter.doFilter(originalRequest, httpObject, httpMessage);
                 
-                //不走hostResolver
-                if (!httpMessage.isRunHostResolver()) {
+                //是否直接退出
+                if (httpMessage.isExit()) {
                 	return new ImmutablePair<>(true, httpMessage);
                 }
                 
-                //走hostResolver-default
+                //default
                 if (result && filter.isBlacklist()) {
                     return new ImmutablePair<>(true, httpMessage);
                 } else if (result && !filter.isBlacklist()) {
