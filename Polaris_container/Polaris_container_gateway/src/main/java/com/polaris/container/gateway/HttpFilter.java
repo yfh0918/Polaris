@@ -1,10 +1,9 @@
 package com.polaris.container.gateway;
 
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
-import com.polaris.container.gateway.pojo.HttpFilterFile;
+import com.polaris.container.gateway.pojo.HttpFile;
 
-public abstract class HttpFilter extends HttpFilterMessage 
-								 implements HttpFilterLifeCycle ,HttpFilterFileListener {
+public abstract class HttpFilter implements HttpFilterLifeCycle ,HttpFileListener {
 	protected HttpFilterEntity httpFilterEntity;
 	
     /**
@@ -16,13 +15,13 @@ public abstract class HttpFilter extends HttpFilterMessage
 		if (httpFilterEntity == null) {
 			return;
 		}
-		HttpFilterFile[] files = httpFilterEntity.getFiles();
+		HttpFile[] files = httpFilterEntity.getFiles();
 		if (files == null) {
 			return;
 		}
-		for (HttpFilterFile file : files) {
+		for (HttpFile file : files) {
 			if (file.getData() == null) {
-				HttpFilterFileReader.INSTANCE.readFile(this, file);
+				HttpFileReader.INSTANCE.readFile(this, file);
 			}
 		}
 	} 

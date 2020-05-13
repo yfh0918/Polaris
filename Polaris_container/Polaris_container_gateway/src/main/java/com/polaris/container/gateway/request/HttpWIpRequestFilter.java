@@ -6,8 +6,9 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.HttpFilterConstant;
-import com.polaris.container.gateway.pojo.HttpFilterFile;
+import com.polaris.container.gateway.HttpConstant;
+import com.polaris.container.gateway.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFile;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -25,7 +26,7 @@ public class HttpWIpRequestFilter extends HttpRequestFilter {
 	private Set<String> ipSet = new LinkedHashSet<>();
 
 	@Override
-	public void onChange(HttpFilterFile file) {
+	public void onChange(HttpFile file) {
 		ipSet = file.getData();
 	}
 	
@@ -35,13 +36,13 @@ public class HttpWIpRequestFilter extends HttpRequestFilter {
     }
 
     @Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
-            String ip = HttpFilterConstant.getRealIp(httpRequest);
+            String ip = HttpConstant.getRealIp(httpRequest);
             if (ipSet.contains(ip)) {
-                hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), HttpWIpRequestFilter.class.getSimpleName(), "white ip");
+                hackLog(logger, HttpConstant.getRealIp(httpRequest), HttpWIpRequestFilter.class.getSimpleName(), "white ip");
             	return true;
             }
         }

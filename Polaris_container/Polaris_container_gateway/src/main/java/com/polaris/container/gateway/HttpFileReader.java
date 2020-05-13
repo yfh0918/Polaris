@@ -6,19 +6,19 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.pojo.HttpFilterFile;
+import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
 import com.polaris.core.config.reader.ConfReaderStrategyDefault;
 import com.polaris.core.util.StringUtil;
 
-public class HttpFilterFileReader {
-	private static Logger logger = LoggerFactory.getLogger(HttpFilterFileReader.class);
-	public static HttpFilterFileReader INSTANCE = new HttpFilterFileReader();
-	private HttpFilterFileReader() {};
+public class HttpFileReader {
+	private static Logger logger = LoggerFactory.getLogger(HttpFileReader.class);
+	public static HttpFileReader INSTANCE = new HttpFileReader();
+	private HttpFileReader() {};
 	
-    public void readFile(HttpFilterFileListener listener, HttpFilterFile file){
+    public void readFile(HttpFileListener listener, HttpFile file){
     	
 		//先获取
     	String content = ConfHandlerProviderFactory.get(file.getType()).get(file.getName());
@@ -43,7 +43,7 @@ public class HttpFilterFileReader {
 			}
     	});
     }
-    private void loadFile(HttpFilterFile file, String content) {
+    private void loadFile(HttpFile file, String content) {
     	Set<String> data = new LinkedHashSet<>();
     	if  (StringUtil.isNotEmpty(content)) {
         	String[] contents = content.split(Constant.LINE_SEP);

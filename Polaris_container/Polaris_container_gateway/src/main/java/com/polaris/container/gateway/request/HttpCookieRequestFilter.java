@@ -9,8 +9,9 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.HttpFilterConstant;
-import com.polaris.container.gateway.pojo.HttpFilterFile;
+import com.polaris.container.gateway.HttpConstant;
+import com.polaris.container.gateway.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.util.RequestUtil;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -29,7 +30,7 @@ public class HttpCookieRequestFilter extends HttpRequestFilter {
 	private Set<Pattern> patterns = new HashSet<>();
 
 	@Override
-	public void onChange(HttpFilterFile file) {
+	public void onChange(HttpFile file) {
 		Set<Pattern> tempPatterns = new HashSet<>();
 		for (String conf : file.getData()) {
 			tempPatterns.add(Pattern.compile(conf));
@@ -38,11 +39,11 @@ public class HttpCookieRequestFilter extends HttpRequestFilter {
 	}
 	
     @Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
-            List<String> headerValues = HttpFilterConstant.getHeaderValues(originalRequest, "Cookie");
+            List<String> headerValues = HttpConstant.getHeaderValues(originalRequest, "Cookie");
             if (headerValues.size() > 0 && headerValues.get(0) != null) {
                 String[] cookies = headerValues.get(0).split(";");
                 for (String cookie : cookies) {
@@ -53,7 +54,7 @@ public class HttpCookieRequestFilter extends HttpRequestFilter {
                     for (Pattern pat : patterns) {
                         Matcher matcher = pat.matcher(cookie.toLowerCase());
                         if (matcher.find()) {
-                            hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), HttpCookieRequestFilter.class.getSimpleName(), pat.toString());
+                            hackLog(logger, HttpConstant.getRealIp(httpRequest), HttpCookieRequestFilter.class.getSimpleName(), pat.toString());
                             return true;
                         }
                     }

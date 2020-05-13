@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
+import com.polaris.container.gateway.HttpMessage;
 import com.polaris.container.gateway.request.HttpTokenRequestFilter;
 import com.polaris.core.util.JwtUtil;
 import com.polaris.core.util.ResultUtil;
@@ -24,7 +25,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 public class HttpTokenResponseFilter extends HttpResponseFilter {
 	private static Logger logger = LoggerFactory.getLogger(HttpTokenResponseFilter.class);
     @Override
-    public boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse) {
+    public boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse, HttpMessage httpMessage) {
     	try {
         	String url = HttpTokenRequestFilter.getUrl(originalRequest);
         	if (HttpTokenRequestFilter.isTokenPath(url)) {
@@ -33,12 +34,12 @@ public class HttpTokenResponseFilter extends HttpResponseFilter {
         			Map<String, Object> requestDto =  JSONObject.parseObject(JwtUtil.decode(jwtInfo));
         			if (requestDto != null) {
         				String token = JwtUtil.createJWT(requestDto);
-        				this.putHeader(JwtUtil.JWT_KEY, jwtInfo);
+        				httpMessage.putHeader(JwtUtil.JWT_KEY, jwtInfo);
         				for (Map.Entry<String, String> headerEntry : httpResponse.headers().entries()) {
-        					this.putHeader(headerEntry.getKey(),headerEntry.getValue());
+        					httpMessage.putHeader(headerEntry.getKey(),headerEntry.getValue());
         				}
-            			this.setResult(ResultUtil.success(token).toJSONString());
-            			this.setStatus(HttpResponseStatus.OK);
+        				httpMessage.setResult(ResultUtil.success(token).toJSONString());
+        				httpMessage.setStatus(HttpResponseStatus.OK);
             			return true;
         			}
         		}

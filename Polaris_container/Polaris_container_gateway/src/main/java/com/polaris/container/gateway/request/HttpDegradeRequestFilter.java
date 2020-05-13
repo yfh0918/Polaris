@@ -6,7 +6,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.pojo.HttpFilterFile;
+import com.polaris.container.gateway.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.core.Constant;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.util.PropertyUtil;
@@ -36,7 +37,7 @@ public class HttpDegradeRequestFilter extends HttpRequestFilter {
 	private static String degradeMessage = Constant.MESSAGE_GLOBAL_ERROR;
 
 	@Override
-	public void onChange(HttpFilterFile file) {
+	public void onChange(HttpFile file) {
     	Set<String> tempDegradeUrlSet = new HashSet<>();
     	String tempDegradeMessageCode = null;
     	String tempDegradeMessage = null;
@@ -67,7 +68,7 @@ public class HttpDegradeRequestFilter extends HttpRequestFilter {
     }
     
 	@Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             
@@ -77,7 +78,7 @@ public class HttpDegradeRequestFilter extends HttpRequestFilter {
             //降级URL
             String url = HttpCCRequestFilter.getUrl(httpRequest);
             if (degradeUrlSet.size() > 0 && degradeUrlSet.contains(url)) {
-            	this.setResult(ResultUtil.create(degradeMessageCode,degradeMessage).toJSONString());
+            	httpMessage.setResult(ResultUtil.create(degradeMessageCode,degradeMessage).toJSONString());
             	return true;
             }
         }

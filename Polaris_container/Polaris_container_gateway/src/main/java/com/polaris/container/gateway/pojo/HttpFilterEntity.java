@@ -7,10 +7,10 @@ public class HttpFilterEntity {
     private int order;  
     private String key;
     private HttpFilter filter;
-    private HttpFilterFile[] files;
+    private HttpFile[] files;
 
     // 构造方法  
-    public HttpFilterEntity(HttpFilter filter, String key, int order, HttpFilterFile... files) {  
+    public HttpFilterEntity(HttpFilter filter, String key, int order, HttpFile... files) {  
     	this.key = key;
         this.order = order; 
         this.files = files;
@@ -35,10 +35,10 @@ public class HttpFilterEntity {
 	public Integer getOrder() {
 		return order;
 	}
-	public HttpFilterFile[] getFiles() {
+	public HttpFile[] getFiles() {
 		return files;
 	}
-	public void setFiles(HttpFilterFile... files) {
+	public void setFiles(HttpFile... files) {
 		this.files = files;
 	}
 	public void setOrder(int order) {

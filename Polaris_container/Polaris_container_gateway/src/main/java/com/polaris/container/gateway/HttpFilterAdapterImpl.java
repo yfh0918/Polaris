@@ -10,9 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.polaris.container.gateway.proxy.FullFlowContext;
 import com.polaris.container.gateway.proxy.HttpFiltersAdapter;
 import com.polaris.container.gateway.proxy.impl.ProxyToServerConnection;
-import com.polaris.container.gateway.request.HttpRequestFilter;
 import com.polaris.container.gateway.request.HttpRequestFilterChain;
-import com.polaris.container.gateway.response.HttpResponseFilter;
 import com.polaris.container.gateway.response.HttpResponseFilterChain;
 import com.polaris.container.gateway.util.RequestUtil;
 import com.polaris.core.Constant;
@@ -55,13 +53,13 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	if (httpObject instanceof HttpRequest) {
         		RequestUtil.remove();
         	}
-            ImmutablePair<Boolean, HttpRequestFilter> immutablePair = HttpRequestFilterChain.INSTANCE.doFilter(originalRequest, httpObject, ctx);
+            ImmutablePair<Boolean, HttpMessage> immutablePair = HttpRequestFilterChain.INSTANCE.doFilter(originalRequest, httpObject, ctx);
             if (immutablePair.left) {
                 httpResponse = createResponse(originalRequest, immutablePair.right);
             }
         } catch (Exception e) {
             httpResponse = createResponse(originalRequest, 
-            		HttpFilterMessage.of(
+            		HttpMessage.of(
             				ResultUtil.create(Constant.RESULT_FAIL,e.toString()).toJSONString(),
             				HttpResponseStatus.BAD_GATEWAY));
             logger.error("client's request failed", e);
@@ -76,7 +74,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         if (resolvedRemoteAddress == null) {
         	if (ctx.channel().isWritable()) {
                 ctx.writeAndFlush(createResponse(originalRequest, 
-                		HttpFilterMessage.of(
+                		HttpMessage.of(
                 				ResultUtil.create(
                 						Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(),
                 						HttpResponseStatus.BAD_GATEWAY)));
@@ -112,14 +110,14 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	
         	if (((HttpResponse) httpObject).status().code() == HttpResponseStatus.BAD_GATEWAY.code()) {
                 ctx.writeAndFlush(createResponse(originalRequest, 
-                		HttpFilterMessage.of(
+                		HttpMessage.of(
                 				ResultUtil.create(
                 						Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(),
                 						HttpResponseStatus.BAD_GATEWAY)));
                 return httpObject;
         	}
 
-        	ImmutablePair<Boolean, HttpResponseFilter> immutablePair = HttpResponseFilterChain.INSTANCE.doFilter(originalRequest, (HttpResponse) httpObject);
+        	ImmutablePair<Boolean, HttpMessage> immutablePair = HttpResponseFilterChain.INSTANCE.doFilter(originalRequest, (HttpResponse) httpObject);
         	
         	if (immutablePair.left) {
         		ctx.writeAndFlush(createResponse(originalRequest, immutablePair.right));
@@ -149,7 +147,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         ServerStrategyProviderFactory.get().onConnectionFail(Server.of(remoteIp, remotePort));
     }
 
-	private HttpResponse createResponse(HttpRequest originalRequest, HttpFilterMessage message) {
+	private HttpResponse createResponse(HttpRequest originalRequest, HttpMessage message) {
         HttpResponse httpResponse;
         if (StringUtil.isNotEmpty(message.getResult())) {
         	ByteBuf buf = io.netty.buffer.Unpooled.copiedBuffer(message.getResult(), CharsetUtil.UTF_8); 

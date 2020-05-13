@@ -18,7 +18,7 @@ import io.netty.handler.codec.http.HttpRequest;
  * Description:
  *
  */
-public class HttpFilterConstant {
+public class HttpConstant {
     enum X_Frame_Options {
         DENY,//表示该页面不允许在 frame 中展示,即便是在相同域名的页面中嵌套也不允许.
         SAMEORIGIN//表示该页面可以在相同域名页面的 frame 中展示.
@@ -102,7 +102,7 @@ public class HttpFilterConstant {
                 ip = request.headers().get("HTTP_X_FORWARDED_FOR");
             }
             if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            	ip = HttpFilterConstant.getRealIp(request);
+            	ip = HttpConstant.getRealIp(request);
             }
             if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
                 try {

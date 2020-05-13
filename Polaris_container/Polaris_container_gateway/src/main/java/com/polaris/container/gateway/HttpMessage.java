@@ -11,8 +11,15 @@ import io.netty.handler.codec.http.HttpResponseStatus;
  * 中途被拦截需要返回的信息
  *
  */
-public class HttpFilterMessage {
+public class HttpMessage {
 
+    /**
+     * 是否走hostResolver
+     *
+     * false:直接ctx.writeAndFlush退出， true : 默认操作
+     */
+	private boolean runHostResolver = true;
+	
 	private String result;
 	public String getResult() {
 		return result;
@@ -31,6 +38,15 @@ public class HttpFilterMessage {
 	}
 	
 	private Map<String, Object> header = new HashMap<>();
+
+	public boolean isRunHostResolver() {
+		return runHostResolver;
+	}
+
+	public void setRunHostResolver(boolean runHostResolver) {
+		this.runHostResolver = runHostResolver;
+	}
+
 	public Map<String, Object> getHeader() {
 		return header;
 	}
@@ -41,11 +57,11 @@ public class HttpFilterMessage {
 		putHeader(pair.getKey(),pair.getValue());
 	}
 	
-	public static HttpFilterMessage of(String result,KeyValuePair... kvPairs) {
+	public static HttpMessage of(String result,KeyValuePair... kvPairs) {
 		return of(result,null,kvPairs);
 	}
-	public static HttpFilterMessage of(String result,HttpResponseStatus status,KeyValuePair... kvPairs) {
-		HttpFilterMessage message = new HttpFilterMessage();
+	public static HttpMessage of(String result,HttpResponseStatus status,KeyValuePair... kvPairs) {
+		HttpMessage message = new HttpMessage();
 		if (status != null) {
 			message.setStatus(status);
 		}

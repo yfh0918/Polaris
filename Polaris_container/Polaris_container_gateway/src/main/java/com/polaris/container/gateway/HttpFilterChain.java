@@ -27,7 +27,7 @@ public abstract class HttpFilterChain <T extends HttpFilter>{
     	if (StringUtil.isEmpty(key)) {
     		return true;
     	}
-    	if (!HttpFilterConstant.ON.equals(ConfClient.get(key))) {
+    	if (!HttpConstant.ON.equals(ConfClient.get(key))) {
     		return true;
     	}
     	return false;

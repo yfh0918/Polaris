@@ -6,7 +6,8 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.HttpFilterConstant;
+import com.polaris.container.gateway.HttpConstant;
+import com.polaris.container.gateway.HttpMessage;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -22,7 +23,7 @@ public class HttpScannerRequestFilter extends HttpRequestFilter {
 	private static Logger logger = LoggerFactory.getLogger(HttpScannerRequestFilter.class);
 
     @Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
@@ -50,19 +51,19 @@ public class HttpScannerRequestFilter extends HttpRequestFilter {
             Matcher matcher3 = pattern3.matcher(httpRequest.uri());
 
             if (acunetixAspect || acunetixAspectPassword || acunetixAspectQueries) {
-                hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), "scanner", "Acunetix Web Vulnerability");
+                hackLog(logger, HttpConstant.getRealIp(httpRequest), "scanner", "Acunetix Web Vulnerability");
                 return true;
             } else if (xScanMemo || xRequestMemo || xRequestManagerMemo || xWIPP) {
-                hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), "scanner", "HP WebInspect");
+                hackLog(logger, HttpConstant.getRealIp(httpRequest), "scanner", "HP WebInspect");
                 return true;
             } else if (matcher1.find()) {
-                hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), "scanner", "Appscan");
+                hackLog(logger, HttpConstant.getRealIp(httpRequest), "scanner", "Appscan");
                 return true;
             } else if (matcher2) {
-                hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), "scanner", "Bugscan");
+                hackLog(logger, HttpConstant.getRealIp(httpRequest), "scanner", "Bugscan");
                 return true;
             } else if (matcher3.find()) {
-                hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), "scanner", "Netsparker");
+                hackLog(logger, HttpConstant.getRealIp(httpRequest), "scanner", "Netsparker");
                 return true;
             }
         }

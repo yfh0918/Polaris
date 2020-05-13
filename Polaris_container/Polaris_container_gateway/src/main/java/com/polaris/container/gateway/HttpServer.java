@@ -23,9 +23,9 @@ import com.polaris.core.util.SpringUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
-public class HttpFilterServer {
+public class HttpServer {
 	
-	private static Logger logger = LoggerFactory.getLogger(HttpFilterServer.class);
+	private static Logger logger = LoggerFactory.getLogger(HttpServer.class);
 	
 	/**
      * 服务器
@@ -35,7 +35,7 @@ public class HttpFilterServer {
 	/**
      * 私有构造方法
      */
-    private HttpFilterServer() {
+    private HttpServer() {
     }
     
     /**
@@ -43,7 +43,7 @@ public class HttpFilterServer {
      *
      * @return 单实例
      */
-    public static HttpFilterServer getInstance() {
+    public static HttpServer getInstance() {
         return Singletone.INSTANCE;
     }
 
@@ -54,7 +54,7 @@ public class HttpFilterServer {
         /**
          * 单实例
          */
-        private static final HttpFilterServer INSTANCE = new HttpFilterServer();
+        private static final HttpServer INSTANCE = new HttpServer();
     }
     
     /**
@@ -67,15 +67,15 @@ public class HttpFilterServer {
     	//创建context
     	SpringUtil.refresh(ConfigurationHelper.getConfiguration());
         ThreadPoolConfiguration threadPoolConfiguration = new ThreadPoolConfiguration();
-        threadPoolConfiguration.withAcceptorThreads(HttpFilterConstant.AcceptorThreads);
-        threadPoolConfiguration.withClientToProxyWorkerThreads(HttpFilterConstant.ClientToProxyWorkerThreads);
-        threadPoolConfiguration.withProxyToServerWorkerThreads(HttpFilterConstant.ProxyToServerWorkerThreads);
+        threadPoolConfiguration.withAcceptorThreads(HttpConstant.AcceptorThreads);
+        threadPoolConfiguration.withClientToProxyWorkerThreads(HttpConstant.ClientToProxyWorkerThreads);
+        threadPoolConfiguration.withProxyToServerWorkerThreads(HttpConstant.ProxyToServerWorkerThreads);
 
         InetSocketAddress inetSocketAddress = new InetSocketAddress(Integer.parseInt(ConfClient.get("server.port")));
         httpProxyServerBootstrap = DefaultHttpProxyServer.bootstrap()
                 .withAddress(inetSocketAddress);
-        httpProxyServerBootstrap.withServerResolver(HttpFilterResolverFactory.get());
-        boolean proxy_tls = HttpFilterConstant.ON.equals(ConfClient.get("server.tls"));
+        httpProxyServerBootstrap.withServerResolver(HttpResolverFactory.get());
+        boolean proxy_tls = HttpConstant.ON.equals(ConfClient.get("server.tls"));
         if (proxy_tls) {
             logger.info("开启TLS支持");
             httpProxyServerBootstrap
@@ -96,14 +96,14 @@ public class HttpFilterServer {
                                                           HttpRequest httpRequest) {
 
                     	//如何设置真实IP
-                        List<String> headerValues = HttpFilterConstant.getHeaderValues(httpRequest, HttpFilterConstant.X_Real_IP);
-                        List<String> headerValues2 = HttpFilterConstant.getHeaderValues(httpRequest, HttpFilterConstant.X_Forwarded_For);
+                        List<String> headerValues = HttpConstant.getHeaderValues(httpRequest, HttpConstant.X_Real_IP);
+                        List<String> headerValues2 = HttpConstant.getHeaderValues(httpRequest, HttpConstant.X_Forwarded_For);
                         if (headerValues.size() == 0) {
                         	if (headerValues2 != null && headerValues2.size() > 0) {
-                        		httpRequest.headers().add(HttpFilterConstant.X_Real_IP, headerValues2.get(0));
+                        		httpRequest.headers().add(HttpConstant.X_Real_IP, headerValues2.get(0));
                         	} else {
                         		String remoteAddress = flowContext.getClientAddress().getAddress().getHostAddress();
-                                httpRequest.headers().add(HttpFilterConstant.X_Real_IP, remoteAddress);
+                                httpRequest.headers().add(HttpConstant.X_Real_IP, remoteAddress);
                         	}
                         }
 
@@ -114,7 +114,7 @@ public class HttpFilterServer {
                             xff.append(headerValues2.get(0)).append(", ");
                         }
                         xff.append(NetUtils.getLocalHost());
-                        httpRequest.headers().set(HttpFilterConstant.X_Forwarded_For, xff.toString());
+                        httpRequest.headers().set(HttpConstant.X_Forwarded_For, xff.toString());
                     }
                 })
                 .withFiltersSource(new HttpFiltersSourceAdapter() {

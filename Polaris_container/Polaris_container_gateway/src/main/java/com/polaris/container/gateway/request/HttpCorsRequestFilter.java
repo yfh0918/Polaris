@@ -6,7 +6,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.pojo.HttpFilterFile;
+import com.polaris.container.gateway.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;
@@ -37,7 +38,7 @@ public class HttpCorsRequestFilter extends HttpRequestFilter {
 
 	
 	@Override
-	public void onChange(HttpFilterFile file) {
+	public void onChange(HttpFile file) {
     	Map<String, String> tempCorsMap = new HashMap<>(); 
     	for (String conf : file.getData()) {
     		KeyValuePair kv = PropertyUtil.getKVPair(conf);
@@ -53,7 +54,7 @@ public class HttpCorsRequestFilter extends HttpRequestFilter {
     }
     
 	@Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             
@@ -63,11 +64,11 @@ public class HttpCorsRequestFilter extends HttpRequestFilter {
             //判断是否为OPTION
             if (httpRequest.method() == HttpMethod.OPTIONS) {
             	if (StringUtil.isNotEmpty(corsMap.get(CORS_BODY_KEY))) {
-            		this.setResult(corsMap.get(CORS_BODY_KEY));
+            		httpMessage.setResult(corsMap.get(CORS_BODY_KEY));
             	} else {
-                	this.setResult(DEFAULT_COSR_BODY);
+            		httpMessage.setResult(DEFAULT_COSR_BODY);
             	}
-            	this.setStatus(HttpResponseStatus.OK);
+            	httpMessage.setStatus(HttpResponseStatus.OK);
             	return true;
             }
             

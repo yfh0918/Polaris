@@ -28,8 +28,9 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.RateLimiter;
-import com.polaris.container.gateway.HttpFilterConstant;
-import com.polaris.container.gateway.pojo.HttpFilterFile;
+import com.polaris.container.gateway.HttpConstant;
+import com.polaris.container.gateway.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.core.Constant;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.pojo.Result;
@@ -45,6 +46,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponseStatus;
 
 /**
  * @author:Tom.Yu
@@ -114,7 +116,7 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
     }
 	
 	@Override
-	public void onChange(HttpFilterFile file) {
+	public void onChange(HttpFile file) {
     	int blockSecondsTemp = 60;
     	boolean isBlackIpTemp = false;
     	int[] IP_RATE = {10,60};
@@ -213,17 +215,17 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
     }
     
 	@Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
-            String realIp = HttpFilterConstant.getRealIp((DefaultHttpRequest) httpObject);
+            String realIp = HttpConstant.getRealIp((DefaultHttpRequest) httpObject);
             
             //控制总流量，超标直接返回
             HttpRequest httpRequest = (HttpRequest)httpObject;
             String url = getUrl(httpRequest);
             
             //view black ip list
-            if (viewBlackLog(url)) {
+            if (viewBlackLog(url,httpMessage)) {
             	return true;
             }
             
@@ -235,7 +237,7 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
         	//是否黑名单
         	if (isBlackIp && blackIpCache.get(realIp) != null){
         		String message = realIp + " access has exceeded ";
-            	this.setResult(ResultUtil.create(Constant.RESULT_FAIL,message).toJSONString());
+        		httpMessage.setResult(ResultUtil.create(Constant.RESULT_FAIL,message).toJSONString());
                 hackLog(logger, realIp, "cc", message);
         		return true;
         	}
@@ -243,7 +245,7 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
         	//cc攻击
             if (ccHack(url, realIp)) {
             	String message = httpRequest.uri() + " " + realIp + " access  has exceeded ";
-            	this.setResult(ResultUtil.create(Constant.RESULT_FAIL,message).toJSONString());
+            	httpMessage.setResult(ResultUtil.create(Constant.RESULT_FAIL,message).toJSONString());
                 hackLog(logger, realIp, "cc", message);
             	return true;
             }
@@ -255,7 +257,7 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
         return false;
     }
 	
-	private boolean viewBlackLog(String url) {
+	private boolean viewBlackLog(String url, HttpMessage httpMessage) {
         if (url.equals("/gateway/cc/ip")) {
         	@SuppressWarnings("rawtypes")
 			Result<List> dto = new Result<>();
@@ -270,7 +272,8 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
             	}
         	} catch (Exception ex) {}
         	dto.setData(dataList);
-        	this.setResult(dto.toJSONString());
+        	httpMessage.setStatus(HttpResponseStatus.OK);
+        	httpMessage.setResult(dto.toJSONString());
         	return true;
         }
         return false;

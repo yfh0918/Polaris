@@ -9,8 +9,9 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.HttpFilterConstant;
-import com.polaris.container.gateway.pojo.HttpFilterFile;
+import com.polaris.container.gateway.HttpConstant;
+import com.polaris.container.gateway.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFile;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
@@ -28,7 +29,7 @@ public class HttpUaRequestFilter extends HttpRequestFilter {
 	private Set<Pattern> patterns = new HashSet<>();
 
 	@Override
-	public void onChange(HttpFilterFile file) {
+	public void onChange(HttpFile file) {
 		Set<Pattern> tempPatterns = new HashSet<>();
 		for (String conf : file.getData()) {
 			tempPatterns.add(Pattern.compile(conf));
@@ -37,16 +38,16 @@ public class HttpUaRequestFilter extends HttpRequestFilter {
 	}
 	
     @Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
-            List<String> headerValues = HttpFilterConstant.getHeaderValues(originalRequest, "User-Agent");
+            List<String> headerValues = HttpConstant.getHeaderValues(originalRequest, "User-Agent");
             if (headerValues.size() > 0 && headerValues.get(0) != null) {
                 for (Pattern pat : patterns) {
                     Matcher matcher = pat.matcher(headerValues.get(0));
                     if (matcher.find()) {
-                        hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), HttpUaRequestFilter.class.getSimpleName(), pat.toString());
+                        hackLog(logger, HttpConstant.getRealIp(httpRequest), HttpUaRequestFilter.class.getSimpleName(), pat.toString());
                         return true;
                     }
                 }

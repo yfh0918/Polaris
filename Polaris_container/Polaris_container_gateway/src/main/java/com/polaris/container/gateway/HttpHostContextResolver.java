@@ -3,8 +3,9 @@ package com.polaris.container.gateway;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
-import com.polaris.container.gateway.pojo.HttpFilterFile;
-import com.polaris.container.gateway.pojo.HttpUpstream;
+import com.polaris.container.gateway.pojo.HttpFile;
+import com.polaris.container.gateway.pojo.HttpHostContext;
+import com.polaris.container.gateway.pojo.HttpHostContext.HttpContextUpstream;
 import com.polaris.container.gateway.proxy.HostResolver;
 import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
 import com.polaris.core.pojo.Server;
@@ -12,10 +13,10 @@ import com.polaris.core.pojo.Server;
 /**
  * @author:Tom.Yu Description:
  */
-public class HttpFilterContextResolver implements HostResolver ,HttpFilterFileListener{
-    public static HttpFilterContextResolver INSTANCE = new HttpFilterContextResolver();
-    private HttpFilterContextResolver() {
-    	HttpFilterFileReader.INSTANCE.readFile(this, new HttpFilterFile(HttpUpstream.NAME));
+public class HttpHostContextResolver implements HostResolver ,HttpFileListener{
+    public static HttpHostContextResolver INSTANCE = new HttpHostContextResolver();
+    private HttpHostContextResolver() {
+    	HttpFileReader.INSTANCE.readFile(this, new HttpFile(HttpHostContext.NAME));
     }
     
     /**
@@ -23,20 +24,20 @@ public class HttpFilterContextResolver implements HostResolver ,HttpFilterFileLi
      *
      */
     @Override
-    public void onChange(HttpFilterFile file) {
-        HttpUpstream.load(file.getData());
+    public void onChange(HttpFile file) {
+        HttpHostContext.load(file.getData());
     }
 
     @Override
     public InetSocketAddress resolve(String host, int port, String context)
             throws UnknownHostException {
-    	HttpUpstream upstream = HttpUpstream.getFromContext(context);
+    	HttpContextUpstream upstream = HttpHostContext.get(host, context);
         if (upstream != null) {
             Server server = ServerStrategyProviderFactory.get().getServer(upstream.getServiceName());
             if (server != null) {
                 return new InetSocketAddress(server.getIp(), server.getPort());
             } 
         }
-        throw new UnknownHostException(host + HttpFilterConstant.COLON + port + context);
+        throw new UnknownHostException(host + HttpConstant.COLON + port + context);
     }
 }

@@ -10,8 +10,9 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.HttpFilterConstant;
-import com.polaris.container.gateway.pojo.HttpFilterFile;
+import com.polaris.container.gateway.HttpConstant;
+import com.polaris.container.gateway.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.util.RequestUtil;
 
 import io.netty.buffer.Unpooled;
@@ -33,7 +34,7 @@ public class HttpPostRequestFilter extends HttpRequestFilter {
     private Set<Pattern> patterns1 = new HashSet<>();
 
 	@Override
-	public void onChange(HttpFilterFile file) {
+	public void onChange(HttpFile file) {
 		
 		//0-file
 		if (file == httpFilterEntity.getFiles()[0]) {
@@ -55,14 +56,14 @@ public class HttpPostRequestFilter extends HttpRequestFilter {
 		
 	}
     @Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext ctx) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext ctx) {
         if (originalRequest.method().name().equals("POST")) {
             if (httpObject instanceof HttpContent) {
                 HttpContent httpContent = (HttpContent) httpObject;
                 String contentBody = null;
-                List<String> headerValues = HttpFilterConstant.getHeaderValues(originalRequest, "Content-Type");
+                List<String> headerValues = HttpConstant.getHeaderValues(originalRequest, "Content-Type");
                 if (headerValues.size() > 0 && headerValues.get(0) != null) {
-                    if (HttpFilterConstant.getHeaderValues(originalRequest, "Content-Type") != null && headerValues.get(0).startsWith("multipart/form-data")) {
+                    if (HttpConstant.getHeaderValues(originalRequest, "Content-Type") != null && headerValues.get(0).startsWith("multipart/form-data")) {
                         contentBody = new String(Unpooled.copiedBuffer(httpContent.content()).array());
                     } else {
                         try {
@@ -81,7 +82,7 @@ public class HttpPostRequestFilter extends HttpRequestFilter {
                         for (Pattern pattern : patterns0) {
                             Matcher matcher = pattern.matcher(contentBody.toLowerCase());
                             if (matcher.find()) {
-                                hackLog(logger, HttpFilterConstant.getRealIp(originalRequest), HttpPostRequestFilter.class.getSimpleName(), pattern.toString());
+                                hackLog(logger, HttpConstant.getRealIp(originalRequest), HttpPostRequestFilter.class.getSimpleName(), pattern.toString());
                                 return true;
                             }
                         }
@@ -90,7 +91,7 @@ public class HttpPostRequestFilter extends HttpRequestFilter {
                             String fileExt = fileMatcher.group(3);
                             for (Pattern pat : patterns1) {
                                 if (pat.matcher(fileExt).matches()) {
-                                    hackLog(logger, HttpFilterConstant.getRealIp(originalRequest), HttpPostRequestFilter.class.getSimpleName(), filePattern.toString());
+                                    hackLog(logger, HttpConstant.getRealIp(originalRequest), HttpPostRequestFilter.class.getSimpleName(), filePattern.toString());
                                     return true;
                                 }
                             }

@@ -5,13 +5,13 @@ import java.util.Set;
 
 import com.polaris.core.config.Config.Type;
 
-public class HttpFilterFile {
+public class HttpFile {
 	
-	public HttpFilterFile(String name) {
+	public HttpFile(String name) {
 		this.name = name;
 		this.type = Type.EXT;
 	}
-	public HttpFilterFile(String name, Type type) {
+	public HttpFile(String name, Type type) {
 		this.name = name;
 		this.type = type;
 	}

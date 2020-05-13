@@ -4,7 +4,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.polaris.container.gateway.pojo.HttpFilterFile;
+import com.polaris.container.gateway.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.core.Constant;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.util.JwtUtil;
@@ -38,7 +39,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
 	public static String TOKEN_MESSAGE=TOKEN_MESSAGE_DEFAULT_VALUE;
 
 	@Override
-	public void onChange(HttpFilterFile file) {
+	public void onChange(HttpFile file) {
     	Set<String> UNCHECKED_PATHS_TEMP = new HashSet<>();
     	Set<String> UNCHECKED_PATHS_PREFIX_TEMP = new HashSet<>();
     	Set<String> TOKEN_PATHS_TEMP = new HashSet<>();
@@ -159,7 +160,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
     }
     
 	@Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
         	
             //获取request
@@ -187,7 +188,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
                 if (uncheckUrl) {
                 	return false;
                 }
-            	this.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
+                httpMessage.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
                 return true;
             }
 
@@ -196,12 +197,12 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
             	//token认证
                 Claims claims = JwtUtil.parseJWT(token);
                 if (claims == null) {
-                	this.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
+                	httpMessage.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
                     return true;
                 }
                 String userName = claims.getSubject();
                 if (StrUtil.isEmpty(userName)) {
-                	this.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
+                	httpMessage.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
                     return true;
                 }
                 
@@ -210,7 +211,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
                 httpRequest.headers().add(SystemCallUtil.key(), SystemCallUtil.value());
                 return false;
             } catch (Exception ex) {
-            	this.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
+            	httpMessage.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
                 return true;
             }
 

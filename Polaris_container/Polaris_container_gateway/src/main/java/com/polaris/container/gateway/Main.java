@@ -17,7 +17,7 @@ public class Main implements Server {
      */
 	@Override
 	public void start() {
-		HttpFilterServer.getInstance().start();
+		HttpServer.getInstance().start();
 	}
 
 

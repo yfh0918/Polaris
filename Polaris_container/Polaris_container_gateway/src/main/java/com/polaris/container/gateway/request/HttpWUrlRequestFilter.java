@@ -8,12 +8,14 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.HttpFilterConstant;
-import com.polaris.container.gateway.pojo.HttpFilterFile;
+import com.polaris.container.gateway.HttpConstant;
+import com.polaris.container.gateway.HttpMessage;
+import com.polaris.container.gateway.pojo.HttpFile;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponseStatus;
 
 /**
  * @author:Tom.Yu
@@ -27,7 +29,7 @@ public class HttpWUrlRequestFilter extends HttpRequestFilter {
 	private Set<Pattern> patterns = new HashSet<>();
 
 	@Override
-	public void onChange(HttpFilterFile file) {
+	public void onChange(HttpFile file) {
 		Set<Pattern> tempPatterns = new HashSet<>();
 		for (String conf : file.getData()) {
 			tempPatterns.add(Pattern.compile(conf));
@@ -41,7 +43,7 @@ public class HttpWUrlRequestFilter extends HttpRequestFilter {
     }
 
     @Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, ChannelHandlerContext channelHandlerContext) {
+    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpMessage httpMessage, ChannelHandlerContext channelHandlerContext) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
@@ -55,7 +57,11 @@ public class HttpWUrlRequestFilter extends HttpRequestFilter {
             for (Pattern pat : patterns) {
                 Matcher matcher = pat.matcher(url);
                 if (matcher.find()) {
-                    hackLog(logger, HttpFilterConstant.getRealIp(httpRequest), HttpWUrlRequestFilter.class.getSimpleName(), pat.toString());
+                    hackLog(logger, HttpConstant.getRealIp(httpRequest), HttpWUrlRequestFilter.class.getSimpleName(), pat.toString());
+                    if (url.startsWith("/favicon.ico")) {
+                    	httpMessage.setRunHostResolver(false);
+                    	httpMessage.setStatus(HttpResponseStatus.OK);
+                    }
                     return true;
                 }
             }

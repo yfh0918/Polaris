@@ -2,6 +2,7 @@ package com.polaris.container.gateway.response;
 
 import java.util.Map;
 
+import com.polaris.container.gateway.HttpMessage;
 import com.polaris.container.gateway.request.HttpCorsRequestFilter;
 
 import io.netty.handler.codec.http.HttpRequest;
@@ -16,7 +17,7 @@ import io.netty.handler.codec.http.HttpResponse;
 public class HttpCorsResponseFilter extends HttpResponseFilter {
 	
     @Override
-    public boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse) {
+    public boolean doFilter(HttpRequest originalRequest, HttpResponse httpResponse, HttpMessage httpMessage) {
     	Map<String, String> corsMap = HttpCorsRequestFilter.getCorsMap();
     	for (Map.Entry<String, String> entry : corsMap.entrySet()) {
     		httpResponse.headers().add(entry.getKey(), entry.getValue());
