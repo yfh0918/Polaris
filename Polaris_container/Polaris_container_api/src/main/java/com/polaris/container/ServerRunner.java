@@ -5,7 +5,7 @@ import com.polaris.container.banner.PolarisBannerPrinter;
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerHelper;
-import com.polaris.core.config.provider.ConfCompositeProvider;
+import com.polaris.core.config.ConfClient;
 
 /**
 *
@@ -37,7 +37,7 @@ public abstract class ServerRunner {
     	PolarisBannerPrinter.print(bannerMode);
     	
     	//各类参数载入
-    	ConfCompositeProvider.INSTANCE.init();
+    	ConfClient.init();
     	
 		//载入配置类
 		ConfigurationHelper.init(args, configClass);		

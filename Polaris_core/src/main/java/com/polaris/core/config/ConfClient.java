@@ -19,6 +19,17 @@ import com.polaris.core.config.provider.ConfCompositeProvider;
 public abstract class ConfClient {
 	
 	/**
+	* 初始化
+	* @param 
+	* @return 
+	* @Exception 
+	* @since 
+	*/
+	public static void init() {
+		ConfCompositeProvider.INSTANCE.init();
+	}
+	
+	/**
 	* 设置配置信息
 	* @param 
 	* @return 
