@@ -326,7 +326,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
                 // Remember the connection for later
                 serverConnectionsMap.put(serverHostAndPort + httpRequestContxt,currentServerConnection);
             } catch (UnknownHostException uhe) {
-                LOG.info("Bad Host {}", httpRequest.uri());
+                LOG.info("Bad Host {}", serverHostAndPort + httpRequest.uri());
                 boolean keepAlive = writeBadGateway(httpRequest);
                 resumeReading();
                 if (keepAlive) {
