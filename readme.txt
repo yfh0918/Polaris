@@ -1,4 +1,5 @@
-﻿1:install 全体
+﻿0:尽量使用稳定分支，比如1.0.0，不建议使用master和snapshot版本
+1:install 全体
  Polaris_assembly插件可以install 但是deploy，jekins构建会存在问题
  （插件目前只能从  http://repository.apache.org/snapshots/com/polaris/Polaris_assembly/1.0.0-SNAPSHOT/maven-metadata.xml拉取）
  需要本地Polaris_assembly包手动copy到jekins的maven仓库
