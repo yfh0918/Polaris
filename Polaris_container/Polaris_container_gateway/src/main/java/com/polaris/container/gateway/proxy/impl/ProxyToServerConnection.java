@@ -83,7 +83,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private volatile InetSocketAddress remoteAddress;
     private volatile InetSocketAddress localAddress;
     private final String serverHostAndPort;
-    private final String httpRequestContxt;
+    private final String contextPath;
     private volatile ChainedProxy chainedProxy;
     private final Queue<ChainedProxy> availableChainedProxies;
     
@@ -156,7 +156,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     static ProxyToServerConnection create(DefaultHttpProxyServer proxyServer,
                                           ClientToProxyConnection clientConnection,
                                           String serverHostAndPort,
-                                          String httpRequestContxt,
+                                          String contextPath,
                                           HttpFilters initialFilters,
                                           HttpRequest initialHttpRequest,
                                           GlobalTrafficShapingHandler globalTrafficShapingHandler)
@@ -175,7 +175,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         return new ProxyToServerConnection(proxyServer,
                 clientConnection,
                 serverHostAndPort,
-                httpRequestContxt,
+                contextPath,
                 chainedProxies.poll(),
                 chainedProxies,
                 initialFilters,
@@ -188,7 +188,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
             DefaultHttpProxyServer proxyServer,
             ClientToProxyConnection clientConnection,
             String serverHostAndPort,
-            String httpRequestContxt,
+            String contextPath,
             ChainedProxy chainedProxy,
             Queue<ChainedProxy> availableChainedProxies,
             HttpFilters initialFilters,
@@ -198,7 +198,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         super(DISCONNECTED, proxyServer, true);
         this.clientConnection = clientConnection;
         this.serverHostAndPort = serverHostAndPort;
-        this.httpRequestContxt = httpRequestContxt;
+        this.contextPath = contextPath;
         this.chainedProxy = chainedProxy;
         this.availableChainedProxies = availableChainedProxies;
         this.trafficHandler = globalTrafficShapingHandler;
@@ -495,8 +495,8 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     public HttpRequest getInitialRequest() {
         return initialRequest;
     }
-    public String getHttpRequestContext() {
-    	return httpRequestContxt;
+    public String getContextPath() {
+    	return contextPath;
     }
 
     @Override
@@ -856,7 +856,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
                     hostAndPort = HostAndPort.fromParts(this.remoteAddress.getHostName(), this.remoteAddress.getPort()).toString();
                     
                     this.remoteAddress = proxyServer.getServerResolver().resolve(this.remoteAddress.getHostName(),
-                            this.remoteAddress.getPort(),httpRequestContxt);
+                            this.remoteAddress.getPort(),contextPath);
                 }
             } catch (UnknownHostException e) {
                 // unable to resolve the hostname to an IP address. notify the filters of the failure before allowing the
@@ -982,7 +982,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         String host = parsedHostAndPort.getHost();
         int port = parsedHostAndPort.getPortOrDefault(80);
 
-        return proxyServer.getServerResolver().resolve(host, port, httpRequestContxt);
+        return proxyServer.getServerResolver().resolve(host, port, contextPath);
     }
 
     /***************************************************************************

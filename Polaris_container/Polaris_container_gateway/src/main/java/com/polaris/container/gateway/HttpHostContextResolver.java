@@ -29,15 +29,15 @@ public class HttpHostContextResolver implements HostResolver ,HttpFileListener{
     }
 
     @Override
-    public InetSocketAddress resolve(String host, int port, String context)
+    public InetSocketAddress resolve(String host, int port, String contextPath)
             throws UnknownHostException {
-    	HttpContextUpstream upstream = HttpHostContext.get(host, context);
+    	HttpContextUpstream upstream = HttpHostContext.get(host, contextPath);
         if (upstream != null) {
             Server server = ServerStrategyProviderFactory.get().getServer(upstream.getServiceName());
             if (server != null) {
                 return new InetSocketAddress(server.getIp(), server.getPort());
             } 
         }
-        throw new UnknownHostException(host + HttpConstant.COLON + port + context);
+        throw new UnknownHostException(host + HttpConstant.COLON + port + contextPath);
     }
 }

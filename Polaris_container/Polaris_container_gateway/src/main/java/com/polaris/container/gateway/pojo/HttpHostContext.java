@@ -48,9 +48,9 @@ public class HttpHostContext implements HttpFileListener{
         refreshHostContextMap();
     }
     
-    public static String getContextFromUri(String uri) {
-    	List<String> contextList = Splitter.on(HttpConstant.SLASH).omitEmptyStrings().splitToList(uri);
-    	return contextList.size() == 0 ? HttpConstant.SLASH : HttpConstant.SLASH + contextList.get(0);
+    public static String getContextPath(String uri) {
+    	List<String> contextList = Splitter.on(HttpConstant.SLASH).splitToList(uri);
+ 		return contextList.size() <= 2 ? HttpConstant.SLASH : HttpConstant.SLASH + contextList.get(1);
     }
     public static HttpContextUpstream get(String host, String context) {
     	return hostContextMap.get(host+context);
@@ -109,4 +109,17 @@ public class HttpHostContext implements HttpFileListener{
 			this.serviceName = serviceName;
 		}
 	}
+	
+	/*
+	public static void main( String[] args ) throws Exception
+    {
+		System.out.println(getContextPath(""));//return /
+		System.out.println(getContextPath("/"));//return /
+		System.out.println(getContextPath("/abc"));//return /
+		System.out.println(getContextPath("/abc/"));//return /abc
+		System.out.println(getContextPath("/abc/ass"));//return /abc
+		System.out.println(getContextPath("/abc/ass/"));//return /abc
+		System.out.println(getContextPath("/abc/ass/ada"));//return /abc
+    }
+    */
 }

@@ -285,21 +285,21 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
             }
         }
         LOG.debug("Finding ProxyToServerConnection serverHostAndPort for: {}", serverHostAndPort);
-        String httpRequestContxt = HttpHostContext.getContextFromUri(httpRequest.uri());
-        LOG.debug("Finding ProxyToServerConnection httpRequestContxt for: {}", httpRequestContxt);
+        String contextPath = HttpHostContext.getContextPath(httpRequest.uri());
+        LOG.debug("Finding ProxyToServerConnection contextPath for: {}", contextPath);
         currentServerConnection = isMitming() || isTunneling() ?
                 this.currentServerConnection
-                : this.serverConnectionsMap.get(serverHostAndPort + httpRequestContxt);
+                : this.serverConnectionsMap.get(serverHostAndPort + contextPath);
 
         boolean newConnectionRequired = false;
         if (ProxyUtils.isCONNECT(httpRequest)) {
             LOG.debug(
                     "Not reusing existing ProxyToServerConnection because request is a CONNECT for: {}",
-                    serverHostAndPort + httpRequestContxt);
+                    serverHostAndPort + contextPath);
             newConnectionRequired = true;
         } else if (currentServerConnection == null) {
             LOG.debug("Didn't find existing ProxyToServerConnection for: {}",
-            		serverHostAndPort + httpRequestContxt);
+            		serverHostAndPort + contextPath);
             newConnectionRequired = true;
         }
 
@@ -309,7 +309,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
                         proxyServer,
                         this,
                         serverHostAndPort,
-                        httpRequestContxt,
+                        contextPath,
                         currentFilters,
                         httpRequest,
                         globalTrafficShapingHandler);
@@ -324,7 +324,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
                     }
                 }
                 // Remember the connection for later
-                serverConnectionsMap.put(serverHostAndPort + httpRequestContxt,currentServerConnection);
+                serverConnectionsMap.put(serverHostAndPort + contextPath,currentServerConnection);
             } catch (UnknownHostException uhe) {
                 LOG.info("Bad Host {}", serverHostAndPort + httpRequest.uri());
                 boolean keepAlive = writeBadGateway(httpRequest);
@@ -635,8 +635,8 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
         // the connection to the server failed, so disconnect the server and remove the ProxyToServerConnection from the
         // map of open server connections
         serverConnection.disconnect();
-        String context = HttpHostContext.getContextFromUri(serverConnection.getHttpRequestContext());
-        this.serverConnectionsMap.remove(serverConnection.getServerHostAndPort() + context);
+        String contextPath = serverConnection.getContextPath();
+        this.serverConnectionsMap.remove(serverConnection.getServerHostAndPort() + contextPath);
 
         boolean keepAlive = writeBadGateway(initialRequest);
         if (keepAlive) {
