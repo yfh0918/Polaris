@@ -190,29 +190,51 @@ public class UndertowServer {
             logger.info("Undertow started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
             
             // add shutdown hook to stop server
-            final String port = this.serverPort;
-            final String context = this.contextPath;
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                public void run() {
-                    try {
-                    	ServerListenerHelper.stopped();
-                    	manager.stop();
-                    	manager.undeploy();
-                    	undertow.stop();
-                    	manager = null;
-                    	undertow = null;
-                    	logger.info("Undertow stopped on port(s) " + port + " with context path '" + context + "'");
-                    } catch (Exception e) {
-                        logger.error("failed to stop undertow.", e);
-                    }
-                }
-            });
+            Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
         } catch (Exception e) {
             this.undertow = null;
             logger.error("failed to start undertow.", e);
         }
     }
+    
+    /**
+     * JVM shutdown hook to shutdown this UndertowServer server. Declared as a class-level variable to allow removing the shutdown hook when the
+     * UndertowServer server is stopped normally.
+     */
+    private final Thread jvmShutdownHook = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            stop();
+        }
+    }, "UndertowServer-JVM-shutdown-hook");
 
+    /**
+     * 停止服务服务器
+     *
+     * @throws Exception
+     */
+    public void stop() {
+    	try {
+        	ServerListenerHelper.stopped();
+        	manager.stop();
+        	manager.undeploy();
+        	undertow.stop();
+        	manager = null;
+        	undertow = null;
+        } catch (Exception e) {
+        	// ignore -- IllegalStateException means the VM is already shutting down
+        }
+    	
+    	// remove the shutdown hook that was added when the UndertowServer was started, since it has now been stopped
+        try {
+            Runtime.getRuntime().removeShutdownHook(jvmShutdownHook);
+        } catch (IllegalStateException e) {
+            // ignore -- IllegalStateException means the VM is already shutting down
+        }
+
+        //log out
+        logger.info("Undertow stopped on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
+    }
     
     /**
      * 获取servlet上下文

@@ -15,6 +15,7 @@ import com.polaris.container.undertow.server.UndertowServer;
 public class Main implements Server{
 
 	private static Logger logger = LoggerFactory.getLogger(Main.class);
+	
     /**
      * 服务启动
      *
@@ -27,6 +28,17 @@ public class Main implements Server{
         server.start();
 	}
 	
+    /**
+     * 停止启动
+     *
+     */
+	@Override
+	public void stop() {
+		//启动jetty
+    	logger.info("undertow停止！");
+        UndertowServer server = UndertowServer.getInstance();
+        server.stop();
+	}
 	
 	/**
      * servlet上下文

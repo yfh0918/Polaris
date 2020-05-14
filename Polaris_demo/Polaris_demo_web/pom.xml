@@ -31,7 +31,7 @@
 		<dependency>
 			<groupId>com.polaris_demo</groupId>
 			<artifactId>Polaris_demo_api</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 		</dependency>
     </dependencies>
 
