@@ -173,18 +173,9 @@ public class TomcatServer {
             logger.info("tomcat started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
 
             // add shutdown hook to stop server
-            final String port = this.serverPort;
-            final String context = this.contextPath;
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                public void run() {
-                    try {
-                        tomcat.stop();
-                        logger.info("Tomcat stopped on port(s) " + port + " with context path '" + context + "'");
-                    } catch (LifecycleException e) {
-                        logger.error("failed to stop tomcat.", e);
-                    }
-                }
-            });
+            Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
+            
+            //wait
             this.tomcat.getServer().await();
         } catch (Exception e) {
 
@@ -194,6 +185,40 @@ public class TomcatServer {
         }
 
 
+    }
+    
+    /**
+     * JVM shutdown hook to shutdown this server. Declared as a class-level variable to allow removing the shutdown hook when the
+     * server is stopped normally.
+     */
+    private final Thread jvmShutdownHook = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            stop();
+        }
+    }, "Tomcat-JVM-shutdown-hook");
+    
+    /**
+     * 停止服务服务器
+     *
+     * @throws Exception
+     */
+    public void stop() {
+    	try {
+            tomcat.stop();
+        } catch (LifecycleException e) {
+        	// ignore -- IllegalStateException means the VM is already shutting down
+        }
+    	
+    	// remove the shutdown hook that was added when the UndertowServer was started, since it has now been stopped
+        try {
+            Runtime.getRuntime().removeShutdownHook(jvmShutdownHook);
+        } catch (IllegalStateException e) {
+            // ignore -- IllegalStateException means the VM is already shutting down
+        }
+
+        //log out
+        logger.info("Tomcat stopped on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
     }
     
     /**

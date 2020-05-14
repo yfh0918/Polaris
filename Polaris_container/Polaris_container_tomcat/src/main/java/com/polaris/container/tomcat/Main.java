@@ -24,6 +24,16 @@ public class Main implements Server {
 	}
 	
 	/**
+     * 停止启动
+     *
+     */
+	@Override
+	public void stop() {
+		TomcatServer server = TomcatServer.getInstance();
+		server.stop();
+	}
+	
+	/**
      * servlet上下文
      *
      */
