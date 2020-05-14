@@ -4,7 +4,7 @@
    <parent>
 		<groupId>com.polaris</groupId>
 		<artifactId>Polaris</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>Polaris_parent</artifactId>
@@ -26,7 +26,7 @@
         <cxf.version>2.7.13</cxf.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <swagger-version>2.9.2</swagger-version>
-        <polaris-version>1.0.0-SNAPSHOT</polaris-version>
+        <polaris-version>1.0.0</polaris-version>
         <nacos.version>1.1.4</nacos.version>
         <dubbo-version>2.7.4</dubbo-version>
         <sentinel-version>1.7.0</sentinel-version>
