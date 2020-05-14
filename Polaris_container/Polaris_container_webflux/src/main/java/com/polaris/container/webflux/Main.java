@@ -12,6 +12,7 @@ import com.polaris.container.webflux.server.WebfluxServer;
  */
 @Order(ServerOrder.WEBFLUX)
 public class Main implements Server {
+	
 	/**
      * 服务启动
      *
@@ -19,5 +20,14 @@ public class Main implements Server {
 	@Override
 	public void start() {
 		WebfluxServer.getInstance().start();
+	}
+	
+	/**
+     * 停止启动
+     *
+     */
+	@Override
+	public void stop() {
+		WebfluxServer.getInstance().stop();
 	}
 }

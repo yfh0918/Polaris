@@ -27,6 +27,10 @@ public class WebfluxServer {
 	
 	private static Logger logger = LoggerFactory.getLogger(WebfluxServer.class);
 	
+	private DisposableServer disposableSever;
+	
+	private int port = 80;
+	
 	/**
      * 私有构造方法
      */
@@ -65,7 +69,7 @@ public class WebfluxServer {
     	//通过ApplicationContext创建HttpHandler
         HttpHandler httpHandler = WebHttpHandlerBuilder.applicationContext(SpringUtil.getApplicationContext()).build();
         ReactorHttpHandlerAdapter httpHandlerAdapter = new ReactorHttpHandlerAdapter(httpHandler);
-        int port = Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE));
+        port = Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE));
         HttpServer server =
                 HttpServer.create()
                 		  .port(port)
@@ -84,27 +88,53 @@ public class WebfluxServer {
         server.protocol(listProtocols());
         
         //bind server
-        DisposableServer disposableSever = server.bindNow();
+        disposableSever = server.bindNow();
         ServerListenerHelper.started();
 
         //log
         logger.info("netty-webflux started on port(s) " + port + " with context path '/'");
         
         // add shutdown hook to stop server
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                try {
-                	ServerListenerHelper.stopped();
-                	disposableSever.disposeNow();
-                } catch (Exception e) {
-                    logger.error("failed to stop netty-webflux.", e);
-                }
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
 
         //block
         disposableSever.onDispose().block();
     }
+    
+    /**
+     * 停止服务服务器
+     *
+     * @throws Exception
+     */
+    public void stop() {
+    	try {
+        	ServerListenerHelper.stopped();
+        	disposableSever.disposeNow();
+        } catch (Exception e) {
+        	// ignore -- IllegalStateException means the VM is already shutting down
+        }
+    	
+    	// remove the shutdown hook that was added when the UndertowServer was started, since it has now been stopped
+        try {
+            Runtime.getRuntime().removeShutdownHook(jvmShutdownHook);
+        } catch (IllegalStateException e) {
+            // ignore -- IllegalStateException means the VM is already shutting down
+        }
+
+        //log out
+        logger.info("Webflux stopped on port(s) " + this.port + " with context path '/'");
+    }
+    
+    /**
+     * JVM shutdown hook to shutdown this server. Declared as a class-level variable to allow removing the shutdown hook when the
+     * server is stopped normally.
+     */
+    private final Thread jvmShutdownHook = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            stop();
+        }
+    }, "Webflux-JVM-shutdown-hook");
     
     private HttpProtocol[] listProtocols() {
         boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl.enable","false"));
