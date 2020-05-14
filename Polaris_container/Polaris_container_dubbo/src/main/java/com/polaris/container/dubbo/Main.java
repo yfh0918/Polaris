@@ -12,6 +12,7 @@ import com.polaris.container.dubbo.server.DubboServer;
  */
 @Order(ServerOrder.DUBBO)
 public class Main implements Server {
+	
 	/**
      * 服务启动
      *
@@ -21,4 +22,12 @@ public class Main implements Server {
 		DubboServer.getInstance().start();
 	}
 
+	/**
+     * 停止启动
+     *
+     */
+	@Override
+	public void stop() {
+		DubboServer.getInstance().stop();
+	}
 }

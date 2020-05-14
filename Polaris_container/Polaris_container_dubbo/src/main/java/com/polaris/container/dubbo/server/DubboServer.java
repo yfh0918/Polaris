@@ -53,18 +53,7 @@ public class DubboServer {
     	ServerListenerHelper.started();
     	
     	// add shutdown hook to stop server
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                try {
-                	
-                	//监听
-                	ServerListenerHelper.stopped();
-                	logger.info("Dubbo stopped on port(s) " + ConfClient.get("dubbo.protocol.port"));
-                } catch (Exception e) {
-                    logger.error("failed to stop dubbo.", e);
-                }
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
         
         //block
         try {
@@ -74,4 +63,39 @@ public class DubboServer {
 			logger.error("ERROR:",e);
 		}
     }
+    
+    /**
+     * 停止服务服务器
+     *
+     * @throws Exception
+     */
+    public void stop() {
+    	try {
+    		//监听
+        	ServerListenerHelper.stopped();
+        } catch (Exception e) {
+        	// ignore -- IllegalStateException means the VM is already shutting down
+        }
+    	
+    	// remove the shutdown hook that was added when the UndertowServer was started, since it has now been stopped
+        try {
+            Runtime.getRuntime().removeShutdownHook(jvmShutdownHook);
+        } catch (IllegalStateException e) {
+            // ignore -- IllegalStateException means the VM is already shutting down
+        }
+
+        //log out
+        logger.info("Dubbo stopped on port(s) " + ConfClient.get("dubbo.protocol.port"));
+    }
+    
+    /**
+     * JVM shutdown hook to shutdown this server. Declared as a class-level variable to allow removing the shutdown hook when the
+     * server is stopped normally.
+     */
+    private final Thread jvmShutdownHook = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            stop();
+        }
+    }, "Dubbo-JVM-shutdown-hook");
 }
