@@ -27,6 +27,8 @@ public class HttpServer {
 	
 	private static Logger logger = LoggerFactory.getLogger(HttpServer.class);
 	
+	private InetSocketAddress inetSocketAddress;
+	
 	/**
      * 服务器
      */
@@ -71,7 +73,7 @@ public class HttpServer {
         threadPoolConfiguration.withClientToProxyWorkerThreads(HttpConstant.ClientToProxyWorkerThreads);
         threadPoolConfiguration.withProxyToServerWorkerThreads(HttpConstant.ProxyToServerWorkerThreads);
 
-        InetSocketAddress inetSocketAddress = new InetSocketAddress(Integer.parseInt(ConfClient.get("server.port")));
+        inetSocketAddress = new InetSocketAddress(Integer.parseInt(ConfClient.get("server.port")));
         httpProxyServerBootstrap = DefaultHttpProxyServer.bootstrap()
                 .withAddress(inetSocketAddress);
         httpProxyServerBootstrap.withServerResolver(HttpResolverFactory.get());
@@ -127,16 +129,43 @@ public class HttpServer {
         logger.info("Gateway started on port(s) " + inetSocketAddress.getPort() + " with context path '/'");
         
         // add shutdown hook to stop server
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
-                try {
-                	ServerListenerHelper.stopped();
-                	logger.info("Gateway stopped on port(s) " + inetSocketAddress.getPort() + " with context path '/'");
-                } catch (Exception e) {
-                    logger.error("failed to stop gateway.", e);
-                }
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
     	
     }
+    
+    /**
+     * 停止服务服务器
+     *
+     * @throws Exception
+     */
+    public void stop() {
+    	try {
+    		//监听
+        	ServerListenerHelper.stopped();
+        	httpProxyServerBootstrap.stop();
+        } catch (Exception e) {
+        	// ignore -- IllegalStateException means the VM is already shutting down
+        }
+    	
+    	// remove the shutdown hook that was added when the UndertowServer was started, since it has now been stopped
+        try {
+            Runtime.getRuntime().removeShutdownHook(jvmShutdownHook);
+        } catch (IllegalStateException e) {
+            // ignore -- IllegalStateException means the VM is already shutting down
+        }
+
+        //log out
+    	logger.info("Gateway stopped on port(s) " + inetSocketAddress.getPort() + " with context path '/'");
+    }
+    
+    /**
+     * JVM shutdown hook to shutdown this server. Declared as a class-level variable to allow removing the shutdown hook when the
+     * server is stopped normally.
+     */
+    private final Thread jvmShutdownHook = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            stop();
+        }
+    }, "Gateway-JVM-shutdown-hook");
 }

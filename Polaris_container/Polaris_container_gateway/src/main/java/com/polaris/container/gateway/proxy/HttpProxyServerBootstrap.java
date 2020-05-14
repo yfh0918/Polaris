@@ -321,6 +321,14 @@ public interface HttpProxyServerBootstrap {
      * @return the newly built and started server
      */
     HttpProxyServer start();
+    
+    /**
+     * <p>
+     * Build and stop the server.
+     * </p>
+     *
+     */
+    void stop();
 
     /**
      * Set the configuration parameters for the proxy's thread pools.

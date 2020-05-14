@@ -11,6 +11,7 @@ import com.polaris.container.ServerOrder;
  */
 @Order(ServerOrder.GATEWAY)
 public class Main implements Server {
+	
 	/**
      * 服务启动
      *
@@ -20,5 +21,12 @@ public class Main implements Server {
 		HttpServer.getInstance().start();
 	}
 
-
+	/**
+     * 停止启动
+     *
+     */
+	@Override
+	public void stop() {
+		HttpServer.getInstance().stop();
+	}
 }

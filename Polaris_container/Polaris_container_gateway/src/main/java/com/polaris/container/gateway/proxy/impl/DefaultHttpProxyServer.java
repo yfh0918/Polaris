@@ -633,6 +633,8 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
         private int maxChunkSize = MAX_CHUNK_SIZE_DEFAULT;
         private boolean allowRequestToOriginServer = false;
 
+        private DefaultHttpProxyServer httpProxyServer; 
+
         private DefaultHttpProxyServerBootstrap() {
         }
 
@@ -876,7 +878,15 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
 
         @Override
         public HttpProxyServer start() {
-            return build().start();
+        	httpProxyServer = build();
+            return httpProxyServer.start();
+        }
+        
+        @Override
+        public void stop() {
+        	if (httpProxyServer != null) {
+            	httpProxyServer.stop();
+        	}
         }
 
         @Override
