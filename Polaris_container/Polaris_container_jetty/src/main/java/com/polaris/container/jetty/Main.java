@@ -22,6 +22,15 @@ public class Main implements Server{
         server.start();
 	}
 	
+    /**
+     * 停止启动
+     *
+     */
+	@Override
+	public void stop() {
+        JettyServer server = JettyServer.getInstance();
+        server.stop();
+	}
 	
 	/**
      * servlet上下文

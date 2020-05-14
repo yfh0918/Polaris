@@ -135,18 +135,7 @@ public class JettyServer {
             logger.info("Jetty started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
             
             // add shutdown hook to stop server
-            final String port = this.serverPort;
-            final String context = this.contextPath;
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                public void run() {
-                    try {
-                    	server.stop();
-                    	logger.info("jetty stopped on port(s) " + port + " with context path '" + context + "'");
-                    } catch (Exception e) {
-                        logger.error("failed to stop jetty.", e);
-                    }
-                }
-            });
+            Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
             
             this.server.join();
         } catch (Exception e) {
@@ -155,9 +144,41 @@ public class JettyServer {
             this.server = null;
             logger.error("Error:",e);
         }
-
-
     }
+    
+    /**
+     * 停止服务服务器
+     *
+     * @throws Exception
+     */
+    public void stop() {
+    	try {
+        	server.stop();
+        } catch (Exception e) {
+        	// ignore -- IllegalStateException means the VM is already shutting down
+        }
+    	
+    	// remove the shutdown hook that was added when the UndertowServer was started, since it has now been stopped
+        try {
+            Runtime.getRuntime().removeShutdownHook(jvmShutdownHook);
+        } catch (IllegalStateException e) {
+            // ignore -- IllegalStateException means the VM is already shutting down
+        }
+
+        //log out
+    	logger.info("Jetty stopped on port(s) " + serverPort + " with context path '" + contextPath + "'");
+    }
+    
+    /**
+     * JVM shutdown hook to shutdown this server. Declared as a class-level variable to allow removing the shutdown hook when the
+     * server is stopped normally.
+     */
+    private final Thread jvmShutdownHook = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            stop();
+        }
+    }, "Jetty-JVM-shutdown-hook");
 
     
     /**
