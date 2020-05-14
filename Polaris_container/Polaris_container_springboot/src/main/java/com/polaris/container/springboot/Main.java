@@ -12,6 +12,7 @@ import com.polaris.container.springboot.server.SpringbootServer;
  */
 @Order(ServerOrder.SPRINGBOOT)
 public class Main implements Server {
+	
 	/**
      * 服务启动
      *
@@ -21,4 +22,12 @@ public class Main implements Server {
 		SpringbootServer.getInstance().start();
 	}
 
+	/**
+     * 停止服务
+     *
+     */
+	@Override
+	public void stop() {
+		SpringbootServer.getInstance().stop();
+	}
 }
