@@ -281,39 +281,4 @@ public class MailUtil {
         	sendMail(mail.getReceiver(), mail.getSubject(), content, mail.getProperties(), mail.getAttachFilePathList().toArray(new String[mail.getAttachFilePathList().size()]));            
         }
 	}
-
-	public static void main( String[] args ) throws Exception
-    {
-		Mail mail = new Mail();
-		mail.setKey("test");
-    	mail.setEnable(true);
-    	mail.setSubject("test");
-    	mail.setReceiver("yfh0919@icloud.com");
-    	mail.setContent("test");
-        //mail system props
-        Properties props = new Properties();
-        
-        MailSSLSocketFactory sslFactory = new MailSSLSocketFactory();
-        sslFactory.setTrustAllHosts(true);
-        props.put("mail.smtp.ssl.socketFactory", sslFactory);
-        props.setProperty("mail.smtp.ssl.enable", "true");
-        props.setProperty("mail.transport.protocol", "smtp");
-        props.setProperty("mail.smtp.auth", "true");
-        props.setProperty("mail.smtp.host", "smtp.qq.com");
-        props.setProperty("mail.smtp.port", "465");
-        props.setProperty("mail.sender", "1815549411@qq.com");
-        props.setProperty("mail.password", "oamcxrnpmnngeaif");
-        mail.setProperties(props);
-		sendMail(mail);
-		
-		List<String> f = new ArrayList<>();
-		f.add("C:\\projects\\Polaris\\readme.txt");
-		mail.setAttachFilePathList(f);
-		mail.setKey("test2");
-    	mail.setEnable(true);
-    	mail.setSubject("test2");
-    	mail.setReceiver("yfh0919@icloud.com");
-    	mail.setContent("test2");
-		sendMail(mail);
-    }
 }
