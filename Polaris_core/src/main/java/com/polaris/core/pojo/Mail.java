@@ -1,11 +1,14 @@
 package com.polaris.core.pojo;
 
+import java.util.List;
 import java.util.Map;
 /**
- * EmailDto
+ * Mail
  *
  */
 public class Mail {
+	
+	private String key;//邮件对象关键字，可以为空
 	
 	private boolean enable = true;
 	
@@ -15,7 +18,19 @@ public class Mail {
 	
 	private String content;//内容
 	
+	private List<String> attachFilePathList;
+	
 	private Map<String,String> placeHolderMap;
+
+
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
 
 	public boolean isEnable() {
 		return enable;
@@ -55,5 +70,13 @@ public class Mail {
 
 	public void setPlaceHolderMap(Map<String, String> placeHolderMap) {
 		this.placeHolderMap = placeHolderMap;
+	}
+
+	public List<String> getAttachFilePathList() {
+		return attachFilePathList;
+	}
+
+	public void setAttachFilePathList(List<String> attachFilePathList) {
+		this.attachFilePathList = attachFilePathList;
 	}
 }

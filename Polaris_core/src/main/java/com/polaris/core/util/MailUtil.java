@@ -44,18 +44,21 @@ public class MailUtil {
 
     private static final String MAIL_ACCOUNT_SEPARATOR = ";"; // separator
 
-    public static boolean sendMail(String receiveMailAccount, String subject, String content) {
-        Boolean isSent = true;
+    // 附件
+    public static boolean sendMail(String receiveMailAccount, String subject, String content,String... attachFilePaths) {
+        
+    	Boolean isSent = true;
         Transport transport = null;
         MimeMessage message = null;
         try {
+            // 1. 创建参数配置, 用于连接邮件服务器的参数配置
+
             // 2. 根据配置创建会话对象, 用于和邮件服务器交互
             Session session = Session.getInstance(loadProperties(), new MyAuthenricator());
-            session.setDebug(false);
+            session.setDebug(false);// 设置为debug模式, 可以查看详细的发送 log
 
             // 3. 创建一封邮件
-            message = createMimeMessage(session, receiveMailAccount, subject, content);
-
+        	message = createMimeMessage(session, receiveMailAccount, subject, content,attachFilePaths);
             LOGGER.info("receiveMailAccount:{}", receiveMailAccount);
 
             // 4. 根据 Session 获取邮件传输对象
@@ -84,108 +87,15 @@ public class MailUtil {
         }
         return isSent;
     }
-
-    // 线程安全
-    public static boolean sendEmail(String receiveMailAccount, String subject, String content,List<String> attachFilePathList) {
-        
-    	Boolean isSent = true;
-        Transport transport = null;
-        MimeMessage message = null;
-        try {
-            // 1. 创建参数配置, 用于连接邮件服务器的参数配置
-
-            // 2. 根据配置创建会话对象, 用于和邮件服务器交互
-            Session session = Session.getInstance(loadProperties(), new MyAuthenricator());
-            session.setDebug(false);// 设置为debug模式, 可以查看详细的发送 log
-
-            // 3. 创建一封邮件
-            if(attachFilePathList!=null&&attachFilePathList.size()>0) {
-            	message = createMimeMessage(session, receiveMailAccount, subject, content,attachFilePathList);
-            }else {
-            	message = createMimeMessage(session, receiveMailAccount, subject, content);
-            }
-
-            // 4. 根据 Session 获取邮件传输对象
-            transport = session.getTransport();
-
-            // 5. 使用 邮箱账号 和 密码 连接邮件服务器, 这里认证的邮箱必须与 message 中的发件人邮箱一致, 否则报错
-            transport.connect();
-
-            // 6. 发送邮件, 发到所有的收件地址, message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人, 密送人
-            transport.sendMessage(message, message.getAllRecipients());
-
-        } catch (Exception e) {
-            LOGGER.error("send mail failed,mail={}", receiveMailAccount);
-            LOGGER.error(e.getMessage(), e);
-            isSent = false;
-            throw new RuntimeException(e.getMessage());
-        } finally {
-            if (transport != null) {
-                try {
-                    // 7. 关闭连接
-                    transport.close();
-                } catch (MessagingException e) {
-                    LOGGER.error(e.getMessage(), e);
-                    e.printStackTrace();
-                }
-            }
-        }
-        return isSent;
-    }
-    // 线程安全
-    public static MimeMessage createMimeMessage(Session session, String receiveMailAccount, String subject, String content) throws Exception {
-        // 1. 创建一封邮件
-        MimeMessage message = new MimeMessage(session);
-
-        // 2. From: 发件人 -> 密尔克卫官网
-        String sender = ConfClient.get("mail.sender");
-        message.setFrom(new InternetAddress(ConfClient.get("mail.sender"), sender, "UTF-8"));
-
-        InternetAddress[] internetAddressTo = null;
-        if(receiveMailAccount!=null) {
-        	if(receiveMailAccount.contains(MAIL_ACCOUNT_SEPARATOR)) {
-        		String[] accounts = receiveMailAccount.split(MAIL_ACCOUNT_SEPARATOR);
-            	//String[] names = receiverName.split(MAIL_ACCOUNT_SEPARATOR);
-            	List<InternetAddress> internetAddressToList = new ArrayList<InternetAddress>(accounts.length);
-            	for(int i = 0;i<accounts.length;i++) {
-            		if(!StringUtils.isEmpty(accounts[i])) {
-            			internetAddressToList.add(new InternetAddress(accounts[i]));
-            		}
-            	}
-            	internetAddressTo = new InternetAddress[internetAddressToList.size()];
-            	internetAddressToList.toArray(internetAddressTo);
-        	}else {
-        		internetAddressTo = new InternetAddress[1];
-        		internetAddressTo[0] = new InternetAddress(receiveMailAccount);
-        	}
-        }
-       // 3. To: 收件人（可以增加多个收件人、抄送、密送）
-        message.setRecipients(MimeMessage.RecipientType.TO, internetAddressTo);
-        // 4. Subject: 邮件主题
-        if (StringUtils.isBlank(subject)) {
-            subject = ConfClient.get("mail.default.subject");;
-        }
-        message.setSubject(subject, "UTF-8");
-
-        // 5. Content: 邮件正文（可以使用html标签）
-        message.setContent(content, "text/html;charset=UTF-8");
-
-        // 6. 设置发件时间
-        message.setSentDate(new Date());
-
-        // 7. 保存设置
-        message.saveChanges();
-
-        return message;
-    }
     
     // 线程安全
-    public static MimeMessage createMimeMessage(Session session, String receiveMailAccount, String subject, String content,List<String> attachFilePathList) throws Exception {
+    public static MimeMessage createMimeMessage(Session session, String receiveMailAccount, String subject, String content,String... attachFilePaths) throws Exception {
         // 1. 创建一封邮件
         MimeMessage message = new MimeMessage(session);
 
         // 2. From: 发件人 
-        message.setFrom(new InternetAddress(ConfClient.get("mail.sender"), ConfClient.get("mail.sender"), "UTF-8"));
+        String sender = ConfClient.get("mail.sender");
+        message.setFrom(new InternetAddress(sender, sender, "UTF-8"));
 
         InternetAddress[] internetAddressTo = null;
         if(receiveMailAccount!=null) {
@@ -206,7 +116,8 @@ public class MailUtil {
         	}
         	
         }
-       // 3. To: 收件人（可以增加多个收件人、抄送、密送）
+        
+        // 3. To: 收件人（可以增加多个收件人、抄送、密送）
         message.setRecipients(MimeMessage.RecipientType.TO, internetAddressTo);
 
          // 4. Subject: 邮件主题
@@ -222,35 +133,32 @@ public class MailUtil {
         // 6. 设置发件时间
         message.setSentDate(new Date());
         
-      //添加邮件的文本内容和附件
-        Multipart multipart=new MimeMultipart();
+        // 7. 添加附件
+        if (attachFilePaths != null && attachFilePaths.length > 0) {
+        	//添加邮件的文本内容和附件
+            Multipart multipart=new MimeMultipart();
 
-        //添加邮件正文
-        BodyPart contentPart=new MimeBodyPart();
-        contentPart.setContent(content,"text/html;charset=utf-8");
-        multipart.addBodyPart(contentPart);
-        File attachment = null;
-        if(attachFilePathList!=null&&attachFilePathList.size()>0) {
-        	String tmpPath = null;
-        	BodyPart attachmentBodyPart = null;
-        	DataSource ds = null;
-        	for(int i=0;i<attachFilePathList.size();i++) {
-        		tmpPath = attachFilePathList.get(i);
-        		attachment = new File(tmpPath);
+            //添加邮件正文
+            BodyPart contentPart=new MimeBodyPart();
+            contentPart.setContent(content,"text/html;charset=utf-8");
+            multipart.addBodyPart(contentPart);
+        	for(String attachFilePath : attachFilePaths) {
+        		File attachment = new File(attachFilePath);
         		//添加附件
                 if(attachment!=null){
-        	        attachmentBodyPart = new MimeBodyPart();
-        	        ds = new FileDataSource(attachment);
+                	BodyPart attachmentBodyPart = new MimeBodyPart();
+                	DataSource ds = new FileDataSource(attachment);
         	        attachmentBodyPart.setDataHandler(new DataHandler(ds));
         	        attachmentBodyPart.setFileName(MimeUtility.encodeWord(attachment.getName()));
         	        multipart.addBodyPart(attachmentBodyPart);
                 }
         	}
+            
+            //将multipart对象放到message中
+            message.setContent(multipart);
         }
         
-        //将multipart对象放到message中
-        message.setContent(multipart);
-        // 7. 保存设置
+        // 8. 保存设置
         message.saveChanges();
 
         return message;
@@ -287,29 +195,48 @@ public class MailUtil {
 	 * @param mail
 	 */
     public static void sendMail(String key, Executor executor, String... placeHolder) {
+    	sendMail(key,executor,null,placeHolder);
+    }
+    public static void sendMail(String key, Executor executor, List<String> attachFilePathList, String... placeHolder) {
     	if (StringUtil.isEmpty(key)) {
     		LOGGER.error("mail.key.subject is null");
     		return;
     	}
-    	Mail emailDTO = new Mail();
-    	emailDTO.setEnable(Boolean.parseBoolean(ConfClient.get("mail."+key+".enable", "true")));
-        emailDTO.setSubject(ConfClient.get("mail."+key+".subject"));
-        emailDTO.setReceiver(ConfClient.get("mail."+key+".receiver"));
-        emailDTO.setContent(ConfClient.get("mail."+key+".content"));
+    	Mail mail = new Mail();
+    	mail.setKey(key);
+    	mail.setEnable(Boolean.parseBoolean(ConfClient.get("mail."+key+".enable", "true")));
+    	mail.setSubject(ConfClient.get("mail."+key+".subject"));
+    	mail.setReceiver(ConfClient.get("mail."+key+".receiver"));
+    	mail.setContent(ConfClient.get("mail."+key+".content"));
         if (placeHolder != null && placeHolder.length > 0) {
         	Map<String, String> placeHolderMap = new HashMap<>();
         	for (int index = 1; index < placeHolder.length + 1; index++) {
         		placeHolderMap.put("placeHolder"+index, placeHolder[index - 1]);
         	}
-        	emailDTO.setPlaceHolderMap(placeHolderMap);
+        	mail.setPlaceHolderMap(placeHolderMap);
         }
-        sendMail(emailDTO, executor);
+        mail.setAttachFilePathList(attachFilePathList);
+        sendMail(mail, executor);
     }
-	public static void sendMail(Mail mailDto,Executor executor) {
-		if(mailDto == null) {
+	public static void sendMail(Mail mail,Executor executor) {
+		if(mail == null) {
+			LOGGER.error("mail object is null");
 			return;
 		}
-		if (!mailDto.isEnable()) {
+		if (!mail.isEnable()) {
+			LOGGER.info("mail:{} enable is false",mail.getKey());
+			return;
+		}
+		if (StringUtil.isEmpty(mail.getReceiver())) {
+			LOGGER.error("mail:{} receiver is null",mail.getKey());
+			return;
+		}
+		if (StringUtil.isEmpty(mail.getSubject())) {
+			LOGGER.error("mail:{} subject is null",mail.getKey());
+			return;
+		}
+		if (StringUtil.isEmpty(mail.getContent())) {
+			LOGGER.error("mail:{} content is null",mail.getKey());
 			return;
 		}
 		
@@ -317,17 +244,13 @@ public class MailUtil {
 		executor.execute(new Runnable() {
             @Override
             public void run() {
-        		String content = mailDto.getContent();
-        		if (StringUtil.isEmpty(content)) {
-        			LOGGER.error("mail content is null");
-        			return;
-        		}
-                if(mailDto.getPlaceHolderMap()!=null && mailDto.getPlaceHolderMap().size()>0) {
-                	Set<String> set = mailDto.getPlaceHolderMap().keySet();
+        		String content = mail.getContent();
+                if(mail.getPlaceHolderMap()!=null && mail.getPlaceHolderMap().size()>0) {
+                	Set<String> set = mail.getPlaceHolderMap().keySet();
                     //替换内容
                     for (String key : set) {
-                        if (StringUtil.isNotEmpty(mailDto.getPlaceHolderMap().get(key))) {
-                            content = content.replace("{" + key + "}", mailDto.getPlaceHolderMap().get(key));
+                        if (StringUtil.isNotEmpty(mail.getPlaceHolderMap().get(key))) {
+                            content = content.replace("{" + key + "}", mail.getPlaceHolderMap().get(key));
                         } else {
                             content = content.replace("{" + key + "}", "");
                         }
@@ -335,7 +258,11 @@ public class MailUtil {
                 }
                 
                 //发邮件
-                sendMail(mailDto.getReceiver(), mailDto.getSubject(), content);            
+                if (mail.getAttachFilePathList() == null || mail.getAttachFilePathList().size() == 0) {
+                	sendMail(mail.getReceiver(), mail.getSubject(), content);            
+                } else {
+                	sendMail(mail.getReceiver(), mail.getSubject(), content, mail.getAttachFilePathList().toArray(new String[mail.getAttachFilePathList().size()]));            
+                }
         	}
         });
 	}
