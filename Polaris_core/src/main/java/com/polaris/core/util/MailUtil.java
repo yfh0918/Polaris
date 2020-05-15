@@ -43,9 +43,12 @@ public class MailUtil {
 	private static final Logger LOGGER = LoggerFactory.getLogger(MailUtil.class);
 
     private static final String MAIL_ACCOUNT_SEPARATOR = ";"; // separator
+    
+    private static final String MAIL_SENDER_KEY = "mail.sender";
+    private static final String MAIL_PASSWORD_KEY = "mail.password";
 
     // 附件
-    public static boolean sendMail(String receiveMailAccount, String subject, String content,String... attachFilePaths) {
+    private static boolean sendMail(String receiveMailAccount, String subject, String content, Properties mailProperties, String... attachFilePaths) {
         
     	Boolean isSent = true;
         Transport transport = null;
@@ -54,18 +57,20 @@ public class MailUtil {
             // 1. 创建参数配置, 用于连接邮件服务器的参数配置
 
             // 2. 根据配置创建会话对象, 用于和邮件服务器交互
-            Session session = Session.getInstance(loadProperties(), new MyAuthenricator());
+        	MyAuthenricator auth = new MyAuthenricator();
+        	auth.setMailProperties(mailProperties);
+            Session session = Session.getInstance(mailProperties, auth);
             session.setDebug(false);// 设置为debug模式, 可以查看详细的发送 log
 
             // 3. 创建一封邮件
-        	message = createMimeMessage(session, receiveMailAccount, subject, content,attachFilePaths);
+        	message = createMimeMessage(session, mailProperties.getProperty(MAIL_SENDER_KEY), receiveMailAccount, subject, content,attachFilePaths);
             LOGGER.info("receiveMailAccount:{}", receiveMailAccount);
 
             // 4. 根据 Session 获取邮件传输对象
             transport = session.getTransport();
 
             // 5. 使用 邮箱账号 和 密码 连接邮件服务器, 这里认证的邮箱必须与 message 中的发件人邮箱一致, 否则报错
-            transport.connect(ConfClient.get("mail.sender"), ConfClient.get("mail.password"));
+            transport.connect(mailProperties.getProperty(MAIL_SENDER_KEY), mailProperties.getProperty(MAIL_PASSWORD_KEY));
 
             // 6. 发送邮件, 发到所有的收件地址, message.getAllRecipients() 获取到的是在创建邮件对象时添加的所有收件人, 抄送人, 密送人
             transport.sendMessage(message, message.getAllRecipients());
@@ -89,12 +94,11 @@ public class MailUtil {
     }
     
     // 线程安全
-    public static MimeMessage createMimeMessage(Session session, String receiveMailAccount, String subject, String content,String... attachFilePaths) throws Exception {
+    private static MimeMessage createMimeMessage(Session session, String sender, String receiveMailAccount, String subject, String content,String... attachFilePaths) throws Exception {
         // 1. 创建一封邮件
         MimeMessage message = new MimeMessage(session);
 
         // 2. From: 发件人 
-        String sender = ConfClient.get("mail.sender");
         message.setFrom(new InternetAddress(sender, sender, "UTF-8"));
 
         InternetAddress[] internetAddressTo = null;
@@ -121,10 +125,6 @@ public class MailUtil {
         message.setRecipients(MimeMessage.RecipientType.TO, internetAddressTo);
 
          // 4. Subject: 邮件主题
-        if (StringUtils.isBlank(subject)) {
-            // 密尔克卫集团官网-通知
-            subject = ConfClient.get("mail.default.subject");
-        }
         message.setSubject(subject, "UTF-8");
 
         // 5. Content: 邮件正文（可以使用html标签）
@@ -165,31 +165,16 @@ public class MailUtil {
     }
 
     static class MyAuthenricator extends Authenticator {
+    	private Properties mailProperties;
+    	public void setMailProperties(Properties mailProperties) {
+    		this.mailProperties = mailProperties;
+    	}
         @Override
         protected PasswordAuthentication getPasswordAuthentication() {
-            return new PasswordAuthentication(ConfClient.get("mail.sender"), ConfClient.get("mail.password"));
+            return new PasswordAuthentication(mailProperties.getProperty(MAIL_SENDER_KEY), mailProperties.getProperty(MAIL_PASSWORD_KEY));
         }
     }
 
-    @SuppressWarnings("restriction")
-	private static Properties loadProperties() {
-        Properties props = new Properties();
-
-        Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-        final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-        props.setProperty("mail.smtp.socketFactory.class", SSL_FACTORY);
-        props.setProperty("mail.smtp.socketFactory.fallback", "false");
-        props.setProperty("mail.smtp.socketFactory.port", ConfClient.get("mail.smtp.port"));
-        props.setProperty("mail.smtp.ssl.enable", ConfClient.get("mail.smtp.ssl.enable"));
-        props.setProperty("mail.transport.protocol", ConfClient.get("mail.transport.protocol"));
-        props.setProperty("mail.smtp.auth", ConfClient.get("mail.smtp.auth"));
-        props.setProperty("mail.smtp.host", ConfClient.get("mail.smtp.host"));
-        props.setProperty("mail.smtp.port", ConfClient.get("mail.smtp.port"));
-        props.setProperty("mail.sender", ConfClient.get("mail.sender"));
-        props.setProperty("mail.password", ConfClient.get("mail.password"));
-        return props;
-    }
-    
     /**
 	 * 发邮件
 	 * @param mail
@@ -197,6 +182,7 @@ public class MailUtil {
     public static void sendMail(String key, Executor executor, String... placeHolder) {
     	sendMail(key,executor,null,placeHolder);
     }
+    @SuppressWarnings("restriction")
     public static void sendMail(String key, Executor executor, List<String> attachFilePathList, String... placeHolder) {
     	if (StringUtil.isEmpty(key)) {
     		LOGGER.error("mail.key.subject is null");
@@ -216,15 +202,47 @@ public class MailUtil {
         	mail.setPlaceHolderMap(placeHolderMap);
         }
         mail.setAttachFilePathList(attachFilePathList);
+        
+        //mail system props
+        Properties props = new Properties();
+        Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+        final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
+        props.setProperty("mail.smtp.socketFactory.class", SSL_FACTORY);
+        props.setProperty("mail.smtp.socketFactory.fallback", "false");
+        props.setProperty("mail.smtp.socketFactory.port", ConfClient.get("mail.smtp.port"));
+        props.setProperty("mail.smtp.ssl.enable", ConfClient.get("mail.smtp.ssl.enable"));
+        props.setProperty("mail.transport.protocol", ConfClient.get("mail.transport.protocol"));
+        props.setProperty("mail.smtp.auth", ConfClient.get("mail.smtp.auth"));
+        props.setProperty("mail.smtp.host", ConfClient.get("mail.smtp.host"));
+        props.setProperty("mail.smtp.port", ConfClient.get("mail.smtp.port"));
+        props.setProperty("mail.sender", ConfClient.get("mail.sender"));
+        props.setProperty("mail.password", ConfClient.get("mail.password"));
+        mail.setProperties(props);
         sendMail(mail, executor);
     }
 	public static void sendMail(Mail mail,Executor executor) {
+		if (executor != null) {
+			executor.execute(new Runnable() {
+	            @Override
+	            public void run() {
+	            	sendMail(mail);
+	        	}
+	        });
+		} else {
+			sendMail(mail);
+		}
+	}
+	public static void sendMail(Mail mail) {
 		if(mail == null) {
 			LOGGER.error("mail object is null");
 			return;
 		}
 		if (!mail.isEnable()) {
 			LOGGER.info("mail:{} enable is false",mail.getKey());
+			return;
+		}
+		if (mail.getProperties() == null) {
+			LOGGER.info("mail:{} properties is null",mail.getKey());
 			return;
 		}
 		if (StringUtil.isEmpty(mail.getReceiver())) {
@@ -240,31 +258,25 @@ public class MailUtil {
 			return;
 		}
 		
-		// 线程池处理
-		executor.execute(new Runnable() {
-            @Override
-            public void run() {
-        		String content = mail.getContent();
-                if(mail.getPlaceHolderMap()!=null && mail.getPlaceHolderMap().size()>0) {
-                	Set<String> set = mail.getPlaceHolderMap().keySet();
-                    //替换内容
-                    for (String key : set) {
-                        if (StringUtil.isNotEmpty(mail.getPlaceHolderMap().get(key))) {
-                            content = content.replace("{" + key + "}", mail.getPlaceHolderMap().get(key));
-                        } else {
-                            content = content.replace("{" + key + "}", "");
-                        }
-                    }
-                }
-                
-                //发邮件
-                if (mail.getAttachFilePathList() == null || mail.getAttachFilePathList().size() == 0) {
-                	sendMail(mail.getReceiver(), mail.getSubject(), content);            
+		String content = mail.getContent();
+        if(mail.getPlaceHolderMap()!=null && mail.getPlaceHolderMap().size()>0) {
+        	Set<String> set = mail.getPlaceHolderMap().keySet();
+            //替换内容
+            for (String key : set) {
+                if (StringUtil.isNotEmpty(mail.getPlaceHolderMap().get(key))) {
+                    content = content.replace("{" + key + "}", mail.getPlaceHolderMap().get(key));
                 } else {
-                	sendMail(mail.getReceiver(), mail.getSubject(), content, mail.getAttachFilePathList().toArray(new String[mail.getAttachFilePathList().size()]));            
+                    content = content.replace("{" + key + "}", "");
                 }
-        	}
-        });
+            }
+        }
+        
+        //发邮件
+        if (mail.getAttachFilePathList() == null || mail.getAttachFilePathList().size() == 0) {
+        	sendMail(mail.getReceiver(), mail.getSubject(), content, mail.getProperties());            
+        } else {
+        	sendMail(mail.getReceiver(), mail.getSubject(), content, mail.getProperties(), mail.getAttachFilePathList().toArray(new String[mail.getAttachFilePathList().size()]));            
+        }
 	}
 
 

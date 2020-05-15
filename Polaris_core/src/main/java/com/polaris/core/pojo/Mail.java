@@ -2,26 +2,65 @@ package com.polaris.core.pojo;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 /**
  * Mail
  *
  */
 public class Mail {
 	
-	private String key;//邮件对象关键字，可以为空
+	/*
+	 *  邮件对象关键字，可以为空
+    */
+	private String key;
 	
+	/*
+	 *  是否发送邮件true发送，false不发送
+    */
 	private boolean enable = true;
 	
-	private String receiver;//收件人，多个以英文分号（;）分割
+	/*
+	 *  收件人，多个以英文分号（;）分割
+    */
+	private String receiver;
 	
-	private String subject;//主题
+	/*
+	 *  主题
+    */
+	private String subject;
 	
-	private String content;//内容
+	/*
+	 *  content中xxx{key1},yyyy{key2}
+    */
+	private String content;
 	
+	/*
+	 *  附件列表
+    */
 	private List<String> attachFilePathList;
 	
+	/*
+	 *  content中{key} 对应的 value
+    */
 	private Map<String,String> placeHolderMap;
-
+	
+	/*
+	 *  设置邮件系统参数
+		Properties props = new Properties();
+	    Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+	    final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
+	    props.setProperty("mail.smtp.socketFactory.class", SSL_FACTORY);
+	    props.setProperty("mail.smtp.socketFactory.fallback", "false");
+	    props.setProperty("mail.smtp.socketFactory.port", ConfClient.get("mail.smtp.port"));
+	    props.setProperty("mail.smtp.ssl.enable", true);
+	    props.setProperty("mail.transport.protocol", smtp);
+	    props.setProperty("mail.smtp.auth", true);
+	    props.setProperty("mail.smtp.host", smtp.qq.com);
+	    props.setProperty("mail.smtp.port", 465);
+	    props.setProperty("mail.sender", xxxx@qq.com);
+	    props.setProperty("mail.password", adfadsfadf);
+    */
+	private Properties properties;//邮件的系统信息
 
 
 	public String getKey() {
@@ -78,5 +117,13 @@ public class Mail {
 
 	public void setAttachFilePathList(List<String> attachFilePathList) {
 		this.attachFilePathList = attachFilePathList;
+	}
+
+	public Properties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(Properties properties) {
+		this.properties = properties;
 	}
 }
