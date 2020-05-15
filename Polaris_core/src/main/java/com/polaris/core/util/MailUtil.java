@@ -1,7 +1,6 @@
 package com.polaris.core.util;
 
 import java.io.File;
-import java.security.Security;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.pojo.Mail;
+import com.sun.mail.util.MailSSLSocketFactory;
 
 /**
  * @ClassName: MailUtil
@@ -182,43 +182,46 @@ public class MailUtil {
     public static void sendMail(String key, Executor executor, String... placeHolder) {
     	sendMail(key,executor,null,placeHolder);
     }
-    @SuppressWarnings("restriction")
     public static void sendMail(String key, Executor executor, List<String> attachFilePathList, String... placeHolder) {
-    	if (StringUtil.isEmpty(key)) {
-    		LOGGER.error("mail.key.subject is null");
-    		return;
-    	}
-    	Mail mail = new Mail();
-    	mail.setKey(key);
-    	mail.setEnable(Boolean.parseBoolean(ConfClient.get("mail."+key+".enable", "true")));
-    	mail.setSubject(ConfClient.get("mail."+key+".subject"));
-    	mail.setReceiver(ConfClient.get("mail."+key+".receiver"));
-    	mail.setContent(ConfClient.get("mail."+key+".content"));
-        if (placeHolder != null && placeHolder.length > 0) {
-        	Map<String, String> placeHolderMap = new HashMap<>();
-        	for (int index = 1; index < placeHolder.length + 1; index++) {
-        		placeHolderMap.put("placeHolder"+index, placeHolder[index - 1]);
+    	
+    	try {
+        	if (StringUtil.isEmpty(key)) {
+        		LOGGER.error("mail.key.subject is null");
+        		return;
         	}
-        	mail.setPlaceHolderMap(placeHolderMap);
-        }
-        mail.setAttachFilePathList(attachFilePathList);
-        
-        //mail system props
-        Properties props = new Properties();
-        Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-        final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-        props.setProperty("mail.smtp.socketFactory.class", SSL_FACTORY);
-        props.setProperty("mail.smtp.socketFactory.fallback", "false");
-        props.setProperty("mail.smtp.socketFactory.port", ConfClient.get("mail.smtp.port"));
-        props.setProperty("mail.smtp.ssl.enable", ConfClient.get("mail.smtp.ssl.enable"));
-        props.setProperty("mail.transport.protocol", ConfClient.get("mail.transport.protocol"));
-        props.setProperty("mail.smtp.auth", ConfClient.get("mail.smtp.auth"));
-        props.setProperty("mail.smtp.host", ConfClient.get("mail.smtp.host"));
-        props.setProperty("mail.smtp.port", ConfClient.get("mail.smtp.port"));
-        props.setProperty("mail.sender", ConfClient.get("mail.sender"));
-        props.setProperty("mail.password", ConfClient.get("mail.password"));
-        mail.setProperties(props);
-        sendMail(mail, executor);
+        	Mail mail = new Mail();
+        	mail.setKey(key);
+        	mail.setEnable(Boolean.parseBoolean(ConfClient.get("mail."+key+".enable", "true")));
+        	mail.setSubject(ConfClient.get("mail."+key+".subject"));
+        	mail.setReceiver(ConfClient.get("mail."+key+".receiver"));
+        	mail.setContent(ConfClient.get("mail."+key+".content"));
+            if (placeHolder != null && placeHolder.length > 0) {
+            	Map<String, String> placeHolderMap = new HashMap<>();
+            	for (int index = 1; index < placeHolder.length + 1; index++) {
+            		placeHolderMap.put("placeHolder"+index, placeHolder[index - 1]);
+            	}
+            	mail.setPlaceHolderMap(placeHolderMap);
+            }
+            mail.setAttachFilePathList(attachFilePathList);
+            
+            //mail system props
+            Properties props = new Properties();
+            MailSSLSocketFactory sslFactory = new MailSSLSocketFactory();
+            sslFactory.setTrustAllHosts(true);
+            props.put("mail.smtp.ssl.socketFactory", sslFactory);
+            props.setProperty("mail.smtp.ssl.enable", ConfClient.get("mail.smtp.ssl.enable"));
+            props.setProperty("mail.transport.protocol", ConfClient.get("mail.transport.protocol"));
+            props.setProperty("mail.smtp.auth", ConfClient.get("mail.smtp.auth"));
+            props.setProperty("mail.smtp.host", ConfClient.get("mail.smtp.host"));
+            props.setProperty("mail.smtp.port", ConfClient.get("mail.smtp.port"));
+            props.setProperty("mail.sender", ConfClient.get("mail.sender"));
+            props.setProperty("mail.password", ConfClient.get("mail.password"));
+            mail.setProperties(props);
+            sendMail(mail, executor);
+    	} catch (Exception ex) {
+    		LOGGER.error("ERROR:",ex);
+    	}
+
     }
 	public static void sendMail(Mail mail,Executor executor) {
 		if (executor != null) {
@@ -279,5 +282,38 @@ public class MailUtil {
         }
 	}
 
-
+	public static void main( String[] args ) throws Exception
+    {
+		Mail mail = new Mail();
+		mail.setKey("test");
+    	mail.setEnable(true);
+    	mail.setSubject("test");
+    	mail.setReceiver("yfh0919@icloud.com");
+    	mail.setContent("test");
+        //mail system props
+        Properties props = new Properties();
+        
+        MailSSLSocketFactory sslFactory = new MailSSLSocketFactory();
+        sslFactory.setTrustAllHosts(true);
+        props.put("mail.smtp.ssl.socketFactory", sslFactory);
+        props.setProperty("mail.smtp.ssl.enable", "true");
+        props.setProperty("mail.transport.protocol", "smtp");
+        props.setProperty("mail.smtp.auth", "true");
+        props.setProperty("mail.smtp.host", "smtp.qq.com");
+        props.setProperty("mail.smtp.port", "465");
+        props.setProperty("mail.sender", "1815549411@qq.com");
+        props.setProperty("mail.password", "oamcxrnpmnngeaif");
+        mail.setProperties(props);
+		sendMail(mail);
+		
+		List<String> f = new ArrayList<>();
+		f.add("C:\\projects\\Polaris\\readme.txt");
+		mail.setAttachFilePathList(f);
+		mail.setKey("test2");
+    	mail.setEnable(true);
+    	mail.setSubject("test2");
+    	mail.setReceiver("yfh0919@icloud.com");
+    	mail.setContent("test2");
+		sendMail(mail);
+    }
 }
