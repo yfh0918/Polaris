@@ -47,11 +47,9 @@ public class Mail {
 	/*
 	 *  设置邮件系统参数
 		Properties props = new Properties();
-	    Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-	    final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-	    props.setProperty("mail.smtp.socketFactory.class", SSL_FACTORY);
-	    props.setProperty("mail.smtp.socketFactory.fallback", "false");
-	    props.setProperty("mail.smtp.socketFactory.port", ConfClient.get("mail.smtp.port"));
+        MailSSLSocketFactory sslFactory = new MailSSLSocketFactory();
+        sslFactory.setTrustAllHosts(true);
+        props.put("mail.smtp.ssl.socketFactory", sslFactory);
 	    props.setProperty("mail.smtp.ssl.enable", true);
 	    props.setProperty("mail.transport.protocol", smtp);
 	    props.setProperty("mail.smtp.auth", true);
