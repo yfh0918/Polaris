@@ -1,6 +1,5 @@
 package com.polaris.core.pojo;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 /**
@@ -37,7 +36,7 @@ public class Mail {
 	/*
 	 *  附件列表
     */
-	private List<String> attachFilePathList;
+	private String[] attachFilePaths;
 	
 	/*
 	 *  content中{key} 对应的 value
@@ -109,12 +108,12 @@ public class Mail {
 		this.placeHolderMap = placeHolderMap;
 	}
 
-	public List<String> getAttachFilePathList() {
-		return attachFilePathList;
+	public String[] getAttachFilePaths() {
+		return attachFilePaths;
 	}
 
-	public void setAttachFilePathList(List<String> attachFilePathList) {
-		this.attachFilePathList = attachFilePathList;
+	public void setAttachFilePaths(String... attachFilePaths) {
+		this.attachFilePaths = attachFilePaths;
 	}
 
 	public Properties getProperties() {

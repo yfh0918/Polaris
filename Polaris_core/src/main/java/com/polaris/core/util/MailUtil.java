@@ -202,7 +202,9 @@ public class MailUtil {
             	}
             	mail.setPlaceHolderMap(placeHolderMap);
             }
-            mail.setAttachFilePathList(attachFilePathList);
+            if (attachFilePathList != null && attachFilePathList.size() > 0) {
+            	mail.setAttachFilePaths(attachFilePathList.toArray(new String[attachFilePathList.size()]));
+            }
             
             //mail system props
             Properties props = new Properties();
@@ -275,10 +277,6 @@ public class MailUtil {
         }
         
         //发邮件
-        if (mail.getAttachFilePathList() == null || mail.getAttachFilePathList().size() == 0) {
-        	sendMail(mail.getReceiver(), mail.getSubject(), content, mail.getProperties());            
-        } else {
-        	sendMail(mail.getReceiver(), mail.getSubject(), content, mail.getProperties(), mail.getAttachFilePathList().toArray(new String[mail.getAttachFilePathList().size()]));            
-        }
+    	sendMail(mail.getReceiver(), mail.getSubject(), content, mail.getProperties(), mail.getAttachFilePaths());            
 	}
 }
