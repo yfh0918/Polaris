@@ -22,32 +22,26 @@ import com.polaris.core.util.StringUtil;
 public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 	
 	Log4jMarkerFactory log4jMarkerFactory = new Log4jMarkerFactory();
-	private volatile boolean initialized = false;
-	private boolean init() {
-		if (initialized) {
-			return initialized;
-		}
+	private boolean traceEnable = false;
+	private void init() {
 		synchronized(ExtendedLogger.class) {
 			//载入日志文件
 			try {
 
 				//从系统目录获取logging.config 
-				String logFile = ConfHandlerSysProvider.INSTANCE.getProperties().getProperty(Constant.LOG_CONFIG, Constant.DEFAULT_LOG_FILE);
+				String logFile = ConfHandlerSysProvider.INSTANCE.getProperties().getProperty(Constant.LOG_CONFIG_KEY, Constant.DEFAULT_LOG_FILE);
 				
 				//设置具体的日志
 				if (logFile != null && !logFile.isEmpty()) {
-					System.setProperty("log4j.configurationFile", logFile);
-					
+					System.setProperty(Constant.LOG_CONFIG_FILE_KEY, logFile);
 			        Logger templogger = LogManager.getLogger(this.name);
 			        logger = new ExtendedLoggerWrapper((AbstractLogger)templogger,templogger.getName(),templogger.getMessageFactory());
-
-					initialized = true;
-					return initialized;
+			        traceEnable = Boolean.parseBoolean(ConfHandlerSysProvider.INSTANCE.getProperties().getProperty(Constant.LOG_TRACE_ENABEL,"false"));
 				}
 			} catch (Exception e) {
+				//ignore
 			}
 		}
-		return false;
 		
 	}
 	
@@ -56,7 +50,7 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private ExtendedLoggerWrapper logger;
+	private AbstractLogger logger;
 	public static final String YEAR_MONTH_DAY_TIME = "yyyy-MM-dd HH:mm:ss";
 	
 	public static final String LOG_SEPARATOR = "->";// 分割符号
@@ -85,7 +79,14 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 		this.name = rootLoggerName;
         this.parent = (ExtendedLogger)object;
         this.loggerContext = loggerContext;
-		init();
+        init();
+	}
+	
+	private AbstractLogger getLogger() {
+		if (logger == null) {
+			init();
+		}
+		return logger == null ? NullLogger.INSTANCE : logger;
 	}
 	
 	public String getName() {
@@ -93,419 +94,242 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 	}
 
 	public boolean isTraceEnabled() {
-		if (!init()) {
-			return false;
-		}
-		return logger.isTraceEnabled();
+		return getLogger().isTraceEnabled();
 	}
 
 	public void trace(String msg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.TRACE, null, getMessage(msg), (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, null, getMessage(msg), (Throwable) null);
 	}
 
 	public void trace(String format, Object arg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.TRACE, null, getMessage(format), arg);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, null, getMessage(format), arg);
 	}
 
 	public void trace(String format, Object arg1, Object arg2) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.TRACE, null, getMessage(format), arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, null, getMessage(format), arg1, arg2);
 	}
 
 	public void trace(String format, Object... arguments) {
-		logger.logIfEnabled(FQCN, Level.TRACE, null, getMessage(format), arguments);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, null, getMessage(format), arguments);
 	}
 
 	public void trace(String msg, Throwable t) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.TRACE, null, getMessage(msg), t);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, null, getMessage(msg), t);
 	}
 
 	public boolean isTraceEnabled(Marker marker) {
-		if (!init()) {
-			return false;
-		}
-		return logger.isTraceEnabled(getMarker(marker));
+		return getLogger().isTraceEnabled(getMarker(marker));
 	}
 
 	public void trace(Marker marker, String msg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(msg), (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(msg), (Throwable) null);
 	}
 
 	public void trace(Marker marker, String format, Object arg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(format), arg);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(format), arg);
 	}
 
 	public void trace(Marker marker, String format, Object arg1, Object arg2) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(format), arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(format), arg1, arg2);
 	}
 
 	public void trace(Marker marker, String format, Object... argArray) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(format), argArray);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(format), argArray);
 	}
 
 	public void trace(Marker marker, String msg, Throwable t) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(msg), t);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(msg), t);
 	}
 
 	public boolean isDebugEnabled() {
-		if (!init()) {
-			return false;
-		}
-		return logger.isDebugEnabled();
+		return getLogger().isDebugEnabled();
 	}
 
 	public void debug(String msg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.DEBUG, null, getMessage(msg), (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, getMessage(msg), (Throwable) null);
 	}
 
 	public void debug(String format, Object arg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.DEBUG, null, getMessage(format), arg);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, getMessage(format), arg);
 	}
 
 	public void debug(String format, Object arg1, Object arg2) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.DEBUG, null, getMessage(format), arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, getMessage(format), arg1, arg2);
 	}
 
 	public void debug(String format, Object... arguments) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.DEBUG, null, getMessage(format), arguments);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, getMessage(format), arguments);
 	}
 
 	public void debug(String msg, Throwable t) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.DEBUG, null, getMessage(msg), t);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, getMessage(msg), t);
 	}
 
 	public boolean isDebugEnabled(Marker marker) {
-		if (!init()) {
-			return false;
-		}
-		return logger.isDebugEnabled(getMarker(marker));
+		return getLogger().isDebugEnabled(getMarker(marker));
 	}
 
 	public void debug(Marker marker,String msg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(msg), (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(msg), (Throwable) null);
 	}
 
 	public void debug(Marker marker,String format, Object arg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(format), arg);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(format), arg);
 	}
 
 	public void debug(Marker marker,String format, Object arg1, Object arg2) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(format), arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(format), arg1, arg2);
 	}
 
 	public void debug(Marker marker,String format, Object... arguments) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(format), arguments);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(format), arguments);
 	}
 
 	public void debug(Marker marker,String msg, Throwable t) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(msg), t);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(msg), t);
 	}
 
 	public boolean isInfoEnabled() {
-		if (!init()) {
-			return false;
-		}
-		return logger.isInfoEnabled();
+		return getLogger().isInfoEnabled();
 	}
 
 	public void info(String msg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.INFO, null, getMessage(msg), (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.INFO, null, getMessage(msg), (Throwable) null);
 	}
 
 	public void info(String format, Object arg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.INFO, null, getMessage(format), arg);
+		getLogger().logIfEnabled(FQCN, Level.INFO, null, getMessage(format), arg);
 	}
 
 	public void info(String format, Object arg1, Object arg2) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.INFO, null, getMessage(format), arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.INFO, null, getMessage(format), arg1, arg2);
 	}
 
 	public void info(String format, Object... arguments) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.INFO, null, getMessage(format), arguments);
+		getLogger().logIfEnabled(FQCN, Level.INFO, null, getMessage(format), arguments);
 	}
 
 	public void info(String msg, Throwable t) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.INFO, null, getMessage(msg), t);
+		getLogger().logIfEnabled(FQCN, Level.INFO, null, getMessage(msg), t);
 	}
 
 	public boolean isInfoEnabled(Marker marker) {
-		if (!init()) {
-			return false;
-		}
-		return logger.isInfoEnabled(getMarker(marker));
+		return getLogger().isInfoEnabled(getMarker(marker));
 	}
 
 	public void info(Marker marker,String msg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(msg), (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(msg), (Throwable) null);
 	}
 
 	public void info(Marker marker,String format, Object arg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(format), arg);
+		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(format), arg);
 	}
 
 	public void info(Marker marker,String format, Object arg1, Object arg2) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(format), arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(format), arg1, arg2);
 	}
 
 	public void info(Marker marker,String format, Object... arguments) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(format), arguments);
+		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(format), arguments);
 	}
 
 	public void info(Marker marker,String msg, Throwable t) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(msg), t);
+		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(msg), t);
 	}
 	public boolean isWarnEnabled() {
-		if (!init()) {
-			return false;
-		}
-		return logger.isWarnEnabled();
+		return getLogger().isWarnEnabled();
 	}
 	
 	public void warn(String msg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.WARN, null, getMessage(msg), (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.WARN, null, getMessage(msg), (Throwable) null);
 	}
 
 	public void warn(String format, Object arg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.WARN, null, getMessage(format), arg);
+		getLogger().logIfEnabled(FQCN, Level.WARN, null, getMessage(format), arg);
 	}
 
 	public void warn(String format, Object arg1, Object arg2) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.WARN, null, getMessage(format), arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.WARN, null, getMessage(format), arg1, arg2);
 	}
 
 	public void warn(String format, Object... arguments) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.WARN, null, getMessage(format), arguments);
+		getLogger().logIfEnabled(FQCN, Level.WARN, null, getMessage(format), arguments);
 	}
 
 	public void warn(String msg, Throwable t) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.WARN, null, getMessage(msg), t);
+		getLogger().logIfEnabled(FQCN, Level.WARN, null, getMessage(msg), t);
 	}
 
 	public boolean isWarnEnabled(Marker marker) {
-		if (!init()) {
-			return false;
-		}
-		return logger.isWarnEnabled(getMarker(marker));
+		return getLogger().isWarnEnabled(getMarker(marker));
 	}
 
 	public void warn(Marker marker,String msg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(msg), (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(msg), (Throwable) null);
 	}
 
 	public void warn(Marker marker,String format, Object arg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(format), arg);
+		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(format), arg);
 	}
 
 	public void warn(Marker marker,String format, Object arg1, Object arg2) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(format), arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(format), arg1, arg2);
 	}
 
 	public void warn(Marker marker,String format, Object... arguments) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(format), arguments);
+		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(format), arguments);
 	}
 
 	public void warn(Marker marker,String msg, Throwable t) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(msg), t);
+		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(msg), t);
 	}
 
 	public boolean isErrorEnabled() {
-		if (!init()) {
-			return false;
-		}
-		return logger.isErrorEnabled();
+		return getLogger().isErrorEnabled();
 	}
 
 	public void error(String msg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.ERROR, null, getMessage(msg), (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, null, getMessage(msg), (Throwable) null);
 	}
 
 	public void error(String format, Object arg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.ERROR, null, getMessage(format), arg);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, null, getMessage(format), arg);
 	}
 
 	public void error(String format, Object arg1, Object arg2) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.ERROR, null, getMessage(format), arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, null, getMessage(format), arg1, arg2);
 	}
 
 	public void error(String format, Object... arguments) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.ERROR, null, getMessage(format), arguments);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, null, getMessage(format), arguments);
 	}
 
 	public void error(String msg, Throwable t) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.ERROR, null, getMessage(msg), t);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, null, getMessage(msg), t);
 	}
 
 	public boolean isErrorEnabled(Marker marker) {
-		if (!init()) {
-			return false;
-		}
-		return logger.isErrorEnabled(getMarker(marker));
+		return getLogger().isErrorEnabled(getMarker(marker));
 	}
 
 	public void error(Marker marker,String msg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(msg), (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(msg), (Throwable) null);
 	}
 
 	public void error(Marker marker,String format, Object arg) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(format), arg);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(format), arg);
 	}
 
 	public void error(Marker marker,String format, Object arg1, Object arg2) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(format), arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(format), arg1, arg2);
 	}
 
 	public void error(Marker marker,String format, Object... arguments) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(format), arguments);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(format), arguments);
 	}
 
 	public void error(Marker marker,String msg, Throwable t) {
-		if (!init()) {
-			return;
-		}
-		logger.logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(msg), t);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(msg), t);
 	}
 
 	public void setLevel(int debug) {
@@ -551,15 +375,16 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
         return childLogger;
     }
     
-
-
 	//日志输出
-	private String getMessage(Object strO) {
+	private String getMessage(String strO) {
 		String str = null;
 		if (strO != null) {
-			str = strO.toString();
+			str = strO;
 		} else {
 			str = "";
+		}
+		if (!traceEnable) {
+			return str;
 		}
 
 		//logger
@@ -611,7 +436,7 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 
 	@Override
 	public void log(Marker marker, String fqcn, int level, String message, Object[] argArray, Throwable t) {
-		logger.logIfEnabled(fqcn, getLevel(level), getMarker(marker), getMessage(message), argArray, t);
+		getLogger().logIfEnabled(fqcn, getLevel(level), getMarker(marker), getMessage(message), argArray, t);
 	}
 	
 	private Level getLevel(int level) {
