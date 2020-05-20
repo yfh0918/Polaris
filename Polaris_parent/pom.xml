@@ -4,7 +4,7 @@
    <parent>
 		<groupId>com.polaris</groupId>
 		<artifactId>Polaris</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2</version>
 	</parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>Polaris_parent</artifactId>
@@ -18,7 +18,7 @@
         <tomcat-version>9.0.31</tomcat-version>
         <jetty-version>9.4.24.v20191120</jetty-version>
         <undertow-version>2.0.30.Final</undertow-version>
-        
+        <polaris-version>1.0.2</polaris-version>
         <activiti-version>5.22.0</activiti-version>
         <hibernate-version>5.4.10.Final</hibernate-version>
         <lucene-version>7.2.0</lucene-version>
@@ -26,7 +26,6 @@
         <cxf.version>2.7.13</cxf.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <swagger-version>2.9.2</swagger-version>
-        <polaris-version>1.0.1</polaris-version>
         <nacos.version>1.1.4</nacos.version>
         <dubbo-version>2.7.4</dubbo-version>
         <sentinel-version>1.7.0</sentinel-version>

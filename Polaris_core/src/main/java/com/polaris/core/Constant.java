@@ -87,7 +87,9 @@ public class Constant {
 	public static final String CONFIG_REGISTRY_ADDRESS_NAME = "config.registry.address";
 	
 	// 日志
-	public static final String LOG_CONFIG="logging.config";
+	public static final String LOG_TRACE_ENABEL="logging.trace.enable";
+	public static final String LOG_CONFIG_FILE_KEY = "log4j.configurationFile";
+	public static final String LOG_CONFIG_KEY="logging.config";
 	public static final String DEFAULT_LOG_FILE = "classpath:config/log4j2.xml";
 	
 	//换行
