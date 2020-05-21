@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
+import com.polaris.core.pojo.Server;
 import com.polaris.core.util.NetUtils;
 
 /**
@@ -23,22 +24,18 @@ abstract public class CronScheduledBusinessTask implements Runnable {
 		try {
 			
 			//get cluster ip list
-            List<String> list = ServerStrategyProviderFactory.get().getRealIpUrlList(ConfClient.getAppName());
+            List<Server> list = ServerStrategyProviderFactory.get().getServerList(ConfClient.getAppName());
             if (list == null || list.size() == 0) {
             	taskExecute();
             	return;
             }
             
-            //get first ip for tast execute
-            String scheduleIpAndPort = list.get(0);
-            String localHost = NetUtils.getLocalHost();
-            String localPort = ConfClient.get(Constant.SERVER_PORT_NAME);
-            String registerIpAndPort = ConfClient.get(Constant.IP_ADDRESS, localHost) + ":" + localPort;
-            
-            //ip is ok
-            if (registerIpAndPort.equals(scheduleIpAndPort)) {
-            	
-            	//task execute
+            //get first Server for tast execute
+            Server server = list.get(0);
+            String localIp = ConfClient.get(Constant.IP_ADDRESS,NetUtils.getLocalHost());
+            Integer localPort = Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME));
+            Server localServer = Server.of(localIp, localPort);
+            if (server.equals(localServer)) {
             	taskExecute();
             }
         } catch (Exception e) {
