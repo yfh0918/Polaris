@@ -72,12 +72,15 @@
         </dependency>
   详情参考Polaris_demo_web_springmvc
   
-9，支持整体调用链路的跟踪，需要配置开启logging.trace.enable=true
-    遵循opening trace协议：traceId, spanId,parentId,moduleId
-    日志采用slf4j的 Logger xLogger = LoggerFactory.getLogger(xxx.class);只需引入Polaris_core包
+9，
+   9.1 支持整体调用链路的跟踪，需要配置开启logging.trace.enable=true
+       遵循opening trace协议：traceId, spanId,parentId,moduleId
+       日志采用slf4j的 Logger xLogger = LoggerFactory.getLogger(xxx.class);只需引入Polaris_core包
 	另外如果采用线程池的方式，需要InheritableThreadLocalExecutor和InheritablePolarisThreadLocal搭配方式使用，线程池中的traceId信息也会进行传递
 	采用dubbo方式 需要映入polaris_container_dubbo模块，帮你做了traceID的传递，
 	http方式 采用HttpClientUtil方式，帮你做了traceID的传递，如果对日志发送到第三方监控装置，可以自行改造Polaris_logger的ExtendedLogger的getMessage方法
+   9.2 支持log4jCallBack回调，需要继承com.polaris.core.log.Log4jCallBack，
+         采用SPI扩展，需要注意的是回调接口中不能用logger.xxx会造成死循环，具体参照Polaris_demo_web_springmvc工程DemoLog4jCallBack类
 	
 10,缓存模块Polaris_extension_cache,
    CacheFactory.getCache(cachename);获取缓存，默认采用EHCache, 

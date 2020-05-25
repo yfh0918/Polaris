@@ -27,9 +27,7 @@ public class ExtendedLoggerContext implements ILoggerFactory {
     public ExtendedLoggerContext() {
         super();
         this.loggerCache = new ConcurrentHashMap<String, ExtendedLogger>();
-
         this.root = new ExtendedLogger(ExtendedLogger.ROOT_LOGGER_NAME, null, this);
-        this.root.setLevel(DEBUG);
         loggerCache.put(ExtendedLogger.ROOT_LOGGER_NAME, root);
         initEvaluatorMap();
         this.frameworkPackages = new ArrayList<String>();

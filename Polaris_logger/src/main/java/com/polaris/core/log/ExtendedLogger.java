@@ -12,14 +12,13 @@ import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 import org.slf4j.Marker;
 import org.slf4j.helpers.BasicMarker;
 import org.slf4j.impl.StaticMarkerBinder;
-import org.slf4j.spi.LocationAwareLogger;
 
 import com.polaris.core.Constant;
 import com.polaris.core.GlobalContext;
 import com.polaris.core.config.provider.ConfHandlerSysProvider;
 import com.polaris.core.util.StringUtil;
 
-public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
+public final class ExtendedLogger extends ExtendedLoggerCallBack implements Serializable {
 	
 	Log4jMarkerFactory log4jMarkerFactory = new Log4jMarkerFactory();
 	private boolean traceEnable = false;
@@ -93,248 +92,408 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
 		return "Polaris.log";
 	}
 
+	@Override
 	public boolean isTraceEnabled() {
 		return getLogger().isTraceEnabled();
 	}
 
+	@Override
 	public void trace(String msg) {
-		getLogger().logIfEnabled(FQCN, Level.TRACE, null, getMessage(msg), (Throwable) null);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.trace(wrappedMessage);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, null, wrappedMessage, (Throwable) null);
 	}
 
+	@Override
 	public void trace(String format, Object arg) {
-		getLogger().logIfEnabled(FQCN, Level.TRACE, null, getMessage(format), arg);
+		String wrappedMessage = getWrappedMessage(format);
+		super.trace(wrappedMessage, arg);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, null, wrappedMessage, arg);
 	}
 
+	@Override
 	public void trace(String format, Object arg1, Object arg2) {
-		getLogger().logIfEnabled(FQCN, Level.TRACE, null, getMessage(format), arg1, arg2);
+		String wrappedMessage = getWrappedMessage(format);
+		super.trace(wrappedMessage,arg1,arg2);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, null, wrappedMessage, arg1, arg2);
 	}
 
+	@Override
 	public void trace(String format, Object... arguments) {
-		getLogger().logIfEnabled(FQCN, Level.TRACE, null, getMessage(format), arguments);
+		String wrappedMessage = getWrappedMessage(format);
+		super.trace(wrappedMessage, arguments);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, null, wrappedMessage, arguments);
 	}
 
+	@Override
 	public void trace(String msg, Throwable t) {
-		getLogger().logIfEnabled(FQCN, Level.TRACE, null, getMessage(msg), t);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.trace(wrappedMessage, t);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, null, wrappedMessage, t);
 	}
 
+	@Override
 	public boolean isTraceEnabled(Marker marker) {
 		return getLogger().isTraceEnabled(getMarker(marker));
 	}
 
+	@Override
 	public void trace(Marker marker, String msg) {
-		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(msg), (Throwable) null);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.trace(marker, wrappedMessage);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), wrappedMessage, (Throwable) null);
 	}
 
+	@Override
 	public void trace(Marker marker, String format, Object arg) {
-		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(format), arg);
+		String wrappedMessage = getWrappedMessage(format);
+		super.trace(marker, wrappedMessage,arg);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), wrappedMessage, arg);
 	}
 
+	@Override
 	public void trace(Marker marker, String format, Object arg1, Object arg2) {
-		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(format), arg1, arg2);
+		String wrappedMessage = getWrappedMessage(format);
+		super.trace(marker, wrappedMessage,arg1,arg2);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), wrappedMessage, arg1, arg2);
 	}
 
+	@Override
 	public void trace(Marker marker, String format, Object... argArray) {
-		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(format), argArray);
+		String wrappedMessage = getWrappedMessage(format);
+		super.trace(marker, wrappedMessage,argArray);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), wrappedMessage, argArray);
 	}
 
+	@Override
 	public void trace(Marker marker, String msg, Throwable t) {
-		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), getMessage(msg), t);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.trace(marker, wrappedMessage,t);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), wrappedMessage, t);
 	}
 
+	@Override
 	public boolean isDebugEnabled() {
 		return getLogger().isDebugEnabled();
 	}
 
+	@Override
 	public void debug(String msg) {
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, getMessage(msg), (Throwable) null);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.debug(wrappedMessage);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, wrappedMessage, (Throwable) null);
 	}
 
+	@Override
 	public void debug(String format, Object arg) {
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, getMessage(format), arg);
+		String wrappedMessage = getWrappedMessage(format);
+		super.debug(wrappedMessage,arg);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, wrappedMessage, arg);
 	}
 
+	@Override
 	public void debug(String format, Object arg1, Object arg2) {
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, getMessage(format), arg1, arg2);
+		String wrappedMessage = getWrappedMessage(format);
+		super.debug(wrappedMessage,arg1,arg2);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, wrappedMessage, arg1, arg2);
 	}
 
+	@Override
 	public void debug(String format, Object... arguments) {
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, getMessage(format), arguments);
+		String wrappedMessage = getWrappedMessage(format);
+		super.debug(wrappedMessage,arguments);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, wrappedMessage, arguments);
 	}
 
+	@Override
 	public void debug(String msg, Throwable t) {
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, getMessage(msg), t);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.debug(wrappedMessage,t);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, wrappedMessage, t);
 	}
 
 	public boolean isDebugEnabled(Marker marker) {
 		return getLogger().isDebugEnabled(getMarker(marker));
 	}
 
+	@Override
 	public void debug(Marker marker,String msg) {
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(msg), (Throwable) null);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.debug(marker,wrappedMessage);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), wrappedMessage, (Throwable) null);
 	}
 
+	@Override
 	public void debug(Marker marker,String format, Object arg) {
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(format), arg);
+		String wrappedMessage = getWrappedMessage(format);
+		super.debug(marker,wrappedMessage,arg);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), wrappedMessage, arg);
 	}
 
+	@Override
 	public void debug(Marker marker,String format, Object arg1, Object arg2) {
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(format), arg1, arg2);
+		String wrappedMessage = getWrappedMessage(format);
+		super.debug(marker,wrappedMessage,arg1,arg2);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), wrappedMessage, arg1, arg2);
 	}
 
 	public void debug(Marker marker,String format, Object... arguments) {
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(format), arguments);
+		String wrappedMessage = getWrappedMessage(format);
+		super.debug(marker,wrappedMessage,arguments);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), wrappedMessage, arguments);
 	}
 
+	@Override
 	public void debug(Marker marker,String msg, Throwable t) {
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), getMessage(msg), t);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.debug(marker,wrappedMessage,t);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), wrappedMessage, t);
 	}
 
+	@Override
 	public boolean isInfoEnabled() {
 		return getLogger().isInfoEnabled();
 	}
 
+	@Override
 	public void info(String msg) {
-		getLogger().logIfEnabled(FQCN, Level.INFO, null, getMessage(msg), (Throwable) null);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.info(wrappedMessage);
+		getLogger().logIfEnabled(FQCN, Level.INFO, null, wrappedMessage, (Throwable) null);
 	}
 
+	@Override
 	public void info(String format, Object arg) {
-		getLogger().logIfEnabled(FQCN, Level.INFO, null, getMessage(format), arg);
+		String wrappedMessage = getWrappedMessage(format);
+		super.info(wrappedMessage,arg);
+		getLogger().logIfEnabled(FQCN, Level.INFO, null, wrappedMessage, arg);
 	}
 
+	@Override
 	public void info(String format, Object arg1, Object arg2) {
-		getLogger().logIfEnabled(FQCN, Level.INFO, null, getMessage(format), arg1, arg2);
+		String wrappedMessage = getWrappedMessage(format);
+		super.info(wrappedMessage,arg1,arg2);
+		getLogger().logIfEnabled(FQCN, Level.INFO, null, wrappedMessage, arg1, arg2);
 	}
 
+	@Override
 	public void info(String format, Object... arguments) {
-		getLogger().logIfEnabled(FQCN, Level.INFO, null, getMessage(format), arguments);
+		String wrappedMessage = getWrappedMessage(format);
+		super.info(wrappedMessage, arguments);
+		getLogger().logIfEnabled(FQCN, Level.INFO, null, wrappedMessage, arguments);
 	}
 
+	@Override
 	public void info(String msg, Throwable t) {
-		getLogger().logIfEnabled(FQCN, Level.INFO, null, getMessage(msg), t);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.info(wrappedMessage, t);
+		getLogger().logIfEnabled(FQCN, Level.INFO, null, wrappedMessage, t);
 	}
 
+	@Override
 	public boolean isInfoEnabled(Marker marker) {
 		return getLogger().isInfoEnabled(getMarker(marker));
 	}
 
+	@Override
 	public void info(Marker marker,String msg) {
-		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(msg), (Throwable) null);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.info(marker,wrappedMessage);
+		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), wrappedMessage, (Throwable) null);
 	}
 
+	@Override
 	public void info(Marker marker,String format, Object arg) {
-		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(format), arg);
+		String wrappedMessage = getWrappedMessage(format);
+		super.info(marker,wrappedMessage,arg);
+		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), wrappedMessage, arg);
 	}
 
+	@Override
 	public void info(Marker marker,String format, Object arg1, Object arg2) {
-		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(format), arg1, arg2);
+		String wrappedMessage = getWrappedMessage(format);
+		super.info(marker,wrappedMessage,arg1,arg2);
+		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), wrappedMessage, arg1, arg2);
 	}
 
+	@Override
 	public void info(Marker marker,String format, Object... arguments) {
-		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(format), arguments);
+		String wrappedMessage = getWrappedMessage(format);
+		super.info(marker,wrappedMessage,arguments);
+		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), wrappedMessage, arguments);
 	}
 
+	@Override
 	public void info(Marker marker,String msg, Throwable t) {
-		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), getMessage(msg), t);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.info(marker,wrappedMessage,t);
+		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), wrappedMessage, t);
 	}
 	public boolean isWarnEnabled() {
 		return getLogger().isWarnEnabled();
 	}
 	
+	@Override
 	public void warn(String msg) {
-		getLogger().logIfEnabled(FQCN, Level.WARN, null, getMessage(msg), (Throwable) null);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.warn(wrappedMessage);
+		getLogger().logIfEnabled(FQCN, Level.WARN, null, wrappedMessage, (Throwable) null);
 	}
 
+	@Override
 	public void warn(String format, Object arg) {
-		getLogger().logIfEnabled(FQCN, Level.WARN, null, getMessage(format), arg);
+		String wrappedMessage = getWrappedMessage(format);
+		super.warn(wrappedMessage,arg);
+		getLogger().logIfEnabled(FQCN, Level.WARN, null, wrappedMessage, arg);
 	}
 
 	public void warn(String format, Object arg1, Object arg2) {
-		getLogger().logIfEnabled(FQCN, Level.WARN, null, getMessage(format), arg1, arg2);
+		String wrappedMessage = getWrappedMessage(format);
+		super.warn(wrappedMessage,arg1,arg2);
+		getLogger().logIfEnabled(FQCN, Level.WARN, null, wrappedMessage, arg1, arg2);
 	}
 
+	@Override
 	public void warn(String format, Object... arguments) {
-		getLogger().logIfEnabled(FQCN, Level.WARN, null, getMessage(format), arguments);
+		String wrappedMessage = getWrappedMessage(format);
+		super.warn(wrappedMessage,arguments);
+		getLogger().logIfEnabled(FQCN, Level.WARN, null, wrappedMessage, arguments);
 	}
 
+	@Override
 	public void warn(String msg, Throwable t) {
-		getLogger().logIfEnabled(FQCN, Level.WARN, null, getMessage(msg), t);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.warn(wrappedMessage,t);
+		getLogger().logIfEnabled(FQCN, Level.WARN, null, wrappedMessage, t);
 	}
 
+	@Override
 	public boolean isWarnEnabled(Marker marker) {
 		return getLogger().isWarnEnabled(getMarker(marker));
 	}
 
+	@Override
 	public void warn(Marker marker,String msg) {
-		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(msg), (Throwable) null);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.warn(marker,wrappedMessage);
+		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), wrappedMessage, (Throwable) null);
 	}
 
+	@Override
 	public void warn(Marker marker,String format, Object arg) {
-		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(format), arg);
+		String wrappedMessage = getWrappedMessage(format);
+		super.warn(marker,wrappedMessage,arg);
+		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), wrappedMessage, arg);
 	}
 
+	@Override
 	public void warn(Marker marker,String format, Object arg1, Object arg2) {
-		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(format), arg1, arg2);
+		String wrappedMessage = getWrappedMessage(format);
+		super.warn(marker,wrappedMessage,arg1,arg2);
+		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), wrappedMessage, arg1, arg2);
 	}
 
+	@Override
 	public void warn(Marker marker,String format, Object... arguments) {
-		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(format), arguments);
+		String wrappedMessage = getWrappedMessage(format);
+		super.warn(marker,wrappedMessage,arguments);
+		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), wrappedMessage, arguments);
 	}
 
+	@Override
 	public void warn(Marker marker,String msg, Throwable t) {
-		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), getMessage(msg), t);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.warn(marker,wrappedMessage,t);
+		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), wrappedMessage, t);
 	}
 
+	@Override
 	public boolean isErrorEnabled() {
 		return getLogger().isErrorEnabled();
 	}
 
+	@Override
 	public void error(String msg) {
-		getLogger().logIfEnabled(FQCN, Level.ERROR, null, getMessage(msg), (Throwable) null);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.error(wrappedMessage);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, null, wrappedMessage, (Throwable) null);
 	}
 
+	@Override
 	public void error(String format, Object arg) {
-		getLogger().logIfEnabled(FQCN, Level.ERROR, null, getMessage(format), arg);
+		String wrappedMessage = getWrappedMessage(format);
+		super.error(wrappedMessage,arg);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, null, wrappedMessage, arg);
 	}
 
+	@Override
 	public void error(String format, Object arg1, Object arg2) {
-		getLogger().logIfEnabled(FQCN, Level.ERROR, null, getMessage(format), arg1, arg2);
+		String wrappedMessage = getWrappedMessage(format);
+		super.error(wrappedMessage,arg1,arg2);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, null, wrappedMessage, arg1, arg2);
 	}
 
+	@Override
 	public void error(String format, Object... arguments) {
-		getLogger().logIfEnabled(FQCN, Level.ERROR, null, getMessage(format), arguments);
+		String wrappedMessage = getWrappedMessage(format);
+		super.error(wrappedMessage,arguments);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, null, wrappedMessage, arguments);
 	}
 
+	@Override
 	public void error(String msg, Throwable t) {
-		getLogger().logIfEnabled(FQCN, Level.ERROR, null, getMessage(msg), t);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.error(wrappedMessage,t);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, null, wrappedMessage, t);
 	}
 
+	@Override
 	public boolean isErrorEnabled(Marker marker) {
 		return getLogger().isErrorEnabled(getMarker(marker));
 	}
 
+	@Override
 	public void error(Marker marker,String msg) {
-		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(msg), (Throwable) null);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.error(marker,wrappedMessage);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), wrappedMessage, (Throwable) null);
 	}
 
+	@Override
 	public void error(Marker marker,String format, Object arg) {
-		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(format), arg);
+		String wrappedMessage = getWrappedMessage(format);
+		super.error(marker,wrappedMessage,arg);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), wrappedMessage, arg);
 	}
 
+	@Override
 	public void error(Marker marker,String format, Object arg1, Object arg2) {
-		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(format), arg1, arg2);
+		String wrappedMessage = getWrappedMessage(format);
+		super.error(marker,wrappedMessage,arg1,arg2);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), wrappedMessage, arg1, arg2);
 	}
 
+	@Override
 	public void error(Marker marker,String format, Object... arguments) {
-		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(format), arguments);
+		String wrappedMessage = getWrappedMessage(format);
+		super.error(marker,wrappedMessage,arguments);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), wrappedMessage, arguments);
 	}
 
+	@Override
 	public void error(Marker marker,String msg, Throwable t) {
-		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), getMessage(msg), t);
+		String wrappedMessage = getWrappedMessage(msg);
+		super.error(marker,wrappedMessage,t);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), wrappedMessage, t);
 	}
 
-	public void setLevel(int debug) {
+	@Override
+	public void log(Marker marker, String fqcn, int level, String message, Object[] argArray, Throwable t) {
+		String wrappedMessage = getWrappedMessage(message);
+		super.log(marker,fqcn,level,wrappedMessage,argArray,t);
+		getLogger().logIfEnabled(fqcn, getLevel(level), getMarker(marker), wrappedMessage, argArray, t);
 	}
-	
+
     ExtendedLogger getChildByName(final String childName) {
         if (childrenList == null) {
             return null;
@@ -376,7 +535,7 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
     }
     
 	//日志输出
-	private String getMessage(String strO) {
+	private String getWrappedMessage(String strO) {
 		String str = null;
 		if (strO != null) {
 			str = strO;
@@ -434,37 +593,6 @@ public final class ExtendedLogger  implements LocationAwareLogger,Serializable {
         }
     }
 
-	@Override
-	public void log(Marker marker, String fqcn, int level, String message, Object[] argArray, Throwable t) {
-		getLogger().logIfEnabled(fqcn, getLevel(level), getMarker(marker), getMessage(message), argArray, t);
-	}
 	
-	private Level getLevel(int level) {
-		if (Level.OFF.intLevel() == level) {
-			return Level.OFF;
-		}
-		if (Level.FATAL.intLevel() == level) {
-			return Level.FATAL;
-		}
-		if (Level.ERROR.intLevel() == level) {
-			return Level.ERROR;
-		}
-		if (Level.WARN.intLevel() == level) {
-			return Level.WARN;
-		}
-		if (Level.INFO.intLevel() == level) {
-			return Level.INFO;
-		}
-		if (Level.DEBUG.intLevel() == level) {
-			return Level.DEBUG;
-		}
-		if (Level.TRACE.intLevel() == level) {
-			return Level.TRACE;
-		}
-		if (Level.ALL.intLevel() == level) {
-			return Level.ALL;
-		}		
-        
-		return Level.INFO;
-	}
+	
 }

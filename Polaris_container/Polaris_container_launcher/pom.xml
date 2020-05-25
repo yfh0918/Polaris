@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.polaris</groupId>
 		<artifactId>Polaris_container</artifactId>
-		<version>1.0.2</version>
+		<version>1.0.3</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>Polaris_container_launcher</artifactId>
@@ -14,6 +14,10 @@
 		<dependency>
 			<groupId>com.polaris</groupId>
 			<artifactId>Polaris_container_api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.polaris</groupId>
+			<artifactId>Polaris_logger</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
