@@ -22,7 +22,6 @@ public class Main implements Server{
      */
 	@Override
 	public void start() {
-		//启动jetty
     	logger.info("undertow启动！");
         UndertowServer server = UndertowServer.getInstance();
         server.start();
@@ -34,7 +33,6 @@ public class Main implements Server{
      */
 	@Override
 	public void stop() {
-		//启动jetty
     	logger.info("undertow停止！");
         UndertowServer server = UndertowServer.getInstance();
         server.stop();
