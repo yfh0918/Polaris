@@ -1,9 +1,7 @@
-﻿0:尽量使用稳定分支，比如1.0.3，不建议使用master和snapshot版本
+0:尽量使用稳定分支，比如1.0.3，不建议使用master和snapshot版本
+ 
 1:install 全体
- Polaris_assembly插件可以install 但是deploy，jekins构建会存在问题
- （插件目前只能从  http://repository.apache.org/snapshots/com/polaris/Polaris_assembly/1.0.0-SNAPSHOT/maven-metadata.xml拉取）
- 需要本地Polaris_assembly包手动copy到jekins的maven仓库
-
+ 
 2:提供两种类型的 demo（调用dubbo应用 和 无dubbo应用）
   主要参数可以参考Polaris_demo_web_resteasy的application.properties
   mvn clean package -Dmaven.test.skip=true,可以在target目录下生成zip文件，解压缩后运行 java -jar Polaris_demo_web_resteasy.jar
