@@ -318,9 +318,9 @@ public class ExtendedLoggerCallBack implements LocationAwareLogger {
 	@Override
 	public void log(Marker marker, String fqcn, int level, String message, Object[] argArray, Throwable t) {
 		if (t == null) {
-			callBack(getLevel(level),message,argArray);
+			callBack(Log4jHelper.getLevel(level),message,argArray);
 		} else {
-			callBack(getLevel(level),message,t);
+			callBack(Log4jHelper.getLevel(level),message,t);
 		}
 	}
 	
@@ -333,34 +333,5 @@ public class ExtendedLoggerCallBack implements LocationAwareLogger {
 		for (Log4jCallBack callBackObj : callBacks) {
 			callBackObj.call(level, message,t);
         }
-	}
-
-	protected Level getLevel(int level) {
-		if (Level.OFF.intLevel() == level) {
-			return Level.OFF;
-		}
-		if (Level.FATAL.intLevel() == level) {
-			return Level.FATAL;
-		}
-		if (Level.ERROR.intLevel() == level) {
-			return Level.ERROR;
-		}
-		if (Level.WARN.intLevel() == level) {
-			return Level.WARN;
-		}
-		if (Level.INFO.intLevel() == level) {
-			return Level.INFO;
-		}
-		if (Level.DEBUG.intLevel() == level) {
-			return Level.DEBUG;
-		}
-		if (Level.TRACE.intLevel() == level) {
-			return Level.TRACE;
-		}
-		if (Level.ALL.intLevel() == level) {
-			return Level.ALL;
-		}		
-        
-		return Level.INFO;
 	}
 }

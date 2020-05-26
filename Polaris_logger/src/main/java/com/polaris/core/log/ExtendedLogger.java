@@ -10,39 +10,11 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.spi.AbstractLogger;
 import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 import org.slf4j.Marker;
-import org.slf4j.helpers.BasicMarker;
-import org.slf4j.impl.StaticMarkerBinder;
 
 import com.polaris.core.Constant;
-import com.polaris.core.GlobalContext;
 import com.polaris.core.config.provider.ConfHandlerSysProvider;
-import com.polaris.core.util.StringUtil;
 
 public final class ExtendedLogger extends ExtendedLoggerCallBack implements Serializable {
-	
-	Log4jMarkerFactory log4jMarkerFactory = new Log4jMarkerFactory();
-	private boolean traceEnable = false;
-	private void init() {
-		synchronized(ExtendedLogger.class) {
-			//载入日志文件
-			try {
-
-				//从系统目录获取logging.config 
-				String logFile = ConfHandlerSysProvider.INSTANCE.getProperties().getProperty(Constant.LOG_CONFIG_KEY, Constant.DEFAULT_LOG_FILE);
-				
-				//设置具体的日志
-				if (logFile != null && !logFile.isEmpty()) {
-					System.setProperty(Constant.LOG_CONFIG_FILE_KEY, logFile);
-			        Logger templogger = LogManager.getLogger(this.name);
-			        logger = new ExtendedLoggerWrapper((AbstractLogger)templogger,templogger.getName(),templogger.getMessageFactory());
-			        traceEnable = Boolean.parseBoolean(ConfHandlerSysProvider.INSTANCE.getProperties().getProperty(Constant.LOG_TRACE_ENABEL,"false"));
-				}
-			} catch (Exception e) {
-				//ignore
-			}
-		}
-		
-	}
 	
     /**
 	 * 
@@ -74,6 +46,23 @@ public final class ExtendedLogger extends ExtendedLoggerCallBack implements Seri
      */
     transient private List<ExtendedLogger> childrenList;
     
+	private boolean traceEnable = false;
+	private void init() {
+		synchronized(ExtendedLogger.class) {
+			try {
+				String logFile = ConfHandlerSysProvider.INSTANCE.getProperties().getProperty(Constant.LOG_CONFIG_KEY, Constant.DEFAULT_LOG_FILE);
+				if (logFile != null && !logFile.isEmpty()) {
+					System.setProperty(Constant.LOG_CONFIG_FILE_KEY, logFile);
+			        Logger templogger = LogManager.getLogger(this.name);
+			        logger = new ExtendedLoggerWrapper((AbstractLogger)templogger,templogger.getName(),templogger.getMessageFactory());
+			        traceEnable = Boolean.parseBoolean(ConfHandlerSysProvider.INSTANCE.getProperties().getProperty(Constant.LOG_TRACE_ENABEL,"false"));
+				}
+			} catch (Exception e) {
+				//ignore
+			}
+		}
+	}
+	
 	public ExtendedLogger(String rootLoggerName, Object object, ExtendedLoggerContext loggerContext) {
 		this.name = rootLoggerName;
         this.parent = (ExtendedLogger)object;
@@ -99,77 +88,77 @@ public final class ExtendedLogger extends ExtendedLoggerCallBack implements Seri
 
 	@Override
 	public void trace(String msg) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.trace(wrappedMessage);
 		getLogger().logIfEnabled(FQCN, Level.TRACE, null, wrappedMessage, (Throwable) null);
 	}
 
 	@Override
 	public void trace(String format, Object arg) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.trace(wrappedMessage, arg);
 		getLogger().logIfEnabled(FQCN, Level.TRACE, null, wrappedMessage, arg);
 	}
 
 	@Override
 	public void trace(String format, Object arg1, Object arg2) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.trace(wrappedMessage,arg1,arg2);
 		getLogger().logIfEnabled(FQCN, Level.TRACE, null, wrappedMessage, arg1, arg2);
 	}
 
 	@Override
 	public void trace(String format, Object... arguments) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.trace(wrappedMessage, arguments);
 		getLogger().logIfEnabled(FQCN, Level.TRACE, null, wrappedMessage, arguments);
 	}
 
 	@Override
 	public void trace(String msg, Throwable t) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.trace(wrappedMessage, t);
 		getLogger().logIfEnabled(FQCN, Level.TRACE, null, wrappedMessage, t);
 	}
 
 	@Override
 	public boolean isTraceEnabled(Marker marker) {
-		return getLogger().isTraceEnabled(getMarker(marker));
+		return getLogger().isTraceEnabled(Log4jHelper.getMarker(marker));
 	}
 
 	@Override
 	public void trace(Marker marker, String msg) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.trace(marker, wrappedMessage);
-		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), wrappedMessage, (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, Log4jHelper.getMarker(marker), wrappedMessage, (Throwable) null);
 	}
 
 	@Override
 	public void trace(Marker marker, String format, Object arg) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.trace(marker, wrappedMessage,arg);
-		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), wrappedMessage, arg);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, Log4jHelper.getMarker(marker), wrappedMessage, arg);
 	}
 
 	@Override
 	public void trace(Marker marker, String format, Object arg1, Object arg2) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.trace(marker, wrappedMessage,arg1,arg2);
-		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), wrappedMessage, arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, Log4jHelper.getMarker(marker), wrappedMessage, arg1, arg2);
 	}
 
 	@Override
 	public void trace(Marker marker, String format, Object... argArray) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.trace(marker, wrappedMessage,argArray);
-		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), wrappedMessage, argArray);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, Log4jHelper.getMarker(marker), wrappedMessage, argArray);
 	}
 
 	@Override
 	public void trace(Marker marker, String msg, Throwable t) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.trace(marker, wrappedMessage,t);
-		getLogger().logIfEnabled(FQCN, Level.TRACE, getMarker(marker), wrappedMessage, t);
+		getLogger().logIfEnabled(FQCN, Level.TRACE, Log4jHelper.getMarker(marker), wrappedMessage, t);
 	}
 
 	@Override
@@ -179,75 +168,75 @@ public final class ExtendedLogger extends ExtendedLoggerCallBack implements Seri
 
 	@Override
 	public void debug(String msg) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.debug(wrappedMessage);
 		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, wrappedMessage, (Throwable) null);
 	}
 
 	@Override
 	public void debug(String format, Object arg) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.debug(wrappedMessage,arg);
 		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, wrappedMessage, arg);
 	}
 
 	@Override
 	public void debug(String format, Object arg1, Object arg2) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.debug(wrappedMessage,arg1,arg2);
 		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, wrappedMessage, arg1, arg2);
 	}
 
 	@Override
 	public void debug(String format, Object... arguments) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.debug(wrappedMessage,arguments);
 		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, wrappedMessage, arguments);
 	}
 
 	@Override
 	public void debug(String msg, Throwable t) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.debug(wrappedMessage,t);
 		getLogger().logIfEnabled(FQCN, Level.DEBUG, null, wrappedMessage, t);
 	}
 
 	public boolean isDebugEnabled(Marker marker) {
-		return getLogger().isDebugEnabled(getMarker(marker));
+		return getLogger().isDebugEnabled(Log4jHelper.getMarker(marker));
 	}
 
 	@Override
 	public void debug(Marker marker,String msg) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.debug(marker,wrappedMessage);
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), wrappedMessage, (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, Log4jHelper.getMarker(marker), wrappedMessage, (Throwable) null);
 	}
 
 	@Override
 	public void debug(Marker marker,String format, Object arg) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.debug(marker,wrappedMessage,arg);
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), wrappedMessage, arg);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, Log4jHelper.getMarker(marker), wrappedMessage, arg);
 	}
 
 	@Override
 	public void debug(Marker marker,String format, Object arg1, Object arg2) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.debug(marker,wrappedMessage,arg1,arg2);
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), wrappedMessage, arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, Log4jHelper.getMarker(marker), wrappedMessage, arg1, arg2);
 	}
 
 	public void debug(Marker marker,String format, Object... arguments) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.debug(marker,wrappedMessage,arguments);
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), wrappedMessage, arguments);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, Log4jHelper.getMarker(marker), wrappedMessage, arguments);
 	}
 
 	@Override
 	public void debug(Marker marker,String msg, Throwable t) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.debug(marker,wrappedMessage,t);
-		getLogger().logIfEnabled(FQCN, Level.DEBUG, getMarker(marker), wrappedMessage, t);
+		getLogger().logIfEnabled(FQCN, Level.DEBUG, Log4jHelper.getMarker(marker), wrappedMessage, t);
 	}
 
 	@Override
@@ -257,77 +246,77 @@ public final class ExtendedLogger extends ExtendedLoggerCallBack implements Seri
 
 	@Override
 	public void info(String msg) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.info(wrappedMessage);
 		getLogger().logIfEnabled(FQCN, Level.INFO, null, wrappedMessage, (Throwable) null);
 	}
 
 	@Override
 	public void info(String format, Object arg) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.info(wrappedMessage,arg);
 		getLogger().logIfEnabled(FQCN, Level.INFO, null, wrappedMessage, arg);
 	}
 
 	@Override
 	public void info(String format, Object arg1, Object arg2) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.info(wrappedMessage,arg1,arg2);
 		getLogger().logIfEnabled(FQCN, Level.INFO, null, wrappedMessage, arg1, arg2);
 	}
 
 	@Override
 	public void info(String format, Object... arguments) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.info(wrappedMessage, arguments);
 		getLogger().logIfEnabled(FQCN, Level.INFO, null, wrappedMessage, arguments);
 	}
 
 	@Override
 	public void info(String msg, Throwable t) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.info(wrappedMessage, t);
 		getLogger().logIfEnabled(FQCN, Level.INFO, null, wrappedMessage, t);
 	}
 
 	@Override
 	public boolean isInfoEnabled(Marker marker) {
-		return getLogger().isInfoEnabled(getMarker(marker));
+		return getLogger().isInfoEnabled(Log4jHelper.getMarker(marker));
 	}
 
 	@Override
 	public void info(Marker marker,String msg) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.info(marker,wrappedMessage);
-		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), wrappedMessage, (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.INFO, Log4jHelper.getMarker(marker), wrappedMessage, (Throwable) null);
 	}
 
 	@Override
 	public void info(Marker marker,String format, Object arg) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.info(marker,wrappedMessage,arg);
-		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), wrappedMessage, arg);
+		getLogger().logIfEnabled(FQCN, Level.INFO, Log4jHelper.getMarker(marker), wrappedMessage, arg);
 	}
 
 	@Override
 	public void info(Marker marker,String format, Object arg1, Object arg2) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.info(marker,wrappedMessage,arg1,arg2);
-		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), wrappedMessage, arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.INFO, Log4jHelper.getMarker(marker), wrappedMessage, arg1, arg2);
 	}
 
 	@Override
 	public void info(Marker marker,String format, Object... arguments) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.info(marker,wrappedMessage,arguments);
-		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), wrappedMessage, arguments);
+		getLogger().logIfEnabled(FQCN, Level.INFO, Log4jHelper.getMarker(marker), wrappedMessage, arguments);
 	}
 
 	@Override
 	public void info(Marker marker,String msg, Throwable t) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.info(marker,wrappedMessage,t);
-		getLogger().logIfEnabled(FQCN, Level.INFO, getMarker(marker), wrappedMessage, t);
+		getLogger().logIfEnabled(FQCN, Level.INFO, Log4jHelper.getMarker(marker), wrappedMessage, t);
 	}
 	public boolean isWarnEnabled() {
 		return getLogger().isWarnEnabled();
@@ -335,76 +324,76 @@ public final class ExtendedLogger extends ExtendedLoggerCallBack implements Seri
 	
 	@Override
 	public void warn(String msg) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.warn(wrappedMessage);
 		getLogger().logIfEnabled(FQCN, Level.WARN, null, wrappedMessage, (Throwable) null);
 	}
 
 	@Override
 	public void warn(String format, Object arg) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.warn(wrappedMessage,arg);
 		getLogger().logIfEnabled(FQCN, Level.WARN, null, wrappedMessage, arg);
 	}
 
 	public void warn(String format, Object arg1, Object arg2) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.warn(wrappedMessage,arg1,arg2);
 		getLogger().logIfEnabled(FQCN, Level.WARN, null, wrappedMessage, arg1, arg2);
 	}
 
 	@Override
 	public void warn(String format, Object... arguments) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.warn(wrappedMessage,arguments);
 		getLogger().logIfEnabled(FQCN, Level.WARN, null, wrappedMessage, arguments);
 	}
 
 	@Override
 	public void warn(String msg, Throwable t) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.warn(wrappedMessage,t);
 		getLogger().logIfEnabled(FQCN, Level.WARN, null, wrappedMessage, t);
 	}
 
 	@Override
 	public boolean isWarnEnabled(Marker marker) {
-		return getLogger().isWarnEnabled(getMarker(marker));
+		return getLogger().isWarnEnabled(Log4jHelper.getMarker(marker));
 	}
 
 	@Override
 	public void warn(Marker marker,String msg) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.warn(marker,wrappedMessage);
-		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), wrappedMessage, (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.WARN, Log4jHelper.getMarker(marker), wrappedMessage, (Throwable) null);
 	}
 
 	@Override
 	public void warn(Marker marker,String format, Object arg) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.warn(marker,wrappedMessage,arg);
-		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), wrappedMessage, arg);
+		getLogger().logIfEnabled(FQCN, Level.WARN, Log4jHelper.getMarker(marker), wrappedMessage, arg);
 	}
 
 	@Override
 	public void warn(Marker marker,String format, Object arg1, Object arg2) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.warn(marker,wrappedMessage,arg1,arg2);
-		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), wrappedMessage, arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.WARN, Log4jHelper.getMarker(marker), wrappedMessage, arg1, arg2);
 	}
 
 	@Override
 	public void warn(Marker marker,String format, Object... arguments) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.warn(marker,wrappedMessage,arguments);
-		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), wrappedMessage, arguments);
+		getLogger().logIfEnabled(FQCN, Level.WARN, Log4jHelper.getMarker(marker), wrappedMessage, arguments);
 	}
 
 	@Override
 	public void warn(Marker marker,String msg, Throwable t) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.warn(marker,wrappedMessage,t);
-		getLogger().logIfEnabled(FQCN, Level.WARN, getMarker(marker), wrappedMessage, t);
+		getLogger().logIfEnabled(FQCN, Level.WARN, Log4jHelper.getMarker(marker), wrappedMessage, t);
 	}
 
 	@Override
@@ -414,84 +403,84 @@ public final class ExtendedLogger extends ExtendedLoggerCallBack implements Seri
 
 	@Override
 	public void error(String msg) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.error(wrappedMessage);
 		getLogger().logIfEnabled(FQCN, Level.ERROR, null, wrappedMessage, (Throwable) null);
 	}
 
 	@Override
 	public void error(String format, Object arg) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.error(wrappedMessage,arg);
 		getLogger().logIfEnabled(FQCN, Level.ERROR, null, wrappedMessage, arg);
 	}
 
 	@Override
 	public void error(String format, Object arg1, Object arg2) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.error(wrappedMessage,arg1,arg2);
 		getLogger().logIfEnabled(FQCN, Level.ERROR, null, wrappedMessage, arg1, arg2);
 	}
 
 	@Override
 	public void error(String format, Object... arguments) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.error(wrappedMessage,arguments);
 		getLogger().logIfEnabled(FQCN, Level.ERROR, null, wrappedMessage, arguments);
 	}
 
 	@Override
 	public void error(String msg, Throwable t) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.error(wrappedMessage,t);
 		getLogger().logIfEnabled(FQCN, Level.ERROR, null, wrappedMessage, t);
 	}
 
 	@Override
 	public boolean isErrorEnabled(Marker marker) {
-		return getLogger().isErrorEnabled(getMarker(marker));
+		return getLogger().isErrorEnabled(Log4jHelper.getMarker(marker));
 	}
 
 	@Override
 	public void error(Marker marker,String msg) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.error(marker,wrappedMessage);
-		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), wrappedMessage, (Throwable) null);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, Log4jHelper.getMarker(marker), wrappedMessage, (Throwable) null);
 	}
 
 	@Override
 	public void error(Marker marker,String format, Object arg) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.error(marker,wrappedMessage,arg);
-		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), wrappedMessage, arg);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, Log4jHelper.getMarker(marker), wrappedMessage, arg);
 	}
 
 	@Override
 	public void error(Marker marker,String format, Object arg1, Object arg2) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.error(marker,wrappedMessage,arg1,arg2);
-		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), wrappedMessage, arg1, arg2);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, Log4jHelper.getMarker(marker), wrappedMessage, arg1, arg2);
 	}
 
 	@Override
 	public void error(Marker marker,String format, Object... arguments) {
-		String wrappedMessage = getWrappedMessage(format);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(format,traceEnable);
 		super.error(marker,wrappedMessage,arguments);
-		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), wrappedMessage, arguments);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, Log4jHelper.getMarker(marker), wrappedMessage, arguments);
 	}
 
 	@Override
 	public void error(Marker marker,String msg, Throwable t) {
-		String wrappedMessage = getWrappedMessage(msg);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(msg,traceEnable);
 		super.error(marker,wrappedMessage,t);
-		getLogger().logIfEnabled(FQCN, Level.ERROR, getMarker(marker), wrappedMessage, t);
+		getLogger().logIfEnabled(FQCN, Level.ERROR, Log4jHelper.getMarker(marker), wrappedMessage, t);
 	}
 
 	@Override
 	public void log(Marker marker, String fqcn, int level, String message, Object[] argArray, Throwable t) {
-		String wrappedMessage = getWrappedMessage(message);
+		String wrappedMessage = Log4jHelper.getWrappedMessage(message,traceEnable);
 		super.log(marker,fqcn,level,wrappedMessage,argArray,t);
-		getLogger().logIfEnabled(fqcn, getLevel(level), getMarker(marker), wrappedMessage, argArray, t);
+		getLogger().logIfEnabled(fqcn, Log4jHelper.getLevel(level), Log4jHelper.getMarker(marker), wrappedMessage, argArray, t);
 	}
 
     ExtendedLogger getChildByName(final String childName) {
@@ -533,66 +522,4 @@ public final class ExtendedLogger extends ExtendedLoggerCallBack implements Seri
         childLogger.effectiveLevelInt = this.effectiveLevelInt;
         return childLogger;
     }
-    
-	//日志输出
-	private String getWrappedMessage(String strO) {
-		String str = null;
-		if (strO != null) {
-			str = strO;
-		} else {
-			str = "";
-		}
-		if (!traceEnable) {
-			return str;
-		}
-
-		//logger
-		StringBuilder strB = new StringBuilder();
-		String traceId = GlobalContext.getTraceId();
-		if (StringUtil.isNotEmpty(traceId)) {
-			strB.append(GlobalContext.TRACE_ID);
-			strB.append(":");
-			strB.append(traceId);
-			strB.append(' ');
-		}
-		String spanId = GlobalContext.getSpanId();
-		if (StringUtil.isNotEmpty(spanId)) {
-			strB.append(GlobalContext.SPAN_ID);
-			strB.append(":");
-			strB.append(spanId);
-			strB.append(' ');
-		}
-		String parentId = GlobalContext.getParentId();
-		if (StringUtil.isNotEmpty(parentId)) {
-			strB.append(GlobalContext.PARENT_ID);
-			strB.append(":");
-			strB.append(parentId);
-			strB.append(' ');
-		}
-		String moduleId = GlobalContext.getModuleId();
-		if (StringUtil.isNotEmpty(moduleId)) {
-			strB.append(GlobalContext.MODULE_ID);
-			strB.append(":");
-			strB.append(moduleId);
-			strB.append(' ');
-		}
-		strB.append(str);
-		return strB.toString();
-	}
-	
-    private org.apache.logging.log4j.Marker getMarker(final Marker marker) {
-        if (marker == null) {
-            return null;
-        } else if (marker instanceof Log4jMarker) {
-            return ((Log4jMarker) marker).getLog4jMarker();
-        } else if (marker instanceof BasicMarker) {
-        	return ((Log4jMarker) log4jMarkerFactory.getMarker(marker)).getLog4jMarker();
-        } else {
-            final Log4jMarkerFactory factory = (Log4jMarkerFactory) StaticMarkerBinder.SINGLETON.getMarkerFactory();
-            return ((Log4jMarker) factory.getMarker(marker)).getLog4jMarker();
-        }
-    }
-
-	
-	
 }
