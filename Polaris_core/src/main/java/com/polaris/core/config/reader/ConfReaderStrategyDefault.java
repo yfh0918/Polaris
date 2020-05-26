@@ -11,6 +11,14 @@ import java.util.Properties;
 import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.StringUtil;
 
+/**
+ * get file info from fileName according to strategy rule
+ * strategy rule  : 
+ *    first order : local path config/fileName  
+ *    second order: local path fileName
+ *    third order : classpath config/fileName
+ *    fourth order: classpath fileName
+ */
 public class ConfReaderStrategyDefault implements ConfReaderStrategy {
 	public static final ConfReaderStrategy INSTANCE = new ConfReaderStrategyDefault();
 	private static String CONFIG = "config";
