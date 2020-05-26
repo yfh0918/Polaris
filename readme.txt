@@ -1,4 +1,4 @@
-﻿0:尽量使用稳定分支，比如1.0.0，不建议使用master和snapshot版本
+﻿0:尽量使用稳定分支，比如1.0.3，不建议使用master和snapshot版本
 1:install 全体
  Polaris_assembly插件可以install 但是deploy，jekins构建会存在问题
  （插件目前只能从  http://repository.apache.org/snapshots/com/polaris/Polaris_assembly/1.0.0-SNAPSHOT/maven-metadata.xml拉取）
@@ -82,7 +82,8 @@
 	http方式 采用HttpClientUtil方式，帮你做了traceID的传递，如果对日志发送到第三方监控装置，
 	可以自行改造Polaris_logger的ExtendedLogger的getMessage方法
    9.2 支持log4jCallBack回调，需要继承com.polaris.core.log.Log4jCallBack，
-         采用SPI扩展，需要注意的是回调接口中不能用logger.xxx会造成死循环，具体参照Polaris_demo_web_springmvc工程DemoLog4jCallBack类
+       采用SPI扩展，需要注意的是回调接口中不能用logger.xxx会造成死循环，具体参照Polaris_demo_web_springmvc工程DemoLog4jCallBack类
+       日志的落库或者和其他系统的对接可在回调函数中完成 
 	
 10,缓存模块Polaris_extension_cache,
    CacheFactory.getCache(cachename);获取缓存，默认采用EHCache, 
