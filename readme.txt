@@ -12,16 +12,17 @@
   支持zookeeper注册中心，server版本3.5.5及以上
   每一个服务 需要在自己的配置文件中设置注册中心
   #name.registry.address=127.0.0.1:8848
-  需要在自己的服务pom.xml中引入 Polaris_naming_nacos
+  需要在自己的服务pom.xml中引入 Polaris_naming_xxx
   
 4:配置中心支持多种模式（zookeeper,nacos,apollo的ConfigFile以及本地文件file），需要在自己的配置文件中设置配置中心
-  所有的配置种类，需自己下载软件，比如nacos,apollo,zookeeper的建议使用ZooViewer（https://github.com/HelloKittyNII/ZooViewer）
+  所有的配置服务端软件需自己下载软件，比如nacos,apollo,   
+  如果是zookeeper的建议使用ZooViewer（https://github.com/HelloKittyNII/ZooViewer）也可以自行开发zookeeper客户端软件
   #zookeeper需要设置config.zk.root.path默认值【/polaris_conf】
   #config.registry.address=127.0.0.1:8848
   
-  需要在自己的服务pom.xml中引入 Polaris_conf_nacos
-  引入配置中心后，所有的properties文件都可以放入nacos（除了application.properties或者application.yaml 或者application.xml 和 log4j2.xml）
-  并且在application.properties中引入需要放入配置中心的配置文件
+  需要在自己的服务pom.xml中引入 Polaris_conf_xxx
+  引入配置中心后，所有的properties文件都可以放入配置中心（除了application.properties或者application.yaml 或者application.xml 和 log4j2.xml）
+  在application.properties中引入需要放入配置中心的配置文件
   #extension files(以下配置文件配置方式  或者也可以采用PolarisConfigurationExt注解或者PolarisConfigurationProperties注解注入)
   #project.extension.properties=main.properties,redis.properties
   #project.extension.properties=main.yaml,redis.yaml
@@ -29,9 +30,8 @@
   #global files(以下配置文件配置方式  或者也可以采用PolarisConfigurationGbl注解或者PolarisConfigurationProperties注解注入)
   #project.global.properties=redis.properties,database.properties
   #project.global.properties=redis.yaml,database.yaml
-  
   默认支持Spring注解@Value的自动更新-（nacos,zookeeper等配置中心的推送更新会同步到@Value注解）
-  可以用value.auto.update=false来关闭，频繁更新配置会影响性能（配置更新采用文件形式）
+  可以用value.auto.update=false来关闭
 
 5:Polaris_extension_workflow是现有的服务（工作流activity内核）
  具体请参考模块的配置,详细参考Polaris_demo目录下的workflow
