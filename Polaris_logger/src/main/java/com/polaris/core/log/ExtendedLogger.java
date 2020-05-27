@@ -21,7 +21,7 @@ public final class ExtendedLogger extends ExtendedLoggerCallBack implements Seri
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private AbstractLogger logger;
+	private AbstractLogger logger = NullLogger.INSTANCE;
 	public static final String YEAR_MONTH_DAY_TIME = "yyyy-MM-dd HH:mm:ss";
 	
 	public static final String LOG_SEPARATOR = "->";// 分割符号
@@ -47,7 +47,10 @@ public final class ExtendedLogger extends ExtendedLoggerCallBack implements Seri
     transient private List<ExtendedLogger> childrenList;
     
 	private boolean traceEnable = false;
-	private void init() {
+	private void initial() {
+		if (!(logger instanceof NullLogger)) {
+			return;
+		}
 		synchronized(ExtendedLogger.class) {
 			try {
 				String logFile = ConfHandlerSysProvider.INSTANCE.getProperties().getProperty(Constant.LOG_CONFIG_KEY, Constant.DEFAULT_LOG_FILE);
@@ -67,14 +70,12 @@ public final class ExtendedLogger extends ExtendedLoggerCallBack implements Seri
 		this.name = rootLoggerName;
         this.parent = (ExtendedLogger)object;
         this.loggerContext = loggerContext;
-        init();
+        initial();
 	}
 	
 	private AbstractLogger getLogger() {
-		if (logger == null) {
-			init();
-		}
-		return logger == null ? NullLogger.INSTANCE : logger;
+		initial();
+		return logger;
 	}
 	
 	public String getName() {
