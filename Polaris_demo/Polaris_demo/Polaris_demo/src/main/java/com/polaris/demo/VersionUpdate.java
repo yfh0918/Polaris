@@ -12,6 +12,8 @@ public final class VersionUpdate {
 	public static void main(String[] args) throws Exception { 
 		String oldChar = "<version>1.0.4</version>";
 		String newChar = "<version>1.0.5</version>";
+		String oldChar2 = "<polaris-version>1.0.4</polaris-version>";
+		String newChar2 = "<polaris-version>1.0.5</polaris-version>";
 		List<String> scanFiles = new ArrayList<String>();
         scanFilesWithRecursion(scanFiles, "C:\\projects\\Polaris", "pom.xml");
         for (String file : scanFiles) {
@@ -20,6 +22,12 @@ public final class VersionUpdate {
         	source = source.replace(oldChar, newChar);
         	lines.set(5, source);
         	FileUtil.writeLines(lines, new File(file), Charset.defaultCharset());
+        	if (file.contains("Polaris_parent")) {
+            	String source2 = lines.get(19);
+            	source2 = source2.replace(oldChar2, newChar2);
+            	lines.set(19, source2);
+            	FileUtil.writeLines(lines, new File(file), Charset.defaultCharset());
+        	}
         }
 	}
 	
