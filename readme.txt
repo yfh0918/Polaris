@@ -109,4 +109,4 @@
 
 14, 分布式事务，建议采用阿里巴巴开源的seata
 
-15, 新增模块AbstractLifeCycle抽象类，任何继承AbstractLifeCycle类的资源释放都可以在close方法中完成，可以参考Polaris_demo_web_springmvc的DemoLifyCycle
+15, 新增模块AbstractLifeCycle抽象类，任何继承AbstractLifeCycle类的资源释放都可以在close方法中完成，可以参考Polaris_demo_web_springmvc的DemoLifCycle
