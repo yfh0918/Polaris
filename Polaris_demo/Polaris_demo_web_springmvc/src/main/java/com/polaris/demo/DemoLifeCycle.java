@@ -1,15 +1,13 @@
 package com.polaris.demo;
 
-import javax.annotation.PostConstruct;
-
-import org.springframework.stereotype.Component;
-
 import com.polaris.core.component.AbstractLifeCycle;
 
-@Component
-public class DemoLifyCycle extends AbstractLifeCycle {
+/**
+ * The DemoLifyCycle for generic components.
+ * {@link DemoApplication}
+ */
+public class DemoLifeCycle extends AbstractLifeCycle {
 	
-	@PostConstruct
 	@Override
 	public void start() {
 		System.out.println("here is add resource");

@@ -2,6 +2,10 @@ package com.polaris.core.component;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * The LifeCycleManager for generic components.
+ * {@link LifeCycleRegisterServerListener}
+ */
 public class LifeCycleManager {
     private static final CopyOnWriteArrayList<LifeCycle> _lifeCycles = new CopyOnWriteArrayList<LifeCycle>();
 
