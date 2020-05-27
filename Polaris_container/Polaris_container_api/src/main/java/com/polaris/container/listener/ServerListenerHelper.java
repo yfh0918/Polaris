@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import com.polaris.core.component.LifeCycleManager;
 import com.polaris.core.naming.ServerClient;
 
 public abstract class ServerListenerHelper {
@@ -13,6 +14,7 @@ public abstract class ServerListenerHelper {
 	public static void init(String[] arg, ServerListener... serverListeners) {
 		addServerListener(serverListeners);
 		addServerListenerExtension();
+		addServerListener(new LifeCycleRegisterServerListener());
 		addServerListener(new ServerRegisterServerListener());
 		starting();
 	}
@@ -71,6 +73,13 @@ public abstract class ServerListenerHelper {
 		@Override
 		public void stopped() {
 	    	ServerClient.unRegister();
+		}
+	}
+	
+	protected static class LifeCycleRegisterServerListener implements ServerListener {
+		@Override
+		public void stopped() {
+	    	LifeCycleManager.close();
 		}
 	}
 

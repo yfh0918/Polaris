@@ -10,8 +10,8 @@ import com.polaris.core.config.reader.ConfReaderStrategyFactory;
 import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.StringUtil;
 
-public class PolarisBannerPrinter {
-	private static final Logger logger = LoggerFactory.getLogger(PolarisBannerPrinter.class);
+public class BannerPrinter {
+	private static final Logger logger = LoggerFactory.getLogger(BannerPrinter.class);
 	private static final String BANNER_FILE = "banner.txt";
 	private static String[] BANNER = { "", 
 			"__________      .__               .__        ",
