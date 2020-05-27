@@ -43,31 +43,31 @@ public abstract class ServerListenerHelper {
 
 	public static void starting() {
 		for (ServerListener serverListener : serverListenerList) {
-			logger.info("serverListener:{} starting",serverListener.getClass().getSimpleName());
+			logger.info("serverListener:{} starting",serverListener.getClass().getName());
 			serverListener.starting();
 		}
 	}
 	public static void started() {
 		for (ServerListener serverListener : serverListenerList) {
-			logger.info("serverListener:{} started",serverListener.getClass().getSimpleName());
+			logger.info("serverListener:{} started",serverListener.getClass().getName());
 			serverListener.started();
 		}
 	}
 	public static void failure() {
 		for (ServerListener serverListener : serverListenerList) {
-			logger.info("serverListener:{} failure",serverListener.getClass().getSimpleName());
+			logger.info("serverListener:{} failure",serverListener.getClass().getName());
 			serverListener.failure();
 		}
 	}
 	public static void stopping() {
 		for (ServerListener serverListener : serverListenerList) {
-			logger.info("serverListener:{} stopping",serverListener.getClass().getSimpleName());
+			logger.info("serverListener:{} stopping",serverListener.getClass().getName());
 			serverListener.stopping();
 		}
 	}
 	public static void stopped() {
 		for (ServerListener serverListener : serverListenerList) {
-			logger.info("serverListener:{} stopped",serverListener.getClass().getSimpleName());
+			logger.info("serverListener:{} stopped",serverListener.getClass().getName());
 			serverListener.stopped();
 		}
 	}
