@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The LifeCycleManager for generic components.
- * {@link LifeCycleRegisterServerListener}
+ * {@link LifeCycleListener}
  */
 public class LifeCycleManager {
 	private static final Logger logger = LoggerFactory.getLogger(LifeCycleManager.class);

@@ -17,8 +17,8 @@ public abstract class ServerListenerHelper {
 	public static void init(String[] arg, ServerListener... serverListeners) {
 		addServerListener(serverListeners);
 		addServerListenerExtension();
-		addServerListener(new LifeCycleRegisterServerListener());
-		addServerListener(new ServerRegisterServerListener());
+		addServerListener(new LifeCycleListener());
+		addServerListener(new ServerRegisterListener());
 		starting();
 	}
 	
@@ -72,7 +72,7 @@ public abstract class ServerListenerHelper {
 		}
 	}
 	
-	protected static class ServerRegisterServerListener implements ServerListener {
+	protected static class ServerRegisterListener implements ServerListener {
 		@Override
 		public void started() {
 			ServerClient.register();
@@ -84,7 +84,7 @@ public abstract class ServerListenerHelper {
 		}
 	}
 	
-	protected static class LifeCycleRegisterServerListener implements ServerListener {
+	protected static class LifeCycleListener implements ServerListener {
 		@Override
 		public void stopped() {
 	    	LifeCycleManager.close();
