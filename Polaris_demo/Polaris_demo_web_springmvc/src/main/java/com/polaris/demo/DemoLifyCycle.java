@@ -10,10 +10,6 @@ import com.polaris.core.component.AbstractLifeCycle;
 public class DemoLifyCycle extends AbstractLifeCycle {
 	
 	@PostConstruct
-	public void initial() {
-		start();
-	}
-	
 	@Override
 	public void start() {
 		System.out.println("here is add resource");
