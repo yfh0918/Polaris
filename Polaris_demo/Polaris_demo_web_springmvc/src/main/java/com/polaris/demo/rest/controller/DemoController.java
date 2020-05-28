@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.polaris.core.util.HttpClientUtil;
+import com.polaris.demo.DemoLifeCycle;
 import com.polaris.demo.config.TestProperties;
 import com.polaris.demo.config.TestProperties.InnerA;
 /**
@@ -37,6 +38,14 @@ public class DemoController {
 		}
 		logger.info(testProperties.getInnerA().getAddress1());
 		HttpClientUtil.get("http://localhost:9077/demowebnodubbo/rest/demo/test2");
+		return "aa";
+    }
+	
+	@RequestMapping(value = "/test/startLifeCycle", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String startLifeCycle(HttpServletRequest request)throws Exception  {
+		DemoLifeCycle lifeCycle = new DemoLifeCycle();
+		lifeCycle.start();
 		return "aa";
     }
 	

@@ -4,19 +4,17 @@ import com.polaris.core.component.AbstractLifeCycle;
 
 /**
  * The DemoLifyCycle for generic components.
- * {@link DemoApplication}
+ * {@link DemoController}
  */
 public class DemoLifeCycle extends AbstractLifeCycle {
-	
+
 	@Override
-	public void start() {
+	public void doStart() throws Exception {
 		System.out.println("here is add resource");
-		super.start();
 	}
 
 	@Override
-	public void stop() {
+	public void doStop() {
 		System.out.println("here is release resource");
 	}
-
 }

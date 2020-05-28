@@ -86,8 +86,13 @@ public abstract class ServerListenerHelper {
 	
 	protected static class LifeCycleListener implements ServerListener {
 		@Override
+		public void started() {
+			LifeCycleManager.start();
+			
+		}
+		@Override
 		public void stopped() {
-	    	LifeCycleManager.close();
+	    	LifeCycleManager.stop();
 		}
 	}
 
