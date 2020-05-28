@@ -3,7 +3,6 @@ package com.polaris.core.config.value;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Collection;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +11,8 @@ import org.springframework.beans.TypeConverter;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSON;
-import com.polaris.core.config.ConfClient;
 
 public class SpringAutoUpdateConfigChangeListener implements BeanFactoryAware{
   private static final Logger logger = LoggerFactory.getLogger(SpringAutoUpdateConfigChangeListener.class);
@@ -28,6 +25,7 @@ public class SpringAutoUpdateConfigChangeListener implements BeanFactoryAware{
     this.typeConverterHasConvertIfNecessaryWithFieldParameter = testTypeConverterHasConvertIfNecessaryWithFieldParameter();
   }
 
+  /*
   public void onChange(Properties cache) {
 	
 	 //是否关闭@Value的自动更新
@@ -44,6 +42,7 @@ public class SpringAutoUpdateConfigChangeListener implements BeanFactoryAware{
       onChange(key.toString());
     }
   }
+  */
   
   public void onChange(String key) {
 	// 1. check whether the changed key is relevant
