@@ -21,19 +21,4 @@ public interface LifeCycle {
      *
      */
 	void stop();
-	
-	/**
-     * @return true if the component has been started.
-     */
-    boolean isStart();
-    
-	/**
-     * @return true if the component has been stopped.
-     */
-    boolean isStop();
-    
-	/**
-     * @return true if the component start failed.
-     */
-    boolean isFailed();
 }

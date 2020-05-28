@@ -51,17 +51,14 @@ public abstract class AbstractLifeCycle implements LifeCycle{
 
     protected abstract void doStop();
     
-	@Override
 	public boolean isStart() {
 		return _state == START;
 	}
 
-	@Override
 	public boolean isStop() {
 		return _state == STOP;
 	}
 	
-	@Override
 	public boolean isFailed() {
 		return _state == FAILED;
 	}
