@@ -15,6 +15,9 @@ public class LifeCycleManager {
     private static final CopyOnWriteArrayList<AbstractLifeCycle> _lifeCycles = new CopyOnWriteArrayList<>();
 
     public static void register(AbstractLifeCycle lifeCycle) {
+    	if (_lifeCycles.contains(lifeCycle)) {
+    		return;
+    	}
     	logger.info("LifeCycleManager add lifeCycle:{}",lifeCycle.getClass().getName());
     	_lifeCycles.add(lifeCycle);
 	}
@@ -41,4 +44,5 @@ public class LifeCycleManager {
     	logger.info("LifeCycleManager remove lifeCycle:{}",lifeCycle.getClass().getName());
     	_lifeCycles.remove(lifeCycle);
 	}
+    
 }
