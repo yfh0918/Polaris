@@ -67,7 +67,7 @@ public abstract class AbstractLifeCycle implements LifeCycle{
 	}
 	
 	private void setStart() {
-		_state = FAILED;
+		_state = START;
     }
 	private void setStop() {
 		_state = STOP;
