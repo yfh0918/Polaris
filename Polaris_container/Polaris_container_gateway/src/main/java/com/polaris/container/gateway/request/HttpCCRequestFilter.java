@@ -70,6 +70,9 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
 	//无需验证的IP
 	public static volatile Set<String> ccSkipIp = new HashSet<>();
 	
+	//无需验证的URL
+	public static volatile Set<String> ccSkipUrl = new HashSet<>();
+	
 	//ip维度，每秒钟的访问数量
 	public static volatile LoadingCache<String, AtomicInteger> secIploadingCache;
 	public static volatile LoadingCache<String, AtomicInteger> minIploadingCache;
@@ -125,6 +128,7 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
     	String ipSavePathTemp = null;
     	
     	Set<String> tempCcSkipIp = new HashSet<>();
+    	Set<String> tempCcSkipUrl = new HashSet<>();
     	for (String conf : file.getData()) {
     		KeyValuePair kv = PropertyUtil.getKVPair(conf);
 			if (kv != null) {
@@ -134,6 +138,16 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
 						String[] ips = kv.getValue().split(",");
 						for (String ip : ips) {
 							tempCcSkipIp.add(ip);
+						}
+					} catch (Exception ex) {
+					}
+				}
+				// skip.ip
+				if (kv.getKey().equals("cc.skip.url")) {
+					try {
+						String[] urls = kv.getValue().split(",");
+						for (String url : urls) {
+							tempCcSkipUrl.add(url);
 						}
 					} catch (Exception ex) {
 					}
@@ -196,6 +210,9 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
     	//无需验证的IP
     	ccSkipIp = tempCcSkipIp;
     	
+    	//无需验证的URL
+    	ccSkipUrl = tempCcSkipUrl;
+    	
     	//总访问量
     	if (int_all_rate != ALL_RATE) {
     		int_all_rate = ALL_RATE;
@@ -230,6 +247,11 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
             
             //判断是否是无需验证的IP
             if (ccSkipIp.contains(realIp)) {
+            	return false;
+            }
+            
+            //无需验证的url
+            if (ccSkipUrl.contains(url)) {
             	return false;
             }
             
