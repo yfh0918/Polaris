@@ -140,9 +140,7 @@ public class HttpServer {
      */
     public void stop() {
     	try {
-    		//监听
-        	ServerListenerHelper.stopped();
-        	httpProxyServerBootstrap.stop();
+        	ServerListenerHelper.stopping();
         } catch (Exception e) {
         	// ignore -- IllegalStateException means the VM is already shutting down
         }
@@ -152,6 +150,13 @@ public class HttpServer {
             Runtime.getRuntime().removeShutdownHook(jvmShutdownHook);
         } catch (IllegalStateException e) {
             // ignore -- IllegalStateException means the VM is already shutting down
+        }
+
+    	try {
+        	httpProxyServerBootstrap.stop();
+        	ServerListenerHelper.stopped();
+        } catch (Exception e) {
+        	// ignore -- IllegalStateException means the VM is already shutting down
         }
 
         //log out

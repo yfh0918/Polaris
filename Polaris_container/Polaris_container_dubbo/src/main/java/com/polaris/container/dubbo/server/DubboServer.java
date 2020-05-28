@@ -60,6 +60,7 @@ public class DubboServer {
         	logger.info("Dubbo started on port(s) " + ConfClient.get("dubbo.protocol.port"));
             new CountDownLatch(1).await();
 		} catch (Exception e) {
+			ServerListenerHelper.failure();
 			logger.error("ERROR:",e);
 		}
     }
@@ -72,7 +73,7 @@ public class DubboServer {
     public void stop() {
     	try {
     		//监听
-        	ServerListenerHelper.stopped();
+        	ServerListenerHelper.stopping();
         } catch (Exception e) {
         	// ignore -- IllegalStateException means the VM is already shutting down
         }
@@ -84,6 +85,12 @@ public class DubboServer {
             // ignore -- IllegalStateException means the VM is already shutting down
         }
 
+    	try {
+    		//监听
+        	ServerListenerHelper.stopped();
+        } catch (Exception e) {
+        	// ignore -- IllegalStateException means the VM is already shutting down
+        }
         //log out
         logger.info("Dubbo stopped on port(s) " + ConfClient.get("dubbo.protocol.port"));
     }

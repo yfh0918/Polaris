@@ -15,6 +15,7 @@ import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.container.tomcat.listener.ServerHandlerListerner;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
@@ -122,6 +123,7 @@ public class TomcatServer {
             tomcat.getHost().addChild(standardContext);
 
         } catch (Exception e) {
+        	ServerListenerHelper.failure();
             logger.error("Error:",e);
         }
 
@@ -180,6 +182,7 @@ public class TomcatServer {
         } catch (Exception e) {
 
             //启动出错的话，清空服务
+        	ServerListenerHelper.failure();
             this.tomcat = null;
             logger.error(e.getMessage());
         }

@@ -192,6 +192,7 @@ public class UndertowServer {
             // add shutdown hook to stop server
             Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
         } catch (Exception e) {
+        	ServerListenerHelper.failure();
             this.undertow = null;
             logger.error("failed to start undertow.", e);
         }
@@ -215,10 +216,11 @@ public class UndertowServer {
      */
     public void stop() {
     	try {
-        	ServerListenerHelper.stopped();
+        	ServerListenerHelper.stopping();
         	manager.stop();
         	manager.undeploy();
         	undertow.stop();
+        	ServerListenerHelper.stopped();
         	manager = null;
         	undertow = null;
         } catch (Exception e) {

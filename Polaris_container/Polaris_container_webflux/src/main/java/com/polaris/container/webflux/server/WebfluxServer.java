@@ -108,8 +108,7 @@ public class WebfluxServer {
      */
     public void stop() {
     	try {
-        	ServerListenerHelper.stopped();
-        	disposableSever.disposeNow();
+        	ServerListenerHelper.stopping();
         } catch (Exception e) {
         	// ignore -- IllegalStateException means the VM is already shutting down
         }
@@ -119,6 +118,12 @@ public class WebfluxServer {
             Runtime.getRuntime().removeShutdownHook(jvmShutdownHook);
         } catch (IllegalStateException e) {
             // ignore -- IllegalStateException means the VM is already shutting down
+        }
+    	try {
+        	disposableSever.disposeNow();
+        	ServerListenerHelper.stopped();
+        } catch (Exception e) {
+        	// ignore -- IllegalStateException means the VM is already shutting down
         }
 
         //log out
@@ -183,6 +188,7 @@ public class WebfluxServer {
     	 	SslContextBuilder.forServer(certificateFile, privateKeyFile);
         	server.secure(sslContextSpec -> sslContextSpec.sslContext(sslContextBuilder));
     	} catch (Exception ex) {
+    		ServerListenerHelper.failure();
     		logger.info("netty-webflux start error : {}",ex);
     		return null;
     	}
