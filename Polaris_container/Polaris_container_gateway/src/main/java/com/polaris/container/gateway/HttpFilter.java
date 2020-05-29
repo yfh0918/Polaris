@@ -3,11 +3,12 @@ package com.polaris.container.gateway;
 import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
+import com.polaris.core.component.AbstractManagedLifeCycle;
 
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 
-public abstract class HttpFilter implements HttpFilterLifeCycle ,HttpFileListener {
+public abstract class HttpFilter extends AbstractManagedLifeCycle implements HttpFileListener {
 	protected HttpFilterEntity httpFilterEntity;
 	
     /**
@@ -15,7 +16,7 @@ public abstract class HttpFilter implements HttpFilterLifeCycle ,HttpFileListene
      *
      */
 	@Override
-	public void start() {
+	public void doStart() {
 		if (httpFilterEntity == null) {
 			return;
 		}

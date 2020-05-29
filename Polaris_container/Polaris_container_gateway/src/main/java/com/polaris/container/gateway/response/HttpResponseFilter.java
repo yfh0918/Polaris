@@ -15,8 +15,8 @@ public abstract class HttpResponseFilter extends HttpFilter {
      *
      */
 	@Override
-	public void start() {
-		super.start();
+	public void doStart() {
+		super.doStart();
 		HttpResponseFilterChain.INSTANCE.add(this);
 	} 
 	
@@ -25,8 +25,7 @@ public abstract class HttpResponseFilter extends HttpFilter {
      *
      */
 	@Override
-	public void stop() {
-		super.stop();
+	public void doStop() {
 		HttpResponseFilterChain.INSTANCE.remove(this);
 	}
 	

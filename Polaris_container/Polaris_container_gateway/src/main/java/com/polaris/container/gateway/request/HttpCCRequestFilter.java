@@ -229,6 +229,13 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
         ipPersistent = ipPersistentTemp;
         ipSavePath = ipSavePathTemp;
     }
+	
+	@Override
+	public void doStop() {
+		threadPool.shutdown();
+		super.doStop();
+		
+	}
     
 	@Override
     public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpFilterMessage httpMessage) {

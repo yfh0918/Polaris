@@ -18,8 +18,8 @@ public abstract class HttpRequestFilter extends HttpFilter  {
      *
      */
 	@Override
-	public void start() {
-		super.start();
+	public void doStart() {
+		super.doStart();
 		HttpRequestFilterChain.INSTANCE.add(this);
 	} 
 	
@@ -28,8 +28,7 @@ public abstract class HttpRequestFilter extends HttpFilter  {
      *
      */
 	@Override
-	public void stop() {
-		super.stop();
+	public void doStop() {
 		HttpRequestFilterChain.INSTANCE.remove(this);
 	}
 	
