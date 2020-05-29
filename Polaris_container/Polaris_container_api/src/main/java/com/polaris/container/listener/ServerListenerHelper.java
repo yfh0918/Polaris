@@ -50,8 +50,7 @@ public abstract class ServerListenerHelper {
 			logger.debug("serverListener:{} started",serverListener.getClass().getName());
 			serverListener.started();
 		}
-		
-		// The last started to register 
+		// the last one is  register
 		ServerClient.register();
 	}
 	public static void failure() {
@@ -61,9 +60,8 @@ public abstract class ServerListenerHelper {
 		}
 	}
 	public static void stopping() {
-		// The first stopping to unRegister 
+		// The first one to unRegister 
 		ServerClient.unRegister();
-		
 		for (ServerListener serverListener : serverListenerList) {
 			logger.debug("serverListener:{} stopping",serverListener.getClass().getName());
 			serverListener.stopping();

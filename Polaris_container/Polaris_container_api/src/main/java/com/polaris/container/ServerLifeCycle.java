@@ -17,7 +17,7 @@ public class ServerLifeCycle extends AbstractLifeCycle implements LifeCycle.List
         public void run() {
             stop();
         }
-    }, "JVM-shutdown-hook");
+    }, "ServerContainer-JVM-shutdown-hook");
     
 	private ServerLifeCycle () {
 		addLifeCycleListener(this);
