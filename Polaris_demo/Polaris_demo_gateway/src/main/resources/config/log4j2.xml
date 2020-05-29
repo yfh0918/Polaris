@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--设置log4j2的自身log级别为warn -->
-<configuration status="warn">
+<configuration status="info">
     <properties>
         <Property name="app_name">BanyanProcessor</Property>
         <Property name="log_path">c:/logs/${app_name}</Property>

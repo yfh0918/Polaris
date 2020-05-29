@@ -14,4 +14,10 @@ public class DemoController {
     public Mono<String> test() {
         return Mono.just("test");
     }
+    
+    @GetMapping(value = "/close")
+    public Mono<String> close() {
+    	System.exit(0);
+        return Mono.just("test");
+    }
 }

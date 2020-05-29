@@ -26,4 +26,10 @@ public class DemoController {
     public String test() {
         return "test";
     }
+    
+    @GetMapping(value = "/close")
+    public String close() {
+    	System.exit(0);
+        return "test";
+    }
 }

@@ -49,6 +49,11 @@ public class DemoController {
 		return "aa";
     }
 	
-
+	@RequestMapping(value = "/close", produces = "application/json;charset=UTF-8")
+    @ResponseBody
+    public String close(HttpServletRequest request)throws Exception  {
+		System.exit(0);
+		return "aa";
+	}
 	
 }

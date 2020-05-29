@@ -29,7 +29,9 @@ public abstract class AbstractManagedLifeCycle extends AbstractLifeCycle impleme
 
 	@Override
 	public void lifeCycleFailure(LifeCycle event, Throwable cause) {
-		logger.error("failed AbstractManagedLifeCycle: " + cause, cause);
+		if (event instanceof AbstractManagedLifeCycle) {
+			logger.error("failed AbstractManagedLifeCycle: " + cause, cause);
+		}
 	}
 
 	@Override
