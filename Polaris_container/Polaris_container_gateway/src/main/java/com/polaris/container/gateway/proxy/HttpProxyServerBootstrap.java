@@ -324,11 +324,19 @@ public interface HttpProxyServerBootstrap {
     
     /**
      * <p>
-     * Build and stop the server.
+     * Build and graceful stop the server.
      * </p>
      *
      */
     void stop();
+    
+    /**
+     * <p>
+     * Build and non graceful stop the server.
+     * </p>
+     *
+     */
+    void abort();
 
     /**
      * Set the configuration parameters for the proxy's thread pools.

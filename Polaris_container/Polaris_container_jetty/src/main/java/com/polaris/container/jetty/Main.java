@@ -17,7 +17,7 @@ public class Main implements Server{
      *
      */
 	@Override
-	public void start() {
+	public void start() throws Exception{
         JettyServer server = JettyServer.getInstance();
         server.start();
 	}
@@ -27,7 +27,7 @@ public class Main implements Server{
      *
      */
 	@Override
-	public void stop() {
+	public void stop() throws Exception{
         JettyServer server = JettyServer.getInstance();
         server.stop();
 	}

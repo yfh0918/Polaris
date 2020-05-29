@@ -142,17 +142,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
     private final ChannelGroup allChannels = new DefaultChannelGroup("HTTP-Proxy-Server", GlobalEventExecutor.INSTANCE);
 
     /**
-     * JVM shutdown hook to shutdown this proxy server. Declared as a class-level variable to allow removing the shutdown hook when the
-     * proxy server is stopped normally.
-     */
-    private final Thread jvmShutdownHook = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            abort();
-        }
-    }, "LittleProxy-JVM-shutdown-hook");
-
-    /**
      * Bootstrap a new {@link DefaultHttpProxyServer} starting from scratch.
      *
      * @return
@@ -443,13 +432,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
 
             serverGroup.unregisterProxyServer(this, graceful);
 
-            // remove the shutdown hook that was added when the proxy was started, since it has now been stopped
-            try {
-                Runtime.getRuntime().removeShutdownHook(jvmShutdownHook);
-            } catch (IllegalStateException e) {
-                // ignore -- IllegalStateException means the VM is already shutting down
-            }
-
             LOG.info("Done shutting down proxy server");
         }
     }
@@ -565,8 +547,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
 
         this.boundAddress = ((InetSocketAddress) future.channel().localAddress());
         LOG.info("Proxy started at address: " + this.boundAddress);
-
-        Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
     }
 
     protected ChainedProxyManager getChainProxyManager() {
@@ -931,5 +911,12 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
                 }
             }
         }
+
+		@Override
+		public void abort() {
+			if (httpProxyServer != null) {
+            	httpProxyServer.abort();
+        	}
+		}
     }
 }

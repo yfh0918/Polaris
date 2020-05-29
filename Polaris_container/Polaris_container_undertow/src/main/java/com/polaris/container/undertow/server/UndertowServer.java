@@ -10,12 +10,12 @@ import javax.servlet.ServletException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 
 import io.undertow.Handlers;
 import io.undertow.Undertow;
+import io.undertow.UndertowOptions;
 import io.undertow.Undertow.Builder;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.PathHandler;
@@ -100,6 +100,8 @@ public class UndertowServer {
 		if (directBuffers != null) {
 			builder.setDirectBuffers(Boolean.parseBoolean(directBuffers));
 		}
+		Integer shutdownTimeout = Integer.parseInt(ConfClient.get("server.shutdownTimeout","10"));
+		builder.setServerOption(UndertowOptions.SHUTDOWN_TIMEOUT, shutdownTimeout);
 		return builder;
 	}
 
@@ -166,76 +168,37 @@ public class UndertowServer {
      *
      * @throws Exception
      */
-    public void start() {
-    	try {
-
-            //如果已经启动就先停掉
-            if (this.undertow != null) {
-                this.undertow.stop();
-                this.undertow = null;
-            }
-
-            //没有初始化过，需要重新初始化
-            if (this.undertow == null) {
-                init();
-            }
-        	
-            //启动服务
-            this.undertow.start();
-            
-            //server listener start
-            ServerListenerHelper.started();
-
-            //log
-            logger.info("Undertow started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
-            
-            // add shutdown hook to stop server
-            Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
-        } catch (Exception e) {
-        	ServerListenerHelper.failure();
+    public void start() throws Exception {
+    	//如果已经启动就先停掉
+        if (this.undertow != null) {
+            this.undertow.stop();
             this.undertow = null;
-            logger.error("failed to start undertow.", e);
         }
+
+        //没有初始化过，需要重新初始化
+        if (this.undertow == null) {
+            init();
+        }
+    	
+        //启动服务
+        this.undertow.start();
+        
+        //log
+        logger.info("Undertow started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
     }
     
-    /**
-     * JVM shutdown hook to shutdown this UndertowServer server. Declared as a class-level variable to allow removing the shutdown hook when the
-     * UndertowServer server is stopped normally.
-     */
-    private final Thread jvmShutdownHook = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            stop();
-        }
-    }, "UndertowServer-JVM-shutdown-hook");
-
+    
     /**
      * 停止服务服务器
      *
      * @throws Exception
      */
-    public void stop() {
-    	try {
-        	ServerListenerHelper.stopping();
-        	manager.stop();
-        	manager.undeploy();
-        	undertow.stop();
-        	ServerListenerHelper.stopped();
-        	manager = null;
-        	undertow = null;
-        } catch (Exception e) {
-        	// ignore -- IllegalStateException means the VM is already shutting down
-        }
-    	
-    	// remove the shutdown hook that was added when the UndertowServer was started, since it has now been stopped
-        try {
-            Runtime.getRuntime().removeShutdownHook(jvmShutdownHook);
-        } catch (IllegalStateException e) {
-            // ignore -- IllegalStateException means the VM is already shutting down
-        }
-
-        //log out
-        logger.info("Undertow stopped on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
+    public void stop() throws Exception {
+    	manager.stop();
+    	manager.undeploy();
+    	undertow.stop();
+    	manager = null;
+    	undertow = null;
     }
     
     /**

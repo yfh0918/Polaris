@@ -18,7 +18,7 @@ public class Main implements Server {
      *
      */
 	@Override
-	public void start() {
+	public void start() throws Exception {
 		WebfluxServer.getInstance().start();
 	}
 	
@@ -27,7 +27,7 @@ public class Main implements Server {
      *
      */
 	@Override
-	public void stop() {
+	public void stop() throws Exception {
 		WebfluxServer.getInstance().stop();
 	}
 }

@@ -18,7 +18,7 @@ public class Main implements Server {
      *
      */
 	@Override
-	public void start() {
+	public void start() throws Exception  {
 		DubboServer.getInstance().start();
 	}
 
@@ -27,7 +27,7 @@ public class Main implements Server {
      *
      */
 	@Override
-	public void stop() {
+	public void stop() throws Exception  {
 		DubboServer.getInstance().stop();
 	}
 }

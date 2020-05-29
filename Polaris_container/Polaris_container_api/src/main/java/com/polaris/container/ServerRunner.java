@@ -46,7 +46,7 @@ public abstract class ServerRunner {
     	ServerListenerHelper.init(args, serverListeners);
     	
     	//启动
-    	ServerFactory.getServer().start();
+    	ServerLifeCycle.INSTANCE.start();;
     }
     
     /**

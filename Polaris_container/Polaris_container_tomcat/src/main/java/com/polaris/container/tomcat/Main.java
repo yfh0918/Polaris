@@ -18,7 +18,7 @@ public class Main implements Server {
      *
      */
 	@Override
-	public void start() {
+	public void start() throws Exception{
 		TomcatServer server = TomcatServer.getInstance();
 		server.start();
 	}
@@ -28,7 +28,7 @@ public class Main implements Server {
      *
      */
 	@Override
-	public void stop() {
+	public void stop() throws Exception{
 		TomcatServer server = TomcatServer.getInstance();
 		server.stop();
 	}

@@ -10,7 +10,6 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 
 import com.polaris.container.config.ConfigurationHelper;
-import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
@@ -61,7 +60,7 @@ public class WebfluxServer {
      *
      * @throws Exception
      */
-    public void start() {
+    public void start() throws Exception {
 
     	//创建context
     	SpringUtil.refresh(ConfigurationHelper.getConfiguration(WebfluxServer.class));
@@ -89,16 +88,18 @@ public class WebfluxServer {
         
         //bind server
         disposableSever = server.bindNow();
-        ServerListenerHelper.started();
 
         //log
         logger.info("netty-webflux started on port(s) " + port + " with context path '/'");
         
-        // add shutdown hook to stop server
-        Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
-
         //block
-        disposableSever.onDispose().block();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+            	disposableSever.onDispose().block();
+            }
+        }, "disposableSever-onDispose-block").start();
+        
     }
     
     /**
@@ -106,40 +107,9 @@ public class WebfluxServer {
      *
      * @throws Exception
      */
-    public void stop() {
-    	try {
-        	ServerListenerHelper.stopping();
-        } catch (Exception e) {
-        	// ignore -- IllegalStateException means the VM is already shutting down
-        }
-    	
-    	// remove the shutdown hook that was added when the UndertowServer was started, since it has now been stopped
-        try {
-            Runtime.getRuntime().removeShutdownHook(jvmShutdownHook);
-        } catch (IllegalStateException e) {
-            // ignore -- IllegalStateException means the VM is already shutting down
-        }
-    	try {
-        	disposableSever.disposeNow();
-        	ServerListenerHelper.stopped();
-        } catch (Exception e) {
-        	// ignore -- IllegalStateException means the VM is already shutting down
-        }
-
-        //log out
-        logger.info("Webflux stopped on port(s) " + this.port + " with context path '/'");
+    public void stop() throws Exception {
+    	disposableSever.disposeNow();
     }
-    
-    /**
-     * JVM shutdown hook to shutdown this server. Declared as a class-level variable to allow removing the shutdown hook when the
-     * server is stopped normally.
-     */
-    private final Thread jvmShutdownHook = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            stop();
-        }
-    }, "Webflux-JVM-shutdown-hook");
     
     private HttpProtocol[] listProtocols() {
         boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl.enable","false"));
@@ -155,43 +125,37 @@ public class WebfluxServer {
 		return new HttpProtocol[] { HttpProtocol.HTTP11 };
 	}
     
-    private HttpServer secure(HttpServer server) {
+    private HttpServer secure(HttpServer server) throws Exception{
         boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl.enable","false"));
     	if (!ssl) {
     		return server;
     	}
-    	try {
-    		String certificate = ConfClient.get("server.certificate.file");
-    		boolean isCertificate = false;
-            File certificateFile = null;
-            if (StringUtil.isNotEmpty(certificate)) {
-            	certificateFile = new File(certificate);
-            	if (certificateFile.isFile()) {
-            		isCertificate = true;
-            	}
-            }
-    		String privateKey = ConfClient.get("server.privateKey.file");
-    		boolean isPrivateKey = false;
-            File privateKeyFile = null;
-            if (StringUtil.isNotEmpty(privateKey)) {
-            	privateKeyFile = new File(privateKey);
-            	if (privateKeyFile.isFile()) {
-            		isPrivateKey = true;
-            	}
-            }
-            if (!isCertificate || !isPrivateKey) {
-            	SelfSignedCertificate cert = new SelfSignedCertificate();
-            	certificateFile = cert.certificate();
-            	privateKeyFile = cert.privateKey();
-            }
-    	 	SslContextBuilder sslContextBuilder =
-    	 	SslContextBuilder.forServer(certificateFile, privateKeyFile);
-        	server.secure(sslContextSpec -> sslContextSpec.sslContext(sslContextBuilder));
-    	} catch (Exception ex) {
-    		ServerListenerHelper.failure();
-    		logger.info("netty-webflux start error : {}",ex);
-    		return null;
-    	}
+    	String certificate = ConfClient.get("server.certificate.file");
+		boolean isCertificate = false;
+        File certificateFile = null;
+        if (StringUtil.isNotEmpty(certificate)) {
+        	certificateFile = new File(certificate);
+        	if (certificateFile.isFile()) {
+        		isCertificate = true;
+        	}
+        }
+		String privateKey = ConfClient.get("server.privateKey.file");
+		boolean isPrivateKey = false;
+        File privateKeyFile = null;
+        if (StringUtil.isNotEmpty(privateKey)) {
+        	privateKeyFile = new File(privateKey);
+        	if (privateKeyFile.isFile()) {
+        		isPrivateKey = true;
+        	}
+        }
+        if (!isCertificate || !isPrivateKey) {
+        	SelfSignedCertificate cert = new SelfSignedCertificate();
+        	certificateFile = cert.certificate();
+        	privateKeyFile = cert.privateKey();
+        }
+	 	SslContextBuilder sslContextBuilder =
+	 	SslContextBuilder.forServer(certificateFile, privateKeyFile);
+    	server.secure(sslContextSpec -> sslContextSpec.sslContext(sslContextBuilder));
     	return server;
     }
 

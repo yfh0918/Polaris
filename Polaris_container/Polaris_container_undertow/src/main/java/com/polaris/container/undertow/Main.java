@@ -1,7 +1,5 @@
 package com.polaris.container.undertow;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 
 import com.polaris.container.Server;
@@ -14,15 +12,13 @@ import com.polaris.container.undertow.server.UndertowServer;
 @Order(ServerOrder.UNDERTOW)
 public class Main implements Server{
 
-	private static Logger logger = LoggerFactory.getLogger(Main.class);
 	
     /**
      * 服务启动
      *
      */
 	@Override
-	public void start() {
-    	logger.info("undertow启动！");
+	public void start() throws Exception {
         UndertowServer server = UndertowServer.getInstance();
         server.start();
 	}
@@ -32,8 +28,7 @@ public class Main implements Server{
      *
      */
 	@Override
-	public void stop() {
-    	logger.info("undertow停止！");
+	public void stop() throws Exception {
         UndertowServer server = UndertowServer.getInstance();
         server.stop();
 	}

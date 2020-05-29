@@ -1,19 +1,21 @@
 package com.polaris.container.jetty.server;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.HashSet;
+import java.util.ServiceLoader;
 
+import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler.ServletContainerInitializerCaller;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.jetty.listener.ServerHandlerLifeCycle;
-import com.polaris.container.jetty.listener.ServerHandlerListerner;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.FileUtil;
@@ -51,42 +53,33 @@ public class JettyServer {
     /**
      * 服务器初始化
      */
-    private void init() {
-        // 构造服务器
-        try {
+    private void init() throws Exception{
+        //定义server
+    	serverPort = ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE);
+        InetSocketAddress addr = new InetSocketAddress("0.0.0.0", Integer.parseInt(serverPort));
+        server = new Server(addr);
+        QueuedThreadPool threadPool = (QueuedThreadPool)server.getThreadPool();
+        threadPool.setMaxThreads(Integer.parseInt(ConfClient.get("server.maxThreads",MAX_THREADS)));
 
-            //定义server
-        	serverPort = ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE);
-            InetSocketAddress addr = new InetSocketAddress("0.0.0.0", Integer.parseInt(serverPort));
-            server = new Server(addr);
-            QueuedThreadPool threadPool = (QueuedThreadPool)server.getThreadPool();
-            threadPool.setMaxThreads(Integer.parseInt(ConfClient.get("server.maxThreads",MAX_THREADS)));
+        // 设置在JVM退出时关闭Jetty的钩子。
+        server.setStopAtShutdown(true);
 
-            // 设置在JVM退出时关闭Jetty的钩子。
-            server.setStopAtShutdown(true);
-
-            //定义context
-            WebAppContext context = new WebAppContext();
-            context.setDefaultsDescriptor("webdefault.xml");
-            contextPath =ConfClient.get(Constant.SERVER_CONTEXT,"/"); 
-            if (!contextPath.startsWith("/")) {
-            	contextPath = "/" + contextPath;
-            }
-            context.setContextPath(contextPath); // Application访问路径
-            String resourceBase = FileUtil.getFullPath("WebContent");
-            File resDir = new File(resourceBase);
-            context.setResourceBase(resDir.getCanonicalPath());
-            context.setMaxFormContentSize(Integer.parseInt(ConfClient.get("server.maxSavePostSize",String.valueOf(MAX_SAVE_POST_SIZE))));
-            servletContext = context.getServletContext();
-            context.addBean(new ServerHandlerLifeCycle(servletContext),false);
-            //context加入server
-            this.server.setHandler(context); // 将Application注册到服务器
-            this.server.addLifeCycleListener(
-            		new ServerHandlerListerner());//监听handler
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        } 
-
+        //定义context
+        WebAppContext context = new WebAppContext();
+        context.setDefaultsDescriptor("webdefault.xml");
+        contextPath =ConfClient.get(Constant.SERVER_CONTEXT,"/"); 
+        if (!contextPath.startsWith("/")) {
+        	contextPath = "/" + contextPath;
+        }
+        context.setContextPath(contextPath); // Application访问路径
+        String resourceBase = FileUtil.getFullPath("WebContent");
+        File resDir = new File(resourceBase);
+        context.setResourceBase(resDir.getCanonicalPath());
+        context.setMaxFormContentSize(Integer.parseInt(ConfClient.get("server.maxSavePostSize",String.valueOf(MAX_SAVE_POST_SIZE))));
+        servletContext = context.getServletContext();
+        context.addBean(new ServerHandlerLifeCycle(servletContext),false);
+        //context加入server
+        this.server.setHandler(context); // 将Application注册到服务器
     }
     
     /**
@@ -113,37 +106,24 @@ public class JettyServer {
      *
      * @throws Exception
      */
-    public void start() {
+    public void start() throws Exception{
 
-        try {
-
-            //如果已经启动就先停掉
-            if (this.server != null && (this.server.isStarted() || this.server.isStarting())) {
-                this.server.stop();
-                this.server = null;
-            }
-
-            //没有初始化过，需要重新初始化
-            if (this.server == null) {
-                init();
-            }
-
-            //启动服务
-            this.server.start();
-            
-            //启动日志
-            logger.info("Jetty started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
-            
-            // add shutdown hook to stop server
-            Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
-            
-            this.server.join();
-        } catch (Exception e) {
-
-            //启动出错的话，清空服务
+        //如果已经启动就先停掉
+        if (this.server != null && (this.server.isStarted() || this.server.isStarting())) {
+            this.server.stop();
             this.server = null;
-            logger.error("Error:",e);
         }
+
+        //没有初始化过，需要重新初始化
+        if (this.server == null) {
+            init();
+        }
+
+        //启动服务
+        this.server.start();
+        
+        //启动日志
+        logger.info("Jetty started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
     }
     
     /**
@@ -151,34 +131,9 @@ public class JettyServer {
      *
      * @throws Exception
      */
-    public void stop() {
-    	try {
-        	server.stop();
-        } catch (Exception e) {
-        	// ignore -- IllegalStateException means the VM is already shutting down
-        }
-    	
-    	// remove the shutdown hook that was added when the UndertowServer was started, since it has now been stopped
-        try {
-            Runtime.getRuntime().removeShutdownHook(jvmShutdownHook);
-        } catch (IllegalStateException e) {
-            // ignore -- IllegalStateException means the VM is already shutting down
-        }
-
-        //log out
-    	logger.info("Jetty stopped on port(s) " + serverPort + " with context path '" + contextPath + "'");
+    public void stop() throws Exception {
+    	server.stop();
     }
-    
-    /**
-     * JVM shutdown hook to shutdown this server. Declared as a class-level variable to allow removing the shutdown hook when the
-     * server is stopped normally.
-     */
-    private final Thread jvmShutdownHook = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            stop();
-        }
-    }, "Jetty-JVM-shutdown-hook");
 
     
     /**
@@ -188,5 +143,76 @@ public class JettyServer {
      */
     public ServletContext getServletContex() {
     	return servletContext;
+    }
+    
+    public static class ServerHandlerLifeCycle implements ServletContainerInitializerCaller {
+    	ServletContext sc;
+    	private final ServiceLoader<ServletContainerInitializer> serviceLoader = ServiceLoader.load(ServletContainerInitializer.class);
+    	
+    	public ServerHandlerLifeCycle(ServletContext sc) {
+    		this.sc = sc;
+    	}
+    	protected void doStart() throws Exception
+        {
+    		for (ServletContainerInitializer servletContainerInitializer : serviceLoader) {
+    			try {
+    				ContextHandler.getCurrentContext().setExtendedListenerTypes(true);
+    				servletContainerInitializer.onStartup(new HashSet<>(), sc);
+    			} catch (Exception e) {
+    				e.printStackTrace();
+    			} finally {
+    				ContextHandler.getCurrentContext().setExtendedListenerTypes(false);
+    			}
+    		}
+        }
+    	@Override
+    	public void start() throws Exception {
+    		doStart();
+    	}
+    	@Override
+    	public void stop() throws Exception {
+    		// TODO Auto-generated method stub
+    		
+    	}
+    	@Override
+    	public boolean isRunning() {
+    		// TODO Auto-generated method stub
+    		return false;
+    	}
+    	@Override
+    	public boolean isStarted() {
+    		// TODO Auto-generated method stub
+    		return false;
+    	}
+    	@Override
+    	public boolean isStarting() {
+    		// TODO Auto-generated method stub
+    		return false;
+    	}
+    	@Override
+    	public boolean isStopping() {
+    		// TODO Auto-generated method stub
+    		return false;
+    	}
+    	@Override
+    	public boolean isStopped() {
+    		// TODO Auto-generated method stub
+    		return false;
+    	}
+    	@Override
+    	public boolean isFailed() {
+    		// TODO Auto-generated method stub
+    		return false;
+    	}
+    	@Override
+    	public void addLifeCycleListener(Listener listener) {
+    		// TODO Auto-generated method stub
+    		
+    	}
+    	@Override
+    	public void removeLifeCycleListener(Listener listener) {
+    		// TODO Auto-generated method stub
+    		
+    	}
     }
 }

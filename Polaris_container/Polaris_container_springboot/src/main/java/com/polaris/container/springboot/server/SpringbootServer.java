@@ -2,13 +2,9 @@ package com.polaris.container.springboot.server;
 
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.ContextStoppedEvent;
 
 import com.polaris.container.config.ConfigurationHelper;
-import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
@@ -47,7 +43,7 @@ public class SpringbootServer {
      *
      * @throws Exception
      */
-    public void start() {
+    public void start() throws Exception{
     	
     	//project
     	String projectName = ConfClient.get(Constant.SPRING_BOOT_NAME, ConfClient.get(Constant.PROJECT_NAME));
@@ -62,23 +58,6 @@ public class SpringbootServer {
     	//启动应用
     	ConfigurationHelper.addConfiguration(SpringbootConfiguration.class);
     	SpringApplication springApplication = new SpringApplication(ConfigurationHelper.getConfiguration());
-        springApplication.addListeners(new ApplicationListener<ContextRefreshedEvent>() {
-
-			@Override
-			public void onApplicationEvent(ContextRefreshedEvent event) {
-				ServerListenerHelper.started();
-			}
-        	
-        });
-        
-        springApplication.addListeners(new ApplicationListener<ContextStoppedEvent>() {
-
-			@Override
-			public void onApplicationEvent(ContextStoppedEvent event) {
-				ServerListenerHelper.stopped();
-			}
-        	
-        });
         springApplication.setBannerMode(Banner.Mode.OFF);
         ConfigurableApplicationContext context = springApplication.run(ConfigurationHelper.getArgs());
         SpringUtil.setApplicationContext(context);
@@ -89,7 +68,7 @@ public class SpringbootServer {
      *
      * @throws Exception
      */
-    public void stop() {
+    public void stop() throws Exception {
     	context.stop();
     }
 }

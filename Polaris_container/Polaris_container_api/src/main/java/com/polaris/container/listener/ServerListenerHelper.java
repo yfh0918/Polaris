@@ -18,8 +18,6 @@ public abstract class ServerListenerHelper {
 		addServerListener(serverListeners);
 		addServerListenerExtension();
 		addServerListener(new LifeCycleListener());
-		addServerListener(new ServerRegisterListener());
-		starting();
 	}
 	
 	public static void addServerListener(ServerListener... serverListeners) {
@@ -43,44 +41,38 @@ public abstract class ServerListenerHelper {
 
 	public static void starting() {
 		for (ServerListener serverListener : serverListenerList) {
-			logger.info("serverListener:{} starting",serverListener.getClass().getName());
+			logger.debug("serverListener:{} starting",serverListener.getClass().getName());
 			serverListener.starting();
 		}
 	}
 	public static void started() {
 		for (ServerListener serverListener : serverListenerList) {
-			logger.info("serverListener:{} started",serverListener.getClass().getName());
+			logger.debug("serverListener:{} started",serverListener.getClass().getName());
 			serverListener.started();
 		}
+		
+		// The last started to register 
+		ServerClient.register();
 	}
 	public static void failure() {
 		for (ServerListener serverListener : serverListenerList) {
-			logger.info("serverListener:{} failure",serverListener.getClass().getName());
+			logger.debug("serverListener:{} failure",serverListener.getClass().getName());
 			serverListener.failure();
 		}
 	}
 	public static void stopping() {
+		// The first stopping to unRegister 
+		ServerClient.unRegister();
+		
 		for (ServerListener serverListener : serverListenerList) {
-			logger.info("serverListener:{} stopping",serverListener.getClass().getName());
+			logger.debug("serverListener:{} stopping",serverListener.getClass().getName());
 			serverListener.stopping();
 		}
 	}
 	public static void stopped() {
 		for (ServerListener serverListener : serverListenerList) {
-			logger.info("serverListener:{} stopped",serverListener.getClass().getName());
+			logger.debug("serverListener:{} stopped",serverListener.getClass().getName());
 			serverListener.stopped();
-		}
-	}
-	
-	protected static class ServerRegisterListener implements ServerListener {
-		@Override
-		public void started() {
-			ServerClient.register();
-			
-		}
-		@Override
-		public void stopped() {
-	    	ServerClient.unRegister();
 		}
 	}
 	

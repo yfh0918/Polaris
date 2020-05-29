@@ -44,25 +44,24 @@ public class DubboServer {
      *
      * @throws Exception
      */
-    public void start() {
+    public void start() throws Exception {
 
     	//创建context
     	SpringUtil.refresh(ConfigurationHelper.getConfiguration());
     	
-    	//监听
-    	ServerListenerHelper.started();
-    	
-    	// add shutdown hook to stop server
-        Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
-        
         //block
-        try {
-        	logger.info("Dubbo started on port(s) " + ConfClient.get("dubbo.protocol.port"));
-            new CountDownLatch(1).await();
-		} catch (Exception e) {
-			ServerListenerHelper.failure();
-			logger.error("ERROR:",e);
-		}
+    	new Thread(new Runnable() {
+            @Override
+            public void run() {
+            	try {
+                	logger.info("Dubbo started on port(s) " + ConfClient.get("dubbo.protocol.port"));
+                    new CountDownLatch(1).await();
+        		} catch (Exception e) {
+        			ServerListenerHelper.failure();
+        			logger.error("ERROR:",e);
+        		}
+            }
+        }, "Dubbo-block").start();
     }
     
     /**
@@ -70,39 +69,8 @@ public class DubboServer {
      *
      * @throws Exception
      */
-    public void stop() {
-    	try {
-    		//监听
-        	ServerListenerHelper.stopping();
-        } catch (Exception e) {
-        	// ignore -- IllegalStateException means the VM is already shutting down
-        }
-    	
-    	// remove the shutdown hook that was added when the UndertowServer was started, since it has now been stopped
-        try {
-            Runtime.getRuntime().removeShutdownHook(jvmShutdownHook);
-        } catch (IllegalStateException e) {
-            // ignore -- IllegalStateException means the VM is already shutting down
-        }
-
-    	try {
-    		//监听
-        	ServerListenerHelper.stopped();
-        } catch (Exception e) {
-        	// ignore -- IllegalStateException means the VM is already shutting down
-        }
-        //log out
-        logger.info("Dubbo stopped on port(s) " + ConfClient.get("dubbo.protocol.port"));
+    public void stop() throws Exception  {
     }
     
-    /**
-     * JVM shutdown hook to shutdown this server. Declared as a class-level variable to allow removing the shutdown hook when the
-     * server is stopped normally.
-     */
-    private final Thread jvmShutdownHook = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            stop();
-        }
-    }, "Dubbo-JVM-shutdown-hook");
+
 }

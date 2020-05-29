@@ -15,7 +15,6 @@ import com.polaris.container.gateway.proxy.HttpProxyServerBootstrap;
 import com.polaris.container.gateway.proxy.extras.SelfSignedSslEngineSourceExt;
 import com.polaris.container.gateway.proxy.impl.DefaultHttpProxyServer;
 import com.polaris.container.gateway.proxy.impl.ThreadPoolConfiguration;
-import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.container.util.NetUtils;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
@@ -125,12 +124,7 @@ public class HttpServer {
                         return new HttpFilterAdapterImpl(originalRequest, ctx);
                     }
                 }).start();
-        ServerListenerHelper.started();
         logger.info("Gateway started on port(s) " + inetSocketAddress.getPort() + " with context path '/'");
-        
-        // add shutdown hook to stop server
-        Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
-    	
     }
     
     /**
@@ -139,38 +133,7 @@ public class HttpServer {
      * @throws Exception
      */
     public void stop() {
-    	try {
-        	ServerListenerHelper.stopping();
-        } catch (Exception e) {
-        	// ignore -- IllegalStateException means the VM is already shutting down
-        }
-    	
-    	// remove the shutdown hook that was added when the UndertowServer was started, since it has now been stopped
-        try {
-            Runtime.getRuntime().removeShutdownHook(jvmShutdownHook);
-        } catch (IllegalStateException e) {
-            // ignore -- IllegalStateException means the VM is already shutting down
-        }
-
-    	try {
-        	httpProxyServerBootstrap.stop();
-        	ServerListenerHelper.stopped();
-        } catch (Exception e) {
-        	// ignore -- IllegalStateException means the VM is already shutting down
-        }
-
-        //log out
-    	logger.info("Gateway stopped on port(s) " + inetSocketAddress.getPort() + " with context path '/'");
+       	httpProxyServerBootstrap.abort();//non graceful
     }
-    
-    /**
-     * JVM shutdown hook to shutdown this server. Declared as a class-level variable to allow removing the shutdown hook when the
-     * server is stopped normally.
-     */
-    private final Thread jvmShutdownHook = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            stop();
-        }
-    }, "Gateway-JVM-shutdown-hook");
+
 }
