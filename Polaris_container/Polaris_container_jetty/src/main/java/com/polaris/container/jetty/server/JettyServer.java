@@ -10,7 +10,6 @@ import javax.servlet.ServletContext;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler.ServletContainerInitializerCaller;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
@@ -77,7 +76,7 @@ public class JettyServer {
         context.setResourceBase(resDir.getCanonicalPath());
         context.setMaxFormContentSize(Integer.parseInt(ConfClient.get("server.maxSavePostSize",String.valueOf(MAX_SAVE_POST_SIZE))));
         servletContext = context.getServletContext();
-        context.addBean(new ServerHandlerLifeCycle(servletContext),false);
+        context.addBean(new JettyServletContainerInitializer(servletContext),false);
         //context加入server
         this.server.setHandler(context); // 将Application注册到服务器
     }
@@ -145,15 +144,15 @@ public class JettyServer {
     	return servletContext;
     }
     
-    public static class ServerHandlerLifeCycle implements ServletContainerInitializerCaller {
+    public static class JettyServletContainerInitializer extends AbstractServletContainerInitializerCaller {
     	ServletContext sc;
     	private final ServiceLoader<ServletContainerInitializer> serviceLoader = ServiceLoader.load(ServletContainerInitializer.class);
     	
-    	public ServerHandlerLifeCycle(ServletContext sc) {
+    	public JettyServletContainerInitializer(ServletContext sc) {
     		this.sc = sc;
     	}
-    	protected void doStart() throws Exception
-        {
+    	@Override
+    	public void start() throws Exception {
     		for (ServletContainerInitializer servletContainerInitializer : serviceLoader) {
     			try {
     				ContextHandler.getCurrentContext().setExtendedListenerTypes(true);
@@ -164,55 +163,6 @@ public class JettyServer {
     				ContextHandler.getCurrentContext().setExtendedListenerTypes(false);
     			}
     		}
-        }
-    	@Override
-    	public void start() throws Exception {
-    		doStart();
-    	}
-    	@Override
-    	public void stop() throws Exception {
-    		// TODO Auto-generated method stub
-    		
-    	}
-    	@Override
-    	public boolean isRunning() {
-    		// TODO Auto-generated method stub
-    		return false;
-    	}
-    	@Override
-    	public boolean isStarted() {
-    		// TODO Auto-generated method stub
-    		return false;
-    	}
-    	@Override
-    	public boolean isStarting() {
-    		// TODO Auto-generated method stub
-    		return false;
-    	}
-    	@Override
-    	public boolean isStopping() {
-    		// TODO Auto-generated method stub
-    		return false;
-    	}
-    	@Override
-    	public boolean isStopped() {
-    		// TODO Auto-generated method stub
-    		return false;
-    	}
-    	@Override
-    	public boolean isFailed() {
-    		// TODO Auto-generated method stub
-    		return false;
-    	}
-    	@Override
-    	public void addLifeCycleListener(Listener listener) {
-    		// TODO Auto-generated method stub
-    		
-    	}
-    	@Override
-    	public void removeLifeCycleListener(Listener listener) {
-    		// TODO Auto-generated method stub
-    		
     	}
     }
 }
