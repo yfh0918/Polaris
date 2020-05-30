@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
-import com.polaris.container.ServerFactory;
+import com.polaris.container.ServerProvider;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerExtension;
 import com.polaris.core.util.SpringUtil;
@@ -30,10 +30,10 @@ public class WebsocketListerner implements ServerListenerExtension{
 
 		@Override
 		public void started() {
-			if (ServerFactory.getServer().getContext() == null) {
+			if (ServerProvider.getServer().getContext() == null) {
 	    		return;
 	    	}
-	    	ServletContext servletContext = (ServletContext)(ServerFactory.getServer().getContext());
+	    	ServletContext servletContext = (ServletContext)(ServerProvider.getServer().getContext());
 	    	ServerContainer serverContainer = (ServerContainer) servletContext.getAttribute("javax.websocket.server.ServerContainer");
 	    	WSEndpointExporter wsEndpointExporter = new WSEndpointExporter();
 	    	wsEndpointExporter.registerEndpoints(serverContainer);

@@ -8,12 +8,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.polaris.core.OrderWrapper;
 
 @SuppressWarnings("rawtypes")
-public class ServerFactory {
+public class ServerProvider {
 	private static final ServiceLoader<Server> servers = ServiceLoader.load(Server.class);
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	private static List<OrderWrapper> serverList = new ArrayList<OrderWrapper>();
     private static volatile Server server;
-	private ServerFactory() {}
+	private ServerProvider() {}
 	
     public static Server getServer() {
     	if (initialized.compareAndSet(false, true)) {

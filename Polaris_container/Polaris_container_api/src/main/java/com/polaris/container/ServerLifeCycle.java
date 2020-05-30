@@ -1,12 +1,13 @@
 package com.polaris.container;
 
 import com.polaris.container.listener.ServerListenerHelper;
-import com.polaris.core.component.AbstractLifeCycle;
+import com.polaris.core.component.AbstractLifeCycleWithListener;
 import com.polaris.core.component.LifeCycle;
 
-public class ServerLifeCycle extends AbstractLifeCycle implements LifeCycle.Listener{
+public class ServerLifeCycle extends AbstractLifeCycleWithListener {
 
 	public static ServerLifeCycle INSTANCE = new ServerLifeCycle();
+	
 	
 	/**
      * JVM shutdown hook to shutdown this server. Declared as a class-level variable to allow removing the shutdown hook when the
@@ -19,16 +20,12 @@ public class ServerLifeCycle extends AbstractLifeCycle implements LifeCycle.List
         }
     }, "ServerContainer-JVM-shutdown-hook");
     
-	private ServerLifeCycle () {
-		addLifeCycleListener(this);
-	}
-	
 	protected void doStart() throws Exception {
-		ServerFactory.getServer().start();
+		ServerProvider.getServer().start();
     }
 
     protected void doStop() throws Exception {
-    	ServerFactory.getServer().stop();
+    	ServerProvider.getServer().stop();
     }
     
 	@Override
@@ -54,10 +51,4 @@ public class ServerLifeCycle extends AbstractLifeCycle implements LifeCycle.List
 		//so stopped method is called after the service is stopping
 		ServerListenerHelper.stopped();
 	}
-
-	@Override
-	public void lifeCycleStopped(LifeCycle event) {
-		//lifeCycleStopped method will not be called after the service is stopped
-	}
-
 }

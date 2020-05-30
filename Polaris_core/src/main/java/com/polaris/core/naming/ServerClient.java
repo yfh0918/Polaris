@@ -20,7 +20,7 @@ public abstract class ServerClient {
 			}
 			String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
 			boolean result = ServerStrategyProviderFactory.get().register(Server.of(registerIp, Integer.parseInt(port)));
-			logger.info("register ip:{}, port:{} , result:{}",registerIp,port,result);
+			logger.debug("register ip:{}, port:{} , result:{}",registerIp,port,result);
 			return result;
 		}
 		return false;
@@ -34,7 +34,7 @@ public abstract class ServerClient {
 			}
 			String registerIp = ConfClient.get(Constant.IP_ADDRESS, NetUtils.getLocalHost());
 			boolean result =  ServerStrategyProviderFactory.get().deregister(Server.of(registerIp, Integer.parseInt(port)));
-			logger.info("unRegister ip:{}, port:{} , result:{}",registerIp,port,result);
+			logger.debug("unRegister ip:{}, port:{} , result:{}",registerIp,port,result);
 			return result;
 		}
 		return false;

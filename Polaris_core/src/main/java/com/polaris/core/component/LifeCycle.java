@@ -1,10 +1,7 @@
 package com.polaris.core.component;
 
-import java.util.EventListener;
-
 /**
  * The lifecycle interface for generic components.
- * Reference jetty LifeCycle interface
  * <br>
  * Classes implementing this interface have a defined life cycle
  * defined by the methods of this interface.
@@ -68,26 +65,9 @@ public interface LifeCycle {
      */
     boolean isFailed();
 
-    void addLifeCycleListener(LifeCycle.Listener listener);
+    void addLifeCycleListener(LifeCycleListener listener);
 
-    void removeLifeCycleListener(LifeCycle.Listener listener);
-
-    /**
-     * Listener.
-     * A listener for Lifecycle events.
-     */
-    interface Listener extends EventListener
-    {
-        void lifeCycleStarting(LifeCycle event);
-
-        void lifeCycleStarted(LifeCycle event);
-
-        void lifeCycleFailure(LifeCycle event, Throwable cause);
-
-        void lifeCycleStopping(LifeCycle event);
-
-        void lifeCycleStopped(LifeCycle event);
-    }
+    void removeLifeCycleListener(LifeCycleListener listener);
 
     /**
      * Utility to start an object if it is a LifeCycle and to convert
@@ -96,16 +76,12 @@ public interface LifeCycle {
      * @param object The instance to start.
      * @throws RuntimeException if the call to start throws an exception.
      */
-    static void start(Object object)
-    {
-        if (object instanceof LifeCycle)
-        {
-            try
-            {
+    static void start(Object object) {
+        if (object instanceof LifeCycle) {
+            try {
                 ((LifeCycle)object).start();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
@@ -118,16 +94,12 @@ public interface LifeCycle {
      * @param object The instance to stop.
      * @throws RuntimeException if the call to stop throws an exception.
      */
-    static void stop(Object object)
-    {
-        if (object instanceof LifeCycle)
-        {
-            try
-            {
+    static void stop(Object object) {
+        if (object instanceof LifeCycle) {
+            try  {
                 ((LifeCycle)object).stop();
             }
-            catch (Exception e)
-            {
+            catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
