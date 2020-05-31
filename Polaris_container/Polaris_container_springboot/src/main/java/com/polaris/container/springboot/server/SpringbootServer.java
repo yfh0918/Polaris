@@ -59,6 +59,7 @@ public class SpringbootServer {
     	ConfigurationHelper.addConfiguration(SpringbootConfiguration.class);
     	SpringApplication springApplication = new SpringApplication(ConfigurationHelper.getConfiguration());
         springApplication.setBannerMode(Banner.Mode.OFF);
+        springApplication.setRegisterShutdownHook(false);//统一由容器管理shutdown处理
         ConfigurableApplicationContext context = springApplication.run(ConfigurationHelper.getArgs());
         SpringUtil.setApplicationContext(context);
     }

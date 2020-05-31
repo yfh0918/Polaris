@@ -7,9 +7,9 @@ import javax.servlet.ServletException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -63,10 +63,7 @@ public class SpringMvcInitializer extends  ExtensionInitializerAbs {
 		@Override
 		protected WebApplicationContext createRootApplicationContext() {
 			WebApplicationContext context = super.createRootApplicationContext();
-			if (context instanceof AnnotationConfigWebApplicationContext) {
-				((AnnotationConfigWebApplicationContext)context).registerShutdownHook();
-			}
-			SpringUtil.setApplicationContext(context);
+			SpringUtil.setApplicationContext((ConfigurableApplicationContext)context);
 			return context;
 		}
 		
