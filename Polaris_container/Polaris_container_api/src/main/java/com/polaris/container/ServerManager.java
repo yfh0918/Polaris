@@ -3,11 +3,12 @@ package com.polaris.container;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.polaris.container.listener.ServerListenerHelper;
-import com.polaris.core.component.AbstractLifeCycleWithListener;
 import com.polaris.core.component.LifeCycle;
+import com.polaris.core.component.LifeCycleListener;
+import com.polaris.core.component.LifeCycleWithListenerManager;
 import com.polaris.core.util.SpringUtil;
 
-public class ServerManager extends AbstractLifeCycleWithListener {
+public class ServerManager extends LifeCycleWithListenerManager implements LifeCycleListener{
 
 	/**
      * constructor ServerManager for private 
@@ -15,6 +16,7 @@ public class ServerManager extends AbstractLifeCycleWithListener {
      */
 	private static ServerManager INSTANCE = new ServerManager();
 	private ServerManager() {
+		addLifeCycleListener(this);
 	}
 	
 	public static void init() {

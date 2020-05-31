@@ -65,43 +65,4 @@ public interface LifeCycle {
      */
     boolean isFailed();
 
-    void addLifeCycleListener(LifeCycleListener listener);
-
-    void removeLifeCycleListener(LifeCycleListener listener);
-
-    /**
-     * Utility to start an object if it is a LifeCycle and to convert
-     * any exception thrown to a {@link RuntimeException}
-     *
-     * @param object The instance to start.
-     * @throws RuntimeException if the call to start throws an exception.
-     */
-    static void start(Object object) {
-        if (object instanceof LifeCycle) {
-            try {
-                ((LifeCycle)object).start();
-            }
-            catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    /**
-     * Utility to stop an object if it is a LifeCycle and to convert
-     * any exception thrown to a {@link RuntimeException}
-     *
-     * @param object The instance to stop.
-     * @throws RuntimeException if the call to stop throws an exception.
-     */
-    static void stop(Object object) {
-        if (object instanceof LifeCycle) {
-            try  {
-                ((LifeCycle)object).stop();
-            }
-            catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
 }

@@ -1,7 +1,5 @@
 package com.polaris.core.component;
 
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,22 +8,9 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractLifeCycle implements LifeCycle {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractLifeCycle.class);
-    public static final String STOPPED = "STOPPED";
-    public static final String FAILED = "FAILED";
-    public static final String STARTING = "STARTING";
-    public static final String STARTED = "STARTED";
-    public static final String STOPPING = "STOPPING";
-    public static final String RUNNING = "RUNNING";
 
-    private final CopyOnWriteArrayList<LifeCycleListener> _listeners = new CopyOnWriteArrayList<LifeCycleListener>();
     private final Object _lock = new Object();
-    private static final int STATE_FAILED = -1;
-    private static final int STATE_STOPPED = 0;
-    private static final int STATE_STARTING = 1;
-    private static final int STATE_STARTED = 2;
-    private static final int STATE_STOPPING = 3;
-    private volatile int _state = STATE_STOPPED;
-    private long _stopTimeout = 30000;//graceful stop default 30 seconds
+    private volatile int _state = LifeCycleState.STATE_STOPPED;
 
     protected void doStart() throws Exception {
     }
@@ -37,7 +22,7 @@ public abstract class AbstractLifeCycle implements LifeCycle {
     public final void start() {
         synchronized (_lock) {
             try {
-                if (_state == STATE_STARTED || _state == STATE_STARTING) {
+                if (_state == LifeCycleState.STATE_STARTED || _state == LifeCycleState.STATE_STARTING) {
                     return;
                 }
                 setStarting();
@@ -53,7 +38,7 @@ public abstract class AbstractLifeCycle implements LifeCycle {
     public final void stop() {
         synchronized (_lock) {
             try {
-                if (_state == STATE_STOPPING || _state == STATE_STOPPED) {
+                if (_state == LifeCycleState.STATE_STOPPING || _state == LifeCycleState.STATE_STOPPED) {
                     return;
                 }
                 setStopping();
@@ -70,132 +55,86 @@ public abstract class AbstractLifeCycle implements LifeCycle {
     {
         final int state = _state;
 
-        return state == STATE_STARTED || state == STATE_STARTING;
+        return state == LifeCycleState.STATE_STARTED || state == LifeCycleState.STATE_STARTING;
     }
 
     @Override
     public boolean isStarted() {
-        return _state == STATE_STARTED;
+        return _state == LifeCycleState.STATE_STARTED;
     }
 
     @Override
     public boolean isStarting() {
-        return _state == STATE_STARTING;
+        return _state == LifeCycleState.STATE_STARTING;
     }
 
     @Override
     public boolean isStopping() {
-        return _state == STATE_STOPPING;
+        return _state == LifeCycleState.STATE_STOPPING;
     }
 
     @Override
     public boolean isStopped() {
-        return _state == STATE_STOPPED;
+        return _state == LifeCycleState.STATE_STOPPED;
     }
 
     @Override
     public boolean isFailed() {
-        return _state == STATE_FAILED;
-    }
-
-    @Override
-    public void addLifeCycleListener(LifeCycleListener listener) {
-        _listeners.add(listener);
-    }
-
-    @Override
-    public void removeLifeCycleListener(LifeCycleListener listener) {
-        _listeners.remove(listener);
+        return _state == LifeCycleState.STATE_FAILED;
     }
 
     public String getState()  {
         switch (_state)
         {
-            case STATE_FAILED:
-                return FAILED;
-            case STATE_STARTING:
-                return STARTING;
-            case STATE_STARTED:
-                return STARTED;
-            case STATE_STOPPING:
-                return STOPPING;
-            case STATE_STOPPED:
-                return STOPPED;
+            case LifeCycleState.STATE_FAILED:
+                return LifeCycleState.FAILED;
+            case LifeCycleState.STATE_STARTING:
+                return LifeCycleState.STARTING;
+            case LifeCycleState.STATE_STARTED:
+                return LifeCycleState.STARTED;
+            case LifeCycleState.STATE_STOPPING:
+                return LifeCycleState.STOPPING;
+            case LifeCycleState.STATE_STOPPED:
+                return LifeCycleState.STOPPED;
         }
         return null;
     }
 
-    public static String getState(LifeCycle lc) {
-        if (lc.isStarting())
-            return STARTING;
-        if (lc.isStarted())
-            return STARTED;
-        if (lc.isStopping())
-            return STOPPING;
-        if (lc.isStopped())
-            return STOPPED;
-        return FAILED;
-    }
-
-    private void setStarted() {
-        _state = STATE_STARTED;
+    protected void setStarted() {
+        _state = LifeCycleState.STATE_STARTED;
         if (LOG.isDebugEnabled()) {
             LOG.debug("started {}", this);
         }
-        for (LifeCycleListener listener : _listeners) {
-            listener.lifeCycleStarted(this);
-        }
     }
 
-    private void setStarting() {
-        _state = STATE_STARTING;
+    protected void setStarting() {
+        _state = LifeCycleState.STATE_STARTING;
         if (LOG.isDebugEnabled()) {
             LOG.debug("starting {}", this);
         }
-        for (LifeCycleListener listener : _listeners) {
-            listener.lifeCycleStarting(this);
-        }
     }
 
-    private void setStopping() {
-        _state = STATE_STOPPING;
+    protected void setStopping() {
+        _state = LifeCycleState.STATE_STOPPING;
         if (LOG.isDebugEnabled()) {
             LOG.debug("stopping {}", this);
         }
-        for (LifeCycleListener listener : _listeners) {
-            listener.lifeCycleStopping(this);
-        }
     }
 
-    private void setStopped() {
-        _state = STATE_STOPPED;
+    protected void setStopped() {
+        _state = LifeCycleState.STATE_STOPPED;
         if (LOG.isDebugEnabled()) {
-            LOG.debug("{} {}", STOPPED, this);
-        }
-        for (LifeCycleListener listener : _listeners) {
-            listener.lifeCycleStopped(this);
+            LOG.debug("{} {}", LifeCycleState.STOPPED, this);
         }
     }
 
-    private void setFailed(Throwable th) {
-        _state = STATE_FAILED;
+    protected void setFailed(Throwable th) {
+        _state = LifeCycleState.STATE_FAILED;
         if (LOG.isDebugEnabled()) {
-            LOG.warn(FAILED + " " + this + ": " + th, th);
-        }
-        for (LifeCycleListener listener : _listeners) {
-            listener.lifeCycleFailure(this, th);
+            LOG.warn(LifeCycleState.FAILED + " " + this + ": " + th, th);
         }
     }
 
-    public long getStopTimeout()  {
-        return _stopTimeout;
-    }
-
-    public void setStopTimeout(long stopTimeout) {
-        this._stopTimeout = stopTimeout;
-    }
-
-    
     @Override
     public String toString() {
         Class<?> clazz = getClass();
