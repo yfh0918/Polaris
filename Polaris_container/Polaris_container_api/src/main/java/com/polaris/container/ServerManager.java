@@ -4,10 +4,19 @@ import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.core.component.AbstractLifeCycleWithListener;
 import com.polaris.core.component.LifeCycle;
 
-public class ServerLifeCycle extends AbstractLifeCycleWithListener {
+public class ServerManager extends AbstractLifeCycleWithListener {
 
-	public static ServerLifeCycle INSTANCE = new ServerLifeCycle();
+	/**
+     * constructor ServerManager for private 
+     * 
+     */
+	private static ServerManager INSTANCE = new ServerManager();
+	private ServerManager() {
+	}
 	
+	public static void init() {
+		INSTANCE.start();
+	}
 	
 	/**
      * JVM shutdown hook to shutdown this server. Declared as a class-level variable to allow removing the shutdown hook when the

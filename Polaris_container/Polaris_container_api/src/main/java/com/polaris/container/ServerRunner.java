@@ -45,8 +45,8 @@ public abstract class ServerRunner {
     	//载入监听器
     	ServerListenerHelper.init(args, serverListeners);
     	
-    	//启动
-    	ServerLifeCycle.INSTANCE.start();;
+    	//启动Server
+    	ServerManager.init();
     }
     
     /**

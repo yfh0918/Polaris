@@ -7,7 +7,7 @@ import java.util.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.core.component.LifeCycleManager;
+import com.polaris.core.component.ManagedComponent;
 import com.polaris.core.naming.ServerClient;
 
 public abstract class ServerListenerHelper {
@@ -77,12 +77,12 @@ public abstract class ServerListenerHelper {
 	protected static class LifeCycleListener implements ServerListener {
 		@Override
 		public void started() {
-			LifeCycleManager.start();
+			ManagedComponent.init();
 			
 		}
 		@Override
 		public void stopped() {
-	    	LifeCycleManager.stop();
+			ManagedComponent.destroy();;
 		}
 	}
 

@@ -1,13 +1,13 @@
 package com.polaris.demo;
 
-import com.polaris.core.component.AbstractManagedLifeCycle;
+import com.polaris.core.component.ManagedComponent;
 import com.polaris.demo.rest.controller.DemoController;
 
 /**
  * The DemoLifyCycle for generic components.
  * {@link DemoController}
  */
-public class DemoLifeCycle extends AbstractManagedLifeCycle {
+public class DemoLifeCycle extends ManagedComponent {
 
 	@Override
 	public void doStart() throws Exception {
