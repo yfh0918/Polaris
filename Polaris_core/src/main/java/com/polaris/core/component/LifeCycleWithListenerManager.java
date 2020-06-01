@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * The AbstractLifeCycleWithListener for generic components.
+ * The LifeCycleWithListenerManager for generic components.
  */
 public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle implements LifeCycleListenerManager{
     private final CopyOnWriteArrayList<LifeCycleListener> _listeners = new CopyOnWriteArrayList<LifeCycleListener>();

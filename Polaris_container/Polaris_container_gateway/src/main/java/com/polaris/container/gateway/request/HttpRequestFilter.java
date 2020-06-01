@@ -3,6 +3,7 @@ package com.polaris.container.gateway.request;
 import org.slf4j.Logger;
 
 import com.polaris.container.gateway.HttpFilter;
+import com.polaris.core.component.LifeCycle;
 
 /**
  * @author:Tom.Yu
@@ -18,8 +19,8 @@ public abstract class HttpRequestFilter extends HttpFilter  {
      *
      */
 	@Override
-	public void doStart() {
-		super.doStart();
+	public void lifeCycleStarting(LifeCycle event) {
+		super.lifeCycleStarting(event);
 		HttpRequestFilterChain.INSTANCE.add(this);
 	} 
 	
@@ -28,7 +29,8 @@ public abstract class HttpRequestFilter extends HttpFilter  {
      *
      */
 	@Override
-	public void doStop() {
+	public void lifeCycleStopping(LifeCycle event) {
+		super.lifeCycleStopping(event);
 		HttpRequestFilterChain.INSTANCE.remove(this);
 	}
 	

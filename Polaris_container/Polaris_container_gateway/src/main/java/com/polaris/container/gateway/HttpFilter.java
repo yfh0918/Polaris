@@ -3,6 +3,7 @@ package com.polaris.container.gateway;
 import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
+import com.polaris.core.component.LifeCycle;
 import com.polaris.core.component.ManagedComponent;
 
 import io.netty.handler.codec.http.HttpObject;
@@ -16,7 +17,7 @@ public abstract class HttpFilter extends ManagedComponent implements HttpFileLis
      *
      */
 	@Override
-	public void doStart() {
+	public void lifeCycleStarting(LifeCycle event) {
 		if (httpFilterEntity == null) {
 			return;
 		}
@@ -29,7 +30,7 @@ public abstract class HttpFilter extends ManagedComponent implements HttpFileLis
 				HttpFileReader.INSTANCE.readFile(this, file);
 			}
 		}
-	} 
+	}
 	
     /**
      * 获取entity对象

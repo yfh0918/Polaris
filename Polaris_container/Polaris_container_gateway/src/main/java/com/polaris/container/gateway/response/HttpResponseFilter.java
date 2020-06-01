@@ -1,6 +1,7 @@
 package com.polaris.container.gateway.response;
 
 import com.polaris.container.gateway.HttpFilter;
+import com.polaris.core.component.LifeCycle;
 
 /**
  * @author:Tom.Yu
@@ -15,17 +16,18 @@ public abstract class HttpResponseFilter extends HttpFilter {
      *
      */
 	@Override
-	public void doStart() {
-		super.doStart();
+	public void lifeCycleStarting(LifeCycle event) {
+		super.lifeCycleStarting(event);
 		HttpResponseFilterChain.INSTANCE.add(this);
-	} 
+	}
 	
     /**
      * 从调用链去除过滤器
      *
      */
 	@Override
-	public void doStop() {
+	public void lifeCycleStopping(LifeCycle event) {
+		super.lifeCycleStopping(event);
 		HttpResponseFilterChain.INSTANCE.remove(this);
 	}
 	

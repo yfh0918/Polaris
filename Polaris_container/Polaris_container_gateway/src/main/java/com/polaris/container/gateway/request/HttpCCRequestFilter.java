@@ -85,10 +85,7 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
 	public static volatile Integer blockSeconds = 60;
 	public static volatile boolean ipPersistent = false;
 	public static volatile String ipSavePath = "";
-	private static ThreadPoolExecutor threadPool = new InheritableThreadLocalExecutor(
-            1, 1, 10, TimeUnit.SECONDS,
-            new LinkedBlockingDeque<Runnable>(10000), //默认10000，超过放弃
-            new ThreadPoolExecutor.AbortPolicy());
+	private ThreadPoolExecutor threadPool = null;
 	private DateTimeFormatter dataFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	private DateTimeFormatter dataFormat2=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 	
@@ -231,10 +228,16 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
     }
 	
 	@Override
+	public void doStart() {
+		threadPool = new InheritableThreadLocalExecutor(
+	            1, 1, 10, TimeUnit.SECONDS,
+	            new LinkedBlockingDeque<Runnable>(10000), //默认10000，超过放弃
+	            new ThreadPoolExecutor.AbortPolicy());
+	}
+	
+	@Override
 	public void doStop() {
 		threadPool.shutdown();
-		super.doStop();
-		
 	}
     
 	@Override
