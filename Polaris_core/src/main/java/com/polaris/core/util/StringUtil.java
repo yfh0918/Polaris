@@ -11,6 +11,8 @@ package com.polaris.core.util;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Iterator;
@@ -1110,4 +1112,9 @@ public class StringUtil {
             return value.toString();
         }
     }
+    
+    public static String newString4UTF8(byte[] bytes) {
+        return new String(bytes, Charset.forName(StandardCharsets.UTF_8.name()));
+    }
+
 }

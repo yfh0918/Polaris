@@ -19,7 +19,7 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import com.polaris.core.config.provider.ConfCompositeProvider;
-import com.polaris.core.util.JsonUtil;
+import com.polaris.core.util.BeanUtil;
 import com.polaris.core.util.StringUtil;
 
 public class ConfigurationProperties implements BeanPostProcessor, PriorityOrdered, ApplicationContextAware, InitializingBean{
@@ -71,7 +71,7 @@ public class ConfigurationProperties implements BeanPostProcessor, PriorityOrder
 			}
 		}
 		try {
-			JsonUtil.toBean(bean, bindMap, false);
+			BeanUtil.toBean(bean, bindMap, false);
 		} catch (Exception ex) {
 			logger.error("ERROR:",ex);
 		}
