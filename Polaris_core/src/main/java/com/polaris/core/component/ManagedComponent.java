@@ -5,8 +5,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /**
  * The ManagedComponent for generic components.
+ * {@link ManagedComponentListener}
  */
 public abstract class ManagedComponent extends LifeCycleWithListenerManager implements LifeCycleListener{
 	final static Logger logger = LoggerFactory.getLogger(ManagedComponent.class);
@@ -39,7 +41,9 @@ public abstract class ManagedComponent extends LifeCycleWithListenerManager impl
 		}
 	}
 
-    
+	/**
+	 * called by ManagedComponentListener of ServerListenerHelper.
+	 */
 	public static void init() {
 		Iterator<ManagedComponent> iterator = _managedComponents.iterator();
 		while (iterator.hasNext()) {
@@ -49,6 +53,9 @@ public abstract class ManagedComponent extends LifeCycleWithListenerManager impl
 		}
 	}
 	
+	/**
+	 * called by ManagedComponentListener of ServerListenerHelper.
+	 */
 	public static void destroy() {
 		Iterator<ManagedComponent> iterator = _managedComponents.iterator();
 		while (iterator.hasNext()) {

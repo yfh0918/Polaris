@@ -17,7 +17,7 @@ public abstract class ServerListenerHelper {
 	public static void init(String[] arg, ServerListener... serverListeners) {
 		addServerListener(serverListeners);
 		addServerListenerExtension();
-		addServerListener(new LifeCycleListener());
+		addServerListener(new ManagedComponentListener());
 	}
 	
 	public static void addServerListener(ServerListener... serverListeners) {
@@ -74,7 +74,7 @@ public abstract class ServerListenerHelper {
 		}
 	}
 	
-	protected static class LifeCycleListener implements ServerListener {
+	protected static class ManagedComponentListener implements ServerListener {
 		@Override
 		public void started() {
 			ManagedComponent.init();
