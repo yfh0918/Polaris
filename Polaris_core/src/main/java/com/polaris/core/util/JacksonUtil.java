@@ -31,9 +31,6 @@ import com.polaris.core.exception.SerializationException;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
-/**
- * @author <a href="mailto:liaochuntao@live.com">liaochuntao</a>
- */
 public final class JacksonUtil {
 
 	static ObjectMapper mapper = new ObjectMapper();

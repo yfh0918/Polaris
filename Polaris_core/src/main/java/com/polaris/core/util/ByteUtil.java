@@ -4,9 +4,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * @author 
- */
 public final class ByteUtil {
 
     public static final byte[] EMPTY = new byte[0];
