@@ -23,29 +23,22 @@ public abstract class ManagedComponent extends LifeCycleWithListenerManager impl
 	@Override
 	public void lifeCycleStarted(LifeCycle component) {
 		if (component instanceof ManagedComponent) {
-			add((ManagedComponent)component);
+			if (_managedComponents.contains((ManagedComponent)component)) {
+	    		return;
+	    	}
+	    	logger.debug("ManagedComponent add lifeCycle:{}",component.getClass().getName());
+	    	_managedComponents.add((ManagedComponent)component);
 		}
 	}
 
 	@Override
 	public void lifeCycleStopped(LifeCycle component) {
 		if (component instanceof ManagedComponent) {
-			remove((ManagedComponent)component);
+			logger.debug("ManagedComponent remove component:{}",component.getClass().getName());
+	    	_managedComponents.remove((ManagedComponent)component);
 		}
 	}
 
-    private void add(ManagedComponent comonent) {
-    	if (_managedComponents.contains(comonent)) {
-    		return;
-    	}
-    	logger.debug("ManagedComponent add lifeCycle:{}",comonent.getClass().getName());
-    	_managedComponents.add(comonent);
-	}
-    
-    private void remove(ManagedComponent component) {
-    	logger.debug("ManagedComponent remove component:{}",component.getClass().getName());
-    	_managedComponents.remove(component);
-	}
     
 	public static void init() {
 		Iterator<ManagedComponent> iterator = _managedComponents.iterator();
