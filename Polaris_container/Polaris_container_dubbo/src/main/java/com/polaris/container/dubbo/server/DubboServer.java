@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.config.ConfigurationHelper;
-import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
 
@@ -57,7 +56,6 @@ public class DubboServer {
                 	logger.info("Dubbo started on port(s) " + ConfClient.get("dubbo.protocol.port"));
                     new CountDownLatch(1).await();
         		} catch (Exception e) {
-        			ServerListenerHelper.failure();
         			logger.error("ERROR:",e);
         		}
             }

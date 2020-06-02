@@ -16,8 +16,8 @@ public abstract class HttpResponseFilter extends HttpFilter {
      *
      */
 	@Override
-	public void lifeCycleStarting(LifeCycle event) {
-		super.lifeCycleStarting(event);
+	public void starting(LifeCycle event) {
+		super.starting(event);
 		HttpResponseFilterChain.INSTANCE.add(this);
 	}
 	
@@ -26,8 +26,8 @@ public abstract class HttpResponseFilter extends HttpFilter {
      *
      */
 	@Override
-	public void lifeCycleStopping(LifeCycle event) {
-		super.lifeCycleStopping(event);
+	public void stopping(LifeCycle event) {
+		super.stopping(event);
 		HttpResponseFilterChain.INSTANCE.remove(this);
 	}
 	

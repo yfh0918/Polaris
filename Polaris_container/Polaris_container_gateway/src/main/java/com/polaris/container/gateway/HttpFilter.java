@@ -17,7 +17,7 @@ public abstract class HttpFilter extends ManagedComponent implements HttpFileLis
      *
      */
 	@Override
-	public void lifeCycleStarting(LifeCycle event) {
+	public void starting(LifeCycle event) {
 		if (httpFilterEntity == null) {
 			return;
 		}

@@ -24,7 +24,7 @@ public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle imp
     	Iterator<LifeCycleListener> iterator = _listeners.iterator();
 		while (iterator.hasNext()) {
 			LifeCycleListener listener = iterator.next();
-			listener.lifeCycleStarting(this);
+			listener.starting(this);
 		}
     }
     
@@ -33,7 +33,7 @@ public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle imp
     	Iterator<LifeCycleListener> iterator = _listeners.iterator();
 		while (iterator.hasNext()) {
 			LifeCycleListener listener = iterator.next();
-			listener.lifeCycleStarted(this);
+			listener.started(this);
 		}
     }
 
@@ -42,7 +42,7 @@ public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle imp
     	Iterator<LifeCycleListener> iterator = _listeners.iterator();
 		while (iterator.hasNext()) {
 			LifeCycleListener listener = iterator.next();
-			listener.lifeCycleStopping(this);
+			listener.stopping(this);
 		}
     }
 
@@ -51,7 +51,7 @@ public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle imp
     	Iterator<LifeCycleListener> iterator = _listeners.iterator();
 		while (iterator.hasNext()) {
 			LifeCycleListener listener = iterator.next();
-			listener.lifeCycleStopped(this);
+			listener.stopped(this);
 			removeLifeCycleListener(listener);
 		}
     }
@@ -61,7 +61,7 @@ public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle imp
     	Iterator<LifeCycleListener> iterator = _listeners.iterator();
 		while (iterator.hasNext()) {
 			LifeCycleListener listener = iterator.next();
-			listener.lifeCycleFailure(this, th);
+			listener.failure(this, th);
 		}
     }
 }

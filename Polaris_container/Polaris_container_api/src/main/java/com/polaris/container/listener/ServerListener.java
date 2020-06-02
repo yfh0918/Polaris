@@ -1,21 +1,6 @@
 package com.polaris.container.listener;
 
-public interface ServerListener {
+import com.polaris.core.component.LifeCycleListener;
 
-	default void starting() {
-		return;
-	}
-	default void started(){
-		return;
-	}
-	default void failure(){
-		return;
-	}
-	default void stopping() {
-		return;
-	}
-	default void stopped() {
-		return;
-	}
-	
+public interface ServerListener extends LifeCycleListener {
 }

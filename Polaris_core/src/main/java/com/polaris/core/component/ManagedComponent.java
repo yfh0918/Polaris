@@ -23,7 +23,7 @@ public abstract class ManagedComponent extends LifeCycleWithListenerManager impl
     }
 	
 	@Override
-	public void lifeCycleStarted(LifeCycle component) {
+	public void started(LifeCycle component) {
 		if (component instanceof ManagedComponent) {
 			if (_managedComponents.contains((ManagedComponent)component)) {
 	    		return;
@@ -34,7 +34,7 @@ public abstract class ManagedComponent extends LifeCycleWithListenerManager impl
 	}
 
 	@Override
-	public void lifeCycleStopped(LifeCycle component) {
+	public void stopped(LifeCycle component) {
 		if (component instanceof ManagedComponent) {
 			logger.debug("ManagedComponent remove component:{}",component.getClass().getName());
 	    	_managedComponents.remove((ManagedComponent)component);
