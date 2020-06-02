@@ -40,7 +40,7 @@ public class Main implements Server {
 	@Override
 	public Object getContext() {
 		TomcatServer server = TomcatServer.getInstance();
-		return server.getServletContex();
+		return server.getContext();
     }
 		
 }

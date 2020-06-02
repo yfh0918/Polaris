@@ -40,6 +40,6 @@ public class Main implements Server{
 	@Override
 	public Object getContext() {
 		UndertowServer server = UndertowServer.getInstance();
-		return server.getServletContex();
+		return server.getContext();
     }
 }

@@ -4,12 +4,12 @@ import java.io.File;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 
+import com.polaris.container.SpringContextServer;
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
@@ -23,7 +23,7 @@ import reactor.netty.http.HttpProtocol;
 import reactor.netty.http.server.HttpServer;
 
 @EnableWebFlux
-public class WebfluxServer {
+public class WebfluxServer extends SpringContextServer{
 	
 	private static Logger logger = LoggerFactory.getLogger(WebfluxServer.class);
 	
@@ -61,10 +61,10 @@ public class WebfluxServer {
      *
      * @throws Exception
      */
+    @Override
     public void start() throws Exception {
-
-    	//创建context
-    	SpringUtil.refresh(ConfigurationHelper.getConfiguration(WebfluxServer.class));
+    	ConfigurationHelper.addConfiguration(WebfluxServer.class);
+    	super.start();
     	
     	//通过ApplicationContext创建HttpHandler
         HttpHandler httpHandler = WebHttpHandlerBuilder.applicationContext(SpringUtil.getApplicationContext()).build();
@@ -108,12 +108,10 @@ public class WebfluxServer {
      *
      * @throws Exception
      */
+    @Override
     public void stop() throws Exception {
-        ConfigurableApplicationContext context = SpringUtil.getApplicationContext();
-        if (context != null) {
-           context.close();
-        }
-    	disposableSever.disposeNow();
+        super.stop();
+        disposableSever.disposeNow();
     }
     
     private HttpProtocol[] listProtocols() {

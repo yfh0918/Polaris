@@ -39,6 +39,6 @@ public class Main implements Server{
 	@Override
 	public Object getContext() {
 		JettyServer server = JettyServer.getInstance();
-		return server.getServletContex();
+		return server.getContext();
     }
 }

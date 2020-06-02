@@ -2,8 +2,6 @@ package com.polaris.container.tomcat.server;
 
 import java.io.File;
 
-import javax.servlet.ServletContext;
-
 import org.apache.catalina.core.AprLifecycleListener;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.core.StandardServer;
@@ -13,12 +11,11 @@ import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ConfigurableApplicationContext;
 
+import com.polaris.container.SpringContextServer;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.FileUtil;
-import com.polaris.core.util.SpringUtil;
 
 /**
  * Class Name : TomcatServer
@@ -27,7 +24,7 @@ import com.polaris.core.util.SpringUtil;
  * Modifier : yufenghua
  */
 
-public class TomcatServer {
+public class TomcatServer extends SpringContextServer {
     private static final Logger logger = LoggerFactory.getLogger(TomcatServer.class);
     private static final String MAX_THREADS = "300";//和jetty保持一致
     private static final  int MAX_SAVE_POST_SIZE = 4 * 1024;
@@ -142,6 +139,7 @@ public class TomcatServer {
      *
      * @throws Exception
      */
+    @Override
     public void start() throws Exception{
 
     	//如果已经启动就先停掉
@@ -169,11 +167,9 @@ public class TomcatServer {
      *
      * @throws Exception
      */
+    @Override
     public void stop() throws Exception {
-        ConfigurableApplicationContext context = SpringUtil.getApplicationContext();
-        if (context != null) {
-           context.close();
-        }
+        super.stop();
         tomcat.stop();
     }
     
@@ -182,7 +178,8 @@ public class TomcatServer {
      *
      * @throws Exception
      */
-    public ServletContext getServletContex() {
+    @Override
+    public Object getContext() {
     	return standardContext.getServletContext();
     }
 }

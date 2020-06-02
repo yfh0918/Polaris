@@ -9,16 +9,15 @@ import javax.servlet.ServletException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ConfigurableApplicationContext;
 
+import com.polaris.container.SpringContextServer;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.SpringUtil;
 
 import io.undertow.Handlers;
 import io.undertow.Undertow;
-import io.undertow.UndertowOptions;
 import io.undertow.Undertow.Builder;
+import io.undertow.UndertowOptions;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.PathHandler;
 import io.undertow.server.session.SessionManager;
@@ -36,7 +35,7 @@ import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
  * Modifier : yufenghua
  */
 
-public class UndertowServer {
+public class UndertowServer extends SpringContextServer {
     private static final Logger logger = LoggerFactory.getLogger(UndertowServer.class);
     
     private Undertow undertow;
@@ -170,6 +169,7 @@ public class UndertowServer {
      *
      * @throws Exception
      */
+    @Override
     public void start() throws Exception {
     	//如果已经启动就先停掉
         if (this.undertow != null) {
@@ -195,11 +195,9 @@ public class UndertowServer {
      *
      * @throws Exception
      */
+    @Override
     public void stop() throws Exception {
-        ConfigurableApplicationContext context = SpringUtil.getApplicationContext();
-        if (context != null) {
-           context.close();
-        }
+        super.stop();
     	manager.stop();
     	manager.undeploy();
     	undertow.stop();
@@ -212,7 +210,8 @@ public class UndertowServer {
      *
      * @throws Exception
      */
-    public ServletContext getServletContex() {
+    @Override
+    public Object getContext() {
     	return servletContext;
     }
 }

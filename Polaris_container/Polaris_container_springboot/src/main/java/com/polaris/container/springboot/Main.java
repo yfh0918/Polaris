@@ -30,4 +30,13 @@ public class Main implements Server {
 	public void stop() throws Exception {
 		SpringbootServer.getInstance().stop();
 	}
+	
+	/**
+     * 获取上下文
+     *
+     */
+	@Override
+	public Object getContext() {
+		return SpringbootServer.getInstance().getContext();
+	}
 }

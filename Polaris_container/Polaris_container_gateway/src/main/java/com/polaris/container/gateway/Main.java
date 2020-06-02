@@ -29,4 +29,13 @@ public class Main implements Server {
 	public void stop() throws Exception {
 		HttpServer.getInstance().stop();
 	}
+	
+	/**
+     * 获取上下文
+     *
+     */
+	@Override
+	public Object getContext() {
+		return HttpServer.getInstance().getContext();
+	}
 }

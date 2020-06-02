@@ -4,13 +4,11 @@ import java.util.concurrent.CountDownLatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ConfigurableApplicationContext;
 
-import com.polaris.container.config.ConfigurationHelper;
+import com.polaris.container.SpringContextServer;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.SpringUtil;
 
-public class DubboServer {
+public class DubboServer extends SpringContextServer{
 	
 	private static Logger logger = LoggerFactory.getLogger(DubboServer.class);
 	
@@ -46,8 +44,7 @@ public class DubboServer {
      */
     public void start() throws Exception {
 
-    	//创建context
-    	SpringUtil.refresh(ConfigurationHelper.getConfiguration());
+    	super.start();
     	
         //block
     	new Thread(new Runnable() {
@@ -63,17 +60,4 @@ public class DubboServer {
         }, "Dubbo-block").start();
     }
     
-    /**
-     * 停止服务服务器
-     *
-     * @throws Exception
-     */
-    public void stop() throws Exception  {
-        ConfigurableApplicationContext context = SpringUtil.getApplicationContext();
-        if (context != null) {
-           context.close();
-        }
-    }
-    
-
 }

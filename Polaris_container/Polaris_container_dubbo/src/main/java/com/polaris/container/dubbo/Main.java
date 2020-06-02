@@ -30,4 +30,13 @@ public class Main implements Server {
 	public void stop() throws Exception  {
 		DubboServer.getInstance().stop();
 	}
+	
+	/**
+     * 获取上下文context
+     *
+     */
+	@Override
+	public Object getContext() {
+		return DubboServer.getInstance().getContext();
+	}
 }

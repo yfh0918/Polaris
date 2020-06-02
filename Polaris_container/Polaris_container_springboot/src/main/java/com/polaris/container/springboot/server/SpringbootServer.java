@@ -4,12 +4,13 @@ import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import com.polaris.container.SpringContextServer;
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
 
-public class SpringbootServer {
+public class SpringbootServer extends SpringContextServer{
 	
 	/**
      * 私有构造方法
@@ -41,6 +42,7 @@ public class SpringbootServer {
      *
      * @throws Exception
      */
+    @Override
     public void start() throws Exception{
     	
     	//project
@@ -60,17 +62,5 @@ public class SpringbootServer {
         springApplication.setRegisterShutdownHook(false);//统一由容器管理shutdown处理
         ConfigurableApplicationContext context = springApplication.run(ConfigurationHelper.getArgs());
         SpringUtil.setApplicationContext(context);
-    }
-    
-    /**
-     * 关闭服务服务器
-     *
-     * @throws Exception
-     */
-    public void stop() throws Exception {
-        ConfigurableApplicationContext context = SpringUtil.getApplicationContext();
-        if (context != null) {
-           context.close();
-        }
     }
 }

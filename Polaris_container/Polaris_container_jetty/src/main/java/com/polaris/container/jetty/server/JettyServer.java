@@ -14,12 +14,11 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ConfigurableApplicationContext;
 
+import com.polaris.container.SpringContextServer;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.FileUtil;
-import com.polaris.core.util.SpringUtil;
 
 /**
  * Class Name : JettyServer
@@ -28,7 +27,7 @@ import com.polaris.core.util.SpringUtil;
  * Modifier : yufenghua
  */
 
-public class JettyServer {
+public class JettyServer extends SpringContextServer{
     private static final Logger logger = LoggerFactory.getLogger(JettyServer.class);
     private static final String MAX_THREADS = "300";//和tomcat保持一致
     private static final  int MAX_SAVE_POST_SIZE = 4 * 1024;
@@ -107,6 +106,7 @@ public class JettyServer {
      *
      * @throws Exception
      */
+    @Override
     public void start() throws Exception{
 
         //如果已经启动就先停掉
@@ -132,11 +132,9 @@ public class JettyServer {
      *
      * @throws Exception
      */
+    @Override
     public void stop() throws Exception {
-        ConfigurableApplicationContext context = SpringUtil.getApplicationContext();
-        if (context != null) {
-           context.close();
-        }
+        super.stop();
     	server.stop();
     }
 
@@ -146,7 +144,8 @@ public class JettyServer {
      *
      * @throws Exception
      */
-    public ServletContext getServletContex() {
+    @Override
+    public Object getContext() {
     	return servletContext;
     }
     

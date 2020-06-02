@@ -35,10 +35,12 @@ public class WebsocketListerner implements ServerListenerExtension{
 				if (((ServerManager)event).getContext() == null) {
 		    		return;
 		    	}
-		    	ServletContext servletContext = (ServletContext)(((ServerManager)event).getContext());
-		    	ServerContainer serverContainer = (ServerContainer) servletContext.getAttribute("javax.websocket.server.ServerContainer");
-		    	WSEndpointExporter wsEndpointExporter = new WSEndpointExporter();
-		    	wsEndpointExporter.registerEndpoints(serverContainer);
+				if ((((ServerManager)event).getContext()) instanceof ServletContext) {
+					ServletContext servletContext = (ServletContext)(((ServerManager)event).getContext());
+			    	ServerContainer serverContainer = (ServerContainer) servletContext.getAttribute("javax.websocket.server.ServerContainer");
+			    	WSEndpointExporter wsEndpointExporter = new WSEndpointExporter();
+			    	wsEndpointExporter.registerEndpoints(serverContainer);
+				}
 			}
 		}
 		

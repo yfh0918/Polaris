@@ -5,9 +5,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ConfigurableApplicationContext;
 
-import com.polaris.container.config.ConfigurationHelper;
+import com.polaris.container.SpringContextServer;
 import com.polaris.container.gateway.proxy.ActivityTrackerAdapter;
 import com.polaris.container.gateway.proxy.FlowContext;
 import com.polaris.container.gateway.proxy.HttpFilters;
@@ -18,12 +17,11 @@ import com.polaris.container.gateway.proxy.impl.DefaultHttpProxyServer;
 import com.polaris.container.gateway.proxy.impl.ThreadPoolConfiguration;
 import com.polaris.container.util.NetUtils;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.SpringUtil;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
-public class HttpServer {
+public class HttpServer extends SpringContextServer{
 	
 	private static Logger logger = LoggerFactory.getLogger(HttpServer.class);
 	
@@ -64,10 +62,11 @@ public class HttpServer {
      *
      * @throws Exception
      */
-    public void start() {
-
-    	//创建context
-    	SpringUtil.refresh(ConfigurationHelper.getConfiguration());
+    @Override
+    public void start() throws Exception{
+    	super.start();
+    	
+    	//start
         ThreadPoolConfiguration threadPoolConfiguration = new ThreadPoolConfiguration();
         threadPoolConfiguration.withAcceptorThreads(HttpConstant.AcceptorThreads);
         threadPoolConfiguration.withClientToProxyWorkerThreads(HttpConstant.ClientToProxyWorkerThreads);
@@ -133,11 +132,9 @@ public class HttpServer {
      *
      * @throws Exception
      */
-    public void stop() {
-        ConfigurableApplicationContext context = SpringUtil.getApplicationContext();
-        if (context != null) {
-           context.close();
-        }
+    @Override
+    public void stop() throws Exception {
+        super.stop();
        	httpProxyServerBootstrap.abort();//non graceful
     }
 
