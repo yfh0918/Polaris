@@ -64,12 +64,12 @@ public class TomcatServer extends SpringContextServer {
         String resourceBase = FileUtil.getFullPath("WebContent");
         File resDir = new File(resourceBase);
         if (!resDir.exists()) {
-        	resDir.mkdirs();
+            resDir.mkdirs();
         }
         String catalina_home = resDir.getCanonicalPath();
         contextPath =ConfClient.get(Constant.SERVER_CONTEXT,"/"); 
         if (!contextPath.startsWith("/")) {
-        	contextPath = "/" + contextPath;
+            contextPath = "/" + contextPath;
         }
         String docBase = "";
 
@@ -142,7 +142,7 @@ public class TomcatServer extends SpringContextServer {
     @Override
     public void start() throws Exception{
 
-    	//如果已经启动就先停掉
+        //如果已经启动就先停掉
         if (this.tomcat != null) {
             this.tomcat.stop();
             this.tomcat = null;
@@ -180,6 +180,6 @@ public class TomcatServer extends SpringContextServer {
      */
     @Override
     public Object getContext() {
-    	return standardContext.getServletContext();
+        return standardContext.getServletContext();
     }
 }

@@ -24,14 +24,14 @@ import reactor.netty.http.server.HttpServer;
 
 @EnableWebFlux
 public class WebfluxServer extends SpringContextServer{
-	
-	private static Logger logger = LoggerFactory.getLogger(WebfluxServer.class);
-	
-	private DisposableServer disposableSever;
-	
-	private int port = 80;
-	
-	/**
+    
+    private static Logger logger = LoggerFactory.getLogger(WebfluxServer.class);
+    
+    private DisposableServer disposableSever;
+    
+    private int port = 80;
+    
+    /**
      * 私有构造方法
      */
     private WebfluxServer() {
@@ -63,25 +63,25 @@ public class WebfluxServer extends SpringContextServer{
      */
     @Override
     public void start() throws Exception {
-    	ConfigurationHelper.addConfiguration(WebfluxServer.class);
-    	super.start();
-    	
-    	//通过ApplicationContext创建HttpHandler
+        ConfigurationHelper.addConfiguration(WebfluxServer.class);
+        super.start();
+        
+        //通过ApplicationContext创建HttpHandler
         HttpHandler httpHandler = WebHttpHandlerBuilder.applicationContext(SpringUtil.getApplicationContext()).build();
         ReactorHttpHandlerAdapter httpHandlerAdapter = new ReactorHttpHandlerAdapter(httpHandler);
         port = Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE));
         HttpServer server =
                 HttpServer.create()
-                		  .port(port)
-                		  .forwarded(Boolean.parseBoolean(ConfClient.get("server.forwarded","true")))
-                		  .compress(Boolean.parseBoolean(ConfClient.get("server.compress","true")))//压缩
+                          .port(port)
+                          .forwarded(Boolean.parseBoolean(ConfClient.get("server.forwarded","true")))
+                          .compress(Boolean.parseBoolean(ConfClient.get("server.compress","true")))//压缩
                           .handle(httpHandlerAdapter);
         
         
         //ssl set
         server = secure(server);
         if (server == null) {
-        	return;
+            return;
         }
         
         //protocals set
@@ -97,7 +97,7 @@ public class WebfluxServer extends SpringContextServer{
         new Thread(new Runnable() {
             @Override
             public void run() {
-            	disposableSever.onDispose().block();
+                disposableSever.onDispose().block();
             }
         }, "disposableSever-onDispose-block").start();
         
@@ -117,49 +117,49 @@ public class WebfluxServer extends SpringContextServer{
     private HttpProtocol[] listProtocols() {
         boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl.enable","false"));
         boolean http2 = Boolean.parseBoolean(ConfClient.get("server.http2.enable","false"));
-		if (http2) {
-			if (ssl) {
-				return new HttpProtocol[] { HttpProtocol.H2, HttpProtocol.HTTP11 };
-			}
-			else {
-				return new HttpProtocol[] { HttpProtocol.H2C, HttpProtocol.HTTP11 };
-			}
-		}
-		return new HttpProtocol[] { HttpProtocol.HTTP11 };
-	}
+        if (http2) {
+            if (ssl) {
+                return new HttpProtocol[] { HttpProtocol.H2, HttpProtocol.HTTP11 };
+            }
+            else {
+                return new HttpProtocol[] { HttpProtocol.H2C, HttpProtocol.HTTP11 };
+            }
+        }
+        return new HttpProtocol[] { HttpProtocol.HTTP11 };
+    }
     
     private HttpServer secure(HttpServer server) throws Exception{
         boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl.enable","false"));
-    	if (!ssl) {
-    		return server;
-    	}
-    	String certificate = ConfClient.get("server.certificate.file");
-		boolean isCertificate = false;
+        if (!ssl) {
+            return server;
+        }
+        String certificate = ConfClient.get("server.certificate.file");
+        boolean isCertificate = false;
         File certificateFile = null;
         if (StringUtil.isNotEmpty(certificate)) {
-        	certificateFile = new File(certificate);
-        	if (certificateFile.isFile()) {
-        		isCertificate = true;
-        	}
+            certificateFile = new File(certificate);
+            if (certificateFile.isFile()) {
+                isCertificate = true;
+            }
         }
-		String privateKey = ConfClient.get("server.privateKey.file");
-		boolean isPrivateKey = false;
+        String privateKey = ConfClient.get("server.privateKey.file");
+        boolean isPrivateKey = false;
         File privateKeyFile = null;
         if (StringUtil.isNotEmpty(privateKey)) {
-        	privateKeyFile = new File(privateKey);
-        	if (privateKeyFile.isFile()) {
-        		isPrivateKey = true;
-        	}
+            privateKeyFile = new File(privateKey);
+            if (privateKeyFile.isFile()) {
+                isPrivateKey = true;
+            }
         }
         if (!isCertificate || !isPrivateKey) {
-        	SelfSignedCertificate cert = new SelfSignedCertificate();
-        	certificateFile = cert.certificate();
-        	privateKeyFile = cert.privateKey();
+            SelfSignedCertificate cert = new SelfSignedCertificate();
+            certificateFile = cert.certificate();
+            privateKeyFile = cert.privateKey();
         }
-	 	SslContextBuilder sslContextBuilder =
-	 	SslContextBuilder.forServer(certificateFile, privateKeyFile);
-    	server.secure(sslContextSpec -> sslContextSpec.sslContext(sslContextBuilder));
-    	return server;
+         SslContextBuilder sslContextBuilder =
+         SslContextBuilder.forServer(certificateFile, privateKeyFile);
+        server.secure(sslContextSpec -> sslContextSpec.sslContext(sslContextBuilder));
+        return server;
     }
 
 }

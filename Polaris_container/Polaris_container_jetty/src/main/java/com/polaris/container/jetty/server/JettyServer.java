@@ -55,7 +55,7 @@ public class JettyServer extends SpringContextServer{
      */
     private void init() throws Exception{
         //定义server
-    	serverPort = ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE);
+        serverPort = ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE);
         InetSocketAddress addr = new InetSocketAddress("0.0.0.0", Integer.parseInt(serverPort));
         server = new Server(addr);
         QueuedThreadPool threadPool = (QueuedThreadPool)server.getThreadPool();
@@ -69,7 +69,7 @@ public class JettyServer extends SpringContextServer{
         context.setDefaultsDescriptor("webdefault.xml");
         contextPath =ConfClient.get(Constant.SERVER_CONTEXT,"/"); 
         if (!contextPath.startsWith("/")) {
-        	contextPath = "/" + contextPath;
+            contextPath = "/" + contextPath;
         }
         context.setContextPath(contextPath); // Application访问路径
         String resourceBase = FileUtil.getFullPath("WebContent");
@@ -135,7 +135,7 @@ public class JettyServer extends SpringContextServer{
     @Override
     public void stop() throws Exception {
         super.stop();
-    	server.stop();
+        server.stop();
     }
 
     
@@ -146,28 +146,28 @@ public class JettyServer extends SpringContextServer{
      */
     @Override
     public Object getContext() {
-    	return servletContext;
+        return servletContext;
     }
     
     public static class JettyServletContainerInitializer extends AbstractServletContainerInitializerCaller {
-    	ServletContext sc;
-    	private final ServiceLoader<ServletContainerInitializer> serviceLoader = ServiceLoader.load(ServletContainerInitializer.class);
-    	
-    	public JettyServletContainerInitializer(ServletContext sc) {
-    		this.sc = sc;
-    	}
-    	@Override
-    	public void start() throws Exception {
-    		for (ServletContainerInitializer servletContainerInitializer : serviceLoader) {
-    			try {
-    				ContextHandler.getCurrentContext().setExtendedListenerTypes(true);
-    				servletContainerInitializer.onStartup(new HashSet<>(), sc);
-    			} catch (Exception e) {
-    				e.printStackTrace();
-    			} finally {
-    				ContextHandler.getCurrentContext().setExtendedListenerTypes(false);
-    			}
-    		}
-    	}
+        ServletContext sc;
+        private final ServiceLoader<ServletContainerInitializer> serviceLoader = ServiceLoader.load(ServletContainerInitializer.class);
+        
+        public JettyServletContainerInitializer(ServletContext sc) {
+            this.sc = sc;
+        }
+        @Override
+        public void start() throws Exception {
+            for (ServletContainerInitializer servletContainerInitializer : serviceLoader) {
+                try {
+                    ContextHandler.getCurrentContext().setExtendedListenerTypes(true);
+                    servletContainerInitializer.onStartup(new HashSet<>(), sc);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    ContextHandler.getCurrentContext().setExtendedListenerTypes(false);
+                }
+            }
+        }
     }
 }

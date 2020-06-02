@@ -9,10 +9,10 @@ import com.polaris.container.SpringContextServer;
 import com.polaris.core.config.ConfClient;
 
 public class DubboServer extends SpringContextServer{
-	
-	private static Logger logger = LoggerFactory.getLogger(DubboServer.class);
-	
-	/**
+    
+    private static Logger logger = LoggerFactory.getLogger(DubboServer.class);
+    
+    /**
      * 私有构造方法
      */
     private DubboServer() {
@@ -44,18 +44,19 @@ public class DubboServer extends SpringContextServer{
      */
     public void start() throws Exception {
 
-    	super.start();
-    	
+        //start
+        super.start();
+        
         //block
-    	new Thread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-            	try {
-                	logger.info("Dubbo started on port(s) " + ConfClient.get("dubbo.protocol.port"));
+                try {
+                    logger.info("Dubbo started on port(s) " + ConfClient.get("dubbo.protocol.port"));
                     new CountDownLatch(1).await();
-        		} catch (Exception e) {
-        			logger.error("ERROR:",e);
-        		}
+                } catch (Exception e) {
+                    logger.error("ERROR:",e);
+                }
             }
         }, "Dubbo-block").start();
     }
