@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.container.gateway.proxy.ActivityTrackerAdapter;
@@ -133,6 +134,10 @@ public class HttpServer {
      * @throws Exception
      */
     public void stop() {
+        ConfigurableApplicationContext context = SpringUtil.getApplicationContext();
+        if (context != null) {
+           context.close();
+        }
        	httpProxyServerBootstrap.abort();//non graceful
     }
 

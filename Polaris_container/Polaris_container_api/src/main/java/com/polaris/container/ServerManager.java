@@ -5,14 +5,11 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.springframework.context.ConfigurableApplicationContext;
-
 import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.core.OrderWrapper;
 import com.polaris.core.component.LifeCycle;
 import com.polaris.core.component.LifeCycleListener;
 import com.polaris.core.component.LifeCycleWithListenerManager;
-import com.polaris.core.util.SpringUtil;
 
 public class ServerManager extends LifeCycleWithListenerManager implements LifeCycleListener{
 
@@ -37,10 +34,12 @@ public class ServerManager extends LifeCycleWithListenerManager implements LifeC
         @Override
         public void run() {
             try {
-				stop();
+				stop();//关闭容器
 			} catch (Exception e) {
 				//ignore
 			}
+
+            
         }
     }, "ServerContainer-JVM-shutdown-hook");
     
@@ -67,10 +66,6 @@ public class ServerManager extends LifeCycleWithListenerManager implements LifeC
 	public void started(LifeCycle event) {
 		ServerListenerHelper.started(event);
         Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
-        ConfigurableApplicationContext context = SpringUtil.getApplicationContext();
-        if (context != null) {
-        	context.registerShutdownHook();
-        }
 	}
 
 	@Override

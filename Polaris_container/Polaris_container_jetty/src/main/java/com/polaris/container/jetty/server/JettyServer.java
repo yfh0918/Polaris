@@ -14,10 +14,12 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.FileUtil;
+import com.polaris.core.util.SpringUtil;
 
 /**
  * Class Name : JettyServer
@@ -131,6 +133,10 @@ public class JettyServer {
      * @throws Exception
      */
     public void stop() throws Exception {
+        ConfigurableApplicationContext context = SpringUtil.getApplicationContext();
+        if (context != null) {
+           context.close();
+        }
     	server.stop();
     }
 

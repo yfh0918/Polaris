@@ -8,15 +8,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * 可在特定线程池中继承的线程变量（配合InheritableThreadLocalExecutor使用）
  */
-public class InheritablePolarisThreadLocal<T> extends InheritableThreadLocal<T>{
+public class PolarisInheritableThreadLocal<T> extends InheritableThreadLocal<T>{
 	@SuppressWarnings("rawtypes")
-	private static List<InheritablePolarisThreadLocal> inheritableExecutorThreadLocalList =new CopyOnWriteArrayList<>();
+	private static List<PolarisInheritableThreadLocal> inheritableExecutorThreadLocalList =new CopyOnWriteArrayList<>();
 
-	public InheritablePolarisThreadLocal(){
+	public PolarisInheritableThreadLocal(){
         this(true);
 	}
 
-	public InheritablePolarisThreadLocal(boolean isAdd){
+	public PolarisInheritableThreadLocal(boolean isAdd){
 		/**
 		 * 一般线程变量本身也不需要被垃圾回收
 		 */
@@ -59,8 +59,8 @@ public class InheritablePolarisThreadLocal<T> extends InheritableThreadLocal<T>{
 	@SuppressWarnings("rawtypes")
 	public static Map<Object,Object> getThreadLocalsMap(){
 		Map<Object,Object> threadLocalMap =new HashMap<>();
-		List<InheritablePolarisThreadLocal> list =inheritableExecutorThreadLocalList;
-		for(InheritablePolarisThreadLocal threadLocal:list){
+		List<PolarisInheritableThreadLocal> list =inheritableExecutorThreadLocalList;
+		for(PolarisInheritableThreadLocal threadLocal:list){
 			threadLocal.getThreadLocalputMap(threadLocalMap);
 		}
 		return threadLocalMap;
@@ -72,8 +72,8 @@ public class InheritablePolarisThreadLocal<T> extends InheritableThreadLocal<T>{
 	 */
 	@SuppressWarnings("rawtypes")
 	public static void setThreadLocalsFromMap(Map<Object,Object> threadLocalMap){
-		List<InheritablePolarisThreadLocal> list =inheritableExecutorThreadLocalList;
-		for(InheritablePolarisThreadLocal threadLocal:list){
+		List<PolarisInheritableThreadLocal> list =inheritableExecutorThreadLocalList;
+		for(PolarisInheritableThreadLocal threadLocal:list){
 			threadLocal.setThreadLocalFromMap(threadLocalMap);
 		}
 	}
@@ -83,8 +83,8 @@ public class InheritablePolarisThreadLocal<T> extends InheritableThreadLocal<T>{
 	 */
 	@SuppressWarnings("rawtypes")
 	public static void removeThreadLocals(){
-		List<InheritablePolarisThreadLocal> list =inheritableExecutorThreadLocalList;
-		for(InheritablePolarisThreadLocal threadLocal:list){
+		List<PolarisInheritableThreadLocal> list =inheritableExecutorThreadLocalList;
+		for(PolarisInheritableThreadLocal threadLocal:list){
 			threadLocal.removeThreadLocal();
 		}
 	}

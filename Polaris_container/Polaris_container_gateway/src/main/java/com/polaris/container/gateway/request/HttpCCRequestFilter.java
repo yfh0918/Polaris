@@ -34,7 +34,7 @@ import com.polaris.container.gateway.pojo.HttpFilterMessage;
 import com.polaris.core.Constant;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.pojo.Result;
-import com.polaris.core.thread.InheritableThreadLocalExecutor;
+import com.polaris.core.thread.ThreadPoolBuilder;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.ResultUtil;
 import com.polaris.core.util.StringUtil;
@@ -229,15 +229,17 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
 	
 	@Override
 	public void doStart() {
-		threadPool = new InheritableThreadLocalExecutor(
-	            1, 1, 10, TimeUnit.SECONDS,
-	            new LinkedBlockingDeque<Runnable>(10000), //默认10000，超过放弃
-	            new ThreadPoolExecutor.AbortPolicy());
-	}
-	
+        threadPool = ThreadPoolBuilder.newBuilder()
+                                      .poolName("HttpCCRequestFilter Thread Pool")
+                                      .coreThreads(1)
+                                      .maximumThreads(1)
+                                      .keepAliveSeconds(10l)
+                                      .workQueue(new LinkedBlockingDeque<Runnable>(10000))
+                                      .build();
+    }
 	@Override
 	public void doStop() {
-		threadPool.shutdown();
+		ThreadPoolBuilder.destroy(threadPool);
 	}
     
 	@Override

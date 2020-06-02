@@ -9,9 +9,11 @@ import javax.servlet.ServletException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.SpringUtil;
 
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -194,6 +196,10 @@ public class UndertowServer {
      * @throws Exception
      */
     public void stop() throws Exception {
+        ConfigurableApplicationContext context = SpringUtil.getApplicationContext();
+        if (context != null) {
+           context.close();
+        }
     	manager.stop();
     	manager.undeploy();
     	undertow.stop();

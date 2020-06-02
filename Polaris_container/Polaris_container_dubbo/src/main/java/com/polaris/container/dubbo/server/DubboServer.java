@@ -4,6 +4,7 @@ import java.util.concurrent.CountDownLatch;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.config.ConfClient;
@@ -68,6 +69,10 @@ public class DubboServer {
      * @throws Exception
      */
     public void stop() throws Exception  {
+        ConfigurableApplicationContext context = SpringUtil.getApplicationContext();
+        if (context != null) {
+           context.close();
+        }
     }
     
 

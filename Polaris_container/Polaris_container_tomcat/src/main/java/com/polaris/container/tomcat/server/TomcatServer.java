@@ -13,10 +13,12 @@ import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.FileUtil;
+import com.polaris.core.util.SpringUtil;
 
 /**
  * Class Name : TomcatServer
@@ -168,7 +170,11 @@ public class TomcatServer {
      * @throws Exception
      */
     public void stop() throws Exception {
-    	tomcat.stop();
+        ConfigurableApplicationContext context = SpringUtil.getApplicationContext();
+        if (context != null) {
+           context.close();
+        }
+        tomcat.stop();
     }
     
     /**

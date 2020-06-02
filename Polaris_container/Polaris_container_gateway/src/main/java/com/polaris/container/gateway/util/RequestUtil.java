@@ -3,7 +3,7 @@ package com.polaris.container.gateway.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.polaris.core.thread.InheritablePolarisThreadLocal;
+import com.polaris.core.thread.PolarisInheritableThreadLocal;
 
 public class RequestUtil {
 
@@ -11,7 +11,7 @@ public class RequestUtil {
     private static final String QUERY_STRING = "queryString";
     private static final String POST_PARAMETER = "postParameter";
     private static final String COOKIE_PARAMETER = "cookieParameter";
-	private static final InheritablePolarisThreadLocal<Map<String, Map<String, String>>> holder=new InheritablePolarisThreadLocal<Map<String,Map<String, String>>>(){
+	private static final PolarisInheritableThreadLocal<Map<String, Map<String, String>>> holder=new PolarisInheritableThreadLocal<Map<String,Map<String, String>>>(){
 		@Override protected Map<String,Map<String, String>>initialValue(){
 			Map<String, Map<String, String>> map = new HashMap<>();
 			map.put(QUERY_STRING, new HashMap<>());

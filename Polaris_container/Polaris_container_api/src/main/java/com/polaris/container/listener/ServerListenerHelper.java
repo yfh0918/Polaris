@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.polaris.core.component.LifeCycle;
 import com.polaris.core.component.ManagedComponent;
 import com.polaris.core.naming.ServerClient;
+import com.polaris.core.thread.ThreadPoolBuilder;
 
 public abstract class ServerListenerHelper {
 	private static final Logger logger = LoggerFactory.getLogger(ServerListenerHelper.class);
@@ -19,6 +20,7 @@ public abstract class ServerListenerHelper {
 		addServerListener(serverListeners);
 		addServerListenerExtension();
 		addServerListener(new ManagedComponentListener());
+		addServerListener(new ThreadPoolListerner());
 	}
 	
 	public static void addServerListener(ServerListener... serverListeners) {
@@ -86,5 +88,12 @@ public abstract class ServerListenerHelper {
 			ManagedComponent.destroy();;
 		}
 	}
+	
+	protected static class ThreadPoolListerner implements ServerListener {
+		@Override
+		public void stopped(LifeCycle event) {
+			ThreadPoolBuilder.destroy();
+		}
 
+	}
 }

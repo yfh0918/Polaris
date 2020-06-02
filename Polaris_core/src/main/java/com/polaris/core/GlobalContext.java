@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.thread.InheritablePolarisThreadLocal;
+import com.polaris.core.thread.PolarisInheritableThreadLocal;
 
 public class GlobalContext {
 	public static final String REQUEST = "request";
@@ -52,7 +52,7 @@ public class GlobalContext {
 		return  ConfClient.getAppName();
 	}
 	//构造函数
-	private static final InheritablePolarisThreadLocal<Map<String, Object>> holder=new InheritablePolarisThreadLocal<Map<String,Object>>(){
+	private static final PolarisInheritableThreadLocal<Map<String, Object>> holder=new PolarisInheritableThreadLocal<Map<String,Object>>(){
 		@Override protected Map<String,Object>initialValue(){
 			return new HashMap<String,Object>();
 		}

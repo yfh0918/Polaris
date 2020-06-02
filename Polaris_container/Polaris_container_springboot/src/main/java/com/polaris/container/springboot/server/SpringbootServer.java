@@ -11,8 +11,6 @@ import com.polaris.core.util.SpringUtil;
 
 public class SpringbootServer {
 	
-	private ConfigurableApplicationContext context;
-	
 	/**
      * 私有构造方法
      */
@@ -70,6 +68,9 @@ public class SpringbootServer {
      * @throws Exception
      */
     public void stop() throws Exception {
-    	context.stop();
+        ConfigurableApplicationContext context = SpringUtil.getApplicationContext();
+        if (context != null) {
+           context.close();
+        }
     }
 }
