@@ -6,11 +6,11 @@ import org.slf4j.LoggerFactory;
 /**
  * The AbstractLifeCycle for generic components.
  */
-public abstract class AbstractLifeCycle implements LifeCycle {
+public abstract class AbstractLifeCycle implements LifeCycle ,LifeCycleState{
     private static final Logger LOG = LoggerFactory.getLogger(AbstractLifeCycle.class);
 
     private final Object _lock = new Object();
-    private volatile int _state = LifeCycleState.STATE_STOPPED;
+    private volatile int _state = STATE_STOPPED;
 
     protected void doStart() throws Exception {
     }
@@ -19,10 +19,10 @@ public abstract class AbstractLifeCycle implements LifeCycle {
     }
 
     @Override
-    public final void start() {
+    public final void start() throws Exception{
         synchronized (_lock) {
             try {
-                if (_state == LifeCycleState.STATE_STARTED || _state == LifeCycleState.STATE_STARTING) {
+                if (_state == STATE_STARTED || _state == STATE_STARTING) {
                     return;
                 }
                 setStarting();
@@ -30,15 +30,16 @@ public abstract class AbstractLifeCycle implements LifeCycle {
                 setStarted();
             } catch (Throwable e) {
                 setFailed(e);
+                throw e;
             }
         }
     }
 
     @Override
-    public final void stop() {
+    public final void stop() throws Exception{
         synchronized (_lock) {
             try {
-                if (_state == LifeCycleState.STATE_STOPPING || _state == LifeCycleState.STATE_STOPPED) {
+                if (_state == STATE_STOPPING || _state == STATE_STOPPED) {
                     return;
                 }
                 setStopping();
@@ -46,6 +47,7 @@ public abstract class AbstractLifeCycle implements LifeCycle {
                 setStopped();
             } catch (Throwable e) {
                 setFailed(e);
+                throw e;
             }
         }
     }
@@ -55,83 +57,83 @@ public abstract class AbstractLifeCycle implements LifeCycle {
     {
         final int state = _state;
 
-        return state == LifeCycleState.STATE_STARTED || state == LifeCycleState.STATE_STARTING;
+        return state == STATE_STARTED || state == STATE_STARTING;
     }
 
     @Override
     public boolean isStarted() {
-        return _state == LifeCycleState.STATE_STARTED;
+        return _state == STATE_STARTED;
     }
 
     @Override
     public boolean isStarting() {
-        return _state == LifeCycleState.STATE_STARTING;
+        return _state == STATE_STARTING;
     }
 
     @Override
     public boolean isStopping() {
-        return _state == LifeCycleState.STATE_STOPPING;
+        return _state == STATE_STOPPING;
     }
 
     @Override
     public boolean isStopped() {
-        return _state == LifeCycleState.STATE_STOPPED;
+        return _state == STATE_STOPPED;
     }
 
     @Override
     public boolean isFailed() {
-        return _state == LifeCycleState.STATE_FAILED;
+        return _state == STATE_FAILED;
     }
 
     public String getState()  {
         switch (_state)
         {
-            case LifeCycleState.STATE_FAILED:
-                return LifeCycleState.FAILED;
-            case LifeCycleState.STATE_STARTING:
-                return LifeCycleState.STARTING;
-            case LifeCycleState.STATE_STARTED:
-                return LifeCycleState.STARTED;
-            case LifeCycleState.STATE_STOPPING:
-                return LifeCycleState.STOPPING;
-            case LifeCycleState.STATE_STOPPED:
-                return LifeCycleState.STOPPED;
+            case STATE_FAILED:
+                return FAILED;
+            case STATE_STARTING:
+                return STARTING;
+            case STATE_STARTED:
+                return STARTED;
+            case STATE_STOPPING:
+                return STOPPING;
+            case STATE_STOPPED:
+                return STOPPED;
         }
         return null;
     }
 
     protected void setStarted() {
-        _state = LifeCycleState.STATE_STARTED;
+        _state = STATE_STARTED;
         if (LOG.isDebugEnabled()) {
             LOG.debug("started {}", this);
         }
     }
 
     protected void setStarting() {
-        _state = LifeCycleState.STATE_STARTING;
+        _state = STATE_STARTING;
         if (LOG.isDebugEnabled()) {
             LOG.debug("starting {}", this);
         }
     }
 
     protected void setStopping() {
-        _state = LifeCycleState.STATE_STOPPING;
+        _state = STATE_STOPPING;
         if (LOG.isDebugEnabled()) {
             LOG.debug("stopping {}", this);
         }
     }
 
     protected void setStopped() {
-        _state = LifeCycleState.STATE_STOPPED;
+        _state = STATE_STOPPED;
         if (LOG.isDebugEnabled()) {
-            LOG.debug("{} {}", LifeCycleState.STOPPED, this);
+            LOG.debug("{} {}", STOPPED, this);
         }
     }
 
     protected void setFailed(Throwable th) {
-        _state = LifeCycleState.STATE_FAILED;
+        _state = STATE_FAILED;
         if (LOG.isDebugEnabled()) {
-            LOG.warn(LifeCycleState.FAILED + " " + this + ": " + th, th);
+            LOG.warn(FAILED + " " + this + ": " + th, th);
         }
     }
 

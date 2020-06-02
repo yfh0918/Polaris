@@ -25,13 +25,14 @@ public abstract class ServerRunner {
     * startServer
     * @param 
     * @return 
+     * @throws Exception 
     * @Exception 
     * @since 
     */
-	public static void run(String[] args, Class<?> configClass, ServerListener... serverListeners) {
+	public static void run(String[] args, Class<?> configClass, ServerListener... serverListeners) throws Exception {
 		run(args, new Class<?>[]{configClass}, serverListeners);
 	}
-    public static void run(String[] args, Class<?>[] configClass, ServerListener... serverListeners) {
+    public static void run(String[] args, Class<?>[] configClass, ServerListener... serverListeners) throws Exception {
     	
     	//banna打印
     	BannerPrinter.print(bannerMode);

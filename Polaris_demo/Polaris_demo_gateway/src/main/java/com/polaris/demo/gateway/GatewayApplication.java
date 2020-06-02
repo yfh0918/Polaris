@@ -13,7 +13,7 @@ import com.polaris.demo.gateway.response.TokenExtendHttpResponseFilter;
 @PolarisApplication
 public class GatewayApplication {
 	
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
     	
     	//启动网关应用
     	ServerRunner.run(args,GatewayApplication.class, new ServerListener() {

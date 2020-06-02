@@ -49,7 +49,11 @@ public abstract class ManagedComponent extends LifeCycleWithListenerManager impl
 		while (iterator.hasNext()) {
 			ManagedComponent component = iterator.next();
 			logger.debug("ManagedComponent start component:{}",component.getClass().getName());
-			component.start();
+			try {
+				component.start();
+			} catch (Exception e) {
+				logger.error("ManagedComponent start component :{} is error:{}",component.getClass().getName(),e);
+			}
 		}
 	}
 	
@@ -61,7 +65,11 @@ public abstract class ManagedComponent extends LifeCycleWithListenerManager impl
 		while (iterator.hasNext()) {
 			ManagedComponent component = iterator.next();
 	    	logger.debug("ManagedComponent stop component:{}",component.getClass().getName());
-	    	component.stop();
+	    	try {
+				component.stop();
+			} catch (Exception e) {
+				logger.error("ManagedComponent stop component :{} is error:{}",component.getClass().getName(),e);
+			}
 		}
 	}
 	

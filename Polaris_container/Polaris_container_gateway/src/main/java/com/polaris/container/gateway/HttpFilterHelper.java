@@ -19,13 +19,21 @@ public class HttpFilterHelper {
 	//外部调用-新增filter
 	public void addFilter(HttpFilterEntity httpFilterEntity) {
 		logger.info("add filter:{}",httpFilterEntity.getFilter().getClass().getSimpleName());
-		httpFilterEntity.getFilter().start();
+		try {
+			httpFilterEntity.getFilter().start();
+		} catch (Exception e) {
+			logger.error("add filter:{} is error:{}",httpFilterEntity.getFilter().getClass().getSimpleName(),e);
+		}
 	}
 	
 	//外部调用-删除filter
 	public void removeFilter(HttpFilterEntity httpFilterEntity) {
 		logger.info("remove filter:{}",httpFilterEntity.getFilter().getClass().getSimpleName());
-		httpFilterEntity.getFilter().stop();
+		try {
+			httpFilterEntity.getFilter().stop();
+		} catch (Exception e) {
+			logger.error("remove filter:{} is error:{}",httpFilterEntity.getFilter().getClass().getSimpleName(),e);
+		}
 	}
 
 }

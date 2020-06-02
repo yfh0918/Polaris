@@ -25,7 +25,7 @@ public class ServerManager extends LifeCycleWithListenerManager implements LifeC
 		addLifeCycleListener(this);
 	}
 	
-	public static void init() {
+	public static void init() throws Exception {
 		INSTANCE.start();
 	}
 	
@@ -36,14 +36,20 @@ public class ServerManager extends LifeCycleWithListenerManager implements LifeC
     private final Thread jvmShutdownHook = new Thread(new Runnable() {
         @Override
         public void run() {
-            stop();
+            try {
+				stop();
+			} catch (Exception e) {
+				//ignore
+			}
         }
     }, "ServerContainer-JVM-shutdown-hook");
     
+    @Override
 	protected void doStart() throws Exception {
 		ServerProvider.getServer().start();
     }
-
+    
+    @Override
     protected void doStop() throws Exception {
     	ServerProvider.getServer().stop();
     }

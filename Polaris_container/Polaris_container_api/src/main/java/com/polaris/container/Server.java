@@ -1,7 +1,7 @@
 package com.polaris.container;
 
-public interface Server {
-	void start() throws Exception;
+import com.polaris.core.component.LifeCycle;
+
+public interface Server extends LifeCycle{
 	default Object getContext() {return null;}
-	default void stop() throws Exception {}
 }
