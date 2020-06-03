@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.ServiceLoader;
 
 import javax.servlet.ServletContainerInitializer;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.slf4j.Logger;
@@ -45,11 +44,6 @@ public class UndertowServer extends SpringContextServer {
     private String serverPort;
     private String contextPath;
 	private final ServiceLoader<ServletContainerInitializer> serviceLoader = ServiceLoader.load(ServletContainerInitializer.class);
-
-    /**
-     * servlet上下文
-     */
-    private ServletContext servletContext;
 
     /**
      * 服务器初始化
@@ -127,9 +121,6 @@ public class UndertowServer extends SpringContextServer {
 		SessionManager sessionManager = deployManager.getDeployment().getSessionManager();
 		int sessionTimeout = Integer.parseInt(ConfClient.get("server.sessionTimeout",String.valueOf(30 * 60)));
 		sessionManager.setDefaultSessionTimeout(sessionTimeout);//30mins
-		
-		//servlet context
-    	servletContext = deployManager.getDeployment().getServletContext();
 		return deployManager;
 	}
     
@@ -180,15 +171,5 @@ public class UndertowServer extends SpringContextServer {
     	undertow.stop();
     	manager = null;
     	undertow = null;
-    }
-    
-    /**
-     * 获取servlet上下文
-     *
-     * @throws Exception
-     */
-    @Override
-    public Object getContext() {
-    	return servletContext;
     }
 }

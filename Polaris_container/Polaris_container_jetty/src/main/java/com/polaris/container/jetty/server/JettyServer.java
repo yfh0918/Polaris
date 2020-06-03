@@ -38,11 +38,6 @@ public class JettyServer extends SpringContextServer{
      */
     private Server server = null;
     
-    /**
-     * servlet上下文
-     */
-    private ServletContext servletContext;
-    
     private String serverPort;
     private String contextPath;
 
@@ -72,8 +67,7 @@ public class JettyServer extends SpringContextServer{
         File resDir = new File(resourceBase);
         context.setResourceBase(resDir.getCanonicalPath());
         context.setMaxFormContentSize(Integer.parseInt(ConfClient.get("server.maxSavePostSize",String.valueOf(MAX_SAVE_POST_SIZE))));
-        servletContext = context.getServletContext();
-        context.addBean(new JettyServletContainerInitializer(servletContext),false);
+        context.addBean(new JettyServletContainerInitializer(context.getServletContext()),false);
         //context加入server
         this.server.setHandler(context); // 将Application注册到服务器
     }
@@ -115,17 +109,6 @@ public class JettyServer extends SpringContextServer{
         server.stop();
     }
 
-    
-    /**
-     * 获取servlet上下文
-     *
-     * @throws Exception
-     */
-    @Override
-    public Object getContext() {
-        return servletContext;
-    }
-    
     public static class JettyServletContainerInitializer extends AbstractServletContainerInitializerCaller {
         ServletContext sc;
         private final ServiceLoader<ServletContainerInitializer> serviceLoader = ServiceLoader.load(ServletContainerInitializer.class);

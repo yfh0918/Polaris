@@ -21,7 +21,7 @@ public class SpringContextServer implements Server{
     }
     
     @Override
-    public Object getContext() {
+    public ConfigurableApplicationContext getContext() {
     	return SpringUtil.getApplicationContext();
     }
 }

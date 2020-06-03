@@ -137,8 +137,6 @@ public class TomcatServer extends SpringContextServer {
         logger.info("tomcat started on port(s) " + this.serverPort + " with context path '" + this.contextPath + "'");
     }
     
-    
-    
     /**
      * 停止服务服务器
      *
@@ -149,14 +147,5 @@ public class TomcatServer extends SpringContextServer {
         super.stop();
         tomcat.stop();
     }
-    
-    /**
-     * 获取servlet上下文
-     *
-     * @throws Exception
-     */
-    @Override
-    public Object getContext() {
-        return standardContext.getServletContext();
-    }
+
 }

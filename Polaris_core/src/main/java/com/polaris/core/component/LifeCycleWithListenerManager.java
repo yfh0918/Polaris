@@ -18,7 +18,7 @@ public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle imp
     public void removeLifeCycleListener(LifeCycleListener listener) {
         _listeners.remove(listener);
     }
-    
+    @Override
     protected void setStarting() {
     	super.setStarting();
     	Iterator<LifeCycleListener> iterator = _listeners.iterator();
@@ -27,7 +27,7 @@ public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle imp
 			listener.starting(this);
 		}
     }
-    
+    @Override
     protected void setStarted() {
     	super.setStarted();
     	Iterator<LifeCycleListener> iterator = _listeners.iterator();
@@ -36,7 +36,7 @@ public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle imp
 			listener.started(this);
 		}
     }
-
+    @Override
     protected void setStopping() {
     	super.setStopping();
     	Iterator<LifeCycleListener> iterator = _listeners.iterator();
@@ -45,7 +45,7 @@ public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle imp
 			listener.stopping(this);
 		}
     }
-
+    @Override
     protected void setStopped() {
     	super.setStopped();
     	Iterator<LifeCycleListener> iterator = _listeners.iterator();
@@ -55,7 +55,7 @@ public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle imp
 			removeLifeCycleListener(listener);
 		}
     }
-
+    @Override
     protected void setFailed(Throwable th) {
     	super.setFailed(th);
     	Iterator<LifeCycleListener> iterator = _listeners.iterator();

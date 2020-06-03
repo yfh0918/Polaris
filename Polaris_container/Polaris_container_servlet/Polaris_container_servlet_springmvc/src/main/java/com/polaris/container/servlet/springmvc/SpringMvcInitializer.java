@@ -14,9 +14,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import com.polaris.container.config.ConfigurationHelper;
+import com.polaris.container.servlet.ServletContextHelp;
 import com.polaris.container.servlet.ServletOrder;
 import com.polaris.container.servlet.initializer.ExtensionInitializerAbs;
-import com.polaris.core.util.SpringUtil;
 
 @Order(ServletOrder.SPRINGMVC)
 public class SpringMvcInitializer extends  ExtensionInitializerAbs { 
@@ -51,19 +51,21 @@ public class SpringMvcInitializer extends  ExtensionInitializerAbs {
 	@EnableWebMvc
 	protected static class SpringMvcInnerInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 		private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
+		private ServletContext servletContext;
 
 		@Override
 		public void onStartup(ServletContext servletContext) throws ServletException {
 			if (!initialized.compareAndSet(false, true)) {
 	            return;
 	        }
+			this.servletContext = servletContext;
 			super.onStartup(servletContext);
 		}
 		
 		@Override
 		protected WebApplicationContext createRootApplicationContext() {
 			WebApplicationContext context = super.createRootApplicationContext();
-			SpringUtil.setApplicationContext((ConfigurableApplicationContext)context);
+			ServletContextHelp.loadServletContext((ConfigurableApplicationContext)context, this.servletContext,false);
 			return context;
 		}
 		

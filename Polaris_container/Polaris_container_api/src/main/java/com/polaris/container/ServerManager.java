@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.springframework.context.ConfigurableApplicationContext;
+
 import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.core.OrderWrapper;
 import com.polaris.core.component.LifeCycle;
@@ -53,7 +55,7 @@ public class ServerManager extends LifeCycleWithListenerManager implements LifeC
     	ServerProvider.getServer().stop();
     }
     
-    public Object getContext() {
+    public ConfigurableApplicationContext getContext() {
     	return ServerProvider.getServer().getContext();
     }
     
