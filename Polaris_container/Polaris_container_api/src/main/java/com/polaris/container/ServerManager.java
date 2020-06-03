@@ -13,7 +13,7 @@ import com.polaris.core.component.LifeCycle;
 import com.polaris.core.component.LifeCycleListener;
 import com.polaris.core.component.LifeCycleWithListenerManager;
 
-public class ServerManager extends LifeCycleWithListenerManager implements LifeCycleListener, Server{
+public class ServerManager extends LifeCycleWithListenerManager implements LifeCycleListener, Server {
 
 	/**
      * constructor ServerManager for private 
