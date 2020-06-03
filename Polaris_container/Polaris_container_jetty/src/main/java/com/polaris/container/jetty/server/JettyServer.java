@@ -14,7 +14,9 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 
+import com.polaris.container.ServerOrder;
 import com.polaris.container.SpringContextServer;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
@@ -26,7 +28,7 @@ import com.polaris.core.util.FileUtil;
  * Creator : yufenghua
  * Modifier : yufenghua
  */
-
+@Order(ServerOrder.JETTY)
 public class JettyServer extends SpringContextServer{
     private static final Logger logger = LoggerFactory.getLogger(JettyServer.class);
     private static final String MAX_THREADS = "300";//和tomcat保持一致
@@ -43,12 +45,6 @@ public class JettyServer extends SpringContextServer{
     
     private String serverPort;
     private String contextPath;
-
-    /**
-     * 私有构造方法
-     */
-    private JettyServer() {
-    }
 
     /**
      * 服务器初始化
@@ -82,25 +78,6 @@ public class JettyServer extends SpringContextServer{
         this.server.setHandler(context); // 将Application注册到服务器
     }
     
-    /**
-     * 获取单实例公共静态方法
-     *
-     * @return 单实例
-     */
-    public static JettyServer getInstance() {
-        return Singletone.INSTANCE;
-    }
-
-    /**
-     * 静态内部类实现单例
-     */
-    private static class Singletone {
-        /**
-         * 单实例
-         */
-        private static final JettyServer INSTANCE = new JettyServer();
-    }
-
     /**
      * 启动服务器
      *

@@ -1,1 +1,1 @@
-com.polaris.container.dubbo.Main
+com.polaris.container.dubbo.server.DubboServer

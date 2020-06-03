@@ -11,7 +11,9 @@ import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.tomcat.util.scan.StandardJarScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 
+import com.polaris.container.ServerOrder;
 import com.polaris.container.SpringContextServer;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
@@ -23,7 +25,7 @@ import com.polaris.core.util.FileUtil;
  * Creator : yufenghua
  * Modifier : yufenghua
  */
-
+@Order(ServerOrder.TOMCAT)
 public class TomcatServer extends SpringContextServer {
     private static final Logger logger = LoggerFactory.getLogger(TomcatServer.class);
     private static final String MAX_THREADS = "300";//和jetty保持一致
@@ -36,12 +38,6 @@ public class TomcatServer extends SpringContextServer {
      */
     private Tomcat tomcat = null;
 
-    /**
-     * 私有构造方法
-     */
-    private TomcatServer() {
-    }
-    
     /**
      * servlet上下文
      */
@@ -113,25 +109,6 @@ public class TomcatServer extends SpringContextServer {
         standardContext.setSessionCookieName("jsessionid");
         tomcat.getHost().addChild(standardContext);
 
-    }
-
-    /**
-     * 获取单实例公共静态方法
-     *
-     * @return 单实例
-     */
-    public static TomcatServer getInstance() {
-        return Singletone.INSTANCE;
-    }
-
-    /**
-     * 静态内部类实现单例
-     */
-    private static class Singletone {
-        /**
-         * 单实例
-         */
-        private static final TomcatServer INSTANCE = new TomcatServer();
     }
 
     /**

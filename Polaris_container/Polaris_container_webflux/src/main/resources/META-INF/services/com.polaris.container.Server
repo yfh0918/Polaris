@@ -1,1 +1,1 @@
-com.polaris.container.webflux.Main
+com.polaris.container.webflux.server.WebfluxServer

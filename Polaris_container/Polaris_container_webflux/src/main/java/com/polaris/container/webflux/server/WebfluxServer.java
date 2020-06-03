@@ -4,11 +4,13 @@ import java.io.File;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 
+import com.polaris.container.ServerOrder;
 import com.polaris.container.SpringContextServer;
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.Constant;
@@ -23,6 +25,7 @@ import reactor.netty.http.HttpProtocol;
 import reactor.netty.http.server.HttpServer;
 
 @EnableWebFlux
+@Order(ServerOrder.WEBFLUX)
 public class WebfluxServer extends SpringContextServer{
     
     private static Logger logger = LoggerFactory.getLogger(WebfluxServer.class);
@@ -30,31 +33,6 @@ public class WebfluxServer extends SpringContextServer{
     private DisposableServer disposableSever;
     
     private int port = 80;
-    
-    /**
-     * 私有构造方法
-     */
-    private WebfluxServer() {
-    }
-    
-    /**
-     * 获取单实例公共静态方法
-     *
-     * @return 单实例
-     */
-    public static WebfluxServer getInstance() {
-        return Singletone.INSTANCE;
-    }
-
-    /**
-     * 静态内部类实现单例
-     */
-    private static class Singletone {
-        /**
-         * 单实例
-         */
-        private static final WebfluxServer INSTANCE = new WebfluxServer();
-    }
     
     /**
      * 启动服务器

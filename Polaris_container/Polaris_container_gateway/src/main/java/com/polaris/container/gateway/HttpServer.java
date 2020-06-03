@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 
+import com.polaris.container.ServerOrder;
 import com.polaris.container.SpringContextServer;
 import com.polaris.container.gateway.proxy.ActivityTrackerAdapter;
 import com.polaris.container.gateway.proxy.FlowContext;
@@ -21,6 +23,7 @@ import com.polaris.core.config.ConfClient;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 
+@Order(ServerOrder.GATEWAY)
 public class HttpServer extends SpringContextServer{
 	
 	private static Logger logger = LoggerFactory.getLogger(HttpServer.class);
@@ -31,31 +34,6 @@ public class HttpServer extends SpringContextServer{
      * 服务器
      */
     private HttpProxyServerBootstrap httpProxyServerBootstrap = null;
-    
-	/**
-     * 私有构造方法
-     */
-    private HttpServer() {
-    }
-    
-    /**
-     * 获取单实例公共静态方法
-     *
-     * @return 单实例
-     */
-    public static HttpServer getInstance() {
-        return Singletone.INSTANCE;
-    }
-
-    /**
-     * 静态内部类实现单例
-     */
-    private static class Singletone {
-        /**
-         * 单实例
-         */
-        private static final HttpServer INSTANCE = new HttpServer();
-    }
     
     /**
      * 启动服务器

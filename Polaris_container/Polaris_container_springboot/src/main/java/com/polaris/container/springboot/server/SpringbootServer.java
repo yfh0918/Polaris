@@ -3,40 +3,18 @@ package com.polaris.container.springboot.server;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.annotation.Order;
 
+import com.polaris.container.ServerOrder;
 import com.polaris.container.SpringContextServer;
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
 
+@Order(ServerOrder.SPRINGBOOT)
 public class SpringbootServer extends SpringContextServer{
 	
-	/**
-     * 私有构造方法
-     */
-    private SpringbootServer() {
-    }
-    
-    /**
-     * 获取单实例公共静态方法
-     *
-     * @return 单实例
-     */
-    public static SpringbootServer getInstance() {
-        return Singletone.INSTANCE;
-    }
-
-    /**
-     * 静态内部类实现单例
-     */
-    private static class Singletone {
-        /**
-         * 单实例
-         */
-        private static final SpringbootServer INSTANCE = new SpringbootServer();
-    }
-    
     /**
      * 启动服务器
      *

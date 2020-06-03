@@ -1,1 +1,1 @@
-com.polaris.container.undertow.Main
+com.polaris.container.undertow.server.UndertowServer

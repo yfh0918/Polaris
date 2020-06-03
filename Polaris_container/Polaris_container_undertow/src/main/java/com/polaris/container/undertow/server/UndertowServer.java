@@ -9,7 +9,9 @@ import javax.servlet.ServletException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.Order;
 
+import com.polaris.container.ServerOrder;
 import com.polaris.container.SpringContextServer;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
@@ -34,7 +36,7 @@ import io.undertow.websockets.jsr.WebSocketDeploymentInfo;
  * Creator : yufenghua
  * Modifier : yufenghua
  */
-
+@Order(ServerOrder.UNDERTOW)
 public class UndertowServer extends SpringContextServer {
     private static final Logger logger = LoggerFactory.getLogger(UndertowServer.class);
     
@@ -48,12 +50,6 @@ public class UndertowServer extends SpringContextServer {
      * servlet上下文
      */
     private ServletContext servletContext;
-
-    /**
-     * 私有构造方法
-     */
-    private UndertowServer() {
-    }
 
     /**
      * 服务器初始化
@@ -145,25 +141,6 @@ public class UndertowServer extends SpringContextServer {
         return contextPath;
     }
     
-    /**
-     * 获取单实例公共静态方法
-     *
-     * @return 单实例
-     */
-    public static UndertowServer getInstance() {
-        return Singletone.INSTANCE;
-    }
-
-    /**
-     * 静态内部类实现单例
-     */
-    private static class Singletone {
-        /**
-         * 单实例
-         */
-        private static final UndertowServer INSTANCE = new UndertowServer();
-    }
-
     /**
      * 启动服务器
      *

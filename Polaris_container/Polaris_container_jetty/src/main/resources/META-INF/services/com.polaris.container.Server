@@ -1,1 +1,1 @@
-com.polaris.container.jetty.Main
+com.polaris.container.jetty.server.JettyServer
