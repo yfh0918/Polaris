@@ -13,13 +13,11 @@ public abstract class ExtensionInitializerAbs implements ExtensionInitializer {
 	protected ServletContext servletContext = null;
 	public void onStartup(ServletContext servletContext) {
 		this.servletContext = servletContext;
-		loadContext();
 		addInitParameter();
 		addListener();
 		addFilter();
 		addServlet();
 	}
-	public abstract void loadContext();
 	public void addInitParameter() {
 		String names = ConfClient.get("servlet.init.parameter.names");
 		String values = ConfClient.get("servlet.init.parameter.values");

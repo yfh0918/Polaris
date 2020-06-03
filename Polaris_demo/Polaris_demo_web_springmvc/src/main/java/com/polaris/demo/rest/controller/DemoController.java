@@ -37,7 +37,7 @@ public class DemoController {
 			logger.info(linnera.getAddress1());
 		}
 		logger.info(testProperties.getInnerA().getAddress1());
-		HttpClientUtil.get("http://localhost:9077/demowebnodubbo/rest/demo/test2");
+		//HttpClientUtil.get("http://localhost:9077/demowebnodubbo/rest/demo/test2");
 		return "aa";
     }
 	

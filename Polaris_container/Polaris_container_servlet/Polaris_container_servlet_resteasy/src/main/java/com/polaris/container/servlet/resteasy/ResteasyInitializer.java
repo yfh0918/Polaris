@@ -11,11 +11,6 @@ import com.polaris.core.util.SpringUtil;
 
 @Order(ServletOrder.RESTEASY)
 public class ResteasyInitializer extends  ExtensionInitializerAbs { 
-
-	@Override
-	public void loadContext() {
-		SpringUtil.refresh(ConfigurationHelper.getConfiguration());
-	} 
 	
 	@Override
 	public void addInitParameter() {
@@ -40,7 +35,8 @@ public class ResteasyInitializer extends  ExtensionInitializerAbs {
 		ServletRegistration.Dynamic servletRegistration = servletContext.
 			    addServlet("dispatcher", org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.class);
 			    servletRegistration.setLoadOnStartup(1);
-			    servletRegistration.addMapping("/*");	
+			    servletRegistration.addMapping("/*");
+		SpringUtil.refresh(ConfigurationHelper.getConfiguration());
 	}
 	
 

@@ -24,16 +24,6 @@ public class SpringMvcInitializer extends  ExtensionInitializerAbs {
 	SpringMvcInnerInitializer initializer = null;
 
 	@Override
-	public void loadContext() {
-		initializer = new SpringMvcInnerInitializer(); 
-		try {
-			initializer.onStartup(this.servletContext);
-		} catch (ServletException e) {
-			logger.error(e.getMessage());
-		}
-	} 
-
-	@Override
 	public void addInitParameter() {
 		super.addInitParameter();
 	}
@@ -48,6 +38,16 @@ public class SpringMvcInitializer extends  ExtensionInitializerAbs {
 		super.addFilter();
 	} 
 	
+    @Override
+    public void addServlet() {
+        initializer = new SpringMvcInnerInitializer(); 
+        try {
+            initializer.onStartup(this.servletContext);
+        } catch (ServletException e) {
+            logger.error("SpringMvcInnerInitializer onStartup Error:{}",e);
+        }
+    } 
+
 	@EnableWebMvc
 	protected static class SpringMvcInnerInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 		private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
