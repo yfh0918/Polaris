@@ -13,7 +13,7 @@ import com.polaris.core.component.LifeCycle;
 import com.polaris.core.component.LifeCycleListener;
 import com.polaris.core.component.LifeCycleWithListenerManager;
 
-public class ServerManager extends LifeCycleWithListenerManager implements LifeCycleListener{
+public class ServerManager extends LifeCycleWithListenerManager implements LifeCycleListener, Server{
 
 	/**
      * constructor ServerManager for private 
@@ -55,6 +55,7 @@ public class ServerManager extends LifeCycleWithListenerManager implements LifeC
     	ServerProvider.getServer().stop();
     }
     
+    @Override
     public ConfigurableApplicationContext getContext() {
     	return ServerProvider.getServer().getContext();
     }

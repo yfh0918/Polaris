@@ -15,9 +15,13 @@ abstract public class ServletContextHelp {
         if (refreshSpringContext) {
             SpringUtil.refresh();
         } 
+        SpringUtil.setApplicationContext(context);
     }
     
     public static ServletContext getServletContext(ConfigurableApplicationContext context) {
+        if (context == null) {
+            return null;
+        }
         Object servletContext = context.getEnvironment().getSystemProperties().get(SERVLET_CONTEXT_KEY);
         if (servletContext != null) {
             return (ServletContext)servletContext;
