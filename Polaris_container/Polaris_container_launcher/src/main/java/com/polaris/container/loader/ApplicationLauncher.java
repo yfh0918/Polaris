@@ -20,42 +20,49 @@ public class ApplicationLauncher {
 	private static final Logger logger = LoggerFactory.getLogger(ApplicationLauncher.class);
 	private static final String DOT_CLASS = ".class";
 	private static final String MANIFEST_FILE = "META-INF/MANIFEST.MF";
+	private static final String JRE_LIB = "/jre/lib/";
 	
 	public static void main(String[] args) throws IOException {
 		ApplicationLauncher.scanMainClass(args);
 	}
 	
     private static void scanMainClass(String[] args) throws IOException {  
-    	URL url = ApplicationLauncher.class.getClassLoader().getResource(MANIFEST_FILE);
-    	String path = java.net.URLDecoder.decode(url.getPath(),Charset.defaultCharset().name());
-		path = path.substring(5).split("!")[0];
-    	File file = new File(path);
-		try(JarFile jarFile = new JarFile(file)) {
-			for(Enumeration<JarEntry> enumeration =  jarFile.entries(); enumeration.hasMoreElements(); ) {
-	            JarEntry jarEntry = enumeration.nextElement();
-	            if (jarEntry.getName().endsWith(DOT_CLASS)) {
-	            	try (InputStream inputStream = new BufferedInputStream(jarFile.getInputStream(jarEntry))) {
-	    				ClassDescriptor classDescriptor = createClassDescriptor(inputStream);
-	    				if (classDescriptor != null && 
-	    					classDescriptor.isMainMethodFound() && 
-	    					classDescriptor.isTargetAnnotationFound()) {
-	    					String className = convertToClassName(jarEntry.getName());
-	    					logger.info("startup class:{} is found",className);
-	    					Class<?> startClass =Class.forName(className);
-	                		Method method = startClass.getMethod("main", String[].class);
-	            			method.invoke(null, (Object)args);
-	            			return;
-	    				}
-	    			} catch (Exception e) {
-						logger.error("Error",e);
-		            }
-	            }
-	        }
-		} catch (Exception e) {
-			logger.error("Error",e);
-			return;
-		}
-		logger.error("in jar:{} has not startup class",file.getName());
+        Enumeration<URL> urls = ApplicationLauncher.class.getClassLoader().getResources(MANIFEST_FILE);
+        while(urls.hasMoreElements()){
+            URL url = urls.nextElement();
+            String path = java.net.URLDecoder.decode(url.getPath(),Charset.defaultCharset().name());
+            if (path.contains(JRE_LIB)) {
+                continue;
+            }
+            path = path.substring(5).split("!")[0];
+            File file = new File(path);
+            try(JarFile jarFile = new JarFile(file)) {
+                for(Enumeration<JarEntry> enumeration =  jarFile.entries(); enumeration.hasMoreElements(); ) {
+                    JarEntry jarEntry = enumeration.nextElement();
+                    if (jarEntry.getName().endsWith(DOT_CLASS)) {
+                        try (InputStream inputStream = new BufferedInputStream(jarFile.getInputStream(jarEntry))) {
+                            ClassDescriptor classDescriptor = createClassDescriptor(inputStream);
+                            if (classDescriptor != null && 
+                                classDescriptor.isMainMethodFound() && 
+                                classDescriptor.isTargetAnnotationFound()) {
+                                String className = convertToClassName(jarEntry.getName());
+                                logger.info("startup class:{}",className);
+                                Class<?> startClass =Class.forName(className);
+                                Method method = startClass.getMethod("main", String[].class);
+                                method.invoke(null, (Object)args);
+                                return;
+                            }
+                        } catch (Exception e) {
+                            logger.error("Error",e);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                logger.error("Error",e);
+                return;
+            }
+        }
+        logger.error("startup class is not found"); 
 	}
     
     private static ClassDescriptor createClassDescriptor(InputStream inputStream) {
