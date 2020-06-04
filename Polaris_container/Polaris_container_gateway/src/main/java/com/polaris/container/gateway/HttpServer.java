@@ -113,7 +113,7 @@ public class HttpServer extends SpringContextServer{
     @Override
     public void stop() throws Exception {
         super.stop();
-       	httpProxyServerBootstrap.abort();//non graceful
+       	httpProxyServerBootstrap.stop();//graceful shutdown
     }
 
 }
