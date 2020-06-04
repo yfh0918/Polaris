@@ -1,4 +1,4 @@
-0:尽量使用稳定分支，比如1.1.2，不建议使用master和snapshot版本
+0:尽量使用稳定分支，不建议使用master和snapshot版本
  
 1:install 全体
  
