@@ -5,6 +5,7 @@ import javax.servlet.ServletContext;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.polaris.container.config.ConfigurationHelper;
+import com.polaris.core.exception.ServletContextException;
 import com.polaris.core.util.SpringUtil;
 
 abstract public class ServletContextHelp {
@@ -17,7 +18,7 @@ abstract public class ServletContextHelp {
     }
     public static void loadServletContext(ConfigurableApplicationContext context, ServletContext servletContext,boolean refreshSpringContext) {
         if (context == null) {
-            throw new RuntimeException("loadServletContext is error caused by ConfigurableApplicationContext is null");
+            throw new ServletContextException("loadServletContext is error caused by ConfigurableApplicationContext is null");
         }
         context.getEnvironment().getSystemProperties().put(SERVLET_CONTEXT_KEY, servletContext);
         SpringUtil.setApplicationContext(context);

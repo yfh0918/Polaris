@@ -4,7 +4,7 @@ import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config;
 import com.polaris.core.config.Config.Type;
-import com.polaris.core.config.ConfigException;
+import com.polaris.core.exception.ConfigException;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.ConfigListener;
 import com.polaris.core.util.StringUtil;

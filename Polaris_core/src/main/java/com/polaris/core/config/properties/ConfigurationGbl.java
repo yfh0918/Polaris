@@ -12,9 +12,9 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
 import com.polaris.core.config.Config.Type;
-import com.polaris.core.config.ConfigException;
 import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.provider.ConfHandlerProviderFactory;
+import com.polaris.core.exception.ConfigException;
 import com.polaris.core.util.StringUtil;
 
 public class ConfigurationGbl implements BeanPostProcessor, PriorityOrdered, ApplicationContextAware, InitializingBean{

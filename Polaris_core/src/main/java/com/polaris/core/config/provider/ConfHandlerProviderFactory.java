@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.polaris.core.config.Config.Type;
-import com.polaris.core.config.ConfigException;
+import com.polaris.core.exception.ConfigException;
 
 public class ConfHandlerProviderFactory {
 	

@@ -3,7 +3,7 @@ package com.polaris.core.config.reader;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.polaris.core.config.ConfigException;
+import com.polaris.core.exception.ConfigException;
 import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.StringUtil;
 
