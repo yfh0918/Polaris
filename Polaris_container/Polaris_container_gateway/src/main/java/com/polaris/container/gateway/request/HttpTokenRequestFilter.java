@@ -174,6 +174,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
             boolean uncheckUrl = !checkUrlPath(HttpTokenRequestFilter.getUrl(httpRequest));
             if (uncheckUrl) {
             	if (isUncheckPolicy()) {
+            	    httpRequest.headers().add(SystemCallUtil.key(), SystemCallUtil.value());
             		return false;
             	}
             }
@@ -185,6 +186,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
             //没有token需要验证url是否放过
             if (StringUtil.isEmpty(token)) {
                 if (uncheckUrl) {
+                    httpRequest.headers().add(SystemCallUtil.key(), SystemCallUtil.value());
                 	return false;
                 }
                 httpMessage.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());

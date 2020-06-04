@@ -10,6 +10,15 @@ import com.polaris.core.config.Config.Opt;
 */
 public interface ConfigListener {
 	
+    /**
+     * 配置发生变化开始后的回调处理
+     * @param  sequence 配置中心以文件为单位，相同的文件sequence也相同
+     * @return 
+     * @Exception 
+     * @since 
+     */
+    default void onStart(String sequence) {}
+     
 	/**
 	* 配置发生变化的回调处理
 	* @param  sequence 配置中心以文件为单位，相同的文件sequence也相同
@@ -23,7 +32,7 @@ public interface ConfigListener {
 	default void onChange(String sequence, Object key, Object value, Opt opt) {}
 	
 	/**
-	* 配置发生变化的回调处理
+	* 配置发生变化结束后的回调处理
 	* @param  sequence 配置中心以文件为单位，相同的文件sequence也相同
 	* @return 
 	* @Exception 

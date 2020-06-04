@@ -2,6 +2,7 @@ package com.polaris.core.config.provider;
 
 import java.util.Properties;
 
+import com.polaris.core.config.ConfEndPoint;
 import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.ConfigListener;
@@ -12,7 +13,7 @@ public class ConfCompositeProvider implements ConfigListener {
     private static final ConfHandlerProvider INSTANCE_SYS = ConfHandlerProviderFactory.get(Type.SYS);
     private static final ConfHandlerProvider INSTANCE_EXT = ConfHandlerProviderFactory.get(Type.EXT);
     private static final ConfHandlerProvider INSTANCE_GBL = ConfHandlerProviderFactory.get(Type.GBL);
-    private static final ConfEndPointProvider INSTANCE_ENDPOINT = ConfEndPointProvider.INSTANCE;
+    private static final ConfEndPoint INSTANCE_ENDPOINT = ConfEndPointProvider.INSTANCE;
     private Properties cache = new Properties();
     private ConfCompositeProvider() {}
     
@@ -36,13 +37,18 @@ public class ConfCompositeProvider implements ConfigListener {
 	}
 	
 	@Override
+    public void onStart(String sequence) {
+        INSTANCE_ENDPOINT.onStart(sequence);
+    }
+	
+	@Override
 	public void onChange(String sequence, Object key, Object value, Opt opt) {
 		if (opt != Opt.DEL) {
 			cache.put(key, value);
 		} else {
 			cache.remove(key);
 		}
-		INSTANCE_ENDPOINT.onChange(sequence, key.toString(), value == null ? null: value.toString(),opt);
+		INSTANCE_ENDPOINT.onChange(sequence, key, value ,opt);
 	}
 	
 	@Override
