@@ -33,7 +33,7 @@
  * http://creativecommons.org/publicdomain/zero/1.0/
  */
 
-package com.polaris.core.schedule;
+package com.polaris.core.thread.cron;
 
 import java.util.concurrent.RejectedExecutionException;
 
