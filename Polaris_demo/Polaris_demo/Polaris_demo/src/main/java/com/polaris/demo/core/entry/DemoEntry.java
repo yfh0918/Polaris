@@ -2,7 +2,7 @@ package com.polaris.demo.core.entry;
 
 import org.apache.dubbo.config.annotation.Service;
 
-import com.polaris.core.adapter.ClassAdapter;
+import com.polaris.core.util.ClassUtil;
 import com.polaris.core.util.EncryptUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.demo.api.dto.DemoDto;
@@ -20,7 +20,7 @@ public class DemoEntry implements DemoEntryIF {
     @Override
     public DemoDto test(DemoDto dto) {
         //定义返回对象
-        TestService testService = ClassAdapter.findServiceImpl(TestService.class);
+        TestService testService = ClassUtil.findServiceImpl(TestService.class);
         System.out.println("this is server0");
         return testService.test(dto);
 
@@ -34,7 +34,7 @@ public class DemoEntry implements DemoEntryIF {
     @Override
     public DemoDto test2(DemoDto dto) {
         //定义返回对象
-        TestService testService = ClassAdapter.findServiceImpl(TestService.class);
+        TestService testService = ClassUtil.findServiceImpl(TestService.class);
         return testService.test(dto);
 
     }

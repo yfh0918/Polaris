@@ -1,4 +1,4 @@
-package com.polaris.core.adapter;
+package com.polaris.core.util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -13,15 +13,13 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.core.util.SpringUtil;
-
 /**
  * service管理类，用于实现针对不同的系统做不同处理
  */
 @SuppressWarnings("unchecked")
-public class ClassAdapter {
+public class ClassUtil {
 	
-	private static final Logger logger = LoggerFactory.getLogger(ClassAdapter.class);
+	private static final Logger logger = LoggerFactory.getLogger(ClassUtil.class);
 
 	//获取指定的service
     public static <T>T findServiceImpl(Class<T> cls) {
