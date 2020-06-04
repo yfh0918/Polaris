@@ -514,7 +514,7 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
                         return new NioServerSocketChannel();
                     }
                 })
-                .option(ChannelOption.SO_BACKLOG, Integer.parseInt(ConfClient.get("tcp.so.backlog", "511")));//nginx default value = 511
+                .option(ChannelOption.SO_BACKLOG, Integer.parseInt(ConfClient.get("tcp.so.backlog", "1024")));
                 break;
             case UDT:
                 LOG.info("Proxy listening with UDT transport");
