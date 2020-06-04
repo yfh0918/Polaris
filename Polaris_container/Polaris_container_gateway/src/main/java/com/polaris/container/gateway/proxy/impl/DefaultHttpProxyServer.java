@@ -32,6 +32,7 @@ import com.polaris.container.gateway.proxy.ProxyAuthenticator;
 import com.polaris.container.gateway.proxy.SslEngineSource;
 import com.polaris.container.gateway.proxy.TransportProtocol;
 import com.polaris.container.gateway.proxy.UnknownTransportProtocolException;
+import com.polaris.core.config.ConfClient;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -512,7 +513,8 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
                     public ServerChannel newChannel() {
                         return new NioServerSocketChannel();
                     }
-                });
+                })
+                .option(ChannelOption.SO_BACKLOG, Integer.parseInt(ConfClient.get("tcp.so.backlog", "511")));//nginx default value = 511
                 break;
             case UDT:
                 LOG.info("Proxy listening with UDT transport");
@@ -522,7 +524,7 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
                         return new NioServerSocketChannel(SelectorProviderUDT.STREAM);
                     }
                 })
-                        .option(ChannelOption.SO_BACKLOG, 10)
+                        .option(ChannelOption.SO_BACKLOG, Integer.parseInt(ConfClient.get("udp.so.backlog", "10")))
                         .option(ChannelOption.SO_REUSEADDR, true);
                 break;
             default:
