@@ -10,13 +10,14 @@ public class HttpFilterHelper {
 	public static HttpFilterHelper INSTANCE = new HttpFilterHelper();
 	private HttpFilterHelper() {};
 	
-	//外部调用-替换现有的filter
-	public void replaceFilter(HttpFilterEntity httpFilterEntity, HttpFilter filter) {
+	//replace
+	public void replaceFilter(HttpFilterEntity httpFilterEntity, HttpFilter newFilter) {
 		removeFilter(httpFilterEntity);
-		httpFilterEntity.setFilter(filter);
+		httpFilterEntity.setFilter(newFilter);
 		addFilter(httpFilterEntity);
 	}
-	//外部调用-新增filter
+	
+	//add
 	public void addFilter(HttpFilterEntity httpFilterEntity) {
 		logger.info("add filter:{}",httpFilterEntity.getFilter().getClass().getSimpleName());
 		try {
@@ -26,7 +27,7 @@ public class HttpFilterHelper {
 		}
 	}
 	
-	//外部调用-删除filter
+	//remove
 	public void removeFilter(HttpFilterEntity httpFilterEntity) {
 		logger.info("remove filter:{}",httpFilterEntity.getFilter().getClass().getSimpleName());
 		try {
