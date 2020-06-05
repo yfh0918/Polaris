@@ -1,4 +1,4 @@
-0:尽量使用稳定分支，不建议使用master和snapshot版本
+﻿0:尽量使用稳定分支，不建议使用master和snapshot版本
  
 1:install 全体
  
@@ -103,7 +103,7 @@
   多数据源如果采用注解切换的请自行添加aop,详情请参考DataBaseAop和serviceImpl中各方法的@DataSource注解
    
 12，和Springboot的融合
- 详细请参考Polaris_demo_springboot
+ 详细请参考Polaris_demo_springboot（自带websocket不用再引入）
 
 13, webflux
  引入Polaris_container_webflux模块，详细请参考Polaris_demo_webflux
