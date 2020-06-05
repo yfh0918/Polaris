@@ -20,8 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.datasource.DynamicDataSource;
 import com.polaris.core.util.SpringUtil;
+import com.polaris.extension.db.datasource.DynamicDataSource;
 
 abstract public class JDBCUtil {
 

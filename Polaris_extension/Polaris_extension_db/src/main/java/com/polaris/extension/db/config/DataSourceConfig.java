@@ -21,9 +21,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.github.pagehelper.PageInterceptor;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.datasource.DynamicDataSource;
 import com.polaris.core.util.EncryptUtil;
 import com.polaris.core.util.EncryptUtil.Type;
+import com.polaris.extension.db.datasource.DynamicDataSource;
 import com.polaris.core.util.StringUtil;
 import com.zaxxer.hikari.HikariDataSource;
 

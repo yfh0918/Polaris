@@ -11,6 +11,10 @@
 	<name>Polaris_extension_db</name>
 
 	<dependencies>
+	    <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+        </dependency>
 		<!-- mybatis -->
 		<dependency>
 			<groupId>org.mybatis</groupId>

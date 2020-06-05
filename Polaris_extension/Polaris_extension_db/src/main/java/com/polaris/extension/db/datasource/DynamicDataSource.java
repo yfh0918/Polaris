@@ -1,4 +1,4 @@
-package com.polaris.core.datasource;
+package com.polaris.extension.db.datasource;
 
 
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
