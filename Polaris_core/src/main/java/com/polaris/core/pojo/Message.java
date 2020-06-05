@@ -20,14 +20,13 @@ public class Message implements Serializable {
 	 */
 	private String message;
 
-	 public  Message(){
-		 
-	 }
-	 
-	 public  Message(String code,String message){
-	    	this.code = code;
-	    	this.message=message;
-	  }
+    public  Message(){
+    }
+     
+    public  Message(String code,String message){
+       	this.code = code;
+       	this.message=message;
+    }
 
 	public String getCode() {
 		return code;
@@ -44,7 +43,4 @@ public class Message implements Serializable {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
-
-	
 }
