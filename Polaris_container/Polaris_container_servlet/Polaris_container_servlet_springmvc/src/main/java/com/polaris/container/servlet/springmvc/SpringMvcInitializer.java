@@ -14,7 +14,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import com.polaris.container.config.ConfigurationHelper;
-import com.polaris.container.servlet.ServletContextHelp;
+import com.polaris.container.servlet.ServletContextHelper;
 import com.polaris.container.servlet.ServletOrder;
 import com.polaris.container.servlet.initializer.ExtensionInitializerAbs;
 
@@ -65,7 +65,7 @@ public class SpringMvcInitializer extends  ExtensionInitializerAbs {
 		@Override
 		protected WebApplicationContext createRootApplicationContext() {
 			WebApplicationContext context = super.createRootApplicationContext();
-			ServletContextHelp.loadServletContext((ConfigurableApplicationContext)context, this.servletContext,false);
+			ServletContextHelper.loadServletContext((ConfigurableApplicationContext)context, this.servletContext,false);
 			return context;
 		}
 		

@@ -17,7 +17,7 @@ import org.springframework.context.ApplicationContext;
 import com.polaris.container.Server;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerExtension;
-import com.polaris.container.servlet.ServletContextHelp;
+import com.polaris.container.servlet.ServletContextHelper;
 import com.polaris.core.component.LifeCycle;
 import com.polaris.core.util.SpringUtil;
 
@@ -33,7 +33,7 @@ public class WebsocketListerner implements ServerListenerExtension{
 		@Override
 		public void started(LifeCycle event) {
 			if (event instanceof Server) {
-				ServletContext servletContext = ServletContextHelp.getServletContext(((Server)event).getContext());
+				ServletContext servletContext = ServletContextHelper.getServletContext(((Server)event).getContext());
 				if (servletContext != null) {
 			    	ServerContainer serverContainer = (ServerContainer) servletContext.getAttribute("javax.websocket.server.ServerContainer");
 			    	WSEndpointExporter wsEndpointExporter = new WSEndpointExporter();

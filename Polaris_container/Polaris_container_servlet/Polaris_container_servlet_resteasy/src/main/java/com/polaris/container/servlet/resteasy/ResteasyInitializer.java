@@ -4,7 +4,7 @@ import javax.servlet.ServletRegistration;
 
 import org.springframework.core.annotation.Order;
 
-import com.polaris.container.servlet.ServletContextHelp;
+import com.polaris.container.servlet.ServletContextHelper;
 import com.polaris.container.servlet.ServletOrder;
 import com.polaris.container.servlet.initializer.ExtensionInitializerAbs;
 
@@ -35,7 +35,7 @@ public class ResteasyInitializer extends  ExtensionInitializerAbs {
 			    addServlet("dispatcher", org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.class);
 			    servletRegistration.setLoadOnStartup(1);
 			    servletRegistration.addMapping("/*");
-		ServletContextHelp.loadServletContext(servletContext,true);
+		ServletContextHelper.loadServletContext(servletContext,true);
 	}
 	
 

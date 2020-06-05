@@ -8,7 +8,7 @@ import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.exception.ServletContextException;
 import com.polaris.core.util.SpringUtil;
 
-abstract public class ServletContextHelp {
+abstract public class ServletContextHelper {
     
     final static String SERVLET_CONTEXT_KEY = "servletContextKey";
 

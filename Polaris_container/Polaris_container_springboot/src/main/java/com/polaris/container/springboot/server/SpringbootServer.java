@@ -11,7 +11,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.polaris.container.ServerOrder;
 import com.polaris.container.SpringContextServer;
 import com.polaris.container.config.ConfigurationHelper;
-import com.polaris.container.servlet.ServletContextHelp;
+import com.polaris.container.servlet.ServletContextHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;
@@ -45,7 +45,7 @@ public class SpringbootServer extends SpringContextServer{
         ConfigurableApplicationContext context = springApplication.run(ConfigurationHelper.getArgs());
         if (context instanceof WebApplicationContext) {
             ServletContext servletContext = ((WebApplicationContext)context).getServletContext();
-            ServletContextHelp.loadServletContext(context, servletContext, false);
+            ServletContextHelper.loadServletContext(context, servletContext, false);
         } else {
             SpringUtil.setApplicationContext(context);
         }
