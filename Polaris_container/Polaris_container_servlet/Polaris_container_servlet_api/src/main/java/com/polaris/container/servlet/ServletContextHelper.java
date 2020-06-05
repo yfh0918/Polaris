@@ -8,10 +8,18 @@ import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.exception.ServletContextException;
 import com.polaris.core.util.SpringUtil;
 
+/**
+* ServletContext helper class
+* 
+*/
 abstract public class ServletContextHelper {
     
-    final static String SERVLET_CONTEXT_KEY = "servletContextKey";
+    final static String SERVLET_CONTEXT_KEY = "PolarisServletContextKey";
 
+    /**
+    * load servlet context into spring context
+    * 
+    */
     public static void loadServletContext(ServletContext servletContext,boolean refreshSpringContext) {
         ConfigurableApplicationContext context = SpringUtil.createApplicationContext(ConfigurationHelper.getConfiguration());
         loadServletContext(context,servletContext,refreshSpringContext);
@@ -27,6 +35,13 @@ abstract public class ServletContextHelper {
         } 
     }
     
+    /**
+     * get servlet context from spring context
+     * 
+     */
+    public static ServletContext getServletContext() {
+        return getServletContext(SpringUtil.getApplicationContext());
+    }
     public static ServletContext getServletContext(ConfigurableApplicationContext context) {
         if (context == null) {
             return null;
