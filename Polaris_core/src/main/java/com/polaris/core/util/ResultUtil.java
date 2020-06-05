@@ -53,7 +53,7 @@ public class ResultUtil {
 			return null;
 		}
 		try {
-			return JacksonUtil.toObj(json, new com.fasterxml.jackson.core.type.TypeReference<Result>() {});
+			return JacksonUtil.toObj(json, new TypeReference<Result>() {});
     	} catch (Exception ex) {
     		return null;
     	}
