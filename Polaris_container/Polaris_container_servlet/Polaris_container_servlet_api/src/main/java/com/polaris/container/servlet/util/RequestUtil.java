@@ -14,9 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.Feature;
 import com.polaris.core.pojo.Parameter;
+import com.polaris.core.util.JacksonUtil;
 import com.polaris.core.util.StringUtil;
 
 public final class RequestUtil {
@@ -69,15 +68,12 @@ public final class RequestUtil {
 	}
 	
 	public static <T> T convertParameterToObject(HttpServletRequest request, Class<T> clazz) {
-		return convertParameterToObject(request, clazz, new Feature[0]);
-	}
-	public static <T> T convertParameterToObject(HttpServletRequest request, Class<T> clazz, Feature... feature) {
 		
 		//获取转换的对象Map
 		Map<String, Object> parameterMap = convertParameterToMap(request);
 		
 		//系统认定的
-		T rtnObject = JSONObject.parseObject(JSONObject.toJSONString(parameterMap), clazz, feature);
+		T rtnObject = JacksonUtil.toObj(JacksonUtil.toJson(parameterMap), clazz);
 	    if (rtnObject instanceof Parameter) {
 	    	((Parameter)rtnObject).setParameterMap(parameterMap);
 	    } 
@@ -118,12 +114,8 @@ public final class RequestUtil {
 	}
 	
 	public static <T> T getRequestBodyToObject(HttpServletRequest request, Class<T> clazz) {
-		return getRequestBodyToObject(request, clazz, new Feature[0]);
-	}
-	
-	public static <T> T getRequestBodyToObject(HttpServletRequest request, Class<T> clazz, Feature... feature) {
 		String body = getRequestBody(request);
-		return JSONObject.parseObject(body, clazz, feature);
+		return JacksonUtil.toObj(body, clazz);
 	}
 
 	

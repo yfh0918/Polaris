@@ -15,10 +15,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
-import com.alibaba.fastjson.JSON;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.pojo.Result;
+import com.polaris.core.util.JacksonUtil;
 
 /**
 * 流量控制过滤器
@@ -147,7 +147,7 @@ public class FlowControlFilter implements Filter {
 		Result responseDto = new Result();
 		responseDto.setMessage(FLOW_CONTROL_MESSAGE);
 		responseDto.setCode(Constant.RESULT_FAIL);
-		httpServletResponse.getWriter().write(JSON.toJSONString(responseDto));
+		httpServletResponse.getWriter().write(JacksonUtil.toJson(responseDto));
 		httpServletResponse.getWriter().flush();
 	}
 	

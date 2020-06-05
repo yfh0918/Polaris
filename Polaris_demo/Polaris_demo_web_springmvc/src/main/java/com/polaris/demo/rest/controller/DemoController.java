@@ -1,5 +1,9 @@
 package com.polaris.demo.rest.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -9,7 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.polaris.core.util.HttpClientUtil;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.polaris.container.servlet.util.RequestUtil;
+import com.polaris.core.util.JacksonUtil;
 import com.polaris.demo.DemoLifeCycle;
 import com.polaris.demo.config.TestProperties;
 import com.polaris.demo.config.TestProperties.InnerA;
@@ -29,6 +35,11 @@ public class DemoController {
 	@RequestMapping(value = "/test", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String uploadBase64Img(HttpServletRequest request)throws Exception  {
+	    Map<String, Object> requestMap = RequestUtil.convertParameterToMap(request);
+	    System.out.println(JacksonUtil.toJson(requestMap));
+	    TestProperties xxxx = RequestUtil.convertParameterToObject(request,TestProperties.class);
+        System.out.println(JacksonUtil.toJson(xxxx));
+        
 		logger.info(testProperties.getAddress1());
 		logger.info(testProperties.getPassword());
 		//logger.info(testProperties.getDigit());
@@ -38,6 +49,17 @@ public class DemoController {
 		}
 		logger.info(testProperties.getInnerA().getAddress1());
 		//HttpClientUtil.get("http://localhost:9077/demowebnodubbo/rest/demo/test2");
+		List<TestProperties> lista = new ArrayList<>();
+		lista.add(testProperties);
+		testProperties.setAddress1(null);
+		String listss = JacksonUtil.toJson(lista);
+		String ss = JacksonUtil.toJson(testProperties);
+		System.out.println(ss);
+		//TestProperties abc = JacksonUtil.toObj(ss, TestProperties.class);
+		Map<String, Object> abcd = JacksonUtil.toObj(ss, new TypeReference<Map<String, Object>>(){});
+		System.out.println(JacksonUtil.toJson(abcd));
+        List<Map<String, Object>> abcde = JacksonUtil.toObj(listss, new TypeReference<List<Map<String, Object>>>(){});
+        System.out.println(JacksonUtil.toJson(abcde));
 		return "aa";
     }
 	

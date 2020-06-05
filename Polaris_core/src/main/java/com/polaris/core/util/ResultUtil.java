@@ -2,9 +2,7 @@ package com.polaris.core.util;
 
 import java.util.List;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.TypeReference;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.polaris.core.Constant;
 import com.polaris.core.pojo.Result;
 
@@ -55,7 +53,7 @@ public class ResultUtil {
 			return null;
 		}
 		try {
-			return JSON.parseObject(json, new TypeReference<Result>() {});
+			return JacksonUtil.toObj(json, new com.fasterxml.jackson.core.type.TypeReference<Result>() {});
     	} catch (Exception ex) {
     		return null;
     	}
@@ -73,7 +71,7 @@ public class ResultUtil {
     }
 	public static <T> List<T> toList(Result result, Class<T> clazz, String successCode) {
 		if (result != null && result.getCode().equals(successCode) && result.getData() != null) {
-	        List<T> ts = (List<T>) JSONArray.parseArray(result.getData().toString(), clazz);
+		    List<T> ts = JacksonUtil.toObj(result.getData().toString(), new TypeReference<List<T>>(){});
 	        return ts;
 		}
 		return null;
@@ -83,7 +81,7 @@ public class ResultUtil {
 	}
 	public static <T> T toObject(Result result, Class<T> clazz, String successCode) {
 		if (result != null && result.getCode().equals(successCode) && result.getData() != null) {
-			return JSON.parseObject(result.getData().toString(), clazz);
+		    return JacksonUtil.toObj(result.getData().toString(), clazz);
 		}
 		return null;
     }

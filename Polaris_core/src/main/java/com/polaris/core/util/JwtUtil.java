@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
 
-import com.alibaba.fastjson.JSON;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.EncryptUtil.Type;
@@ -139,7 +138,7 @@ public class JwtUtil {
 		userMap.put(JWT_TTL_MILLIS_KEY, tokenTime);
 	}
 	public static String encode(Map<String, Object> jwtMap) {
-		String jwtInfo = JSON.toJSONString(jwtMap);
+		String jwtInfo = JacksonUtil.toJson(jwtMap);
     	try {
         	return URLEncoder.encode(jwtInfo,Constant.UTF_CODE);
 		} catch (UnsupportedEncodingException e) {
@@ -155,4 +154,5 @@ public class JwtUtil {
 		}
     	return jwtInfo;
 	}
+	
 }

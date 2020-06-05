@@ -16,47 +16,49 @@
 
 package com.polaris.core.util;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.polaris.core.exception.DeserializationException;
 import com.polaris.core.exception.SerializationException;
 
-import java.io.IOException;
-import java.lang.reflect.Type;
-
 public final class JacksonUtil {
 
 	static ObjectMapper mapper = new ObjectMapper();
 
 	static {
-		mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-		mapper.setSerializationInclusion(Include.NON_NULL);
+	    mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+              .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+		      .setSerializationInclusion(Include.NON_NULL);
 	}
 
-	public static String toJson(Object obj) {
+	public static String toJson(Object obj, ObjectMapper... objectMapper) {
         try {
-            return mapper.writeValueAsString(obj);
+            return getMapper(objectMapper).writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw new SerializationException(obj.getClass(), e);
         }
     }
 
-	public static byte[] toJsonBytes(Object obj) {
+	public static byte[] toJsonBytes(Object obj, ObjectMapper... objectMapper) {
         try {
-            return ByteUtil.toBytes(mapper.writeValueAsString(obj));
+            return ByteUtil.toBytes(getMapper(objectMapper).writeValueAsString(obj));
         } catch (JsonProcessingException e) {
             throw new SerializationException(obj.getClass(), e);
         }
     }
 
-	public static <T> T toObj(byte[] json, Class<T> cls) {
+	public static <T> T toObj(byte[] json, Class<T> cls, ObjectMapper... objectMapper) {
         try {
             return toObj(StringUtil.newString4UTF8(json), cls);
         } catch (Exception e) {
@@ -64,7 +66,7 @@ public final class JacksonUtil {
         }
     }
 
-	public static <T> T toObj(byte[] json, Type cls) {
+	public static <T> T toObj(byte[] json, Type cls, ObjectMapper... objectMapper) {
         try {
             return toObj(StringUtil.newString4UTF8(json), cls);
         } catch (Exception e) {
@@ -72,7 +74,7 @@ public final class JacksonUtil {
         }
     }
 
-    public static <T> T toObj(byte[] json, TypeReference<T> typeReference) {
+    public static <T> T toObj(byte[] json, TypeReference<T> typeReference, ObjectMapper... objectMapper) {
         try {
             return toObj(StringUtil.newString4UTF8(json), typeReference);
         } catch (Exception e) {
@@ -80,51 +82,56 @@ public final class JacksonUtil {
         }
     }
 
-	public static <T> T toObj(String json, Class<T> cls) {
+	public static <T> T toObj(String json, Class<T> cls, ObjectMapper... objectMapper) {
         try {
-            return mapper.readValue(json, cls);
+            return getMapper(objectMapper).readValue(json, cls);
         } catch (IOException e) {
             throw new DeserializationException(cls, e);
         }
     }
 
-	public static <T> T toObj(String json, Type type) {
+	public static <T> T toObj(String json, Type type, ObjectMapper... objectMapper) {
         try {
-            return mapper.readValue(json, mapper.constructType(type));
+            return getMapper(objectMapper).readValue(json, getMapper(objectMapper).constructType(type));
         } catch (IOException e) {
             throw new DeserializationException(e);
         }
     }
 
-    public static <T> T toObj(String json, TypeReference<T> typeReference) {
+    public static <T> T toObj(String json, TypeReference<T> typeReference, ObjectMapper... objectMapper) {
         try {
-            return mapper.readValue(json, typeReference);
+            return getMapper(objectMapper).readValue(json, typeReference);
         } catch (IOException e) {
             throw new DeserializationException(typeReference.getClass(), e);
         }
     }
 
-    public static JsonNode toObj(String json) {
+    public static JsonNode toObj(String json, ObjectMapper... objectMapper) {
         try {
-            return mapper.readTree(json);
+            return getMapper(objectMapper).readTree(json);
         } catch (IOException e) {
             throw new DeserializationException(e);
         }
     }
 
-	public static void registerSubtype(Class<?> clz, String type) {
-	    mapper.registerSubtypes(new NamedType(clz, type));
+	public static void registerSubtype(Class<?> clz, String type, ObjectMapper... objectMapper) {
+	    getMapper(objectMapper).registerSubtypes(new NamedType(clz, type));
     }
 
-    public static ObjectNode createEmptyJsonNode() {
-	    return new ObjectNode(mapper.getNodeFactory());
+    public static ObjectNode createEmptyJsonNode(ObjectMapper... objectMapper) {
+	    return new ObjectNode(getMapper(objectMapper).getNodeFactory());
     }
 
-    public static ArrayNode createEmptyArrayNode() {
-	    return new ArrayNode(mapper.getNodeFactory());
+    public static ArrayNode createEmptyArrayNode(ObjectMapper... objectMapper) {
+	    return new ArrayNode(getMapper(objectMapper).getNodeFactory());
     }
 
-    public static JsonNode transferToJsonNode(Object obj) {
-	    return mapper.valueToTree(obj);
+    public static JsonNode transferToJsonNode(Object obj, ObjectMapper... objectMapper) {
+	    return getMapper(objectMapper).valueToTree(obj);
     }
+    
+    private static ObjectMapper getMapper(ObjectMapper... objectMapper) {
+        return objectMapper.length == 0 ? mapper : objectMapper[0];
+    }
+    
 }

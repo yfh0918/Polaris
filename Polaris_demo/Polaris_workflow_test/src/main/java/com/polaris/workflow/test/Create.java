@@ -8,7 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
+import com.polaris.core.util.JacksonUtil;
 import com.polaris.workflow.service.WorkflowCreateService;
 import com.polaris.workflow.service.WorkflowProcessService;
 
@@ -246,7 +246,7 @@ public class Create {
 		sequenceFlow7.put(WorkflowCreateService.COND_EXP, "");
 		sequenceFlowList.add(sequenceFlow7);
     	
-		String json = JSON.toJSONString(deployment);
+		String json = JacksonUtil.toJson(deployment);
     	System.out.println(json);
     	Map<String, Object> diagramMap = workflowCreateService.createDiagramMap(json);
     	return workflowCreateService.createDiagram(

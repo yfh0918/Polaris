@@ -1,6 +1,9 @@
 package com.polaris.core.util;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.dom4j.Attribute;
@@ -9,8 +12,6 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 public abstract class XmlUtil {
 	
 	public static Properties getProperties (InputStream inputStream) {
@@ -38,9 +39,9 @@ public abstract class XmlUtil {
      * @return
      * @throws DocumentException
      */
-    public static JSONObject xml2Json(String xmlStr) throws DocumentException{
+    public static Map<String, Object> xml2Json(String xmlStr) throws DocumentException{
         Document doc= DocumentHelper.parseText(xmlStr);
-        JSONObject json=new JSONObject();
+        Map<String, Object> json=new HashMap<>();
         dom4j2Json(doc.getRootElement(), json);
         return json;
     }
@@ -51,7 +52,7 @@ public abstract class XmlUtil {
      * @param json
      */
     @SuppressWarnings("unchecked")
-	private static void dom4j2Json(Element element,JSONObject json){
+	private static void dom4j2Json(Element element,Map<String, Object> json){
         //如果是属性
         for(Object o:element.attributes()){
             Attribute attr=(Attribute)o;
@@ -66,20 +67,20 @@ public abstract class XmlUtil {
 
         for(Element e:chdEl){//有子元素
             if(!e.elements().isEmpty()){//子元素也有子元素
-                JSONObject chdjson=new JSONObject();
+                Map<String, Object> chdjson=new HashMap<>();
                 dom4j2Json(e,chdjson);
                 Object o=json.get(e.getName());
                 if(o!=null){
-                    JSONArray jsona=null;
-                    if(o instanceof JSONObject){//如果此元素已存在,则转为jsonArray
-                        JSONObject jsono=(JSONObject)o;
+                    List<Map<String, Object>> jsona=null;
+                    if(o instanceof Map){//如果此元素已存在,则转为jsonArray
+                        Map<String, Object> jsono=(Map<String, Object>)o;
                         json.remove(e.getName());
-                        jsona=new JSONArray();
+                        jsona=new ArrayList<>();
                         jsona.add(jsono);
                         jsona.add(chdjson);
                     }
-                    if(o instanceof JSONArray){
-                        jsona=(JSONArray)o;
+                    if(o instanceof List){
+                        jsona=(List<Map<String, Object>>)o;
                         jsona.add(chdjson);
                     }
                     json.put(e.getName(), jsona);

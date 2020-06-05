@@ -35,10 +35,11 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.polaris.core.Constant;
-import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.BeanUtil;
+import com.polaris.core.util.FileUtil;
+import com.polaris.core.util.JacksonUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.workflow.dto.WorkflowDto;
 import com.polaris.workflow.util.WorkflowUtils;
@@ -153,7 +154,7 @@ public class WorkflowCreateServiceImpl implements WorkflowCreateService{
     } 
     @Override
     public UserTask createUserTask(Map<String, Object> userTaskMap) { 
-    	return BeanUtil.toBean(UserTask.class, JSON.toJSONString(userTaskMap), true);
+    	return BeanUtil.toBean(UserTask.class, JacksonUtil.toJson(userTaskMap), true);
     }
     @Override
     public List<Map<String, Object>> getAllTaskMap(Map<String, Object> processMap) {
@@ -184,7 +185,7 @@ public class WorkflowCreateServiceImpl implements WorkflowCreateService{
     }
     @Override
     public SequenceFlow createSequenceFlow(Map<String, Object> sequenceFlowMap) { 
-    	return BeanUtil.toBean(SequenceFlow.class, JSON.toJSONString(sequenceFlowMap), true);
+    	return BeanUtil.toBean(SequenceFlow.class, JacksonUtil.toJson(sequenceFlowMap), true);
     }
     @Override
     public List<Map<String, Object>> getAllSequenceFlowMap(Map<String, Object> processMap) {
@@ -208,7 +209,7 @@ public class WorkflowCreateServiceImpl implements WorkflowCreateService{
     }
     @Override
     public ExclusiveGateway createExclusiveGateway(Map<String, Object> exclusiveGatewayMap) { 
-    	return BeanUtil.toBean(ExclusiveGateway.class, JSON.toJSONString(exclusiveGatewayMap), true);
+    	return BeanUtil.toBean(ExclusiveGateway.class, JacksonUtil.toJson(exclusiveGatewayMap), true);
     }
     @Override
     public List<Map<String, Object>> getAllExclusiveGatewayMap(Map<String, Object> processMap) {
@@ -232,7 +233,7 @@ public class WorkflowCreateServiceImpl implements WorkflowCreateService{
     }
     @Override
     public ParallelGateway createParallelGateway(Map<String, Object> parallelGatewayMap) {  
-    	return BeanUtil.toBean(ParallelGateway.class, JSON.toJSONString(parallelGatewayMap), true);
+    	return BeanUtil.toBean(ParallelGateway.class, JacksonUtil.toJson(parallelGatewayMap), true);
     }
     @Override
     public List<Map<String, Object>> getAllParallelGatewayMap(Map<String, Object> processMap) {
@@ -258,7 +259,7 @@ public class WorkflowCreateServiceImpl implements WorkflowCreateService{
     }  
     @Override
     public StartEvent createStartEvent(Map<String, Object> startEventMap) {  
-         return BeanUtil.toBean(StartEvent.class, JSON.toJSONString(startEventMap), true);
+         return BeanUtil.toBean(StartEvent.class, JacksonUtil.toJson(startEventMap), true);
     }  
     
   
@@ -281,7 +282,7 @@ public class WorkflowCreateServiceImpl implements WorkflowCreateService{
     }
     @Override
     public EndEvent createEndEvent(Map<String, Object> endEventMap) {  
-        return BeanUtil.toBean(EndEvent.class, JSON.toJSONString(endEventMap), true);
+        return BeanUtil.toBean(EndEvent.class, JacksonUtil.toJson(endEventMap), true);
     }
     
     /**
@@ -291,7 +292,7 @@ public class WorkflowCreateServiceImpl implements WorkflowCreateService{
      */
     @Override
     public Map<String, Object> createDiagramMap(String json) {
-    	return JSON.parseObject(json);
+        return JacksonUtil.toObj(json, new TypeReference<Map<String, Object>>(){});
     }
     /**
      * 动态创建流程

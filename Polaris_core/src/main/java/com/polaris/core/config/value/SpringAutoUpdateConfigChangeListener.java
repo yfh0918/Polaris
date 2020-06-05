@@ -12,7 +12,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 
-import com.alibaba.fastjson.JSON;
+import com.polaris.core.util.JacksonUtil;
 
 public class SpringAutoUpdateConfigChangeListener implements BeanFactoryAware{
   private static final Logger logger = LoggerFactory.getLogger(SpringAutoUpdateConfigChangeListener.class);
@@ -100,7 +100,7 @@ public class SpringAutoUpdateConfigChangeListener implements BeanFactoryAware{
 
   private Object parseJsonValue(String json, Type targetType) {
     try {
-    	return JSON.parseObject(json, targetType.getClass());
+        return JacksonUtil.toObj(json, targetType.getClass());
     } catch (Throwable ex) {
       logger.error("Parsing json '{}' to type {} failed!", json, targetType, ex);
       throw ex;

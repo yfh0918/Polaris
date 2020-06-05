@@ -9,10 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.fastjson.JSONObject;
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.provider.ConfCompositeProvider;
+import com.polaris.core.util.JacksonUtil;
 import com.polaris.core.util.SpringUtil;
 import com.polaris.workflow.dto.WorkflowDto;
 import com.polaris.workflow.service.WorkflowCreateService;
@@ -57,7 +57,7 @@ public class ClaimApp {
      */
     public void deployDiagram() {
         WorkflowDto dto = workflowCreateService.getAllDeployment();
-        System.out.println((JSONObject) JSONObject.toJSON(dto));
+        System.out.println(JacksonUtil.toJson(dto));
         //{"pageSize":10,"pageTo":10,"processDefinitionKey":"claim","total":0,"deploymentId":"b65da5bf-7d6c-11e7-9afd-000c295e0f9b","map":{},"totalPage":0,"pageFrom":1,"pageIndex":1,"status":0}
 
     }
@@ -80,7 +80,7 @@ public class ClaimApp {
         groups.add("185");
         dto.setCandidateGroups(groups);
         dto = workflowService.startWorkflow(dto);//启动流程
-        System.out.println((JSONObject) JSONObject.toJSON(dto));//查看返回结果，目前是json
+        System.out.println(JacksonUtil.toJson(dto));//查看返回结果，目前是json
         //{"pageSize":10,"pageTo":10,"processDefinitionKey":"claim","total":0,"map":{},"processInstanceId":"b6eee943-7d6c-11e7-9afd-000c295e0f9b","variables":{"assignee":"checker001"},"totalPage":0,"pageFrom":1,"userId":"yufenghua","pageIndex":1,"businessKey":"test001","status":0}
     }
 
@@ -120,7 +120,7 @@ public class ClaimApp {
             }
         }
         //	String applyUserId = dto.getDatas().get(0).get(WorkflowDto.APPLY_USERID).toString();//获取任务发起人
-        System.out.println((JSONObject) JSONObject.toJSON(dto));
+        System.out.println(JacksonUtil.toJson(dto));
         //{"pageSize":10,"pageTo":10,"processDefinitionKey":"claim","total":1,"map":{},"datas":[{"businessKey":"test001","processInstanceId":"b6eee943-7d6c-11e7-9afd-000c295e0f9b","processDefinitionId":"claim:1:b68d4142-7d6c-11e7-9afd-000c295e0f9b","taskName":"理赔单据立案","taskVariables":{"applyUserId":"yufenghua","assignee":"checker001"},"taskId":"b6f3a439-7d6c-11e7-9afd-000c295e0f9b"}],"totalPage":1,"pageFrom":1,"userId":"checker001","pageIndex":1,"status":0}
     }
 
@@ -142,7 +142,7 @@ public class ClaimApp {
 
         //执行任务认领
         dto = workflowService.claim(dto);
-        System.out.println((JSONObject) JSONObject.toJSON(dto));
+        System.out.println(JacksonUtil.toJson(dto));
         //{"pageSize":10,"pageTo":10,"total":0,"map":{},"totalPage":0,"pageFrom":1,"userId":"checker001","pageIndex":1,"taskId":"b6f3a439-7d6c-11e7-9afd-000c295e0f9b","status":0}
     }
 
@@ -171,7 +171,7 @@ public class ClaimApp {
 
         //执行处理
         dto = workflowService.complete(dto);
-        System.out.println((JSONObject) JSONObject.toJSON(dto));
+        System.out.println(JacksonUtil.toJson(dto));
 //    	{"pageSize":10,"pageTo":10,"total":0,"map":{},"variables":{"assignee":"checker002"},"totalPage":0,"pageFrom":1,"pageIndex":1,"taskId":"b6f3a439-7d6c-11e7-9afd-000c295e0f9b","status":0}
     }
 
@@ -218,7 +218,7 @@ public class ClaimApp {
         }
 
 
-        System.out.println((JSONObject) JSONObject.toJSON(dto));
+        System.out.println(JacksonUtil.toJson(dto));
 //    	{"pageSize":10,"pageTo":10,"processDefinitionKey":"claim","total":1,"map":{},"datas":[{"businessKey":"test001","processInstanceId":"b6eee943-7d6c-11e7-9afd-000c295e0f9b","processDefinitionId":"claim:1:b68d4142-7d6c-11e7-9afd-000c295e0f9b","taskName":"立案查询","taskVariables":{"applyUserId":"yufenghua","assignee":"checker002"},"taskId":"7ccbeadc-7d6f-11e7-9afd-000c295e0f9b"}],"totalPage":1,"pageFrom":1,"pageIndex":1,"status":0}
     }
 
@@ -263,7 +263,7 @@ public class ClaimApp {
                 }
             }
         }
-        System.out.println((JSONObject) JSONObject.toJSON(dto));
+        System.out.println(JacksonUtil.toJson(dto));
 //    	{"pageSize":10,"pageTo":10,"processDefinitionKey":"claim","total":1,"map":{},"datas":[{"businessKey":"test001","processInstanceId":"b6eee943-7d6c-11e7-9afd-000c295e0f9b","processDefinitionId":"claim:1:b68d4142-7d6c-11e7-9afd-000c295e0f9b"}],"totalPage":1,"pageFrom":1,"pageIndex":1,"status":0}
     }
 
@@ -284,7 +284,7 @@ public class ClaimApp {
             dto.getUsedBusinessKeyList();
             dto.getUsingBusinessKeyList();
         }
-        System.out.println((JSONObject) JSONObject.toJSON(dto));
+        System.out.println(JacksonUtil.toJson(dto));
 //    	{"pageSize":10,"pageTo":10,"processDefinitionKey":"claim","total":1,"map":{},"datas":[{"businessKey":"test001","processInstanceId":"b6eee943-7d6c-11e7-9afd-000c295e0f9b","processDefinitionId":"claim:1:b68d4142-7d6c-11e7-9afd-000c295e0f9b"}],"totalPage":1,"pageFrom":1,"pageIndex":1,"status":0}
     }
 
@@ -296,7 +296,7 @@ public class ClaimApp {
      */
     public void traceProcess() {
         WorkflowDto dto = traceService.traceProcess("b6eee943-7d6c-11e7-9afd-000c295e0f9b");
-        System.out.println((JSONObject) JSONObject.toJSON(dto));
+        System.out.println(JacksonUtil.toJson(dto));
         // {"pageSize":10,"pageTo":10,"total":0,"map":{},"processInstanceId":"b6eee943-7d6c-11e7-9afd-000c295e0f9b","totalPage":0,"pageFrom":1,"msgContent":"没有processInstanceId","pageIndex":1,"status":1}
     }
 
@@ -308,7 +308,7 @@ public class ClaimApp {
     public void deleteFinishedProcessInstaces() {
         //执行处理
         WorkflowDto dto = workflowService.deleteFinishedProcessInstaces("5af8c2cd-7cb0-11e7-b0e2-000c295e0f9b");
-        System.out.println((JSONObject) JSONObject.toJSON(dto));
+        System.out.println(JacksonUtil.toJson(dto));
     }
 
     /**
@@ -316,7 +316,7 @@ public class ClaimApp {
      */
     public void deleteRuntimeProcessInstance() {
         WorkflowDto dto = workflowService.deleteRuntimeProcessInstance("5af8c2cd-7cb0-11e7-b0e2-000c295e0f9b","delete reason");
-        System.out.println(JSONObject.toJSON(dto));
+        System.out.println(JacksonUtil.toJson(dto));
     }
 
 }

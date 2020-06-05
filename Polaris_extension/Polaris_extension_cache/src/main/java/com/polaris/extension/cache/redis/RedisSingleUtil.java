@@ -6,8 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSONObject;
 import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.JacksonUtil;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -269,7 +269,7 @@ public class RedisSingleUtil {
         T result = null;
         try {
             String value = get(key);
-            result = JSONObject.parseObject(value, clazz);
+            result = JacksonUtil.toObj(value, clazz);
         } catch (Exception e) {
             logger.error("Get clazz value error : " + e);
 

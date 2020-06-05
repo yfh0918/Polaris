@@ -10,11 +10,11 @@ public class DemoLog4jCallBack implements Log4jCallBack
 {
 //	private static final Logger logger = LoggerFactory.getLogger(DemoLog4jCallBack.class);
 	public void call(Level level, String message, Object... args){
-		System.out.println("call level_0");
+		//System.out.println("call level_0");
 		//不能在回调函数中调用logger.xx会造成死循环
 		//logger.info("call level_0");
 	}
 	public void call(Level level, String message, Throwable t) {
-		System.out.println("call level_1");
+		//System.out.println("call level_1");
 	}
 }

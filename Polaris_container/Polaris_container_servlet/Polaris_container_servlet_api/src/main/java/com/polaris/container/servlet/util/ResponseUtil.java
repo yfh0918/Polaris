@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSONObject;
-
 public class ResponseUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseUtil.class);
@@ -19,7 +17,7 @@ public class ResponseUtil {
      *
      * @return
      */
-    public static void returnJson(HttpServletResponse response, JSONObject json) {
+    public static void returnJson(HttpServletResponse response, String json) {
         PrintWriter writer = null;
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");

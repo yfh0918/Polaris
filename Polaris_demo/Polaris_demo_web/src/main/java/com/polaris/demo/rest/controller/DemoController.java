@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.alibaba.fastjson.JSONObject;
 import com.polaris.demo.api.dto.DemoDto;
 import com.polaris.demo.api.service.DemoEntryIF;
 
@@ -36,7 +35,7 @@ public class DemoController {
     @POST
     @Path("/test")
     @Produces(MediaType.APPLICATION_JSON)
-    public JSONObject demotest(@Context HttpServletRequest request) {
+    public String demotest(@Context HttpServletRequest request) {
 
         //定义返回对象
         demoEntryIF.test2(new DemoDto());

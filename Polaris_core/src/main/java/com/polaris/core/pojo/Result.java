@@ -3,9 +3,8 @@ package com.polaris.core.pojo;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.polaris.core.Constant;
+import com.polaris.core.util.JacksonUtil;
 
 public class Result<T> extends Message implements Serializable {
 	
@@ -58,9 +57,7 @@ public class Result<T> extends Message implements Serializable {
 
     @Override
     public String toString() {
-        return JSONObject.toJSONString(this
-                , SerializerFeature.DisableCircularReferenceDetect
-                , SerializerFeature.WriteMapNullValue);
+        return JacksonUtil.toJson(this);
     }
 
     public Boolean isSuccess() {
@@ -71,9 +68,7 @@ public class Result<T> extends Message implements Serializable {
      * @return
      */
     public String toJSONString() {
-        return JSONObject.toJSONString(this
-                , SerializerFeature.DisableCircularReferenceDetect
-                , SerializerFeature.WriteMapNullValue);
+        return toString();
     }
 
 }
