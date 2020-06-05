@@ -71,7 +71,7 @@ public class ResultUtil {
     }
 	public static <T> List<T> toList(Result result, Class<T> clazz, String successCode) {
 		if (result != null && result.getCode().equals(successCode) && result.getData() != null) {
-		    List<T> ts = JacksonUtil.toObj(result.getData().toString(), new TypeReference<List<T>>(){});
+		    List<T> ts = JacksonUtil.toObj(JacksonUtil.toJson(result.getData()), new TypeReference<List<T>>(){});
 	        return ts;
 		}
 		return null;
@@ -81,7 +81,7 @@ public class ResultUtil {
 	}
 	public static <T> T toObject(Result result, Class<T> clazz, String successCode) {
 		if (result != null && result.getCode().equals(successCode) && result.getData() != null) {
-		    return JacksonUtil.toObj(result.getData().toString(), clazz);
+		    return JacksonUtil.toObj(JacksonUtil.toJson(result.getData()), clazz);
 		}
 		return null;
     }
