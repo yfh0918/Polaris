@@ -20,7 +20,7 @@ import org.springframework.util.ReflectionUtils.MethodCallback;
 import com.polaris.container.config.ConfigurationExtension;
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.ReflectionUtil;
+import com.polaris.core.util.ClassUtil;
 import com.polaris.core.util.StringUtil;
 
 public class DubboConfigurer implements ConfigurationExtension{
@@ -32,7 +32,7 @@ public class DubboConfigurer implements ConfigurationExtension{
 		
 		try {
 			Map<String, Object> memberValues = 
-					ReflectionUtil.getMemberValuesMap(clazz, EnableDubbo.class);
+			        ClassUtil.getMemberValuesMap(clazz, EnableDubbo.class);
 			
 			//scanBasePackages
 			String scanBasePackages = ConfClient.get("dubbo.scanBasePackages");
@@ -80,7 +80,7 @@ public class DubboConfigurer implements ConfigurationExtension{
 	        ReflectionUtils.doWithMethods(ApplicationConfig.class, new MethodCallback() {
 				@Override
 				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					String fileName = ReflectionUtil.getFieldNameForSet(method);
+					String fileName = ClassUtil.getFieldNameForSet(method);
 					if (StringUtil.isEmpty(fileName)) {
 						return;
 					}
@@ -89,7 +89,7 @@ public class DubboConfigurer implements ConfigurationExtension{
 					if (StringUtil.isEmpty(value)) {
 						return;
 					}
-					ReflectionUtil.setMethodValue(method, applicationConfig, value);
+					ClassUtil.setMethodValue(method, applicationConfig, value);
 				}
 			});
 	        applicationConfig.setName(ConfClient.getAppName());
@@ -103,7 +103,7 @@ public class DubboConfigurer implements ConfigurationExtension{
 	        ReflectionUtils.doWithMethods(RegistryConfig.class, new MethodCallback() {
 				@Override
 				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					String fileName = ReflectionUtil.getFieldNameForSet(method);
+					String fileName = ClassUtil.getFieldNameForSet(method);
 					if (StringUtil.isEmpty(fileName)) {
 						return;
 					}
@@ -112,7 +112,7 @@ public class DubboConfigurer implements ConfigurationExtension{
 					if (StringUtil.isEmpty(value)) {
 						return;
 					}
-					ReflectionUtil.setMethodValue(method, registryConfig, value);
+					ClassUtil.setMethodValue(method, registryConfig, value);
 				}
 			});
 	        return registryConfig;
@@ -124,7 +124,7 @@ public class DubboConfigurer implements ConfigurationExtension{
 	        ReflectionUtils.doWithMethods(ProtocolConfig.class, new MethodCallback() {
 				@Override
 				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					String fileName = ReflectionUtil.getFieldNameForSet(method);
+					String fileName = ClassUtil.getFieldNameForSet(method);
 					if (StringUtil.isEmpty(fileName)) {
 						return;
 					}
@@ -133,7 +133,7 @@ public class DubboConfigurer implements ConfigurationExtension{
 					if (StringUtil.isEmpty(value)) {
 						return;
 					}
-					ReflectionUtil.setMethodValue(method, protocolConfig, value);
+					ClassUtil.setMethodValue(method, protocolConfig, value);
 				}
 			});
 	        return protocolConfig;
@@ -145,7 +145,7 @@ public class DubboConfigurer implements ConfigurationExtension{
 	        ReflectionUtils.doWithMethods(ProviderConfig.class, new MethodCallback() {
 				@Override
 				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					String fileName = ReflectionUtil.getFieldNameForSet(method);
+					String fileName = ClassUtil.getFieldNameForSet(method);
 					if (StringUtil.isEmpty(fileName)) {
 						return;
 					}
@@ -154,7 +154,7 @@ public class DubboConfigurer implements ConfigurationExtension{
 					if (StringUtil.isEmpty(value)) {
 						return;
 					}
-					ReflectionUtil.setMethodValue(method, providerConfig, value);
+					ClassUtil.setMethodValue(method, providerConfig, value);
 				}
 			});
 	    	return providerConfig;

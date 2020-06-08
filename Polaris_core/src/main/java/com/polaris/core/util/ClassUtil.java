@@ -1,6 +1,10 @@
 package com.polaris.core.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -12,14 +16,17 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.convert.support.DefaultConversionService;
 
 /**
- * service管理类，用于实现针对不同的系统做不同处理
+ * Class关联处理
  */
 @SuppressWarnings("unchecked")
 public class ClassUtil {
 	
 	private static final Logger logger = LoggerFactory.getLogger(ClassUtil.class);
+    private static String METHOD_PREFIX_SET = "set";
+    private static DefaultConversionService conversionService = new DefaultConversionService();
 
 	//获取指定的service
     public static <T>T findServiceImpl(Class<T> cls) {
@@ -89,6 +96,40 @@ public class ClassUtil {
 		}
 		return null;
 	}
+    
+    public static String getFieldNameForSet(Method method) {
+        if (!method.getName().startsWith(METHOD_PREFIX_SET)) {
+            return null;
+        }
+        String fieldName = method.getName().substring(METHOD_PREFIX_SET.length());
+        return fieldName.substring(0,1).toLowerCase().concat(fieldName.substring(1));
+    }
+    
+    public static void setMethodValue(Method method,Object obj,Object fieldValue) throws RuntimeException{
+        try {
+            if (!method.isAccessible()) {
+                method.setAccessible(true);
+            }
+            
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            if (parameterTypes == null || parameterTypes.length != 1) {
+                return;
+            }
+            method.invoke(obj, fieldValue == null ? null : conversionService.convert(fieldValue, parameterTypes[0]));
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        
+    }
+    
+    public static Map<String, Object> getMemberValuesMap(Class<?> clazz, Class<? extends Annotation> annotationType) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        Annotation annotation = clazz.getAnnotation(annotationType);
+        InvocationHandler invocationHandler = Proxy.getInvocationHandler(annotation);
+        Field value = invocationHandler.getClass().getDeclaredField("memberValues");
+        value.setAccessible(true);
+        Map<String, Object> memberValuesMap = (Map<String, Object>) value.get(invocationHandler);
+        return memberValuesMap;
+    }
     
     static class MapUtil {
     	

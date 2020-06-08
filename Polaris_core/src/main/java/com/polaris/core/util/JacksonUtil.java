@@ -34,12 +34,12 @@ import com.polaris.core.exception.SerializationException;
 
 public final class JacksonUtil {
 
-	static ObjectMapper mapper = new ObjectMapper();
+	static ObjectMapper defaultMapper = new ObjectMapper();
 
 	static {
-	    mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-              .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-		      .setSerializationInclusion(Include.NON_NULL);
+	    defaultMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                     .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+		             .setSerializationInclusion(Include.NON_NULL);
 	}
 
 	public static String toJson(Object obj, ObjectMapper... objectMapper) {
@@ -131,7 +131,7 @@ public final class JacksonUtil {
     }
     
     private static ObjectMapper getMapper(ObjectMapper... objectMapper) {
-        return objectMapper.length == 0 ? mapper : objectMapper[0];
+        return objectMapper.length == 0 ? defaultMapper : objectMapper[0];
     }
     
 }

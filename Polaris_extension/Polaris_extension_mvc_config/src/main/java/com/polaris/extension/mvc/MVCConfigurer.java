@@ -23,7 +23,7 @@ import org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver;
 
 import com.polaris.container.config.ConfigurationExtension;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.ReflectionUtil;
+import com.polaris.core.util.ClassUtil;
 import com.polaris.core.util.StringUtil;
 
 public class MVCConfigurer implements ConfigurationExtension {
@@ -42,7 +42,7 @@ public class MVCConfigurer implements ConfigurationExtension {
 			ReflectionUtils.doWithMethods(CommonsMultipartResolver.class, new MethodCallback() {
 				@Override
 				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					String fileName = ReflectionUtil.getFieldNameForSet(method);
+					String fileName = ClassUtil.getFieldNameForSet(method);
 					if (StringUtil.isEmpty(fileName)) {
 						return;
 					}
@@ -51,7 +51,7 @@ public class MVCConfigurer implements ConfigurationExtension {
 					if (StringUtil.isEmpty(value)) {
 						return;
 					}
-					ReflectionUtil.setMethodValue(method, multipartResolver, value);
+					ClassUtil.setMethodValue(method, multipartResolver, value);
 				}
 			});
 			
@@ -73,7 +73,7 @@ public class MVCConfigurer implements ConfigurationExtension {
 			ReflectionUtils.doWithMethods(FreeMarkerConfigurer.class, new MethodCallback() {
 				@Override
 				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					String fileName = ReflectionUtil.getFieldNameForSet(method);
+					String fileName = ClassUtil.getFieldNameForSet(method);
 					if (StringUtil.isEmpty(fileName)) {
 						return;
 					}
@@ -82,7 +82,7 @@ public class MVCConfigurer implements ConfigurationExtension {
 					if (StringUtil.isEmpty(value)) {
 						return;
 					}
-					ReflectionUtil.setMethodValue(method, freeMarkerConfigurer, value);
+					ClassUtil.setMethodValue(method, freeMarkerConfigurer, value);
 				}
 			});
 
@@ -98,7 +98,7 @@ public class MVCConfigurer implements ConfigurationExtension {
 			ReflectionUtils.doWithMethods(FreeMarkerViewResolver.class, new MethodCallback() {
 				@Override
 				public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-					String fileName = ReflectionUtil.getFieldNameForSet(method);
+					String fileName = ClassUtil.getFieldNameForSet(method);
 					if (StringUtil.isEmpty(fileName)) {
 						return;
 					}
@@ -107,7 +107,7 @@ public class MVCConfigurer implements ConfigurationExtension {
 					if (StringUtil.isEmpty(value)) {
 						return;
 					}
-					ReflectionUtil.setMethodValue(method, viewResolver, value);
+					ClassUtil.setMethodValue(method, viewResolver, value);
 				}
 			});
 			
