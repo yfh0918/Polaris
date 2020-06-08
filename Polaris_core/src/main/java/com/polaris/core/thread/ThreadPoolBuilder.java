@@ -9,6 +9,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import com.polaris.core.util.Requires;
 public final class ThreadPoolBuilder {
     private static Logger logger = LoggerFactory.getLogger(ThreadPoolBuilder.class);
     private static CopyOnWriteArrayList<ThreadPoolExecutor> _threadPoolExecutors = new CopyOnWriteArrayList<>();
+    private static final AtomicBoolean CLOSED = new AtomicBoolean(false);
     
    /**
     * The default rejected execution handler
@@ -34,6 +36,9 @@ public final class ThreadPoolBuilder {
    }
 
    public static void destroy() {
+       if (!CLOSED.compareAndSet(false, true)) {
+           return;
+       }
        Iterator<ThreadPoolExecutor> iterator = _threadPoolExecutors.iterator();
        while (iterator.hasNext()) {
     	   ThreadPoolExecutor executor = iterator.next();
