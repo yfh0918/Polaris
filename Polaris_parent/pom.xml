@@ -30,6 +30,8 @@
         <sentinel-version>1.7.0</sentinel-version>
         <springboot-version>2.2.4.RELEASE</springboot-version>
         <jackson.version>2.10.2</jackson.version>
+        <poi.version>4.1.2</poi.version>
+        <minio.version>7.0.2</minio.version>
     </properties>
     <profiles>
         <profile>
@@ -65,7 +67,6 @@
             </properties>
         </profile>
     </profiles>
-
 
     <dependencyManagement>
         <dependencies>
@@ -1056,30 +1057,39 @@
 	            <artifactId>xercesImpl</artifactId>
 	            <version>2.11.0</version>
         	</dependency>
+			<!-- https://mvnrepository.com/artifact/io.minio/minio -->
+			<dependency>
+			    <groupId>io.minio</groupId>
+			    <artifactId>minio</artifactId>
+			    <version>${minio.version}</version>
+			</dependency>
 
-            <!-- excel -->
+            <!-- poi -->
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
-                <version>3.15</version>
+                <version>${poi.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-excelant</artifactId>
-                <version>3.15</version>
+                <version>${poi.version}</version>
             </dependency>
-
-            <!-- doc -->
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
-                <version>3.15</version>
+                <version>${poi.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-scratchpad</artifactId>
-                <version>3.15</version>
+                <version>${poi.version}</version>
             </dependency>
+			<dependency>
+			    <groupId>org.apache.poi</groupId>
+			    <artifactId>poi-scratchpad</artifactId>
+                <version>${poi.version}</version>
+			</dependency>
 
             <!-- alibaba&&服务注册等 -->
             <dependency>
