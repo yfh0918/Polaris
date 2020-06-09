@@ -10,7 +10,9 @@ import java.util.concurrent.ThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NonInheritableScheduledExecutor extends ScheduledThreadPoolExecutor implements NamingExecutor{
+import com.polaris.core.component.Naming;
+
+public class NonInheritableScheduledExecutor extends ScheduledThreadPoolExecutor implements Naming{
 	private static Logger logger = LoggerFactory.getLogger(NonInheritableScheduledExecutor.class);
 
 	protected final String  name;

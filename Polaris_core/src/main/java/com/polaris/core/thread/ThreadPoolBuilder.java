@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.core.component.Naming;
 import com.polaris.core.util.Requires;
 
 /**
@@ -58,8 +59,8 @@ public final class ThreadPoolBuilder {
               executor.shutdownNow();
               Thread.interrupted();
           } catch (Throwable ex) {
-              if (executor instanceof NamingExecutor) {
-                  logger.error("shutdown the executor:{} has error : {}", ((NamingExecutor)executor).getName(),ex);
+              if (executor instanceof Naming) {
+                  logger.error("shutdown the executor:{} has error : {}", ((Naming)executor).getName(),ex);
               } else {
                   logger.error("shutdown the executor has error : {}", ex);
               }

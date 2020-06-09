@@ -32,7 +32,7 @@
         <jackson.version>2.11.0</jackson.version>
         <poi.version>4.1.2</poi.version>
         <minio.version>7.0.2</minio.version>
-        <hutool.version>5.3.7</hutool.version>
+        <hutool.version>4.1.18</hutool.version>
     </properties>
     <profiles>
         <profile>

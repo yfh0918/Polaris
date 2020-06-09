@@ -12,10 +12,12 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.core.component.Naming;
+
 /**
  * 支持可继承的线程变量的线程池（配合InheritableThreadLocal使用）
  */
-public class NonInheritableExecutor extends ThreadPoolExecutor implements NamingExecutor {
+public class NonInheritableExecutor extends ThreadPoolExecutor implements Naming {
 	private static Logger logger = LoggerFactory.getLogger(NonInheritableExecutor.class);
 
 	protected final String  name;
