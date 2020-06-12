@@ -39,31 +39,37 @@ public class CacheAspect extends CacheAspectSupport {
       
             //普通缓存
             if (cacheable.type().equals(CacheOperType.CACHE)) {
-                Object cacheObject = CacheUtil.getCacheObject(cache, key, cacheable.serialize());  
-                if (null != cacheObject) {  
-                    return cacheObject;  
-                }  
-          
-                Object result = joinPoint.proceed();  
-                if (null != result) {
-                	CacheUtil.cacheObject(cache, key, result, cacheable.serialize(), cacheable.timeout());
-                }  
-                return result;  
+                synchronized(key.toString().intern()) {
+                    Object cacheObject = CacheUtil.getCacheObject(cache, key, cacheable.serialize());  
+                    if (null != cacheObject) {  
+                        return cacheObject;  
+                    }  
+              
+                    Object result = joinPoint.proceed();  
+                    if (null != result) {
+                        CacheUtil.cacheObject(cache, key, result, cacheable.serialize(), cacheable.timeout());
+                    }  
+                    return result; 
+                }
             }
             
             //只缓存
             if (cacheable.type().equals(CacheOperType.PUT)) {
                 Object result = joinPoint.proceed();  
                 if (null != result) {
-                	CacheUtil.cacheObject(cache, key, result, cacheable.serialize(), cacheable.timeout());
-                }  
-                return result;  
+                    synchronized(key.toString().intern()) {
+                        CacheUtil.cacheObject(cache, key, result, cacheable.serialize(), cacheable.timeout());
+                    }
+                    return result;  
+                }
             }
             
             //淘汰缓存
             if (cacheable.type().equals(CacheOperType.EVICT)) {
             	Object result = joinPoint.proceed(); 
-            	CacheUtil.removeCacheObject(cache, key, cacheable.serialize());
+                synchronized(key.toString().intern()) {
+                    CacheUtil.removeCacheObject(cache, key, cacheable.serialize());
+                }
             	return result;  
             }
         }
