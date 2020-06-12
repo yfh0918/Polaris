@@ -16,7 +16,7 @@ public @interface Cacheable {
     String key() default "";  
   
     /** 
-     * The cache timeout, unit for minute. 
+     * The cache timeout, unit for seconds. 
      *  
      * @return 
      */  
