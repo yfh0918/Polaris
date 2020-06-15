@@ -9,18 +9,21 @@ import com.polaris.core.OrderWrapper;
 import com.polaris.core.config.ConfHandler;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config;
+import com.polaris.core.config.Config.Type;
+import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.ConfigListener;
+import com.polaris.core.exception.ConfigException;
 import com.polaris.core.util.StringUtil;
 
+@SuppressWarnings("rawtypes")
 public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
-    private static final ServiceLoader<ConfHandler> handlerLoader = ServiceLoader.load(ConfHandler.class);
-	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
-	protected static ConfHandler handler;
+    private final ServiceLoader<ConfHandler> handlerLoader = ServiceLoader.load(ConfHandler.class);
+	private volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	protected ConfHandlerStrategy strategy = ConfHandlerStrategyFactory.get();
 	private ConfigListener configListener;
 	
-    @SuppressWarnings("rawtypes")
-	protected static ConfHandler initHandler() {
+	private ConfHandler handler;
+	private ConfHandler initHandler() {
 		if (!initialized.compareAndSet(false, true)) {
             return handler;
         }
@@ -34,10 +37,25 @@ public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
     	return handler;
     }
     
-    @Override
-    public void init(ConfigListener configListener) {
-    	this.configListener = configListener;
-    	initHandler();
+    protected void init(ConfigListener configListener, Type type, String propertyType) {
+        this.configListener = configListener;
+        
+        //initial config handler
+        initHandler();
+        
+        //get target files from system properties
+        String files = ConfigFactory.get(Type.SYS).getProperties(Type.SYS.name()).getProperty(propertyType);
+        if (StringUtil.isEmpty(files)) {
+            return;
+        }
+        String[] fileArray = files.split(",");
+        
+        //target files loop
+        for (String file : fileArray) {
+            if (!getAndListen(file)) {
+                throw new ConfigException("type:"+type.name()+" file:"+file+" is not exsit");
+            }
+        }
     }
     
 	public boolean getAndListen(String file, String group, Config config) {
@@ -67,6 +85,7 @@ public abstract class ConfHandlerAbsProvider implements ConfHandlerProvider{
 		}
     	return null;
 	}
+    
     public void listen(String fileName,String group, ConfHandlerListener listener) {
 		if (handler != null) {
 			handler.listen(fileName, group, listener);
