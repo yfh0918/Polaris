@@ -3,8 +3,6 @@ package com.polaris.core.util;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import com.alibaba.nacos.core.utils.ApplicationUtils;
-
 /**
  * Twitter_Snowflake<br>
  * SnowFlake的结构如下(每部分用-分开):<br>
