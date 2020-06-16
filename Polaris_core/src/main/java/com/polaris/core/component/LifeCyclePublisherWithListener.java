@@ -1,23 +1,16 @@
 package com.polaris.core.component;
 
 import java.util.Iterator;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * The LifeCycleWithListenerManager for generic components.
  */
-public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle implements LifeCycleListenerManager{
-    private final CopyOnWriteArrayList<LifeCycleListener> _listeners = new CopyOnWriteArrayList<LifeCycleListener>();
-
-    @Override
-    public void addLifeCycleListener(LifeCycleListener listener) {
-        _listeners.add(listener);
+public abstract class LifeCyclePublisherWithListener extends LifeCyclePublisher implements LifeCycleListener{
+    
+    protected LifeCyclePublisherWithListener() {
+        addLifeCycleListener(this);
     }
-
-    @Override
-    public void removeLifeCycleListener(LifeCycleListener listener) {
-        _listeners.remove(listener);
-    }
+    
     @Override
     protected void setStarting() {
     	super.setStarting();
@@ -27,6 +20,7 @@ public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle imp
 			listener.starting(this);
 		}
     }
+    
     @Override
     protected void setStarted() {
     	super.setStarted();
@@ -36,6 +30,7 @@ public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle imp
 			listener.started(this);
 		}
     }
+    
     @Override
     protected void setStopping() {
     	super.setStopping();
@@ -45,6 +40,7 @@ public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle imp
 			listener.stopping(this);
 		}
     }
+    
     @Override
     protected void setStopped() {
     	super.setStopped();
@@ -55,6 +51,7 @@ public abstract class LifeCycleWithListenerManager extends AbstractLifeCycle imp
 			removeLifeCycleListener(listener);
 		}
     }
+    
     @Override
     protected void setFailed(Throwable th) {
     	super.setFailed(th);

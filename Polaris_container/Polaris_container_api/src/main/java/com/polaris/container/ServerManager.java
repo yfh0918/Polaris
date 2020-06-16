@@ -10,19 +10,15 @@ import org.springframework.context.ConfigurableApplicationContext;
 import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.core.OrderWrapper;
 import com.polaris.core.component.LifeCycle;
-import com.polaris.core.component.LifeCycleListener;
-import com.polaris.core.component.LifeCycleWithListenerManager;
+import com.polaris.core.component.LifeCyclePublisherWithListener;
 
-public class ServerManager extends LifeCycleWithListenerManager implements LifeCycleListener, Server {
+public class ServerManager extends LifeCyclePublisherWithListener implements Server {
 
 	/**
      * constructor ServerManager for private 
      * 
      */
 	private static ServerManager INSTANCE = new ServerManager();
-	private ServerManager() {
-		addLifeCycleListener(this);
-	}
 	
 	public static void init() throws Exception {
 		INSTANCE.start();

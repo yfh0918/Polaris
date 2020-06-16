@@ -10,18 +10,11 @@ import org.slf4j.LoggerFactory;
  * The ManagedComponent for generic components.
  * {@link ManagedComponentListener}
  */
-public abstract class ManagedComponent extends LifeCycleWithListenerManager implements LifeCycleListener{
+public abstract class ManagedComponent extends LifeCyclePublisherWithListener {
 	final static Logger logger = LoggerFactory.getLogger(ManagedComponent.class);
 	
     private static final CopyOnWriteArrayList<ManagedComponent> _managedComponents = new CopyOnWriteArrayList<>();
 
-    /**
-     * The constructor for protected.
-     */
-	protected ManagedComponent() {
-        addLifeCycleListener(this);
-    }
-	
 	@Override
 	public void started(LifeCycle component) {
 		if (component instanceof ManagedComponent) {
