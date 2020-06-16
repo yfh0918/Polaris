@@ -12,17 +12,14 @@ import com.polaris.core.OrderWrapper;
 import com.polaris.core.component.LifeCycle;
 import com.polaris.core.component.LifeCyclePublisherWithListener;
 
-public class ServerManager extends LifeCyclePublisherWithListener implements Server {
+public class ServerProxy extends LifeCyclePublisherWithListener implements Server {
 
 	/**
      * constructor ServerManager for private 
      * 
      */
-	private static ServerManager INSTANCE = new ServerManager();
-	
-	public static void init() throws Exception {
-		INSTANCE.start();
-	}
+	public static Server INSTANCE = new ServerProxy();
+	private ServerProxy() {}
 	
 	/**
      * JVM shutdown hook to shutdown this server. Declared as a class-level variable to allow removing the shutdown hook when the
@@ -80,14 +77,13 @@ public class ServerManager extends LifeCyclePublisherWithListener implements Ser
 		ServerListenerHelper.stopped(event);
 	}
 	
-	static private class ServerProvider {
+	private static class ServerProvider {
 		private static final ServiceLoader<Server> servers = ServiceLoader.load(Server.class);
 		private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 		@SuppressWarnings("rawtypes")
 		private static List<OrderWrapper> serverList = new ArrayList<OrderWrapper>();
 	    private static volatile Server server;
 		private ServerProvider() {}
-		
 	    public static Server getServer() {
 	    	if (initialized.compareAndSet(false, true)) {
 	    		for (Server server : servers) {

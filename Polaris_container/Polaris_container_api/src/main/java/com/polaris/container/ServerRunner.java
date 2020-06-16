@@ -47,7 +47,7 @@ public abstract class ServerRunner {
     	ServerListenerHelper.init(args, serverListeners);
     	
     	//启动Server
-    	ServerManager.init();
+    	ServerProxy.INSTANCE.start();;
     }
     
     /**
