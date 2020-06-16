@@ -1,0 +1,2 @@
+CONNECT_URL=http://xxx.com/abc/statistics/save
+STATISTICS_PATHS=/abc/version/download
