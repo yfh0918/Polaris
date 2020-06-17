@@ -10,9 +10,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
-import com.polaris.core.config.ConfigFactory;
 import com.polaris.core.config.Config.Type;
-import com.polaris.core.config.provider.ConfHandlerProviderFactory;
+import com.polaris.core.config.provider.ConfHandlerFactory;
+import com.polaris.core.config.provider.ConfigFactory;
 import com.polaris.core.exception.ConfigException;
 import com.polaris.core.util.StringUtil;
 
@@ -25,7 +25,7 @@ public abstract class ConfigurationAbs implements BeanPostProcessor, PriorityOrd
         for (String file : files) {
             if (StringUtil.isNotEmpty(file)) {
                 if (ConfigFactory.get(type).getProperties(file) == null) {
-                    if (!ConfHandlerProviderFactory.get(type).getAndListen(file)) {
+                    if (ConfHandlerFactory.getOrCreate(type).getAndListen(file,type.getGroup())==null) {
                         throw new ConfigException("type:"+type.toString()+" file:" + file + " is not exsit");
                     }
                 } 

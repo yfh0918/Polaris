@@ -8,21 +8,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.Config;
-import com.polaris.core.config.ConfigFactory;
-import com.polaris.core.config.ConfigListener;
+import com.polaris.core.config.ConfigChangeListener;
+import com.polaris.core.config.ConfigChangeNotifier;
 import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.util.UuidUtil;
 
 @SuppressWarnings("rawtypes")
-public class ConfHandlerStrategyDefault implements ConfHandlerStrategy {
-	private static final Logger logger = LoggerFactory.getLogger(ConfHandlerStrategyDefault.class);
-	public static final ConfHandlerStrategy INSTANCE = new ConfHandlerStrategyDefault();
-	private ConfHandlerStrategyDefault() {}
+public class ConfigChangeNotifierDefault implements ConfigChangeNotifier {
+	private static final Logger logger = LoggerFactory.getLogger(ConfigChangeNotifierDefault.class);
+	public static final ConfigChangeNotifier INSTANCE = new ConfigChangeNotifierDefault();
+	private ConfigChangeNotifierDefault() {}
 	
 	@Override
-	public void notify(ConfigListener configListener, Config config, String file, String contents) {
+	public void notify(ConfigChangeListener configListener, Config config, String file, String contents) {
 		Properties oldProperties = config.getProperties(file);
 		Properties newProperties = ConfReaderFactory.get(file).getProperties(contents);
 		String sequence = UuidUtil.generateUuid();

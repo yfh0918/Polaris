@@ -12,7 +12,9 @@ import org.apache.logging.log4j.spi.ExtendedLoggerWrapper;
 import org.slf4j.Marker;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.provider.ConfHandlerSysProvider;
+import com.polaris.core.config.Config.Type;
+import com.polaris.core.config.provider.ConfHandlerFactory;
+import com.polaris.core.config.provider.ConfHandlerSystem;
 
 public final class ExtendedLogger extends ExtendedLoggerCallBack implements Serializable {
 	
@@ -53,12 +55,13 @@ public final class ExtendedLogger extends ExtendedLoggerCallBack implements Seri
 		}
 		synchronized(ExtendedLogger.class) {
 			try {
-				String logFile = ConfHandlerSysProvider.INSTANCE.getProperties().getProperty(Constant.LOG_CONFIG_KEY, Constant.DEFAULT_LOG_FILE);
+			    ConfHandlerSystem confHandlerSystem = (ConfHandlerSystem)ConfHandlerFactory.getOrCreate(Type.SYS);
+				String logFile = confHandlerSystem.getProperties().getProperty(Constant.LOG_CONFIG_KEY, Constant.DEFAULT_LOG_FILE);
 				if (logFile != null && !logFile.isEmpty()) {
 					System.setProperty(Constant.LOG_CONFIG_FILE_KEY, logFile);
 			        Logger templogger = LogManager.getLogger(this.name);
 			        logger = new ExtendedLoggerWrapper((AbstractLogger)templogger,templogger.getName(),templogger.getMessageFactory());
-			        traceEnable = Boolean.parseBoolean(ConfHandlerSysProvider.INSTANCE.getProperties().getProperty(Constant.LOG_TRACE_ENABEL,"false"));
+			        traceEnable = Boolean.parseBoolean(confHandlerSystem.getProperties().getProperty(Constant.LOG_TRACE_ENABEL,"false"));
 				}
 			} catch (Exception e) {
 				//ignore

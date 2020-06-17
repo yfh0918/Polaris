@@ -28,4 +28,23 @@ public interface ConfHandler {
      * @since 
      */
 	default String get(String fileName, String group) {return null;}
+	
+	/**
+     * 获取+监听文件内容-第三方扩展包，Polaris_conf_nacos，Polaris_conf_zk，Polaris_conf_file等等
+     * @param  fileName 指定的文件
+     * @param  group 
+     * @param  listeners 
+     * @return String 文件内容
+     * @Exception 
+     * @since 
+     */
+    default String getAndListen(String fileName, String group, ConfHandlerListener... listeners) {
+        String result = get(fileName,group);
+        if (listeners != null) {
+            for (ConfHandlerListener listener: listeners) {
+                listen(fileName,group,listener);
+            }
+        }
+        return result;
+    }
 }

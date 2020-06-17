@@ -24,6 +24,4 @@ public @interface PolarisConfigurationGbl {
 	 * global file from local or data center
 	 */
 	String[] value() default{};
-
-
 }

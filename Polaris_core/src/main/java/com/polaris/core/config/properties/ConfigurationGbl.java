@@ -12,7 +12,6 @@ public class ConfigurationGbl extends ConfigurationAbs {
 	public int getOrder() {
 		return Ordered.HIGHEST_PRECEDENCE + 2;
 	}
-
 	
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {

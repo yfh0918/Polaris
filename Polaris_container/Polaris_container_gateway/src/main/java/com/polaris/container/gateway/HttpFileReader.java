@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
-import com.polaris.core.config.provider.ConfHandlerProviderFactory;
+import com.polaris.core.config.provider.ConfHandlerFactory;
 import com.polaris.core.config.reader.ConfReaderStrategyDefault;
 import com.polaris.core.util.StringUtil;
 
@@ -21,7 +21,7 @@ public class HttpFileReader {
     public void readFile(HttpFileListener listener, HttpFile file){
     	
 		//先获取
-    	String content = ConfHandlerProviderFactory.get(file.getType()).get(file.getName());
+    	String content = ConfHandlerFactory.getOrCreate(file.getType()).get(file.getName(),file.getType().getGroup());
     	
     	//获取不到-从本地文件系统获取
     	if (StringUtil.isEmpty(content)) {
@@ -34,7 +34,7 @@ public class HttpFileReader {
 		logger.info("file:{} type:{} is added",file.getName(),file.getType());
 		
 		//后监听
-		ConfHandlerProviderFactory.get(file.getType()).listen(file.getName(), new ConfHandlerListener() {
+		ConfHandlerFactory.getOrCreate(file.getType()).listen(file.getName(),file.getType().getGroup(), new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
 				loadFile(file, content);

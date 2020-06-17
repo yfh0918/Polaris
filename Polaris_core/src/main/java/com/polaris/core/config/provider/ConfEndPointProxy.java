@@ -5,10 +5,10 @@ import java.util.ServiceLoader;
 import com.polaris.core.config.ConfEndPoint;
 import com.polaris.core.config.Config.Opt;
 
-public class ConfEndPointProvider implements ConfEndPoint{
+public class ConfEndPointProxy implements ConfEndPoint{
     protected final ServiceLoader<ConfEndPoint> endPointLoader = ServiceLoader.load(ConfEndPoint.class);
-    private ConfEndPointProvider() {}
-    public static ConfEndPointProvider INSTANCE = new ConfEndPointProvider();
+    private ConfEndPointProxy() {}
+    public static ConfEndPointProxy INSTANCE = new ConfEndPointProxy();
     
     @Override
     public void init() {

@@ -1,5 +1,5 @@
 package com.polaris.core.config;
 
-public interface ConfEndPoint extends ConfigListener{
+public interface ConfEndPoint extends ConfigChangeListener{
 	default void init() {};
 }

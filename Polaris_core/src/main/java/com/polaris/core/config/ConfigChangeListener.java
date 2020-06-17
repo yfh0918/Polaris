@@ -8,7 +8,7 @@ import com.polaris.core.config.Config.Opt;
 * {@link}ConfHandlerStrategyFactory
 * {@link}ConfHandlerStrategyDefault
 */
-public interface ConfigListener {
+public interface ConfigChangeListener {
 	
     /**
      * 配置发生变化开始后的回调处理

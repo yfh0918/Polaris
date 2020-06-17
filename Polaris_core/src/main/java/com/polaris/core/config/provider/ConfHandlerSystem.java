@@ -4,29 +4,30 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.polaris.core.Constant;
+import com.polaris.core.config.ConfigChangeListener;
 import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.Config.Type;
-import com.polaris.core.config.ConfigFactory;
-import com.polaris.core.config.ConfigListener;
 import com.polaris.core.config.reader.ConfReaderStrategyFactory;
 import com.polaris.core.util.EnvironmentUtil;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
-public class ConfHandlerSysProvider implements ConfHandlerProvider{
+public class ConfHandlerSystem extends ConfHandlerProxy{
 	private static volatile String CONFIG_NAME = "application";
 	private static String SYSTEM_SEQUENCE = "system";
-	public static ConfHandlerSysProvider INSTANCE = new ConfHandlerSysProvider();
-	private ConfHandlerSysProvider() {}
-	private Properties properties = null;
+    private Properties properties;
+	public ConfHandlerSystem(Type type, ConfigChangeListener configListener) {
+	    super(type,configListener);
+	}
 	
 	@Override
-	public void init(ConfigListener configListener) {
+	public void init() {
+        ConfigFactory.get(Type.SYS).put(Type.SYS.name(), getProperties());
+	    configChangeListener.onStart(SYSTEM_SEQUENCE);
 		for (Map.Entry<Object, Object> entry : getProperties().entrySet()) {
-			configListener.onChange(SYSTEM_SEQUENCE, entry.getKey(), entry.getValue(), Opt.ADD);
+		    configChangeListener.onChange(SYSTEM_SEQUENCE, entry.getKey(), entry.getValue(), Opt.ADD);
 		}
-		ConfigFactory.get(Type.SYS).put(Type.SYS.name(), getProperties());
-		configListener.onComplete(SYSTEM_SEQUENCE);
+		configChangeListener.onComplete(SYSTEM_SEQUENCE);
 	}
 	
 	public Properties getProperties() {

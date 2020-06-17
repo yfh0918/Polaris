@@ -1,7 +1,7 @@
 package com.polaris.core.config;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.provider.ConfCompositeProvider;
+import com.polaris.core.config.provider.ConfHandlerComposite;
 
 /**
 *
@@ -26,7 +26,7 @@ public abstract class ConfClient {
 	* @since 
 	*/
 	public static void init() {
-		ConfCompositeProvider.INSTANCE.init();
+		ConfHandlerComposite.INSTANCE.init();
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public abstract class ConfClient {
 	* @since 
 	*/
 	public static void set(String key, String value) {
-		ConfCompositeProvider.INSTANCE.putProperty(key, value);
+		ConfHandlerComposite.INSTANCE.putProperty(key, value);
 	}
 	
 	/**
@@ -48,7 +48,7 @@ public abstract class ConfClient {
 	* @since 
 	*/
 	public static String get(String key, String... defaultVal) {
-		return ConfCompositeProvider.INSTANCE.getProperty(key,defaultVal);
+		return ConfHandlerComposite.INSTANCE.getProperty(key,defaultVal);
 	}
 	
 	/**

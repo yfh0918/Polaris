@@ -1,9 +1,11 @@
-package com.polaris.core.config;
+package com.polaris.core.config.provider;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.polaris.core.config.Config;
 
 public enum ConfigDefault implements Config {
 	

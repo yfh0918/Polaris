@@ -12,9 +12,21 @@ public interface Config {
 	}
 	
 	public enum Type {
-		SYS,//system
-		EXT,//extension
-	    GBL;//global
+		SYS("project.system.properties",null),//system,目前用不到
+		EXT("project.extension.properties",null),//application.properties中定义的extension
+	    GBL("project.global.properties","global");//application.properties中定义的global
+        private String propertyType;
+        private String group;
+	    Type(String propertyType, String group) {
+	        this.propertyType = propertyType;
+	        this.group = group;
+	    }
+        public String getPropertyType() {
+            return propertyType;
+        }
+        public String getGroup() {
+            return group == null?ConfClient.getAppName():group;
+        }
 	}
 	
 	Type getType();
