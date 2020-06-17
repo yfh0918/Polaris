@@ -3,10 +3,9 @@ package com.polaris.core.config;
 import com.polaris.core.config.Config.Opt;
 
 /**
-* 配置变化的监听器
-* {@link}ConfCompositeProvider
-* {@link}ConfHandlerStrategyFactory
-* {@link}ConfHandlerStrategyDefault
+* 配置变化的监听器-用于properties文件，yaml文件
+* {@link}ConfigDefault
+* {@link}ConfigFactory
 */
 public interface ConfigChangeListener {
 	

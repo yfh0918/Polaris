@@ -15,7 +15,7 @@ import com.polaris.container.gateway.request.HttpRequestFilterChain;
 import com.polaris.container.gateway.response.HttpResponseFilterChain;
 import com.polaris.container.gateway.util.RequestUtil;
 import com.polaris.core.Constant;
-import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
+import com.polaris.core.naming.NamingClient;
 import com.polaris.core.pojo.Server;
 import com.polaris.core.util.ResultUtil;
 import com.polaris.core.util.StringUtil;
@@ -145,7 +145,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     	ProxyToServerConnection proxyToServerConnection = flowContext.getServerConnection();
         String remoteIp = proxyToServerConnection.getRemoteAddress().getAddress().getHostAddress();
         int remotePort = proxyToServerConnection.getRemoteAddress().getPort();
-        ServerStrategyProviderFactory.get().onConnectionFail(Server.of(remoteIp, remotePort));
+        NamingClient.onConnectionFail(Server.of(remoteIp, remotePort));
     }
 
 	private HttpResponse createResponse(HttpRequest originalRequest, HttpFilterMessage message) {

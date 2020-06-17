@@ -1,10 +1,8 @@
-package com.polaris.core.naming.provider;
+package com.polaris.core.naming;
 
 import java.util.List;
 
-import com.polaris.core.naming.ServerHandler;
-
-public interface ServerStrategyProvider extends ServerHandler{
+public interface UrlHandler {
 	
 	/**
 	* 获取真实的IP+url

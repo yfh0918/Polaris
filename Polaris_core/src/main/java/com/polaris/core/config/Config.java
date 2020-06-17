@@ -3,6 +3,11 @@ package com.polaris.core.config;
 import java.util.Collection;
 import java.util.Properties;
 
+/**
+* properties文件，yaml文件的对外接口暴露
+* {@link}ConfHandlerComposite
+* {@link}ConfHandlerProxy
+*/
 public interface Config {
 	
 	public enum Opt {

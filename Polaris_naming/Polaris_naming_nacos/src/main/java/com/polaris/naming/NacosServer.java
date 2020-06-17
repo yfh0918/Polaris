@@ -13,13 +13,13 @@ import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.ServerHandler;
-import com.polaris.core.naming.ServerHandlerOrder;
+import com.polaris.core.naming.NamingHandler;
+import com.polaris.core.naming.NamingHandlerOrder;
 import com.polaris.core.pojo.Server;
 import com.polaris.core.util.StringUtil;
 
-@Order(ServerHandlerOrder.NACOS)
-public class NacosServer implements ServerHandler {
+@Order(NamingHandlerOrder.NACOS)
+public class NacosServer implements NamingHandler {
 	private static final Logger logger = LoggerFactory.getLogger(NacosServer.class);
 	private volatile NamingService naming;
 	public NacosServer() {

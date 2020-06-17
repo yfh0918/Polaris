@@ -19,14 +19,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.ServerHandler;
-import com.polaris.core.naming.ServerHandlerOrder;
+import com.polaris.core.naming.NamingHandler;
+import com.polaris.core.naming.NamingHandlerOrder;
 import com.polaris.core.pojo.Server;
 import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.WeightedRoundRobinScheduling;
 
-@Order(ServerHandlerOrder.ZK)
-public class ZkServer implements ServerHandler {
+@Order(NamingHandlerOrder.ZK)
+public class ZkServer implements NamingHandler {
 	private static final Logger logger = LoggerFactory.getLogger(ZkServer.class);
 	private CuratorFramework curator;
 	private Map<String, ZkCache> zkCacheMap = new ConcurrentHashMap<>();

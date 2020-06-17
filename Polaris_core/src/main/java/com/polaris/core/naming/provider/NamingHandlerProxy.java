@@ -6,28 +6,28 @@ import java.util.ServiceLoader;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.polaris.core.OrderWrapper;
-import com.polaris.core.naming.ServerHandler;
+import com.polaris.core.naming.NamingHandler;
 import com.polaris.core.pojo.Server;
 
 @SuppressWarnings("rawtypes")
-public class ServerHandlerProvider implements ServerHandler{
-	private static final ServiceLoader<ServerHandler> serviceLoader = ServiceLoader.load(ServerHandler.class);
+public class NamingHandlerProxy implements NamingHandler{
+	private static final ServiceLoader<NamingHandler> serviceLoader = ServiceLoader.load(NamingHandler.class);
 	private static List<OrderWrapper> discoveryHandlerList = new ArrayList<OrderWrapper>();
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
-	private static ServerHandler handler = getHandler();
-    public static final ServerHandlerProvider INSTANCE = new ServerHandlerProvider();
-    private ServerHandlerProvider() {}
+	private static NamingHandler handler = getHandler();
+    public static final NamingHandlerProxy INSTANCE = new NamingHandlerProxy();
+    private NamingHandlerProxy() {}
 	
 	//初始化
-	private static ServerHandler getHandler() {
+	private static NamingHandler getHandler() {
 		if (!initialized.compareAndSet(false, true)) {
             return handler;
         }
-    	for (ServerHandler discoveryHandler : serviceLoader) {
+    	for (NamingHandler discoveryHandler : serviceLoader) {
     		OrderWrapper.insertSorted(discoveryHandlerList, discoveryHandler);
         }
     	if (discoveryHandlerList.size() > 0) {
-    		handler = (ServerHandler)discoveryHandlerList.get(0).getHandler();
+    		handler = (NamingHandler)discoveryHandlerList.get(0).getHandler();
     	}
     	return handler;
     }

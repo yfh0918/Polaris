@@ -15,7 +15,7 @@ import com.polaris.core.pojo.Server;
 * @version
 *
 */
-public interface ServerHandler {
+public interface NamingHandler {
 	
 	/**
 	* 注册到注册中心

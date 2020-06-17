@@ -7,7 +7,7 @@ import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpHostContext;
 import com.polaris.container.gateway.pojo.HttpHostContext.HttpContextUpstream;
 import com.polaris.container.gateway.proxy.HostResolver;
-import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
+import com.polaris.core.naming.NamingClient;
 import com.polaris.core.pojo.Server;
 
 /**
@@ -33,7 +33,7 @@ public class HttpHostContextResolver implements HostResolver ,HttpFileListener{
             throws UnknownHostException {
     	HttpContextUpstream upstream = HttpHostContext.get(host, contextPath);
         if (upstream != null) {
-            Server server = ServerStrategyProviderFactory.get().getServer(upstream.getServiceName());
+            Server server = NamingClient.getServer(upstream.getServiceName());
             if (server != null) {
                 return new InetSocketAddress(server.getIp(), server.getPort());
             } 

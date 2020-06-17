@@ -11,17 +11,17 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.common.base.Splitter;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.ServerHandler;
+import com.polaris.core.naming.NamingHandler;
 import com.polaris.core.pojo.Server;
 import com.polaris.core.util.WeightedRoundRobinScheduling;
 
-public class ServerHandlerLocalProvider implements ServerHandler{
+public class NamingHandlerProxyLocal implements NamingHandler{
     private Map<String, WeightedRoundRobinScheduling> serviceNameMap = new ConcurrentHashMap<>();
     private Map<Server, String> serverMap = new ConcurrentHashMap<>();
     private ScheduledThreadPoolExecutor scheduledThreadPoolExecutor = null;
 
-    public static ServerHandlerLocalProvider INSTANCE = new ServerHandlerLocalProvider();
-    private ServerHandlerLocalProvider() {}
+    public static NamingHandlerProxyLocal INSTANCE = new NamingHandlerProxyLocal();
+    private NamingHandlerProxyLocal() {}
     
     @Override
     public Server getServer(String serviceName) {
@@ -43,10 +43,10 @@ public class ServerHandlerLocalProvider implements ServerHandler{
     	
     	//初期化定时器
 		if (scheduledThreadPoolExecutor == null) {
-			synchronized(ServerHandlerLocalProvider.class){
+			synchronized(NamingHandlerProxyLocal.class){
 				if (scheduledThreadPoolExecutor == null) {
 					scheduledThreadPoolExecutor = new ScheduledThreadPoolExecutor(1);
-			        scheduledThreadPoolExecutor.scheduleAtFixedRate(new ServerHandlerLocalCheckTask(serviceNameMap), 
+			        scheduledThreadPoolExecutor.scheduleAtFixedRate(new UnhealthyCheckTask(serviceNameMap), 
 			        		Integer.parseInt(ConfClient.get("server.check.cycletime", "30")), 
 			        		Integer.parseInt(ConfClient.get("server.check.cycletime", "30")), TimeUnit.SECONDS);
 				}

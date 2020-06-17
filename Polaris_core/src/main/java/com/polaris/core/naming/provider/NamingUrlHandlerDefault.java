@@ -3,15 +3,16 @@ package com.polaris.core.naming.provider;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.polaris.core.naming.ServerHandler;
+import com.polaris.core.naming.NamingHandler;
+import com.polaris.core.naming.NamingUrlHandler;
 import com.polaris.core.pojo.Server;
 import com.polaris.core.pojo.ServerHost;
 
-public class ServerStrategyProviderDefault implements ServerStrategyProvider{
-    public static final ServerStrategyProviderDefault INSTANCE = new ServerStrategyProviderDefault();
-    private static final ServerHandler INSTANCE_REMOTE = ServerHandlerProvider.INSTANCE;
-    private static final ServerHandler INSTANCE_LOCAL = ServerHandlerLocalProvider.INSTANCE;
-    private ServerStrategyProviderDefault() {}
+public class NamingUrlHandlerDefault implements NamingUrlHandler {
+    public static final NamingUrlHandlerDefault INSTANCE = new NamingUrlHandlerDefault();
+    private static final NamingHandler INSTANCE_REMOTE = NamingHandlerProxy.INSTANCE;
+    private static final NamingHandler INSTANCE_LOCAL = NamingHandlerProxyLocal.INSTANCE;
+    private NamingUrlHandlerDefault() {}
     
     @Override
     public boolean register(Server server) {

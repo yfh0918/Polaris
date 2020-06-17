@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.GlobalContext;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
+import com.polaris.core.naming.NamingClient;
 import com.polaris.core.pojo.Server;
 import com.polaris.core.pojo.ServerHost;
  
@@ -354,7 +354,7 @@ public class HttpClientUtil {
     //获取uri
     private static HttpUriRequest getHttpUriRequest( 
     		HTTPRequestParameter parameter) throws Exception {
-    	String url = ServerStrategyProviderFactory.get().getRealIpUrl(parameter.getUrl());
+    	String url = NamingClient.getRealIpUrl(parameter.getUrl());
     	LOGGER.info(url);
     	HttpRequestBase request = null;
 
@@ -423,7 +423,7 @@ public class HttpClientUtil {
     //错误处理
     private static void setHttpException(String url, Exception ex) {
     	String ipAndPort = ServerHost.of(url).getServiceName();
-    	ServerStrategyProviderFactory.get().onConnectionFail(Server.of(ipAndPort));
+    	NamingClient.onConnectionFail(Server.of(ipAndPort));
     	if (LOGGER.isDebugEnabled()) {
         	LOGGER.debug("ERROR:",ex);
     	}

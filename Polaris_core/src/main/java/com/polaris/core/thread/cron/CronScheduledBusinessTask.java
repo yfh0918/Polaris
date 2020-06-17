@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.naming.provider.ServerStrategyProviderFactory;
+import com.polaris.core.naming.NamingClient;
 import com.polaris.core.pojo.Server;
 import com.polaris.core.util.NetUtils;
 
@@ -24,7 +24,7 @@ abstract public class CronScheduledBusinessTask implements Runnable {
 		try {
 			
 			//get cluster ip list
-            List<Server> list = ServerStrategyProviderFactory.get().getServerList(ConfClient.getAppName());
+            List<Server> list = NamingClient.getServerList(ConfClient.getAppName());
             if (list == null || list.size() == 0) {
             	taskExecute();
             	return;
