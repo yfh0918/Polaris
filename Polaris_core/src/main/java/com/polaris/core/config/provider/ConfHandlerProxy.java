@@ -8,10 +8,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.polaris.core.OrderWrapper;
 import com.polaris.core.config.ConfHandler;
 import com.polaris.core.config.ConfHandlerListener;
-import com.polaris.core.config.Config;
+import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.ConfigChangeListener;
 import com.polaris.core.config.ConfigChangeNotifier;
-import com.polaris.core.config.Config.Type;
 import com.polaris.core.exception.ConfigException;
 import com.polaris.core.util.StringUtil;
 
@@ -70,25 +69,20 @@ public class ConfHandlerProxy implements ConfHandler{
 	@Override
     public String getAndListen(String fileName,String group, ConfHandlerListener... listener) {
     	
-        //config
-        Config config = ConfigFactory.get(type);
-        
 		//get
 		String contents = get(fileName,group);
-		if (StringUtil.isEmpty(contents)) {
-			return null;
+		if (StringUtil.isNotEmpty(contents)) {
+			notifier.notify(configChangeListener, ConfigFactory.get(type), fileName, contents);
 		}
-		
-		//get
-		notifier.notify(configChangeListener, config, fileName, contents);
 		
 		//listen
     	listen(fileName, group, new ConfHandlerListener() {
 			@Override
 			public void receive(String contents) {
-			    notifier.notify(configChangeListener, config, fileName, contents);
+			    notifier.notify(configChangeListener, ConfigFactory.get(type), fileName, contents);
 			}
 		});
+    	
     	return contents;
     }
 
