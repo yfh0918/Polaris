@@ -2,38 +2,43 @@ package com.polaris.core.log;
 
 import java.util.Map;
 
+import org.apache.logging.log4j.ThreadContext;
 import org.slf4j.spi.MDCAdapter;
 
 public class XfliMDCAdapter implements MDCAdapter {
 
-	public void put(String key, String val) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void put(final String key, final String val) {
+        ThreadContext.put(key, val);
+    }
 
-	public String get(String key) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public String get(final String key) {
+        return ThreadContext.get(key);
+    }
 
-	public void remove(String key) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void remove(final String key) {
+        ThreadContext.remove(key);
+    }
 
-	public void clear() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void clear() {
+        ThreadContext.clearMap();
+    }
 
-	public Map<String, String> getCopyOfContextMap() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Map<String, String> getCopyOfContextMap() {
+        return ThreadContext.getContext();
+    }
 
-	public void setContextMap(Map<String, String> contextMap) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    @SuppressWarnings("unchecked") // nothing we can do about this, restricted by SLF4J API
+    public void setContextMap(@SuppressWarnings("rawtypes") final Map map) {
+        ThreadContext.clearMap();
+        for (final Map.Entry<String, String> entry : ((Map<String, String>) map).entrySet()) {
+            ThreadContext.put(entry.getKey(), entry.getValue());
+        }
+    }
 
 }

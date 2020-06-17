@@ -1,20 +1,14 @@
 package com.polaris.core.config;
 
+import com.polaris.core.component.Initial;
+
 /**
 * 第三方扩展包接口
 * {@link}Polaris_conf_nacos
 * {@link}Polaris_conf_zk
 * {@link}Polaris_conf_file
 */
-public interface ConfHandler {
-    
-    /**
-     * 初始化-第三方扩展包，Polaris_conf_nacos，Polaris_conf_zk，Polaris_conf_file等等
-     * @return 
-     * @Exception 
-     * @since 
-     */
-    default void init() {}
+public interface ConfHandler extends Initial{
     
     /**
      * 监听指定文件-第三方扩展包，Polaris_conf_nacos，Polaris_conf_zk，Polaris_conf_file等等
