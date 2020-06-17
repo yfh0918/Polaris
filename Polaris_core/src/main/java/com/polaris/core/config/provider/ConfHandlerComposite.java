@@ -15,9 +15,9 @@ public class ConfHandlerComposite implements ConfigChangeListener {
     private ConfHandlerComposite() {}
     
     public void init() {
-        ConfHandlerFactory.getOrCreate(Type.SYS);
-        ConfHandlerFactory.getOrCreate(Type.EXT);
-        ConfHandlerFactory.getOrCreate(Type.GBL);
+        ConfHandlerFactory.getOrCreate(Type.SYS).init();
+        ConfHandlerFactory.getOrCreate(Type.EXT).init();
+        ConfHandlerFactory.getOrCreate(Type.GBL).init();
     	INSTANCE_ENDPOINT.init();
     }
 	public String getProperty(String key, String... defaultValue) {

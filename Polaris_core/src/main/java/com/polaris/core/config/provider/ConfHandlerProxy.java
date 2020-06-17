@@ -30,9 +30,9 @@ public class ConfHandlerProxy implements ConfHandler{
 	public ConfHandlerProxy(Type type, ConfigChangeListener configChangeListener) {
 	    this.type = type;
 	    this.configChangeListener = configChangeListener;
-	    init();
 	}
 	
+	@Override
 	public void init() {
         
         //initial config handler

@@ -4,10 +4,12 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.polaris.core.Constant;
+import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.ConfigChangeListener;
 import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.reader.ConfReaderStrategyFactory;
+import com.polaris.core.exception.ConfigException;
 import com.polaris.core.util.EnvironmentUtil;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
@@ -73,4 +75,19 @@ public class ConfHandlerSystem extends ConfHandlerProxy{
 		}
     	return this.properties;
 	}
+	
+	@Override
+	public void listen(String fileName, String group, ConfHandlerListener listener) {
+	    throw new ConfigException("Not supported for listen method");
+	}
+    
+	@Override
+	public String get(String fileName, String group) {
+	    throw new ConfigException("Not supported for get method");
+	}
+	
+	@Override
+    public String getAndListen(String fileName, String group, ConfHandlerListener... listeners) {
+        throw new ConfigException("Not supported for getAndListen method");
+    }
 }

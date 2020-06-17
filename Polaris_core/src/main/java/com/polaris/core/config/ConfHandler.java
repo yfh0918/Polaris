@@ -9,6 +9,14 @@ package com.polaris.core.config;
 public interface ConfHandler {
     
     /**
+     * 初始化-第三方扩展包，Polaris_conf_nacos，Polaris_conf_zk，Polaris_conf_file等等
+     * @return 
+     * @Exception 
+     * @since 
+     */
+    default void init() {}
+    
+    /**
      * 监听指定文件-第三方扩展包，Polaris_conf_nacos，Polaris_conf_zk，Polaris_conf_file等等
      * @param  fileName 被监听的文件
      * @param  group 
