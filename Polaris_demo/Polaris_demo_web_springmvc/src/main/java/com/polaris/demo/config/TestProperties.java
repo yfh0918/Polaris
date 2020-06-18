@@ -3,7 +3,7 @@ package com.polaris.demo.config;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.polaris.core.config.properties.PolarisConfigurationProperties;
+import com.polaris.core.config.annotation.PolarisConfigurationProperties;
 
 @PolarisConfigurationProperties(prefix="test",ext="testP.properties")
 @JsonIgnoreProperties(value = { "$$beanFactory"})

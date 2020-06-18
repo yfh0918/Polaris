@@ -1,4 +1,4 @@
-package com.polaris.core.config.properties;
+package com.polaris.core.config.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
+import com.polaris.core.config.properties.ConfigurationGblImport;
+
 /**
  * An annotation as Properties files.
  *
@@ -17,11 +19,11 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Configuration
-@Import(ConfigurationExtImport.class)
-public @interface PolarisConfigurationExt {
+@Import(ConfigurationGblImport.class)
+public @interface PolarisConfigurationGbl {
 
 	/**
-	 * extension file from local or data center
+	 * global file from local or data center
 	 */
 	String[] value() default{};
 }

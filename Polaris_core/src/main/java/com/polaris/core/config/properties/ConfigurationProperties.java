@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.core.Ordered;
 
+import com.polaris.core.config.annotation.PolarisConfigurationProperties;
 import com.polaris.core.config.provider.ConfHandlerComposite;
 import com.polaris.core.util.BeanUtil;
 import com.polaris.core.util.StringUtil;

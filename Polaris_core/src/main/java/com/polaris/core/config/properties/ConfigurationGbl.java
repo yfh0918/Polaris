@@ -4,6 +4,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.core.Ordered;
 
 import com.polaris.core.config.Config.Type;
+import com.polaris.core.config.annotation.PolarisConfigurationGbl;
 
 public class ConfigurationGbl extends ConfigurationAbs {
 	public static final String BEAN_NAME = ConfigurationGbl.class.getName();

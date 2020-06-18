@@ -1,4 +1,4 @@
-package com.polaris.core.config.properties;
+package com.polaris.core.config.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
+
+import com.polaris.core.config.properties.ConfigurationPropertiesImport;
 
 /**
  * An annotation for Polaris configuration Properties for binding POJO as Properties Object.
