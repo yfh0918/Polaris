@@ -68,7 +68,7 @@ public class JwtUtil {
     public static String createJWT(long ttlMillis, Map<String, Object> user, String key,SignatureAlgorithm signatureAlgorithm) {
 
         //生成JWT的时间
-        long nowMillis = System.currentTimeMillis();
+        long nowMillis = SystemClock.now();
         Date now = new Date(nowMillis);
 
         //生成签发人

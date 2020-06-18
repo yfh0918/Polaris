@@ -13,7 +13,6 @@ import java.util.Enumeration;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-
 /**
  * @author:Tom.Yu
  *
@@ -131,7 +130,7 @@ public class NetUtils  {
 
     private static final int RND_PORT_RANGE = 10000;
 
-    private static final Random RANDOM = new Random(System.currentTimeMillis());
+    private static final Random RANDOM = new Random(SystemClock.now());
     private static final int MIN_PORT = 0;
     private static final int MAX_PORT = 65535;
     private static final Pattern ADDRESS_PATTERN = Pattern.compile("^\\d{1,3}(\\.\\d{1,3}){3}\\:\\d{1,5}$");
