@@ -1,14 +1,15 @@
 package com.polaris.core.notify;
 
+import java.util.EventListener;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 class EventEntry {
     final Class<? extends Event> eventType;
-    final CopyOnWriteArrayList<AbstractEventListener> listeners;
+    final CopyOnWriteArrayList<EventListener> listeners;
 
     EventEntry(Class<? extends Event> type) {
         eventType = type;
-        listeners = new CopyOnWriteArrayList<AbstractEventListener>();
+        listeners = new CopyOnWriteArrayList<EventListener>();
     }
 
     @Override

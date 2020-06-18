@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.polaris.core.notify.Event;
 
-public abstract class AbstractEventListener implements EventListener{
+public abstract class MultiEventListener implements EventListener{
     
-    public AbstractEventListener() {
+    public MultiEventListener() {
         /**
          * automatic register
          */
