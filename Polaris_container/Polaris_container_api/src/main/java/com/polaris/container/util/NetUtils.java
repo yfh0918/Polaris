@@ -130,13 +130,6 @@ public class NetUtils extends com.polaris.core.util.NetUtils{
         return address == null ? LOCALHOST : address.getHostAddress();
     }
 
-    
-
-    /**
-     * 閬嶅巻鏈湴缃戝崱锛岃繑鍥炵涓�涓悎鐞嗙殑IP銆�
-     *
-     * @return 鏈湴缃戝崱IP
-     */
     public static InetAddress getLocalAddress() {
         if (LOCAL_ADDRESS != null)
             return LOCAL_ADDRESS;
@@ -232,6 +225,4 @@ public class NetUtils extends com.polaris.core.util.NetUtils{
         sb.append(path);
         return sb.toString();
     }
-    
-
 }

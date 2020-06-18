@@ -1404,9 +1404,6 @@
                 <includes>
                     <include>**/*.*</include>
                 </includes>
-                <excludes>
-                	<exclude>**/config-*/</exclude>
-                </excludes>
             </resource>
         </resources>
 
