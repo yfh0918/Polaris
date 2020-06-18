@@ -68,7 +68,17 @@ public class EventPublisher {
         Type type = listener.getClass().getGenericSuperclass();
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
-            getEntry((Class<E>)(parameterizedType.getActualTypeArguments()[0])).listeners.addIfAbsent(listener);
+            Type[] args = parameterizedType.getActualTypeArguments();
+            if (args != null) {
+                for (Type arg : args) {
+                    try {
+                        getEntry((Class<E>)arg).listeners.addIfAbsent(listener);
+                        break;
+                    } catch (Exception ex) {
+                        continue;
+                    }
+                }
+            }
         }
         
     }
