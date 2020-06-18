@@ -42,9 +42,9 @@ public class ConfHandlerProxy implements ConfHandler{
         if (StringUtil.isEmpty(files)) {
             return;
         }
-        String[] fileArray = files.split(",");
         
         //target files loop
+        String[] fileArray = files.split(",");
         for (String fileName : fileArray) {
             if (getAndListen(fileName, type.getGroup()) == null) {
                 throw new ConfigException("type:"+type.name()+" file:"+fileName+" is not exsit");
