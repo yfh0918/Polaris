@@ -71,12 +71,12 @@ public abstract class WebComponentResister implements Initial, Naming{
                 Map<String, Object> attributes = ((ScannedGenericBeanDefinition)candidate).getMetadata()
                         .getAnnotationAttributes(getName());
                 if (attributes != null) {
-                    doHandler(attributes,(ScannedGenericBeanDefinition)candidate);
+                    doResister(attributes,(ScannedGenericBeanDefinition)candidate);
                 }
                 
             }
         }
     }
     
-    abstract protected void doHandler(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition);
+    abstract protected void doResister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition);
 }
