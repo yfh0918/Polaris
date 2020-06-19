@@ -16,56 +16,44 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.container.servlet.ServletContextHelper;
 import com.polaris.container.servlet.ServletOrder;
-import com.polaris.container.servlet.initializer.ExtensionInitializerAbs;
+import com.polaris.container.servlet.initializer.WebExtensionInitializer;
 
 @Order(ServletOrder.SPRINGMVC)
-public class SpringMvcInitializer extends  ExtensionInitializerAbs { 
+public class SpringMvcInitializer implements WebExtensionInitializer { 
 	final static Logger logger = LoggerFactory.getLogger(SpringMvcInitializer.class);
 	SpringMvcInnerInitializer initializer = null;
 
 	@Override
-	public void addInitParameter() {
-		super.addInitParameter();
-	}
-
-	@Override
-	public void addListener() {
-		super.addListener();
-	}
-
-	@Override
-	public void addFilter() {
-		super.addFilter();
-	} 
-	
-    @Override
-    public void addServlet() {
-        initializer = new SpringMvcInnerInitializer(); 
+    public void onStartup(ServletContext servletContext) {
+	    initializer = new SpringMvcInnerInitializer(); 
         try {
-            initializer.onStartup(this.servletContext);
+            initializer.onStartup(servletContext);
         } catch (ServletException e) {
             logger.error("SpringMvcInnerInitializer onStartup Error:{}",e);
         }
-    } 
+    }
+	
+    
 
 	@EnableWebMvc
 	protected static class SpringMvcInnerInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 		private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 		private ServletContext servletContext;
+		private WebApplicationContext context;
 
 		@Override
-		public void onStartup(ServletContext servletContext) throws ServletException {
+		public void onStartup(ServletContext servletContextImpl) throws ServletException {
 			if (!initialized.compareAndSet(false, true)) {
 	            return;
 	        }
-			this.servletContext = servletContext;
+			servletContext = servletContextImpl;
 			super.onStartup(servletContext);
+			ServletContextHelper.loadServletContext((ConfigurableApplicationContext)context, servletContext,false);
 		}
 		
 		@Override
 		protected WebApplicationContext createRootApplicationContext() {
-			WebApplicationContext context = super.createRootApplicationContext();
-			ServletContextHelper.loadServletContext((ConfigurableApplicationContext)context, this.servletContext,false);
+			context = super.createRootApplicationContext();
 			return context;
 		}
 		
@@ -87,7 +75,5 @@ public class SpringMvcInitializer extends  ExtensionInitializerAbs {
 		public static boolean isInitialized () {
 			return initialized.get();
 		}
-		
-
 	}
 }

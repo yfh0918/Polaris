@@ -51,8 +51,8 @@ public class SpringUtil {
     
     public static void refresh(Class<?>... clazz) {
 		context = createApplicationContext(clazz);
-		if (context instanceof AnnotationConfigApplicationContext) {
-			((AnnotationConfigApplicationContext)context).refresh();
+		if (context instanceof ConfigurableApplicationContext) {
+			((ConfigurableApplicationContext)context).refresh();
 		} else {
 			throw new RuntimeException("context can't refresh");
 		}

@@ -13,22 +13,22 @@ import javax.servlet.ServletException;
 import com.polaris.core.OrderWrapper;
 
 @SuppressWarnings("rawtypes")
-public class ServletInitializerImpl implements  ServletContainerInitializer { 
+public class WebServletInitializerImpl implements  ServletContainerInitializer { 
 	
-	private static final ServiceLoader<ExtensionInitializer> servlets = ServiceLoader.load(ExtensionInitializer.class);
+	private static final ServiceLoader<WebExtensionInitializer> servlets = ServiceLoader.load(WebExtensionInitializer.class);
 	private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
 	private static List<OrderWrapper> servletList = new ArrayList<OrderWrapper>();
-    private static volatile ExtensionInitializer extensionInitializer;
+    private static volatile WebExtensionInitializer extensionInitializer;
 
     public void onStartup(Set<Class<?>> requestFirstFilters, ServletContext servletContext)  throws ServletException {
 		
     	//初始化
 		if (initialized.compareAndSet(false, true)) {
-			for (ExtensionInitializer extensionInitializer : servlets) {
+			for (WebExtensionInitializer extensionInitializer : servlets) {
 	    		OrderWrapper.insertSorted(servletList, extensionInitializer);
 	        }
 	    	if (servletList.size() > 0) {
-	    		extensionInitializer = (ExtensionInitializer)servletList.get(0).getHandler();
+	    		extensionInitializer = (WebExtensionInitializer)servletList.get(0).getHandler();
 	    	}
 		}
 		

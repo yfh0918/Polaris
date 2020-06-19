@@ -1,4 +1,4 @@
-package com.polaris.demo.config;
+package com.polaris.demo.configurer;
 
 import java.io.IOException;
 

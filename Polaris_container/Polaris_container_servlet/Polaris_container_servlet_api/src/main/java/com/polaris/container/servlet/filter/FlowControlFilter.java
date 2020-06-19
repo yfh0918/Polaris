@@ -1,6 +1,7 @@
 package com.polaris.container.servlet.filter;
 
 import java.io.IOException;
+import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -49,11 +50,23 @@ public class FlowControlFilter implements Filter {
 	//流量控制信息
 	private static final String FLOW_CONTROL_MESSAGE = "请求已满，请稍后再试";
 	
+	//外部传入阐述
+	private Properties properties;
+	public void load(Properties properties) {
+	    this.properties = properties;
+	}
+	private String get(String key) {
+	    if (properties != null && properties.containsKey(key)) {
+	        return properties.getProperty(key);
+	    }
+	    return ConfClient.get(key);
+	}
+	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		
 		//application.properties中定义的最大线程数
-		String p = ConfClient.get("server.flowcontrol.permits");
+		String p = get("server.flowcontrol.permits");
 		if(p != null) {
 			permits = Integer.parseInt(p);
 			if(permits < 0) {
@@ -62,7 +75,7 @@ public class FlowControlFilter implements Filter {
 		}
 
 		//application.properties中定义的最大等待时间
-		String t = ConfClient.get("server.flowcontrol.timeout");
+		String t = get("server.flowcontrol.timeout");
 		if(t != null) {
 			timeout = Long.parseLong(t);
 			if(timeout < 1) {
@@ -71,7 +84,7 @@ public class FlowControlFilter implements Filter {
 		}
 
 		//application.properties中定义的等待队列的最大尺度
-		String b = ConfClient.get("server.flowcontrol.bufferSize");
+		String b = get("server.flowcontrol.bufferSize");
 		if(b != null) {
 			bufferSize = Integer.parseInt(b);
 			if(bufferSize < 0) {
