@@ -1,6 +1,7 @@
 package com.polaris.container.servlet.initializer;
 
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public abstract class ComponentScanRegister implements Initial{
     @Override
     public void init() {
         Set<ScannedGenericBeanDefinition> candidateComponents = getCandidateComponents();
-        if (candidateComponents == null || getCandidateComponents().size() == 0) {
+        if (candidateComponents == null || candidateComponents.size() == 0) {
             candidateComponents = findCandidateComponents(getTypeFilters());
         }
         registerCandidateComponents(candidateComponents);
@@ -43,7 +44,11 @@ public abstract class ComponentScanRegister implements Initial{
     public Set<ScannedGenericBeanDefinition> getCandidateComponents() {
         return new HashSet<>();
     }
-    abstract public List<AnnotationTypeFilter> getTypeFilters();
+    public List<AnnotationTypeFilter> getTypeFilters() {
+        List<AnnotationTypeFilter> servletComponentTypeFilters = new ArrayList<>();
+        servletComponentTypeFilters.add(new AnnotationTypeFilter(annotationType));
+        return servletComponentTypeFilters;
+    } 
     
     protected Set<ScannedGenericBeanDefinition> findCandidateComponents(List<AnnotationTypeFilter> typeFilters) {
         requires();
@@ -77,8 +82,7 @@ public abstract class ComponentScanRegister implements Initial{
         }
     }
     
-    protected void doRegister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
-    }
+    abstract protected void doRegister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition);
     
     protected void requires() {
         Requires.requireNonNull(springContext,"ConfigurableApplicationContext is null");

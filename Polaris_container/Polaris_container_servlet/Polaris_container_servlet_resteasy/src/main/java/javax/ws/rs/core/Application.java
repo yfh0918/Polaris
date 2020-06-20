@@ -39,16 +39,12 @@
  */
 package javax.ws.rs.core;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.ws.rs.Path;
-
-import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import com.polaris.container.servlet.initializer.ComponentScanRegister;
 import com.polaris.container.servlet.initializer.ServletContextHelper;
@@ -74,17 +70,10 @@ import com.polaris.core.util.SpringUtil;
  * @author Marek Potociar
  * @since 1.0
  */
-public class Application extends ComponentScanRegister{
+public abstract class Application extends ComponentScanRegister{
 
     protected static Set<Object> singletons = new LinkedHashSet<Object>();
     protected static Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
-    
-    @Override
-    public List<AnnotationTypeFilter> getTypeFilters() {
-        List<AnnotationTypeFilter> servletComponentTypeFilters = new ArrayList<>();
-        servletComponentTypeFilters.add(new AnnotationTypeFilter(Path.class));
-        return  Collections.unmodifiableList(servletComponentTypeFilters);
-    }
     
     public Application() {
         super(SpringUtil.getApplicationContext(), ServletContextHelper.getServletContext(), Path.class);

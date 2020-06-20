@@ -1,9 +1,6 @@
 package com.polaris.container.servlet.initializer;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,7 +12,6 @@ import javax.websocket.server.ServerEndpointConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import com.polaris.container.Server;
 import com.polaris.container.listener.ServerListener;
@@ -51,13 +47,6 @@ public class WebSocketRegister implements ServerListenerExtension {
                 }
             }
         }
-        
-        @Override
-        public List<AnnotationTypeFilter> getTypeFilters() {
-            List<AnnotationTypeFilter> servletComponentTypeFilters = new ArrayList<>();
-            servletComponentTypeFilters.add(new AnnotationTypeFilter(ServerEndpoint.class));
-            return Collections.unmodifiableList(servletComponentTypeFilters);
-        } 
         
         @Override
         protected void doRegister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
