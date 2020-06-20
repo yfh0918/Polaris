@@ -58,10 +58,6 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
         protected String[] getServletMappings() {
             return new String[] { "/" };
         }
-        
-        public static boolean isInitialized () {
-            return initialized.get();
-        }
     }
 
 }

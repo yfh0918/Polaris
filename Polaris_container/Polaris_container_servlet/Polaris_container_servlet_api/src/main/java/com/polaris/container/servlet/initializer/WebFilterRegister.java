@@ -108,12 +108,10 @@ public class WebFilterRegister extends WebComponentRegister{
     }
     
     private void addFilterToServletContext() {
-        //trace -first
-        servletContext.addFilter("TraceFilter", new TraceFilter())
-                      .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
+        FilterRegistration.Dynamic dynamic = servletContext.addFilter("TraceFilter", new TraceFilter());
+        dynamic.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 
         for (WebFilterBean filterBean : filterBeans) {
-            FilterRegistration.Dynamic dynamic = null;
             if (filterBean.getFilter() == null) {
                 dynamic = servletContext.addFilter(filterBean.getFilterName(),filterBean.getFilterClass());
             } else {
