@@ -1,14 +1,21 @@
 package com.polaris.demo;
 
 
+import java.io.IOException;
 import java.util.Properties;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebListener;
 
-import org.springframework.stereotype.Component;
+import org.springframework.core.annotation.Order;
 
 import com.polaris.container.ServerRunner;
 import com.polaris.container.annotation.PolarisApplication;
@@ -69,7 +76,6 @@ public class DemoApplication
     
    }
     
-    @Component
     @WebInitParam(name="afdddddddddd",value="ddddddddddddd")
     @WebListener
     static public class MyServletContextListener implements ServletContextListener {
@@ -85,5 +91,21 @@ public class DemoApplication
             }
      
     
+    }
+    
+    @WebFilter(filterName="demofilter",urlPatterns={"/*"}, initParams={
+            @WebInitParam(name = "noLoginPaths", value = "index.jsp;fail.jsp;/LoginServlet")
+            })
+    @Order(2)
+    static public class DemoFilter implements Filter {
+
+        @Override
+        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+                throws IOException, ServletException {
+            System.out.println("DemoFilter");
+            System.out.println(request.getServletContext().getInitParameter("testdemo"));
+            chain.doFilter(request, response);
+        }
+
     }
 }

@@ -3,8 +3,10 @@ package com.polaris.container.servlet.initializer;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.annotation.WebFilter;
@@ -28,7 +30,7 @@ public abstract class WebComponentRegister implements Initial{
     protected Class<? extends Annotation> annotationType;
 
     private static final List<AnnotationTypeFilter> TYPE_FILTERS;
-    private static ClassPathScanningCandidateComponentProvider componentProvider;
+    private static Set<ScannedGenericBeanDefinition> candidateComponents = new HashSet<>();
 
     static {
         List<AnnotationTypeFilter> servletComponentTypeFilters = new ArrayList<>();
@@ -55,36 +57,37 @@ public abstract class WebComponentRegister implements Initial{
     
     @Override
     public void init() {
-        Class<?>[] clazz = ConfigurationHelper.getClasses();
-        for (int i0 = 0; i0 < clazz.length; i0++) {
-            scanPackage(clazz[i0].getPackage().getName());
-        }
+        findCandidateComponents();
+        registerCandidateComponents();
     }
-    private void createComponentProvider() {
-        if (componentProvider != null) {
+    private void findCandidateComponents() {
+        if (candidateComponents.size() > 0) {
             return;
         }
-        componentProvider = new ClassPathScanningCandidateComponentProvider(
+        ClassPathScanningCandidateComponentProvider componentProvider = new ClassPathScanningCandidateComponentProvider(
                 false);
         componentProvider.setEnvironment(this.springContext.getEnvironment());
         componentProvider.setResourceLoader(this.springContext);
         for (AnnotationTypeFilter typeFilter : TYPE_FILTERS) {
             componentProvider.addIncludeFilter(typeFilter);
         }
-    }
-    
-    private void scanPackage(String packageToScan) {
-        createComponentProvider();
-        for (BeanDefinition candidate : componentProvider
-                .findCandidateComponents(packageToScan)) {
-            if (candidate instanceof ScannedGenericBeanDefinition) {
-                
-                Map<String, Object> attributes = ((ScannedGenericBeanDefinition)candidate).getMetadata()
-                        .getAnnotationAttributes(annotationType.getName());
-                if (attributes != null) {
-                    doRegister(attributes,(ScannedGenericBeanDefinition)candidate);
+        Class<?>[] clazz = ConfigurationHelper.getClasses();
+        for (int i0 = 0; i0 < clazz.length; i0++) {
+            for (BeanDefinition candidate : componentProvider
+                    .findCandidateComponents(clazz[i0].getPackage().getName())) {
+                if (candidate instanceof ScannedGenericBeanDefinition) {
+                    candidateComponents.add((ScannedGenericBeanDefinition)candidate);
                 }
-                
+            }
+        }
+        
+    }
+    private void registerCandidateComponents() {
+        for (ScannedGenericBeanDefinition candidate : candidateComponents) {
+            Map<String, Object> attributes = ((ScannedGenericBeanDefinition)candidate).getMetadata()
+                    .getAnnotationAttributes(annotationType.getName());
+            if (attributes != null) {
+                doRegister(attributes,(ScannedGenericBeanDefinition)candidate);
             }
         }
     }
