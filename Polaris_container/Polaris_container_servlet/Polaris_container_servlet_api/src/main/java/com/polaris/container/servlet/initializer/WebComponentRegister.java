@@ -19,7 +19,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 public abstract class WebComponentRegister extends ComponentScanRegister{
 
     private static final List<AnnotationTypeFilter> TYPE_FILTERS;
-    private static Set<ScannedGenericBeanDefinition> candidateComponents = new HashSet<>();
+    private static Set<ScannedGenericBeanDefinition> CANDIDATE_COMPONENTS = new HashSet<>();
 
     static {
         List<AnnotationTypeFilter> servletComponentTypeFilters = new ArrayList<>();
@@ -40,10 +40,11 @@ public abstract class WebComponentRegister extends ComponentScanRegister{
     }
     
     @Override
-    public void init() {
-        if (candidateComponents.size() == 0) {
-            candidateComponents = findCandidateComponents(TYPE_FILTERS);
-        }
-        registerCandidateComponents(candidateComponents);
+    public List<AnnotationTypeFilter> getTypeFilters() {
+        return TYPE_FILTERS;
+    }
+    
+    public Set<ScannedGenericBeanDefinition> getCandidateComponents() {
+        return CANDIDATE_COMPONENTS;
     }
 }

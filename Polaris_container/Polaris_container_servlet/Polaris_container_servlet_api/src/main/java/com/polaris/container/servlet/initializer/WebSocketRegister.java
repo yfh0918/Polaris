@@ -1,10 +1,12 @@
 package com.polaris.container.servlet.initializer;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
 import javax.websocket.DeploymentException;
 import javax.websocket.server.ServerContainer;
 import javax.websocket.server.ServerEndpoint;
@@ -12,13 +14,14 @@ import javax.websocket.server.ServerEndpointConfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ScannedGenericBeanDefinition;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import com.polaris.container.Server;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerExtension;
 import com.polaris.core.component.LifeCycle;
-import com.polaris.core.util.SpringUtil;
+import com.polaris.core.exception.ServletContextException;
 
 public class WebSocketRegister implements ServerListenerExtension {
 
@@ -27,7 +30,7 @@ public class WebSocketRegister implements ServerListenerExtension {
         return new ServerListener[] {new WSEndpointExporter()};
     }
 
-    public static class WSEndpointExporter implements ServerListener{
+    public static class WSEndpointExporter extends ComponentScanRegister implements ServerListener{
         private static Logger logger = LoggerFactory.getLogger(WSEndpointExporter.class);
         
         @javax.annotation.Nullable
@@ -38,11 +41,30 @@ public class WebSocketRegister implements ServerListenerExtension {
         @Override
         public void started(LifeCycle event) {
             if (event instanceof Server) {
-                ServletContext servletContext = ServletContextHelper.getServletContext(((Server)event).getContext());
+                springContext = ((Server)event).getContext();
+                servletContext = ServletContextHelper.getServletContext(springContext);
+                annotationType = ServerEndpoint.class;
                 if (servletContext != null) {
-                    ServerContainer serverContainer = (ServerContainer) servletContext.getAttribute("javax.websocket.server.ServerContainer");
+                    serverContainer = (ServerContainer) servletContext.getAttribute("javax.websocket.server.ServerContainer");
+                    init();
                     registerEndpoints(serverContainer);
                 }
+            }
+        }
+        
+        @Override
+        public List<AnnotationTypeFilter> getTypeFilters() {
+            List<AnnotationTypeFilter> servletComponentTypeFilters = new ArrayList<>();
+            servletComponentTypeFilters.add(new AnnotationTypeFilter(ServerEndpoint.class));
+            return Collections.unmodifiableList(servletComponentTypeFilters);
+        } 
+        
+        @Override
+        protected void doRegister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
+            try {
+                registerEndpoint(Class.forName(beanDefinition.getBeanClassName()));
+            } catch (ClassNotFoundException e) {
+                throw new ServletContextException(beanDefinition.getBeanClassName() + " is not found");
             }
         }
         
@@ -50,36 +72,14 @@ public class WebSocketRegister implements ServerListenerExtension {
          * Actually register the endpoints. Called by {@link #afterSingletonsInstantiated()}.
          */
         public void registerEndpoints(ServerContainer serverContainer) {
-            WSEndpointExporter.serverContainer = serverContainer;
-            Set<Class<?>> endpointClasses = new LinkedHashSet<>();
-
-
-            ApplicationContext context = SpringUtil.getApplicationContext();
-            if (context != null) {
-                String[] endpointBeanNames = context.getBeanNamesForAnnotation(ServerEndpoint.class);
-                for (String beanName : endpointBeanNames) {
-                    endpointClasses.add(context.getType(beanName));
-                }
-            }
-
-            for (Class<?> endpointClass : endpointClasses) {
-                registerEndpoint(endpointClass);
-            }
-            
             for (Class<?> endpointClass : endpointClassSet) {
                 registerEndpoint(endpointClass);
             }
             endpointClassSet.clear();
-            if (context != null) {
-                Map<String, ServerEndpointConfig> endpointConfigMap = context.getBeansOfType(ServerEndpointConfig.class);
-                for (ServerEndpointConfig endpointConfig : endpointConfigMap.values()) {
-                    registerEndpoint(endpointConfig);
-                }
-                for (ServerEndpointConfig endpointConfig : endpointConfigSet) {
-                    registerEndpoint(endpointConfig);
-                }
-                endpointConfigSet.clear();
+            for (ServerEndpointConfig endpointConfig : endpointConfigSet) {
+                registerEndpoint(endpointConfig);
             }
+            endpointConfigSet.clear();
         }
 
         public static void registerEndpoint(Class<?> endpointClass) {
@@ -112,7 +112,8 @@ public class WebSocketRegister implements ServerListenerExtension {
             catch (DeploymentException ex) {
                 throw new IllegalStateException("Failed to register ServerEndpointConfig: " + endpointConfig, ex);
             }
-        }   
+        }
+  
     }
 
 }

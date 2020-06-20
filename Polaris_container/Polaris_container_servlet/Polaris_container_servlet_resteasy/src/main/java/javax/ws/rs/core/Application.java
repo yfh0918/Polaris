@@ -41,7 +41,6 @@ package javax.ws.rs.core;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +48,6 @@ import java.util.Set;
 
 import javax.ws.rs.Path;
 
-import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import com.polaris.container.servlet.initializer.ComponentScanRegister;
@@ -78,24 +76,14 @@ import com.polaris.core.util.SpringUtil;
  */
 public class Application extends ComponentScanRegister{
 
-    //global var
-    private static final List<AnnotationTypeFilter> TYPE_FILTERS;
-    private static Set<ScannedGenericBeanDefinition> candidateComponents = new HashSet<>();
     protected static Set<Object> singletons = new LinkedHashSet<Object>();
     protected static Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
-
-    static {
-        List<AnnotationTypeFilter> servletComponentTypeFilters = new ArrayList<>();
-        servletComponentTypeFilters.add(new AnnotationTypeFilter(Path.class));
-        TYPE_FILTERS = Collections.unmodifiableList(servletComponentTypeFilters);
-    }
     
     @Override
-    public void init() {
-        if (candidateComponents.size() == 0) {
-            candidateComponents = findCandidateComponents(TYPE_FILTERS);
-        }
-        registerCandidateComponents(candidateComponents);
+    public List<AnnotationTypeFilter> getTypeFilters() {
+        List<AnnotationTypeFilter> servletComponentTypeFilters = new ArrayList<>();
+        servletComponentTypeFilters.add(new AnnotationTypeFilter(Path.class));
+        return  Collections.unmodifiableList(servletComponentTypeFilters);
     }
     
     public Application() {
@@ -173,5 +161,4 @@ public class Application extends ComponentScanRegister{
     public Map<String, Object> getProperties() {
         return Collections.emptyMap();
     }
-
 }

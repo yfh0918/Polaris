@@ -19,21 +19,34 @@ import com.polaris.core.component.Initial;
 import com.polaris.core.util.Requires;
 
 public abstract class ComponentScanRegister implements Initial{
-
     protected ConfigurableApplicationContext springContext;
     protected ServletContext servletContext;
     protected Class<? extends Annotation> annotationType;
 
+    public ComponentScanRegister() {
+    }
+    
     public ComponentScanRegister(ConfigurableApplicationContext springContext, ServletContext servletContext, Class<? extends Annotation> annotationType) {
-        Requires.requireNonNull(springContext,"ConfigurableApplicationContext is null");
-        Requires.requireNonNull(servletContext,"ServletContext is null");
-        Requires.requireNonNull(annotationType,"AnnotationType is null");
         this.springContext = springContext;
         this.servletContext = servletContext;
         this.annotationType = annotationType;
     }
     
+    @Override
+    public void init() {
+        Set<ScannedGenericBeanDefinition> candidateComponents = getCandidateComponents();
+        if (candidateComponents == null || getCandidateComponents().size() == 0) {
+            candidateComponents = findCandidateComponents(getTypeFilters());
+        }
+        registerCandidateComponents(candidateComponents);
+    }
+    public Set<ScannedGenericBeanDefinition> getCandidateComponents() {
+        return new HashSet<>();
+    }
+    abstract public List<AnnotationTypeFilter> getTypeFilters();
+    
     protected Set<ScannedGenericBeanDefinition> findCandidateComponents(List<AnnotationTypeFilter> typeFilters) {
+        requires();
         Set<ScannedGenericBeanDefinition> candidateComponents = new HashSet<>();
         ClassPathScanningCandidateComponentProvider componentProvider = new ClassPathScanningCandidateComponentProvider(
                 false);
@@ -54,6 +67,7 @@ public abstract class ComponentScanRegister implements Initial{
         return candidateComponents;
     }
     protected void registerCandidateComponents(Set<ScannedGenericBeanDefinition> candidateComponents) {
+        requires();
         for (ScannedGenericBeanDefinition candidate : candidateComponents) {
             Map<String, Object> attributes = ((ScannedGenericBeanDefinition)candidate).getMetadata()
                     .getAnnotationAttributes(annotationType.getName());
@@ -64,5 +78,11 @@ public abstract class ComponentScanRegister implements Initial{
     }
     
     protected void doRegister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
+    }
+    
+    protected void requires() {
+        Requires.requireNonNull(springContext,"ConfigurableApplicationContext is null");
+        Requires.requireNonNull(servletContext,"ServletContext is null");
+        Requires.requireNonNull(annotationType,"AnnotationType is null");
     }
 }
