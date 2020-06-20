@@ -11,7 +11,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.polaris.container.ServerOrder;
 import com.polaris.container.SpringContextServer;
 import com.polaris.container.config.ConfigurationHelper;
-import com.polaris.container.servlet.ServletContextHelper;
+import com.polaris.container.servlet.initializer.ServletContextHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringUtil;

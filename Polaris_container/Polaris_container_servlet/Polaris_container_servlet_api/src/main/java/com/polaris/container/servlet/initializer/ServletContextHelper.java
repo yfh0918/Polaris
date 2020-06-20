@@ -1,14 +1,10 @@
-package com.polaris.container.servlet;
+package com.polaris.container.servlet.initializer;
 
 import javax.servlet.ServletContext;
 
 import org.springframework.context.ConfigurableApplicationContext;
 
 import com.polaris.container.config.ConfigurationHelper;
-import com.polaris.container.servlet.initializer.WebFilterRegister;
-import com.polaris.container.servlet.initializer.WebInitParamRegister;
-import com.polaris.container.servlet.initializer.WebListenerRegister;
-import com.polaris.core.component.Initial;
 import com.polaris.core.exception.ServletContextException;
 import com.polaris.core.util.SpringUtil;
 
@@ -37,7 +33,7 @@ abstract public class ServletContextHelper {
         if (refreshSpringContext) {
             SpringUtil.refresh();
         } 
-        loadWebComponent(context, servletContext);
+        WebComponentRegister.loadWebComponent(context,servletContext);
     }
     
     /**
@@ -56,18 +52,5 @@ abstract public class ServletContextHelper {
             return (ServletContext)servletContext;
         }
         return null;
-    }
-    
-    /**
-    * load web initParam, webListener, webFilter from spring context
-    * 
-    */
-    private static void loadWebComponent(ConfigurableApplicationContext springContext, ServletContext servletContext) {
-        Initial webInitParamRegister  = new WebInitParamRegister(springContext,servletContext);
-        Initial webListenerRegister  = new WebListenerRegister(springContext,servletContext);
-        Initial webFilterRegister  = new WebFilterRegister(springContext,servletContext);
-        webInitParamRegister.init();
-        webListenerRegister.init();
-        webFilterRegister.init();
     }
 }

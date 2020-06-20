@@ -30,11 +30,11 @@ import org.springframework.util.StringUtils;
 import com.polaris.container.servlet.filter.TraceFilter;
 import com.polaris.core.exception.ServletContextException;
 
-public class WebFilterRegister extends WebComponentResister{
+public class WebFilterRegister extends WebComponentRegister{
     private static List<WebFilterBean> filterBeans = new CopyOnWriteArrayList<>();
     
     public WebFilterRegister(ConfigurableApplicationContext springContext, ServletContext servletContext) {
-        super(springContext,servletContext);
+        super(springContext,servletContext,WebFilter.class);
     }
     
     @Override
@@ -43,14 +43,9 @@ public class WebFilterRegister extends WebComponentResister{
         addFilterToServletContext();
     }
     
-    @Override
-    public String getName() {
-        return WebFilter.class.getName();
-    }
-
     @SuppressWarnings("unchecked")
     @Override
-    protected void doResister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
+    protected void doRegister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
         WebFilterBean filterBean = new WebFilterBean();
         filterBean.setAsyncSupported((Boolean)attributes.get("asyncSupported"));
         filterBean.setDispatcherTypes(extractDispatcherTypes(attributes));

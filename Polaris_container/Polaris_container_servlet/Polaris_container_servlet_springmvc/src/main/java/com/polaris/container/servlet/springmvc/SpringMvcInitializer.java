@@ -14,12 +14,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import com.polaris.container.config.ConfigurationHelper;
-import com.polaris.container.servlet.ServletContextHelper;
 import com.polaris.container.servlet.ServletOrder;
-import com.polaris.container.servlet.initializer.WebExtensionInitializer;
+import com.polaris.container.servlet.initializer.ServletContextHelper;
+import com.polaris.container.servlet.initializer.WebServletInitializerExtension;
 
 @Order(ServletOrder.SPRINGMVC)
-public class SpringMvcInitializer implements WebExtensionInitializer { 
+public class SpringMvcInitializer implements WebServletInitializerExtension { 
 	final static Logger logger = LoggerFactory.getLogger(SpringMvcInitializer.class);
 	SpringMvcInnerInitializer initializer = null;
 

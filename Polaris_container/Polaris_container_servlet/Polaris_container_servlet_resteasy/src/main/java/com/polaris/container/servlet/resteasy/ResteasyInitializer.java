@@ -5,12 +5,12 @@ import javax.servlet.ServletRegistration;
 
 import org.springframework.core.annotation.Order;
 
-import com.polaris.container.servlet.ServletContextHelper;
 import com.polaris.container.servlet.ServletOrder;
-import com.polaris.container.servlet.initializer.WebExtensionInitializer;
+import com.polaris.container.servlet.initializer.ServletContextHelper;
+import com.polaris.container.servlet.initializer.WebServletInitializerExtension;
 
 @Order(ServletOrder.RESTEASY)
-public class ResteasyInitializer implements WebExtensionInitializer { 
+public class ResteasyInitializer implements WebServletInitializerExtension { 
 	
     @Override
     public void onStartup(ServletContext servletContext) {

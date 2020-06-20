@@ -1,5 +1,6 @@
 package com.polaris.container.servlet.initializer;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.annotation.WebFilter;
+import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebListener;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -17,13 +19,13 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.component.Initial;
-import com.polaris.core.component.Naming;
 import com.polaris.core.util.Requires;
 
-public abstract class WebComponentResister implements Initial, Naming{
+public abstract class WebComponentRegister implements Initial{
 
     protected ConfigurableApplicationContext springContext;
     protected ServletContext servletContext;
+    protected Class<? extends Annotation> annotationType;
 
     private static final List<AnnotationTypeFilter> TYPE_FILTERS;
     private static ClassPathScanningCandidateComponentProvider componentProvider;
@@ -32,14 +34,23 @@ public abstract class WebComponentResister implements Initial, Naming{
         List<AnnotationTypeFilter> servletComponentTypeFilters = new ArrayList<>();
         servletComponentTypeFilters.add(new AnnotationTypeFilter(WebListener.class));
         servletComponentTypeFilters.add(new AnnotationTypeFilter(WebFilter.class));
+        servletComponentTypeFilters.add(new AnnotationTypeFilter(WebInitParam.class));
         TYPE_FILTERS = Collections.unmodifiableList(servletComponentTypeFilters);
     }
     
-    public WebComponentResister(ConfigurableApplicationContext springContext, ServletContext servletContext) {
+    public static void loadWebComponent(ConfigurableApplicationContext springContext, ServletContext servletContext) {
+        new WebInitParamRegister(springContext,servletContext).init();
+        new WebListenerRegister(springContext,servletContext).init();
+        new WebFilterRegister(springContext,servletContext).init();
+    }
+    
+    public WebComponentRegister(ConfigurableApplicationContext springContext, ServletContext servletContext, Class<? extends Annotation> annotationType) {
         Requires.requireNonNull(springContext,"ConfigurableApplicationContext is null");
         Requires.requireNonNull(servletContext,"ServletContext is null");
+        Requires.requireNonNull(annotationType,"AnnotationType is null");
         this.springContext = springContext;
         this.servletContext = servletContext;
+        this.annotationType = annotationType;
     }
     
     @Override
@@ -69,14 +80,14 @@ public abstract class WebComponentResister implements Initial, Naming{
             if (candidate instanceof ScannedGenericBeanDefinition) {
                 
                 Map<String, Object> attributes = ((ScannedGenericBeanDefinition)candidate).getMetadata()
-                        .getAnnotationAttributes(getName());
+                        .getAnnotationAttributes(annotationType.getName());
                 if (attributes != null) {
-                    doResister(attributes,(ScannedGenericBeanDefinition)candidate);
+                    doRegister(attributes,(ScannedGenericBeanDefinition)candidate);
                 }
                 
             }
         }
     }
     
-    abstract protected void doResister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition);
+    abstract protected void doRegister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition);
 }

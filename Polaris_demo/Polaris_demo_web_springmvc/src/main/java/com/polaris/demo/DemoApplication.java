@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebListener;
 
 import org.springframework.stereotype.Component;
@@ -68,6 +69,7 @@ public class DemoApplication
    }
     
     @Component
+    @WebInitParam(name="afdddddddddd",value="ddddddddddddd")
     @WebListener
     static public class MyServletContextListener implements ServletContextListener {
          @Override

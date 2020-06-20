@@ -17,7 +17,6 @@ import org.springframework.context.ApplicationContext;
 import com.polaris.container.Server;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerExtension;
-import com.polaris.container.servlet.ServletContextHelper;
 import com.polaris.core.component.LifeCycle;
 import com.polaris.core.util.SpringUtil;
 
