@@ -17,7 +17,6 @@ import com.polaris.container.servlet.initializer.ServletContextHelper;
 import com.polaris.container.servlet.initializer.WebFilterRegister;
 import com.polaris.container.servlet.initializer.WebInitParamRegister;
 import com.polaris.container.servlet.initializer.WebListenerRegister;
-import com.polaris.core.util.SpringUtil;
 
 public class SpringServletContainerInitializer implements ServletContainerInitializer {
 
@@ -43,7 +42,6 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
             new WebInitParamRegister((ConfigurableApplicationContext)context,servletContext).init();
             new WebListenerRegister((ConfigurableApplicationContext)context,servletContext).init();
             new WebFilterRegister((ConfigurableApplicationContext)context,servletContext).init();
-
         }
         
         @Override
