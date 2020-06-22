@@ -22,7 +22,7 @@ public class WebSocketRegister implements ServerListenerExtension {
         return new ServerListener[] {new WSEndpointExporter()};
     }
 
-    public static class WSEndpointExporter extends ComponentScanRegister implements ServerListener{
+    public static class WSEndpointExporter extends WebComponentRegister implements ServerListener{
         
         @javax.annotation.Nullable
         private ServerContainer serverContainer;

@@ -1,12 +1,8 @@
 package com.polaris.container.servlet.customize;
 
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.servlet.MultipartConfigElement;
@@ -20,18 +16,18 @@ import javax.servlet.annotation.WebServlet;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.core.type.filter.TypeFilter;
 
 import com.polaris.container.servlet.initializer.WebComponentRegister;
 import com.polaris.core.exception.ServletContextException;
 
 public class WebServletRegister extends WebComponentRegister{
     private final static List<WebServletBean> servletBeans = new CopyOnWriteArrayList<>();
-    private final static Set<ScannedGenericBeanDefinition> candidateComponents = new HashSet<>();
-    private final static Class<? extends Annotation> annotationType = WebServlet.class;
+    static {
+        WebComponentRegister.TYPE_FILTERS.add(new AnnotationTypeFilter(WebServlet.class));    
+    }
     
     public WebServletRegister(ConfigurableApplicationContext springContext, ServletContext servletContext) {
-        super(springContext,servletContext,annotationType);
+        super(springContext,servletContext,WebServlet.class);
     }
     
     @Override
@@ -51,18 +47,6 @@ public class WebServletRegister extends WebComponentRegister{
         servletBean.setUrlPatterns(extractUrlPatterns(attributes));
         servletBean.setMultipartConfig(determineMultipartConfig(beanDefinition));
         register(servletBean);    
-    }
-
-    @Override
-    public List<TypeFilter> getTypeFilters() {
-        List<TypeFilter> servletComponentTypeFilters = new ArrayList<>();
-        servletComponentTypeFilters.add(new AnnotationTypeFilter(annotationType));
-        return servletComponentTypeFilters;
-    }
-    
-    @Override
-    public Set<ScannedGenericBeanDefinition> getCandidateComponents() {
-        return candidateComponents;
     }
     
     private MultipartConfigElement determineMultipartConfig(

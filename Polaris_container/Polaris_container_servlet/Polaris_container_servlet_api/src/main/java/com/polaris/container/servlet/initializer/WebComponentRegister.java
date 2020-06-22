@@ -3,7 +3,6 @@ package com.polaris.container.servlet.initializer;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,29 +15,32 @@ import javax.servlet.ServletContext;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
 import javax.servlet.annotation.WebListener;
+import javax.websocket.server.ServerEndpoint;
+import javax.websocket.server.ServerEndpointConfig;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
 public abstract class WebComponentRegister extends ComponentScanRegister{
 
-    private static final List<TypeFilter> TYPE_FILTERS;
     private static Set<ScannedGenericBeanDefinition> CANDIDATE_COMPONENTS = new HashSet<>();
-
+    protected static final List<TypeFilter> TYPE_FILTERS = new ArrayList<>();
     static {
-        List<TypeFilter> servletComponentTypeFilters = new ArrayList<>();
-        servletComponentTypeFilters.add(new AnnotationTypeFilter(WebListener.class));
-        servletComponentTypeFilters.add(new AnnotationTypeFilter(WebFilter.class));
-        servletComponentTypeFilters.add(new AnnotationTypeFilter(WebInitParam.class));
-        TYPE_FILTERS = Collections.unmodifiableList(servletComponentTypeFilters);
+        TYPE_FILTERS.add(new AnnotationTypeFilter(WebListener.class));
+        TYPE_FILTERS.add(new AnnotationTypeFilter(WebFilter.class));
+        TYPE_FILTERS.add(new AnnotationTypeFilter(WebInitParam.class));
+        TYPE_FILTERS.add(new AnnotationTypeFilter(ServerEndpoint.class));
+        TYPE_FILTERS.add(new AssignableTypeFilter(ServerEndpointConfig.class));
     }
     
+    public WebComponentRegister() {}
     public WebComponentRegister(ConfigurableApplicationContext springContext, ServletContext servletContext, Class<? extends Annotation> annotationType) {
         super(springContext,servletContext,annotationType);
     }

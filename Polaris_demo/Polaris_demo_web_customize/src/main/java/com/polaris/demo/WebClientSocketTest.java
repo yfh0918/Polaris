@@ -29,7 +29,7 @@ public class WebClientSocketTest {
 
     protected boolean start() {
         WebSocketContainer Container = ContainerProvider.getWebSocketContainer();
-        String uri = "ws://localhost:9077/demowebnodubbo/websocket?parameter1=1&parmeter2=2";
+        String uri = "ws://localhost:9078/democustomize/websocket?parameter1=1&parmeter2=2";
         System.out.println("Connecting to " + uri);
         try {
         	session = Container.connectToServer(WebClientSocketTest.class, URI.create(uri));
