@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.EventListener;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 
@@ -21,18 +20,33 @@ public class EventPublisher {
      */
     public static void fireEvent(Event event) {
         checkNotNull(event);
-
-        for (EventListener listener : getEntry(event.getClass()).listeners) {
-            try {
-                if (listener instanceof MultiEventListener) {
-                    ((MultiEventListener)listener).onEvent(event);
-                } else {
-                    ((SingleEventListener)listener).onEvent(event);
-                }
-                
-            } catch (Exception e) {
-                log.error(e.toString(), e);
+        for (AbstractEventListener listener : getEntry(event.getClass()).listeners) {
+            if (listener.getExecutor() == null) {
+                fireEvent0(event,listener);
+            } else {
+                listener.getExecutor().execute(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            fireEvent0(event,listener);
+                        }
+                    }
+                ); 
             }
+            
+        }
+    }
+    
+    private static void fireEvent0(Event event, AbstractEventListener listener) {
+        try {
+            if (listener instanceof MultiEventListener) {
+                ((MultiEventListener)listener).onEvent(event);
+            } else {
+                ((SingleEventListener)listener).onEvent(event);
+            }
+            
+        } catch (Exception e) {
+            log.error(e.toString(), e);
         }
     }
     

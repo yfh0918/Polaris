@@ -1,8 +1,6 @@
 package com.polaris.core.notify;
 
-import java.util.EventListener;
-
-public abstract class SingleEventListener<E extends Event> implements EventListener{
+public abstract class SingleEventListener<E extends Event> extends AbstractEventListener{
     public SingleEventListener() {
         /**
          * automatic register

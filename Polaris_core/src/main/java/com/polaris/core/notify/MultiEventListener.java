@@ -1,11 +1,8 @@
 package com.polaris.core.notify;
 
-import java.util.EventListener;
 import java.util.List;
 
-import com.polaris.core.notify.Event;
-
-public abstract class MultiEventListener implements EventListener{
+public abstract class MultiEventListener extends AbstractEventListener{
     
     public MultiEventListener() {
         /**
