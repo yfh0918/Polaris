@@ -6,7 +6,7 @@ import java.util.Map;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.thread.PolarisInheritableThreadLocal;
 
-public class GlobalContext {
+public abstract class GlobalContext {
 	public static final String REQUEST = "request";
 	public static final String RESPONSE = "response";
 	public static final String TRACE_ID = "traceId";
@@ -52,27 +52,27 @@ public class GlobalContext {
 		return  ConfClient.getAppName();
 	}
 	//构造函数
-	private static final PolarisInheritableThreadLocal<Map<String, Object>> holder=new PolarisInheritableThreadLocal<Map<String,Object>>(){
+	private static final PolarisInheritableThreadLocal<Map<String, Object>> HOLDER=new PolarisInheritableThreadLocal<Map<String,Object>>(){
 		@Override protected Map<String,Object>initialValue(){
 			return new HashMap<String,Object>();
 		}
 	};
 
 	public static void setContext(String key, Object value) {
-		Map<String, Object> map = holder.get();
+		Map<String, Object> map = HOLDER.get();
 		map.put(key, value);
-		holder.set(map);
+		HOLDER.set(map);
 	}
 	public static Object getContext(String key) {
-		return holder.get().get(key);
+		return HOLDER.get().get(key);
 	}
 	public static void removeContext(String key) {
-		holder.get().remove(key);
+	    HOLDER.get().remove(key);
 	}
 	public static Map<String,Object> getContext() {
-		return holder.get();
+		return HOLDER.get();
 	}
 	public static void removeContext() {
-		holder.remove();
+	    HOLDER.remove();
 	}
 }
