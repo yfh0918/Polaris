@@ -89,12 +89,10 @@ public abstract class ComponentScanRegister implements Initial{
                             .getAnnotationAttributes(type.getName());
                     if (attributes != null) {
                         doRegister(type, attributes,(ScannedGenericBeanDefinition)candidate);
-                        break;
                     }
                 } else {
                     if (type.getName().equals(candidate.getBeanClassName())) {
                         doRegister(type, null,(ScannedGenericBeanDefinition)candidate);
-                        break;
                     }
                 }
             }
