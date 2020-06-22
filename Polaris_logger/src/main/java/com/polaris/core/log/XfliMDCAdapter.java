@@ -33,8 +33,8 @@ public class XfliMDCAdapter implements MDCAdapter {
     }
 
     @Override
-    @SuppressWarnings("unchecked") // nothing we can do about this, restricted by SLF4J API
-    public void setContextMap(@SuppressWarnings("rawtypes") final Map map) {
+    @SuppressWarnings({"unchecked","rawtypes"}) // nothing we can do about this, restricted by SLF4J API
+    public void setContextMap(final Map map) {
         ThreadContext.clearMap();
         for (final Map.Entry<String, String> entry : ((Map<String, String>) map).entrySet()) {
             ThreadContext.put(entry.getKey(), entry.getValue());
