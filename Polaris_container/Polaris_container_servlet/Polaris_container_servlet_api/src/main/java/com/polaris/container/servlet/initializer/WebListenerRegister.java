@@ -14,14 +14,14 @@ import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import com.polaris.core.exception.ServletContextException;
 
 public class WebListenerRegister extends WebComponentRegister{
-    private static final Set<Class <? extends EventListener>> webListenerSet = new LinkedHashSet<>();
+    private static final Set<Class <? extends EventListener>> WEB_LISTENS = new LinkedHashSet<>();
 
     public WebListenerRegister(ConfigurableApplicationContext springContext, ServletContext servletContext) {
         super(springContext,servletContext,WebListener.class);
     }
     
     public static void register(Class <? extends EventListener> listenerClass) {
-        webListenerSet.add(listenerClass);
+        WEB_LISTENS.add(listenerClass);
     }
     @Override
     public void init() {
@@ -33,14 +33,14 @@ public class WebListenerRegister extends WebComponentRegister{
     @Override
     protected void doRegister(Class<?> type, Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
         try {
-            webListenerSet.add((Class <? extends EventListener>)(Class.forName(beanDefinition.getBeanClassName())));
+            WEB_LISTENS.add((Class <? extends EventListener>)(Class.forName(beanDefinition.getBeanClassName())));
         } catch (ClassNotFoundException e) {
             throw new ServletContextException(beanDefinition.getBeanClassName() + " is not found");
         }
     }
     
     private void addListenerToServletContext() {
-        for (Class <? extends EventListener> listenerClass : webListenerSet) {
+        for (Class <? extends EventListener> listenerClass : WEB_LISTENS) {
             servletContext.addListener(listenerClass);
         }
     }

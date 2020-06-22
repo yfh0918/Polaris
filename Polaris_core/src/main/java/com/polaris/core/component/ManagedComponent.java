@@ -12,17 +12,16 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ManagedComponent extends LifeCyclePublisherWithListener {
 	final static Logger logger = LoggerFactory.getLogger(ManagedComponent.class);
-	
-    private static final CopyOnWriteArrayList<ManagedComponent> _managedComponents = new CopyOnWriteArrayList<>();
+    private static final CopyOnWriteArrayList<ManagedComponent> MANAGED_COMPONENTS = new CopyOnWriteArrayList<>();
 
 	@Override
 	public void started(LifeCycle component) {
 		if (component instanceof ManagedComponent) {
-			if (_managedComponents.contains((ManagedComponent)component)) {
+			if (MANAGED_COMPONENTS.contains((ManagedComponent)component)) {
 	    		return;
 	    	}
 	    	logger.debug("ManagedComponent add lifeCycle:{}",component.getClass().getName());
-	    	_managedComponents.add((ManagedComponent)component);
+	    	MANAGED_COMPONENTS.add((ManagedComponent)component);
 		}
 	}
 
@@ -30,7 +29,7 @@ public abstract class ManagedComponent extends LifeCyclePublisherWithListener {
 	public void stopped(LifeCycle component) {
 		if (component instanceof ManagedComponent) {
 			logger.debug("ManagedComponent remove component:{}",component.getClass().getName());
-	    	_managedComponents.remove((ManagedComponent)component);
+			MANAGED_COMPONENTS.remove((ManagedComponent)component);
 		}
 	}
 
@@ -38,7 +37,7 @@ public abstract class ManagedComponent extends LifeCyclePublisherWithListener {
 	 * called by ManagedComponentListener of ServerListenerHelper.
 	 */
 	public static void init() {
-		Iterator<ManagedComponent> iterator = _managedComponents.iterator();
+		Iterator<ManagedComponent> iterator = MANAGED_COMPONENTS.iterator();
 		while (iterator.hasNext()) {
 			ManagedComponent component = iterator.next();
 			logger.debug("ManagedComponent start component:{}",component.getClass().getName());
@@ -54,7 +53,7 @@ public abstract class ManagedComponent extends LifeCyclePublisherWithListener {
 	 * called by ManagedComponentListener of ServerListenerHelper.
 	 */
 	public static void destroy() {
-		Iterator<ManagedComponent> iterator = _managedComponents.iterator();
+		Iterator<ManagedComponent> iterator = MANAGED_COMPONENTS.iterator();
 		while (iterator.hasNext()) {
 			ManagedComponent component = iterator.next();
 	    	logger.debug("ManagedComponent stop component:{}",component.getClass().getName());

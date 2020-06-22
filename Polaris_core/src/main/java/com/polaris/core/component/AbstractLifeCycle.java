@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractLifeCycle implements LifeCycle ,LifeCycleState{
     private static final Logger LOG = LoggerFactory.getLogger(AbstractLifeCycle.class);
 
-    private final Object _lock = new Object();
-    private volatile int _state = STATE_STOPPED;
+    private final Object LOCK = new Object();
+    private volatile int STATE = STATE_STOPPED;
 
     protected void doStart() throws Exception {
     }
@@ -20,9 +20,9 @@ public abstract class AbstractLifeCycle implements LifeCycle ,LifeCycleState{
 
     @Override
     public final void start() throws Exception{
-        synchronized (_lock) {
+        synchronized (LOCK) {
             try {
-                if (_state == STATE_STARTED || _state == STATE_STARTING) {
+                if (STATE == STATE_STARTED || STATE == STATE_STARTING) {
                     return;
                 }
                 setStarting();
@@ -37,9 +37,9 @@ public abstract class AbstractLifeCycle implements LifeCycle ,LifeCycleState{
 
     @Override
     public final void stop() throws Exception{
-        synchronized (_lock) {
+        synchronized (LOCK) {
             try {
-                if (_state == STATE_STOPPING || _state == STATE_STOPPED) {
+                if (STATE == STATE_STOPPING || STATE == STATE_STOPPED) {
                     return;
                 }
                 setStopping();
@@ -55,38 +55,38 @@ public abstract class AbstractLifeCycle implements LifeCycle ,LifeCycleState{
     @Override
     public boolean isRunning()
     {
-        final int state = _state;
+        final int state = STATE;
 
         return state == STATE_STARTED || state == STATE_STARTING;
     }
 
     @Override
     public boolean isStarted() {
-        return _state == STATE_STARTED;
+        return STATE == STATE_STARTED;
     }
 
     @Override
     public boolean isStarting() {
-        return _state == STATE_STARTING;
+        return STATE == STATE_STARTING;
     }
 
     @Override
     public boolean isStopping() {
-        return _state == STATE_STOPPING;
+        return STATE == STATE_STOPPING;
     }
 
     @Override
     public boolean isStopped() {
-        return _state == STATE_STOPPED;
+        return STATE == STATE_STOPPED;
     }
 
     @Override
     public boolean isFailed() {
-        return _state == STATE_FAILED;
+        return STATE == STATE_FAILED;
     }
 
     public String getState()  {
-        switch (_state)
+        switch (STATE)
         {
             case STATE_FAILED:
                 return FAILED;
@@ -103,35 +103,35 @@ public abstract class AbstractLifeCycle implements LifeCycle ,LifeCycleState{
     }
 
     protected void setStarted() {
-        _state = STATE_STARTED;
+        STATE = STATE_STARTED;
         if (LOG.isDebugEnabled()) {
             LOG.debug("started {}", this);
         }
     }
 
     protected void setStarting() {
-        _state = STATE_STARTING;
+        STATE = STATE_STARTING;
         if (LOG.isDebugEnabled()) {
             LOG.debug("starting {}", this);
         }
     }
 
     protected void setStopping() {
-        _state = STATE_STOPPING;
+        STATE = STATE_STOPPING;
         if (LOG.isDebugEnabled()) {
             LOG.debug("stopping {}", this);
         }
     }
 
     protected void setStopped() {
-        _state = STATE_STOPPED;
+        STATE = STATE_STOPPED;
         if (LOG.isDebugEnabled()) {
             LOG.debug("{} {}", STOPPED, this);
         }
     }
 
     protected void setFailed(Throwable th) {
-        _state = STATE_FAILED;
+        STATE = STATE_FAILED;
         if (LOG.isDebugEnabled()) {
             LOG.warn(FAILED + " " + this + ": " + th, th);
         }

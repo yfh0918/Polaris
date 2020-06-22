@@ -26,7 +26,7 @@ import com.polaris.container.servlet.filter.TraceFilter;
 import com.polaris.core.exception.ServletContextException;
 
 public class WebFilterRegister extends WebComponentRegister{
-    private static final List<WebFilterBean> filterBeans = new CopyOnWriteArrayList<>();
+    private static final List<WebFilterBean> FILTER_BEANS = new CopyOnWriteArrayList<>();
     
     public WebFilterRegister(ConfigurableApplicationContext springContext, ServletContext servletContext) {
         super(springContext,servletContext,WebFilter.class);
@@ -64,7 +64,7 @@ public class WebFilterRegister extends WebComponentRegister{
         FilterRegistration.Dynamic dynamic = servletContext.addFilter("TraceFilter", new TraceFilter());
         dynamic.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 
-        for (WebFilterBean filterBean : filterBeans) {
+        for (WebFilterBean filterBean : FILTER_BEANS) {
             if (filterBean.getFilter() == null) {
                 dynamic = servletContext.addFilter(filterBean.getFilterName(),filterBean.getFilterClass());
             } else {
@@ -82,8 +82,8 @@ public class WebFilterRegister extends WebComponentRegister{
     }
     
     public static void register(WebFilterBean filterBean) {
-        filterBeans.add(filterBean);
-        Collections.sort(filterBeans, new WebFilterBeanCompare());
+        FILTER_BEANS.add(filterBean);
+        Collections.sort(FILTER_BEANS, new WebFilterBeanCompare());
     }
     
     static public class WebFilterBean {

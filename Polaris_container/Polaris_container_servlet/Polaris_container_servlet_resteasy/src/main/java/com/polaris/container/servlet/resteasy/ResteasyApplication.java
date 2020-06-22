@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 import com.polaris.core.exception.ServletContextException;
 
 public class ResteasyApplication extends Application {
-    protected final static Set<Object> singletons = new LinkedHashSet<Object>();
-    protected final static Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+    protected final static Set<Object> SINGLETONS = new LinkedHashSet<Object>();
+    protected final static Set<Class<?>> CLASSES = new LinkedHashSet<Class<?>>();
 
     @Override
     protected void doRegister(Class<?> type, Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
@@ -23,13 +23,13 @@ public class ResteasyApplication extends Application {
             Class<?> beanClass = Class.forName(beanDefinition.getBeanClassName());
             Component springComponent = AnnotationUtils.findAnnotation(beanClass, Component.class);
             if (springComponent == null) {
-                classes.add(beanClass);
+                CLASSES.add(beanClass);
             } else {
                 Scope springScope = AnnotationUtils.findAnnotation(beanClass, Scope.class);
                 if (springScope != null && springScope.value().equals("prototype")) {
-                    classes.add(beanClass);
+                    CLASSES.add(beanClass);
                 } else {
-                    singletons.add(springContext.getBean(beanClass));
+                    SINGLETONS.add(springContext.getBean(beanClass));
                 }
             }
         } catch (ClassNotFoundException e) {
@@ -38,10 +38,10 @@ public class ResteasyApplication extends Application {
     }
     
     public Set<Class<?>> getClasses() {
-        return classes;
+        return CLASSES;
     }
 
     public Set<Object> getSingletons() {
-        return singletons;
+        return SINGLETONS;
     }
 }
