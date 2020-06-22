@@ -50,7 +50,8 @@
 8,如何启动，打开eclipse后启动xxxApplication.java文件（注解@PolarisApplication） 
  总要，为了加快启动速度，请把Polaris_launcher放置到依赖包的最前面
 
-  8.1 pom.xml中提供 tomcat和jetty两种启动模式,并且提供resteasy和springmvc组合的方式
+  8.1 pom.xml中提供 tomcat和jetty两种启动模式,并且提供resteasy,springmvc,自定义customize三种组合的方式
+      customize模式，支持@WebServlet注解和手动注入两种，详细请参考Polaris_demo_web_customize模块
       具体参考pom.xml
 	  <dependency>
             <groupId>com.polaris</groupId>
@@ -62,7 +63,7 @@
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_container_servlet_springmvc</artifactId> ->可修改成Polaris_container_resteasy
+            <artifactId>Polaris_container_servlet_springmvc</artifactId> ->可修改成Polaris_container_resteasy或Polaris_container_customize
         </dependency>
 	<dependency>
             <groupId>com.polaris</groupId>
