@@ -33,7 +33,9 @@ abstract public class ServletContextHelper {
         if (refreshSpringContext) {
             SpringUtil.refresh();
         } 
-        WebComponentRegister.loadWebComponent(context,servletContext);
+        new WebInitParamRegister(context,servletContext).init();
+        new WebListenerRegister(context,servletContext).init();
+        new WebFilterRegister(context,servletContext).init();
     }
     
     /**

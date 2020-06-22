@@ -63,6 +63,9 @@ public class ConfHandlerProxy implements ConfHandler{
         if (configHandlerList.size() > 0) {
             handler = (ConfHandler)configHandlerList.get(0).getHandler();
         }
+        if (handler == null) {
+            throw new ConfigException("Excepiton caused by ConfHandler is null");
+        }
         return handler;
     }
 

@@ -14,6 +14,7 @@
 	<module>Polaris_container_servlet_api</module>
 	<module>Polaris_container_servlet_resteasy</module>
 	<module>Polaris_container_servlet_springmvc</module>
+	<module>Polaris_container_servlet_customize</module>
   </modules>
   <dependencies>
   		<dependency>

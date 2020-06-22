@@ -12,11 +12,11 @@ import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
 import com.polaris.core.exception.ServletContextException;
-import com.polaris.core.util.SpringUtil;
 
 public class ResteasyApplication extends Application {
-    protected Set<Object> singletons = new LinkedHashSet<Object>();
-    protected Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+    protected final static Set<Object> singletons = new LinkedHashSet<Object>();
+    protected final static Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+
     @Override
     protected void doRegister(Class<?> type, Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
         try {
@@ -29,7 +29,7 @@ public class ResteasyApplication extends Application {
                 if (springScope != null && springScope.value().equals("prototype")) {
                     classes.add(beanClass);
                 } else {
-                    singletons.add(SpringUtil.getApplicationContext().getBean(beanClass));
+                    singletons.add(springContext.getBean(beanClass));
                 }
             }
         } catch (ClassNotFoundException e) {

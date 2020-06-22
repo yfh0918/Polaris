@@ -1,6 +1,5 @@
 package com.polaris.container.servlet.initializer;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -17,21 +16,17 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.Order;
-import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 import com.polaris.container.servlet.filter.TraceFilter;
 import com.polaris.core.exception.ServletContextException;
 
 public class WebFilterRegister extends WebComponentRegister{
-    private static List<WebFilterBean> filterBeans = new CopyOnWriteArrayList<>();
+    private static final List<WebFilterBean> filterBeans = new CopyOnWriteArrayList<>();
     
     public WebFilterRegister(ConfigurableApplicationContext springContext, ServletContext servletContext) {
         super(springContext,servletContext,WebFilter.class);
@@ -49,7 +44,7 @@ public class WebFilterRegister extends WebComponentRegister{
         WebFilterBean filterBean = new WebFilterBean();
         filterBean.setAsyncSupported((Boolean)attributes.get("asyncSupported"));
         filterBean.setDispatcherTypes(extractDispatcherTypes(attributes));
-        filterBean.setFilterName(determineName(attributes, beanDefinition));
+        filterBean.setFilterName(determineName(attributes, beanDefinition,"filterName"));
         try {
             Class<? extends Filter> filterClass = (Class<? extends Filter>)(Class.forName(beanDefinition.getBeanClassName()));
             Order order = AnnotationUtils.findAnnotation(filterClass, Order.class);
@@ -62,49 +57,7 @@ public class WebFilterRegister extends WebComponentRegister{
         }
         filterBean.setInitParams(extractInitParameters(attributes));
         filterBean.setUrlPatterns(extractUrlPatterns(attributes));
-        register(filterBean);    }
-    
-    private Map<String, String> extractInitParameters(
-            Map<String, Object> attributes) {
-        Map<String, String> initParameters = new HashMap<>();
-        for (AnnotationAttributes initParam : (AnnotationAttributes[]) attributes
-                .get("initParams")) {
-            String name = (String) initParam.get("name");
-            String value = (String) initParam.get("value");
-            initParameters.put(name, value);
-        }
-        return initParameters;
-    }
-    
-    private EnumSet<DispatcherType> extractDispatcherTypes(
-            Map<String, Object> attributes) {
-        DispatcherType[] dispatcherTypes = (DispatcherType[]) attributes
-                .get("dispatcherTypes");
-        if (dispatcherTypes.length == 0) {
-            return EnumSet.noneOf(DispatcherType.class);
-        }
-        if (dispatcherTypes.length == 1) {
-            return EnumSet.of(dispatcherTypes[0]);
-        }
-        return EnumSet.of(dispatcherTypes[0],
-                Arrays.copyOfRange(dispatcherTypes, 1, dispatcherTypes.length));
-    }
-
-    private String determineName(Map<String, Object> attributes,
-            BeanDefinition beanDefinition) {
-        return (String) (StringUtils.hasText((String) attributes.get("filterName"))
-                ? attributes.get("filterName") : beanDefinition.getBeanClassName());
-    }
-
-    private String[] extractUrlPatterns(Map<String, Object> attributes) {
-        String[] value = (String[]) attributes.get("value");
-        String[] urlPatterns = (String[]) attributes.get("urlPatterns");
-        if (urlPatterns.length > 0) {
-            Assert.state(value.length == 0,
-                    "The urlPatterns and value attributes are mutually exclusive.");
-            return urlPatterns;
-        }
-        return value;
+        register(filterBean);    
     }
     
     private void addFilterToServletContext() {
@@ -122,6 +75,9 @@ public class WebFilterRegister extends WebComponentRegister{
             for (Map.Entry<String, String> entry : filterBean.getInitParams().entrySet()) {
                 dynamic.setInitParameter(entry.getKey(),entry.getValue());
             }
+            if (filterBean.getServletNames() != null && filterBean.getServletNames().length > 0) {
+                dynamic.addMappingForServletNames(filterBean.getDispatcherTypes(), true, filterBean.getServletNames());
+            }
         }
     }
     
@@ -131,19 +87,6 @@ public class WebFilterRegister extends WebComponentRegister{
     }
     
     static public class WebFilterBean {
-        /**
-         * The description of the filter
-         * 
-         * @return the description of the filter
-         */
-        private String description = "";
-        
-        /**
-         * The display name of the filter
-         *
-         * @return the display name of the filter
-         */
-        private String displayName = "";
         
         /**
          * The init parameters of the filter
@@ -159,19 +102,6 @@ public class WebFilterRegister extends WebComponentRegister{
          */
         private String filterName = "";
         
-        /**
-         * The small-icon of the filter
-         *
-         * @return the small-icon of the filter
-         */
-        private String smallIcon =  "";
-
-        /**
-         * The large-icon of the filter
-         *
-         * @return the large-icon of the filter
-         */
-        private String largeIcon = "";
 
         /**
          * The names of the servlets to which the filter applies.
@@ -179,14 +109,6 @@ public class WebFilterRegister extends WebComponentRegister{
          * @return the names of the servlets to which the filter applies
          */
         private String[] servletNames = {};
-        
-        /**
-         * The URL patterns to which the filter applies
-         * The default value is an empty array.
-         *
-         * @return the URL patterns to which the filter applies
-         */
-        private String[] value = {};
 
         /**
          * The URL patterns to which the filter applies
@@ -218,22 +140,6 @@ public class WebFilterRegister extends WebComponentRegister{
         
         private Integer order = Ordered.LOWEST_PRECEDENCE;
         
-        public String getDescription() {
-            return description;
-        }
-
-        public void setDescription(String description) {
-            this.description = description;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-
-        public void setDisplayName(String displayName) {
-            this.displayName = displayName;
-        }
-
         public Map<String, String> getInitParams() {
             return initParams;
         }
@@ -250,36 +156,12 @@ public class WebFilterRegister extends WebComponentRegister{
             this.filterName = filterName;
         }
 
-        public String getSmallIcon() {
-            return smallIcon;
-        }
-
-        public void setSmallIcon(String smallIcon) {
-            this.smallIcon = smallIcon;
-        }
-
-        public String getLargeIcon() {
-            return largeIcon;
-        }
-
-        public void setLargeIcon(String largeIcon) {
-            this.largeIcon = largeIcon;
-        }
-
         public String[] getServletNames() {
             return servletNames;
         }
 
         public void setServletNames(String[] servletNames) {
             this.servletNames = servletNames;
-        }
-
-        public String[] getValue() {
-            return value;
-        }
-
-        public void setValue(String[] value) {
-            this.value = value;
         }
 
         public String[] getUrlPatterns() {

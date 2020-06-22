@@ -10,7 +10,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 
 public class WebInitParamRegister extends WebComponentRegister{
-    private static Map<String, String> webInitParamMap = new LinkedHashMap<>();
+    private static final Map<String, String> webInitParamMap = new LinkedHashMap<>();
 
     public WebInitParamRegister(ConfigurableApplicationContext springContext, ServletContext servletContext) {
         super(springContext,servletContext,WebInitParam.class);

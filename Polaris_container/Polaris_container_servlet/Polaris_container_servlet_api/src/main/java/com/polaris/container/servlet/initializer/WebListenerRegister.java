@@ -14,7 +14,7 @@ import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import com.polaris.core.exception.ServletContextException;
 
 public class WebListenerRegister extends WebComponentRegister{
-    private static Set<Class <? extends EventListener>> webListenerSet = new LinkedHashSet<>();
+    private static final Set<Class <? extends EventListener>> webListenerSet = new LinkedHashSet<>();
 
     public WebListenerRegister(ConfigurableApplicationContext springContext, ServletContext servletContext) {
         super(springContext,servletContext,WebListener.class);
