@@ -40,7 +40,6 @@
 package javax.ws.rs.core;
 
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -72,8 +71,7 @@ import com.polaris.core.util.SpringUtil;
  */
 public abstract class Application extends ComponentScanRegister{
 
-    protected static Set<Object> singletons = new LinkedHashSet<Object>();
-    protected static Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
+
     
     public Application() {
         super(SpringUtil.getApplicationContext(), ServletContextHelper.getServletContext(), Path.class);
@@ -100,7 +98,7 @@ public abstract class Application extends ComponentScanRegister{
      *         is equivalent to returning an empty set.
      */
     public Set<Class<?>> getClasses() {
-        return classes;
+        return Collections.emptySet();
     }
 
     /**
@@ -123,7 +121,7 @@ public abstract class Application extends ComponentScanRegister{
      *         is equivalent to returning an empty set.
      */
     public Set<Object> getSingletons() {
-        return singletons;
+        return Collections.emptySet();
     }
 
     /**

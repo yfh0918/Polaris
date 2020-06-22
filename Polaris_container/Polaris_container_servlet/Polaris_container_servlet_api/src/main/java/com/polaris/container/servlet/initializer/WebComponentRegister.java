@@ -15,14 +15,15 @@ import javax.servlet.annotation.WebListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.core.type.filter.TypeFilter;
 
 public abstract class WebComponentRegister extends ComponentScanRegister{
 
-    private static final List<AnnotationTypeFilter> TYPE_FILTERS;
+    private static final List<TypeFilter> TYPE_FILTERS;
     private static Set<ScannedGenericBeanDefinition> CANDIDATE_COMPONENTS = new HashSet<>();
 
     static {
-        List<AnnotationTypeFilter> servletComponentTypeFilters = new ArrayList<>();
+        List<TypeFilter> servletComponentTypeFilters = new ArrayList<>();
         servletComponentTypeFilters.add(new AnnotationTypeFilter(WebListener.class));
         servletComponentTypeFilters.add(new AnnotationTypeFilter(WebFilter.class));
         servletComponentTypeFilters.add(new AnnotationTypeFilter(WebInitParam.class));
@@ -40,7 +41,7 @@ public abstract class WebComponentRegister extends ComponentScanRegister{
     }
     
     @Override
-    public List<AnnotationTypeFilter> getTypeFilters() {
+    public List<TypeFilter> getTypeFilters() {
         return TYPE_FILTERS;
     }
     

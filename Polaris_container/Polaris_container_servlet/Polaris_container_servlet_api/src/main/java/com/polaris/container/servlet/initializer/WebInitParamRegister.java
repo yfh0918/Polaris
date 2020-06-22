@@ -28,7 +28,7 @@ public class WebInitParamRegister extends WebComponentRegister{
     }
 
     @Override
-    protected void doRegister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
+    protected void doRegister(Class<?> type, Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
         String name = (String) attributes.get("name");
         String value = (String) attributes.get("value");
         webInitParamMap.put(name, value);

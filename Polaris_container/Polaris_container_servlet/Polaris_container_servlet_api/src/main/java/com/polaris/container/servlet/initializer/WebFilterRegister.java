@@ -45,7 +45,7 @@ public class WebFilterRegister extends WebComponentRegister{
     
     @SuppressWarnings("unchecked")
     @Override
-    protected void doRegister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
+    protected void doRegister(Class<?> type, Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
         WebFilterBean filterBean = new WebFilterBean();
         filterBean.setAsyncSupported((Boolean)attributes.get("asyncSupported"));
         filterBean.setDispatcherTypes(extractDispatcherTypes(attributes));

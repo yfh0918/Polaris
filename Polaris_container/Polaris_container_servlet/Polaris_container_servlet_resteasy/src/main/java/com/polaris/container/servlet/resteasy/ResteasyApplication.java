@@ -1,8 +1,9 @@
 package com.polaris.container.servlet.resteasy;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
-import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
 
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
@@ -14,9 +15,10 @@ import com.polaris.core.exception.ServletContextException;
 import com.polaris.core.util.SpringUtil;
 
 public class ResteasyApplication extends Application {
-    
+    protected Set<Object> singletons = new LinkedHashSet<Object>();
+    protected Set<Class<?>> classes = new LinkedHashSet<Class<?>>();
     @Override
-    protected void doRegister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
+    protected void doRegister(Class<?> type, Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
         try {
             Class<?> beanClass = Class.forName(beanDefinition.getBeanClassName());
             Component springComponent = AnnotationUtils.findAnnotation(beanClass, Component.class);
@@ -35,16 +37,11 @@ public class ResteasyApplication extends Application {
         }
     }
     
-    public static void registerEndPoint(Object obj) {
-    	Path path = obj.getClass().getAnnotation(Path.class);
-    	if (path != null) {
-        	singletons.add(obj);
-    	}
+    public Set<Class<?>> getClasses() {
+        return classes;
     }
-    public static void registerEndPoint(Class<?> clazz) {
-    	Path path = clazz.getAnnotation(Path.class);
-    	if (path != null) {
-        	classes.add(clazz);
-    	}
+
+    public Set<Object> getSingletons() {
+        return singletons;
     }
 }

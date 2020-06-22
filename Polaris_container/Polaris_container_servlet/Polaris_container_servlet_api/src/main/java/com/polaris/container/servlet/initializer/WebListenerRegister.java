@@ -31,7 +31,7 @@ public class WebListenerRegister extends WebComponentRegister{
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void doRegister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
+    protected void doRegister(Class<?> type, Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition) {
         try {
             webListenerSet.add((Class <? extends EventListener>)(Class.forName(beanDefinition.getBeanClassName())));
         } catch (ClassNotFoundException e) {

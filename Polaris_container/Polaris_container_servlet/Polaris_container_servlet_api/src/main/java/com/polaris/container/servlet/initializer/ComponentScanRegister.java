@@ -14,6 +14,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.core.type.filter.AssignableTypeFilter;
+import org.springframework.core.type.filter.TypeFilter;
 
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.component.Initial;
@@ -22,42 +24,49 @@ import com.polaris.core.util.Requires;
 public abstract class ComponentScanRegister implements Initial{
     protected ConfigurableApplicationContext springContext;
     protected ServletContext servletContext;
-    protected Class<? extends Annotation> annotationType;
+    protected Class<?>[] types;
+    private Set<ScannedGenericBeanDefinition> candidateComponents = new HashSet<>();
 
     public ComponentScanRegister() {
     }
     
-    public ComponentScanRegister(ConfigurableApplicationContext springContext, ServletContext servletContext, Class<? extends Annotation> annotationType) {
+    public ComponentScanRegister(ConfigurableApplicationContext springContext, ServletContext servletContext, Class<?>... types) {
         this.springContext = springContext;
         this.servletContext = servletContext;
-        this.annotationType = annotationType;
+        this.types = types;
     }
     
     @Override
     public void init() {
-        Set<ScannedGenericBeanDefinition> candidateComponents = getCandidateComponents();
-        if (candidateComponents == null || candidateComponents.size() == 0) {
-            candidateComponents = findCandidateComponents(getTypeFilters());
-        }
-        registerCandidateComponents(candidateComponents);
+        findCandidateComponents(getTypeFilters(), getCandidateComponents());
+        registerCandidateComponents(getCandidateComponents());
     }
     public Set<ScannedGenericBeanDefinition> getCandidateComponents() {
-        return new HashSet<>();
+        return candidateComponents;
     }
-    public List<AnnotationTypeFilter> getTypeFilters() {
-        List<AnnotationTypeFilter> servletComponentTypeFilters = new ArrayList<>();
-        servletComponentTypeFilters.add(new AnnotationTypeFilter(annotationType));
-        return servletComponentTypeFilters;
+    @SuppressWarnings("unchecked")
+    public List<TypeFilter> getTypeFilters() {
+        List<TypeFilter> typeFilters = new ArrayList<>();
+        for (Class<?> type : types) {
+            if (Annotation.class.isAssignableFrom(type)) {
+                typeFilters.add(new AnnotationTypeFilter((Class<? extends Annotation>)type));
+            } else {
+                typeFilters.add(new AssignableTypeFilter(type));
+            }
+        }
+        return typeFilters;
     } 
     
-    protected Set<ScannedGenericBeanDefinition> findCandidateComponents(List<AnnotationTypeFilter> typeFilters) {
+    protected void findCandidateComponents(List<TypeFilter> typeFilters, Set<ScannedGenericBeanDefinition> candidateComponents) {
+        if (candidateComponents != null && candidateComponents.size() > 0) {
+            return;
+        }
         requires();
-        Set<ScannedGenericBeanDefinition> candidateComponents = new HashSet<>();
         ClassPathScanningCandidateComponentProvider componentProvider = new ClassPathScanningCandidateComponentProvider(
                 false);
         componentProvider.setEnvironment(this.springContext.getEnvironment());
         componentProvider.setResourceLoader(this.springContext);
-        for (AnnotationTypeFilter typeFilter : typeFilters) {
+        for (TypeFilter typeFilter : typeFilters) {
             componentProvider.addIncludeFilter(typeFilter);
         }
         Class<?>[] clazz = ConfigurationHelper.getClasses();
@@ -69,24 +78,34 @@ public abstract class ComponentScanRegister implements Initial{
                 }
             }
         }
-        return candidateComponents;
     }
+    
     protected void registerCandidateComponents(Set<ScannedGenericBeanDefinition> candidateComponents) {
         requires();
         for (ScannedGenericBeanDefinition candidate : candidateComponents) {
-            Map<String, Object> attributes = ((ScannedGenericBeanDefinition)candidate).getMetadata()
-                    .getAnnotationAttributes(annotationType.getName());
-            if (attributes != null) {
-                doRegister(attributes,(ScannedGenericBeanDefinition)candidate);
+            for (Class<?> type : types) {
+                if (Annotation.class.isAssignableFrom(type)) {
+                    Map<String, Object> attributes = ((ScannedGenericBeanDefinition)candidate).getMetadata()
+                            .getAnnotationAttributes(type.getName());
+                    if (attributes != null) {
+                        doRegister(type, attributes,(ScannedGenericBeanDefinition)candidate);
+                        break;
+                    }
+                } else {
+                    if (type.getName().equals(candidate.getBeanClassName())) {
+                        doRegister(type, null,(ScannedGenericBeanDefinition)candidate);
+                        break;
+                    }
+                }
             }
+            
         }
     }
     
-    abstract protected void doRegister(Map<String, Object> attributes, ScannedGenericBeanDefinition beanDefinition);
+    abstract protected void doRegister(Class<?> type, Map<String, Object> attributes,  ScannedGenericBeanDefinition beanDefinition);
     
     protected void requires() {
         Requires.requireNonNull(springContext,"ConfigurableApplicationContext is null");
         Requires.requireNonNull(servletContext,"ServletContext is null");
-        Requires.requireNonNull(annotationType,"AnnotationType is null");
     }
 }
