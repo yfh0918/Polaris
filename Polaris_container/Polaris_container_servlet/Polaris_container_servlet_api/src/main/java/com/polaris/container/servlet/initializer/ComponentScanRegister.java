@@ -82,8 +82,8 @@ public abstract class ComponentScanRegister implements Initial{
     
     protected void registerCandidateComponents(Set<ScannedGenericBeanDefinition> candidateComponents) {
         requires();
-        for (ScannedGenericBeanDefinition candidate : candidateComponents) {
-            for (Class<?> type : types) {
+        for (Class<?> type : types) {
+            for (ScannedGenericBeanDefinition candidate : candidateComponents) {
                 if (Annotation.class.isAssignableFrom(type)) {
                     Map<String, Object> attributes = ((ScannedGenericBeanDefinition)candidate).getMetadata()
                             .getAnnotationAttributes(type.getName());
@@ -98,7 +98,6 @@ public abstract class ComponentScanRegister implements Initial{
                     }
                 }
             }
-            
         }
     }
     
