@@ -16,6 +16,7 @@ abstract public class ConfigurationHelper {
 	private static List<Class<?>> configClassList = new ArrayList<>();
 	private static String[] args;
 	private static Class<?>[] classes;
+	private static List<String> basePackageList = new ArrayList<>();
 	
 	public static void init(String[] arg, Class<?>... clazz) {
 		//设置
@@ -24,6 +25,7 @@ abstract public class ConfigurationHelper {
 		addConfiguration(ConfPropertyConfiguration.class);
 		addConfiguration(clazz);
 		addConfigurationExtension();
+		addBasePackage(clazz);
 	}
 	public static Class<?>[] getConfiguration() {
 		Class<?>[] returnClass = new Class[configClassList.size()];
@@ -51,12 +53,21 @@ abstract public class ConfigurationHelper {
 			}
         }
 	}
-
+	private static void addBasePackage(Class<?>... clazz) {
+		if (clazz != null && clazz.length > 0) {
+    		for (Class<?> clazz0 : clazz) {
+    			basePackageList.add(clazz0.getPackage().getName());
+    		}
+    	}
+	}
 	public static String[] getArgs() {
 		return args;
 	}
 	public static Class<?>[] getClasses() {
 		return classes;
+	}
+	public static List<String> getBasePackageList() {
+		return basePackageList;
 	}
 	
 	@Configuration
