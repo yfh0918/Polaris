@@ -4,13 +4,6 @@ import java.util.List;
 
 public abstract class MultiEventListener extends AbstractEventListener{
     
-    public MultiEventListener() {
-        /**
-         * automatic register
-         */
-        EventPublisher.addEventListener(this);
-    }
-
     /**
      * 感兴趣的事件列表
      *

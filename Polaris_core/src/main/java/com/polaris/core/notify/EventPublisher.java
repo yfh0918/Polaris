@@ -67,9 +67,19 @@ public class EventPublisher {
     }
 
     /**
+     * add event listener
+     */
+    public static void addEventListener(AbstractEventListener listener) {
+        if (listener instanceof MultiEventListener) {
+            addEventListener0((MultiEventListener)listener);
+        } else if (listener instanceof SingleEventListener) {
+            addEventListener1((SingleEventListener)listener);
+        }
+    }
+    /**
      * add multi event listener
      */
-    public static void addEventListener(MultiEventListener listener) {
+    private static void addEventListener0(MultiEventListener listener) {
         for (Class<? extends Event> type : listener.interest()) {
             getEntry(type).listeners.addIfAbsent(listener);
         }
@@ -78,7 +88,7 @@ public class EventPublisher {
     /**
      * add single event listener
      */
-    public static <E extends Event> void addEventListener(SingleEventListener<E> listener) {
+    private static <E extends Event> void addEventListener1(SingleEventListener<E> listener) {
         Type type = listener.getClass().getGenericSuperclass();
         if (type instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) type;
