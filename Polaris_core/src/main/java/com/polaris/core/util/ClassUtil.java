@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,44 +130,6 @@ public class ClassUtil {
         value.setAccessible(true);
         Map<String, Object> memberValuesMap = (Map<String, Object>) value.get(invocationHandler);
         return memberValuesMap;
-    }
-    
-    static class MapUtil {
-    	
-    	private static final Logger logger = LoggerFactory.getLogger(MapUtil.class);
-
-    	//根据key排序
-    	public static <K extends Comparable<? super K>, V > LinkedHashMap<K, V> sortByKey(Map<K, V> map) {
-    		LinkedHashMap<K, V> result = new LinkedHashMap<>();
-            Stream<Entry<K, V>> st = map.entrySet().stream();
-            st.sorted(Comparator.comparing(e -> e.getKey())).forEach(e -> result.put(e.getKey(), e.getValue()));
-            return result;
-        }	
-    		
-    	//根据value排序
-    	public static <K, V extends Comparable<? super V>> LinkedHashMap<K, V> sortByValue(Map<K, V> map) {
-    		LinkedHashMap<K, V> result = new LinkedHashMap<>();
-            Stream<Entry<K, V>> st = map.entrySet().stream();
-            st.sorted(Comparator.comparing(e -> e.getValue())).forEach(e -> result.put(e.getKey(), e.getValue()));
-            return result;
-        }
-    	
-    	//获取第一个元素
-    	public static <K, V> Entry<K, V> getHead(LinkedHashMap<K, V> map) {
-    	    return map.entrySet().iterator().next();
-    	}
-    	
-    	//获取最后一个元素
-    	public static <K, V> Entry<K, V> getTail(LinkedHashMap<K, V> map) {
-    		try {
-    			Field tail = map.getClass().getDeclaredField("tail");
-    		    tail.setAccessible(true);
-    		    return (Entry<K, V>) tail.get(map);
-    		} catch (Exception ex) {
-    			logger.error(ex.getMessage());
-    			return null;
-    		}
-    	}
     }
     
     public static Set<Class<?>> getAllSuperClasses(Class<?> clazz) {
