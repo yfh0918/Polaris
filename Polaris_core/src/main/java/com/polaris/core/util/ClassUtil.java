@@ -5,13 +5,16 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -167,6 +170,33 @@ public class ClassUtil {
     			return null;
     		}
     	}
+    }
+    
+    public static Set<Class<?>> getAllSuperClasses(Class<?> clazz) {
+        if (clazz == null) {
+            return null;
+        }
+        Set<Class<?>> classes = new LinkedHashSet<>();
+        Class<?> superclass = clazz.getSuperclass();
+        while (superclass != null && superclass != Object.class) {
+            classes.add(superclass);
+            superclass = superclass.getSuperclass();
+        }
+        return classes;
+    }
+    
+    public static Set<Type> getAllSuperTypes(Class<?> clazz) {
+        if (clazz == null) {
+            return null;
+        }
+        Set<Type> types = new LinkedHashSet<>();
+        types.add(clazz.getGenericSuperclass());
+        Class<?> superclass = clazz.getSuperclass();
+        while (superclass != null && superclass != Object.class) {
+            types.add(superclass.getGenericSuperclass());
+            superclass = superclass.getSuperclass();
+        }
+        return types;
     }
     
 }

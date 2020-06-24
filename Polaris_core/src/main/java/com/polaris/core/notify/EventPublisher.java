@@ -4,11 +4,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.polaris.core.util.ClassUtil;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class EventPublisher {
@@ -89,22 +92,23 @@ public class EventPublisher {
      * add single event listener
      */
     private static <E extends Event> void addEventListener1(SingleEventListener<E> listener) {
-        Type type = listener.getClass().getGenericSuperclass();
-        if (type instanceof ParameterizedType) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            Type[] args = parameterizedType.getActualTypeArguments();
-            if (args != null) {
-                for (Type arg : args) {
-                    try {
-                        getEntry((Class<E>)arg).listeners.addIfAbsent(listener);
-                        break;
-                    } catch (Exception ex) {
-                        continue;
+        Set<Type> typeSet = ClassUtil.getAllSuperTypes(listener.getClass());
+        for (Type type : typeSet) {
+            if (type instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+                Type[] args = parameterizedType.getActualTypeArguments();
+                if (args != null) {
+                    for (Type arg : args) {
+                        try {
+                            getEntry((Class<E>)arg).listeners.addIfAbsent(listener);
+                            return;
+                        } catch (Exception ex) {
+                            continue;
+                        }
                     }
                 }
-            }
+            } 
         }
-        
     }
     
     /**
