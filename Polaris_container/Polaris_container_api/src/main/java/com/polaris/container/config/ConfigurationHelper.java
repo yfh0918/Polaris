@@ -1,11 +1,15 @@
 package com.polaris.container.config;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationUtils;
 
 import com.polaris.core.config.value.SpringAutoUpdateConfigChangeListener;
 import com.polaris.core.config.value.SpringPlaceholderConfigurer;
@@ -16,7 +20,7 @@ abstract public class ConfigurationHelper {
 	private static List<Class<?>> configClassList = new ArrayList<>();
 	private static String[] args;
 	private static Class<?>[] classes;
-	private static List<String> basePackageList = new ArrayList<>();
+	private static Set<String> basePackageSet = new HashSet<>();
 	
 	public static void init(String[] arg, Class<?>... clazz) {
 		//设置
@@ -56,7 +60,13 @@ abstract public class ConfigurationHelper {
 	private static void addBasePackage(Class<?>... clazz) {
 		if (clazz != null && clazz.length > 0) {
     		for (Class<?> clazz0 : clazz) {
-    			basePackageList.add(clazz0.getPackage().getName());
+    		    ComponentScan componentScan = AnnotationUtils.findAnnotation(clazz0, ComponentScan.class);
+    		    if (componentScan != null) {
+    		        for (String basePackage : componentScan.basePackages()) {
+    		            basePackageSet.add(basePackage);
+    		        }
+    		        basePackageSet.add(clazz0.getPackage().getName());
+    		    }
     		}
     	}
 	}
@@ -66,8 +76,8 @@ abstract public class ConfigurationHelper {
 	public static Class<?>[] getClasses() {
 		return classes;
 	}
-	public static List<String> getBasePackageList() {
-		return basePackageList;
+	public static Set<String> getBasePackageSet() {
+		return basePackageSet;
 	}
 	
 	@Configuration

@@ -69,8 +69,7 @@ public abstract class ComponentScanRegister implements Initial{
         for (TypeFilter typeFilter : typeFilters) {
             componentProvider.addIncludeFilter(typeFilter);
         }
-        List<String> basePackageList = ConfigurationHelper.getBasePackageList();
-        for (String basePackage : basePackageList) {
+        for (String basePackage : ConfigurationHelper.getBasePackageSet()) {
             for (BeanDefinition candidate : componentProvider.findCandidateComponents(basePackage)) {
                 if (candidate instanceof ScannedGenericBeanDefinition) {
                     candidateComponents.add((ScannedGenericBeanDefinition)candidate);

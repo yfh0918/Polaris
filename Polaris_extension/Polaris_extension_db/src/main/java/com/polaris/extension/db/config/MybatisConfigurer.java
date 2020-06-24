@@ -2,7 +2,6 @@ package com.polaris.extension.db.config;
 
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -36,9 +35,8 @@ public class MybatisConfigurer{
         if (StringUtil.isNotEmpty(mapperScanBasePackage)) {
             mapperScannerConfigurer.setBasePackage(mapperScanBasePackage);
         } else {
-        	List<String> basePackageList = ConfigurationHelper.getBasePackageList();
         	Set<String> mappers = new HashSet<>();
-        	for (String basePackage : basePackageList) {
+        	for (String basePackage : ConfigurationHelper.getBasePackageSet()) {
         		mappers.add(basePackage + ".**.mapper");
         	}
             mapperScannerConfigurer.setBasePackage(Joiner.on(',').skipNulls().join(mappers));
