@@ -11,6 +11,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
 
+import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.value.SpringAutoUpdateConfigChangeListener;
 import com.polaris.core.config.value.SpringPlaceholderConfigurer;
 import com.polaris.core.config.value.SpringValueProcessor;
@@ -91,7 +92,7 @@ abstract public class ConfigurationHelper {
 	protected static class ConfPropertyConfiguration {
 		@Bean
 		public static SpringPlaceholderConfigurer propertyPlaceholderConfigurer() {
-			return new SpringPlaceholderConfigurer();
+			return new SpringPlaceholderConfigurer(ConfClient.get());
 		}
 		@Bean
 		public static SpringAutoUpdateConfigChangeListener springAutoUpdateConfigChangeListener() {

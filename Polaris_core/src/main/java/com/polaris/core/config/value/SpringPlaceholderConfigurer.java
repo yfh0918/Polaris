@@ -1,6 +1,7 @@
 package com.polaris.core.config.value;
 
 import java.util.HashSet;
+import java.util.Properties;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -15,15 +16,17 @@ import org.springframework.util.StringValueResolver;
  */
 public class SpringPlaceholderConfigurer extends PropertySourcesPlaceholderConfigurer {
 
+    private final Properties properties;
+    public SpringPlaceholderConfigurer(Properties properties) {
+        this.properties = properties;
+    }
+    
 	@Override
 	protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, ConfigurablePropertyResolver propertyResolver) throws BeansException {
-		
-		
-		// init value resolver
 		StringValueResolver valueResolver = new StringValueResolver() {
 			@Override
 			public String resolveStringValue(String strVal) {
-				return SpringPlaceholderHelper.parseStringValue(strVal, new HashSet<String>()).trim();
+				return SpringPlaceholderHelper.parseStringValue(properties, strVal, new HashSet<String>()).trim();
 			}
 		};
 		super.doProcessProperties(beanFactoryToProcess, valueResolver);
@@ -33,7 +36,6 @@ public class SpringPlaceholderConfigurer extends PropertySourcesPlaceholderConfi
 	public int getOrder() {
 		return Ordered.LOWEST_PRECEDENCE;
 	}
-
 
 	@Override
 	public void setIgnoreUnresolvablePlaceholders(boolean ignoreUnresolvablePlaceholders) {

@@ -1,5 +1,6 @@
 package com.polaris.core.config.value;
 
+import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 
@@ -13,7 +14,7 @@ import org.springframework.util.StringUtils;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import com.polaris.core.config.ConfClient;
+//import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.StringUtil;
 
 /**
@@ -168,7 +169,7 @@ public class SpringPlaceholderHelper {
     return -1;
   }
   
-	public static String parseStringValue(
+	public static String parseStringValue(Properties properties,
 			String value, Set<String> visitedPlaceholders) {
 
 		StringBuilder result = new StringBuilder(value);
@@ -184,15 +185,15 @@ public class SpringPlaceholderHelper {
 							"Circular placeholder reference '" + originalPlaceholder + "' in property definitions");
 				}
 				// Recursive invocation, parsing placeholders contained in the placeholder key.
-				placeholder = parseStringValue(placeholder, visitedPlaceholders);
+				placeholder = parseStringValue(properties, placeholder, visitedPlaceholders);
 				// Now obtain the value for the fully resolved key...
-				String propVal = ConfClient.get(placeholder);
+				String propVal = properties.getProperty(placeholder);
 				if (StringUtil.isEmpty(propVal) && VALUE_SEPARATOR != null) {
 					int separatorIndex = placeholder.indexOf(VALUE_SEPARATOR);
 					if (separatorIndex != -1) {
 						String actualPlaceholder = placeholder.substring(0, separatorIndex);
 						String defaultValue = placeholder.substring(separatorIndex + VALUE_SEPARATOR.length());
-						propVal = ConfClient.get(actualPlaceholder);
+						propVal = properties.getProperty(actualPlaceholder);
 						if (StringUtil.isEmpty(propVal)) {
 							propVal = defaultValue;
 						}
@@ -202,7 +203,7 @@ public class SpringPlaceholderHelper {
 					
 					// Recursive invocation, parsing placeholders contained in the
 					// previously resolved placeholder value.
-					propVal = parseStringValue(propVal,  visitedPlaceholders);
+					propVal = parseStringValue(properties, propVal,  visitedPlaceholders);
 					result.replace(startIndex, endIndex + PLACEHOLDER_SUFFIX.length(), propVal);
 					if (logger.isTraceEnabled()) {
 						logger.trace("Resolved placeholder '" + placeholder + "'");

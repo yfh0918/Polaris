@@ -49,7 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.GlobalContext;
-import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.NamingClient;
 import com.polaris.core.pojo.Server;
 import com.polaris.core.pojo.ServerHost;
@@ -67,9 +66,6 @@ public class HttpClientUtil {
 	private static final String HTTP = "http";
 	private static final String HTTPS = "https";
 	
-	private static final String RETRY_COUNT = "http.connect.retryCount";
-	private static final String POOL_CONN_MAX_COUNT="http.connect.maxCount";
-	private static final String POOL_CONN_PERROUTE = "http.connect.perRouteCount";
 	private static final String UTF8 = "UTF-8";
 	private static int timeout = -1;
 	private static Logger LOGGER = LoggerFactory.getLogger(HttpClientUtil.class);
@@ -104,9 +100,9 @@ public class HttpClientUtil {
         if (defaultHttpClient == null) {
             synchronized (syncLock) {
                 if (defaultHttpClient == null) {
-                    int connPoolMaxCount = Integer.parseInt(ConfClient.get(POOL_CONN_MAX_COUNT, "100"));
-                    int connPoolDefaultPerRoute = Integer.parseInt(ConfClient.get(POOL_CONN_PERROUTE, "20"));
-                	int retryCount = Integer.parseInt(ConfClient.get(RETRY_COUNT, "2"));
+                    int connPoolMaxCount = 100;
+                    int connPoolDefaultPerRoute = 20;
+                	int retryCount = 2;
                 	defaultHttpClient = createHttpClient(connPoolMaxCount, connPoolDefaultPerRoute, retryCount);
                 }
             }

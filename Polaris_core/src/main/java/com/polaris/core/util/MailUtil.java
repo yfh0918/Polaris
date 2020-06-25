@@ -30,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.core.config.ConfClient;
 import com.polaris.core.pojo.Mail;
 import com.sun.mail.util.MailSSLSocketFactory;
 
@@ -179,10 +178,10 @@ public class MailUtil {
 	 * 发邮件
 	 * @param mail
 	 */
-    public static void sendMail(String key, Executor executor, String... placeHolder) {
-    	sendMail(key,executor,null,placeHolder);
+    public static void sendMail(Properties properties, String key, Executor executor, String... placeHolder) {
+    	sendMail(properties, key,executor,null,placeHolder);
     }
-    public static void sendMail(String key, Executor executor, List<String> attachFilePathList, String... placeHolder) {
+    public static void sendMail(Properties properties, String key, Executor executor, List<String> attachFilePathList, String... placeHolder) {
     	
     	try {
         	if (StringUtil.isEmpty(key)) {
@@ -191,10 +190,10 @@ public class MailUtil {
         	}
         	Mail mail = new Mail();
         	mail.setKey(key);
-        	mail.setEnable(Boolean.parseBoolean(ConfClient.get("mail."+key+".enable", "true")));
-        	mail.setSubject(ConfClient.get("mail."+key+".subject"));
-        	mail.setReceiver(ConfClient.get("mail."+key+".receiver"));
-        	mail.setContent(ConfClient.get("mail."+key+".content"));
+        	mail.setEnable(Boolean.parseBoolean(properties.getProperty("mail."+key+".enable", "true")));
+        	mail.setSubject(properties.getProperty("mail."+key+".subject"));
+        	mail.setReceiver(properties.getProperty("mail."+key+".receiver"));
+        	mail.setContent(properties.getProperty("mail."+key+".content"));
             if (placeHolder != null && placeHolder.length > 0) {
             	Map<String, String> placeHolderMap = new HashMap<>();
             	for (int index = 1; index < placeHolder.length + 1; index++) {
@@ -211,13 +210,13 @@ public class MailUtil {
             MailSSLSocketFactory sslFactory = new MailSSLSocketFactory();
             sslFactory.setTrustAllHosts(true);
             props.put("mail.smtp.ssl.socketFactory", sslFactory);
-            props.setProperty("mail.smtp.ssl.enable", ConfClient.get("mail.smtp.ssl.enable"));
-            props.setProperty("mail.transport.protocol", ConfClient.get("mail.transport.protocol"));
-            props.setProperty("mail.smtp.auth", ConfClient.get("mail.smtp.auth"));
-            props.setProperty("mail.smtp.host", ConfClient.get("mail.smtp.host"));
-            props.setProperty("mail.smtp.port", ConfClient.get("mail.smtp.port"));
-            props.setProperty("mail.sender", ConfClient.get("mail.sender"));
-            props.setProperty("mail.password", ConfClient.get("mail.password"));
+            props.setProperty("mail.smtp.ssl.enable", properties.getProperty("mail.smtp.ssl.enable"));
+            props.setProperty("mail.transport.protocol", properties.getProperty("mail.transport.protocol"));
+            props.setProperty("mail.smtp.auth", properties.getProperty("mail.smtp.auth"));
+            props.setProperty("mail.smtp.host", properties.getProperty("mail.smtp.host"));
+            props.setProperty("mail.smtp.port", properties.getProperty("mail.smtp.port"));
+            props.setProperty("mail.sender", properties.getProperty("mail.sender"));
+            props.setProperty("mail.password", properties.getProperty("mail.password"));
             mail.setProperties(props);
             sendMail(mail, executor);
     	} catch (Exception ex) {

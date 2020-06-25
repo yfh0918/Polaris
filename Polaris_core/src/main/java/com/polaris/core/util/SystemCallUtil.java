@@ -1,19 +1,19 @@
 package com.polaris.core.util;
 
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.EncryptUtil.Type;
 
 public abstract class SystemCallUtil {
 
 	private static Map<String, String> encryptMap = new ConcurrentHashMap<>();
-	public static String value() {
-		String key = ConfClient.get(Constant.SYSTEM_CALL_ENCRYPT_KEY,Constant.SYSTEM_CALL_ENCRYPT_KEY_DEFAULT);
-    	String startwith = ConfClient.get(Constant.SYSTEM_CALL_START_WITH,Constant.SYSTEM_CALL_START_WITH_DEFAULT);
-    	String strChars = ConfClient.get(Constant.SYSTEM_CALL_ENCRYPT_VALUE,Constant.SYSTEM_CALL_ENCRYPT_VALUE_DEFAULT);
+	public static String value(Properties properties) {
+		String key = properties.getProperty(Constant.SYSTEM_CALL_ENCRYPT_KEY,Constant.SYSTEM_CALL_ENCRYPT_KEY_DEFAULT);
+    	String startwith = properties.getProperty(Constant.SYSTEM_CALL_START_WITH,Constant.SYSTEM_CALL_START_WITH_DEFAULT);
+    	String strChars = properties.getProperty(Constant.SYSTEM_CALL_ENCRYPT_VALUE,Constant.SYSTEM_CALL_ENCRYPT_VALUE_DEFAULT);
     	String systemKey = key + startwith + strChars;
     	String value = getValue(systemKey);
     	if (StringUtil.isNotEmpty(value)) {
@@ -22,17 +22,17 @@ public abstract class SystemCallUtil {
 		return putValue(systemKey, startwith, strChars, key);
 	}
 	
-	public static String key() {
-		return ConfClient.get(Constant.SYSTEM_CALL_HEADER_KEY, Constant.SYSTEM_CALL_HEADER_KEY_DEFAULT);
+	public static String key(Properties properties) {
+		return properties.getProperty(Constant.SYSTEM_CALL_HEADER_KEY, Constant.SYSTEM_CALL_HEADER_KEY_DEFAULT);
 	}
 	
-	public static boolean verify(String sourceValue) {
+	public static boolean verify(Properties properties, String sourceValue) {
 		if (StringUtil.isEmpty(sourceValue)) {
 			return false;
 		}
-		String key = ConfClient.get(Constant.SYSTEM_CALL_ENCRYPT_KEY,Constant.SYSTEM_CALL_ENCRYPT_KEY_DEFAULT);
-    	String startwith = ConfClient.get(Constant.SYSTEM_CALL_START_WITH,Constant.SYSTEM_CALL_START_WITH_DEFAULT);
-    	String strChars = ConfClient.get(Constant.SYSTEM_CALL_ENCRYPT_VALUE,Constant.SYSTEM_CALL_ENCRYPT_VALUE_DEFAULT);
+		String key = properties.getProperty(Constant.SYSTEM_CALL_ENCRYPT_KEY,Constant.SYSTEM_CALL_ENCRYPT_KEY_DEFAULT);
+    	String startwith = properties.getProperty(Constant.SYSTEM_CALL_START_WITH,Constant.SYSTEM_CALL_START_WITH_DEFAULT);
+    	String strChars = properties.getProperty(Constant.SYSTEM_CALL_ENCRYPT_VALUE,Constant.SYSTEM_CALL_ENCRYPT_VALUE_DEFAULT);
     	String systemKey = key + startwith + strChars;
     	String value = getValue(systemKey);
     	if (StringUtil.isEmpty(value)) {

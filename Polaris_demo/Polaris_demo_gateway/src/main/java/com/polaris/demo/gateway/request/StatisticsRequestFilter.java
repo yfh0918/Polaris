@@ -16,6 +16,7 @@ import com.polaris.container.gateway.HttpConstant;
 import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
 import com.polaris.container.gateway.request.HttpRequestFilter;
+import com.polaris.core.config.ConfClient;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.thread.ThreadPoolBuilder;
 import com.polaris.core.util.HttpClientUtil;
@@ -139,7 +140,7 @@ public class StatisticsRequestFilter extends HttpRequestFilter {
                     requestParams.put("uri", uri);
                     requestParams.put("queryParameter", queryParameter);
                     Map<String, String> headerParams = new HashMap<>();
-                    headerParams.put(SystemCallUtil.key(), SystemCallUtil.value());
+                    headerParams.put(SystemCallUtil.key(ConfClient.get()), SystemCallUtil.value(ConfClient.get()));
                     try {
                         HttpClientUtil.post(connectUrl, 1000, requestParams, headerParams, httpClient);
                     } catch (Exception ex) {

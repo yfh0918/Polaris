@@ -1,5 +1,7 @@
 package com.polaris.core.config;
 
+import java.util.Properties;
+
 import com.polaris.core.Constant;
 import com.polaris.core.config.provider.ConfHandlerComposite;
 
@@ -50,6 +52,17 @@ public abstract class ConfClient {
 	public static String get(String key, String... defaultVal) {
 		return ConfHandlerComposite.INSTANCE.getProperty(key,defaultVal);
 	}
+	
+    /**
+    * 获取全体配置
+    * @param 
+    * @return 
+    * @Exception 
+    * @since 
+    */
+    public static Properties get() {
+        return ConfHandlerComposite.INSTANCE.getProperties();
+    }
 	
 	/**
 	* 应用名称

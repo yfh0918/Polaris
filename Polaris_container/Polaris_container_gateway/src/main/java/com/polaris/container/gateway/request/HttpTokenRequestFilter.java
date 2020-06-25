@@ -7,12 +7,14 @@ import java.util.Set;
 import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
 import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.util.JwtUtil;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.ResultUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.SystemCallUtil;
+import com.polaris.core.util.UuidUtil;
 
 import cn.hutool.core.util.StrUtil;
 import io.jsonwebtoken.Claims;
@@ -142,8 +144,8 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
     
     //验证url
     public static boolean isSystemCall(HttpRequest httpRequest) {
-    	String value = httpRequest.headers().get(SystemCallUtil.key());
-    	return SystemCallUtil.verify(value);
+    	String value = httpRequest.headers().get(SystemCallUtil.key(ConfClient.get()));
+    	return SystemCallUtil.verify(ConfClient.get(),value);
     }
 
     
@@ -174,7 +176,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
             boolean uncheckUrl = !checkUrlPath(HttpTokenRequestFilter.getUrl(httpRequest));
             if (uncheckUrl) {
             	if (isUncheckPolicy()) {
-            	    httpRequest.headers().add(SystemCallUtil.key(), SystemCallUtil.value());
+            	    httpRequest.headers().add(SystemCallUtil.key(ConfClient.get()), SystemCallUtil.value(ConfClient.get()));
             		return false;
             	}
             }
@@ -186,7 +188,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
             //没有token需要验证url是否放过
             if (StringUtil.isEmpty(token)) {
                 if (uncheckUrl) {
-                    httpRequest.headers().add(SystemCallUtil.key(), SystemCallUtil.value());
+                    httpRequest.headers().add(SystemCallUtil.key(ConfClient.get()), SystemCallUtil.value(ConfClient.get()));
                 	return false;
                 }
                 httpMessage.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
@@ -196,7 +198,8 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
             try {
             	
             	//token认证
-                Claims claims = JwtUtil.parseJWT(token);
+                String signKey = ConfClient.get(JwtUtil.JWT_SIGN_KEY, UuidUtil.generateUuid());
+                Claims claims = JwtUtil.parseJWT(token,signKey);
                 if (claims == null) {
                 	httpMessage.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
                     return true;
@@ -209,7 +212,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
                 
                 //设置claims信息
                 httpRequest.headers().add(JwtUtil.CLAIMS_KEY, JwtUtil.encode(claims));
-                httpRequest.headers().add(SystemCallUtil.key(), SystemCallUtil.value());
+                httpRequest.headers().add(SystemCallUtil.key(ConfClient.get()), SystemCallUtil.value(ConfClient.get()));
                 return false;
             } catch (Exception ex) {
             	httpMessage.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());

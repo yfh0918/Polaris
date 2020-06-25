@@ -4,9 +4,7 @@ public class ConfigException extends PolarisRuntimeException{
 
     private static final long serialVersionUID = 1L;
 
-
     public static final int ERROR_CODE = 201;
-
 
     private static final String DEFAULT_MSG = "config failed. ";
 
