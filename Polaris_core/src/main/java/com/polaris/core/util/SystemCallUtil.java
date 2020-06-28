@@ -5,11 +5,15 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.polaris.core.Constant;
+import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.EncryptUtil.Type;
 
 public abstract class SystemCallUtil {
 
 	private static Map<String, String> encryptMap = new ConcurrentHashMap<>();
+	public static String value() {
+	    return value(ConfClient.get());
+	}
 	public static String value(Properties properties) {
 		String key = properties.getProperty(Constant.SYSTEM_CALL_ENCRYPT_KEY,Constant.SYSTEM_CALL_ENCRYPT_KEY_DEFAULT);
     	String startwith = properties.getProperty(Constant.SYSTEM_CALL_START_WITH,Constant.SYSTEM_CALL_START_WITH_DEFAULT);
@@ -22,10 +26,16 @@ public abstract class SystemCallUtil {
 		return putValue(systemKey, startwith, strChars, key);
 	}
 	
-	public static String key(Properties properties) {
-		return properties.getProperty(Constant.SYSTEM_CALL_HEADER_KEY, Constant.SYSTEM_CALL_HEADER_KEY_DEFAULT);
+	public static String key() {
+		return key(ConfClient.get());
 	}
+	public static String key(Properties properties) {
+        return properties.getProperty(Constant.SYSTEM_CALL_HEADER_KEY, Constant.SYSTEM_CALL_HEADER_KEY_DEFAULT);
+    }
 	
+	public static boolean verify(String sourceValue) {
+	    return verify(ConfClient.get(),sourceValue);
+	}
 	public static boolean verify(Properties properties, String sourceValue) {
 		if (StringUtil.isEmpty(sourceValue)) {
 			return false;

@@ -30,6 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.core.config.ConfClient;
 import com.polaris.core.pojo.Mail;
 import com.sun.mail.util.MailSSLSocketFactory;
 
@@ -178,8 +179,14 @@ public class MailUtil {
 	 * 发邮件
 	 * @param mail
 	 */
+    public static void sendMail(String key, Executor executor, String... placeHolder) {
+        sendMail(ConfClient.get(), key,executor,null,placeHolder);
+    }
     public static void sendMail(Properties properties, String key, Executor executor, String... placeHolder) {
     	sendMail(properties, key,executor,null,placeHolder);
+    }
+    public static void sendMail(String key, Executor executor, List<String> attachFilePathList, String... placeHolder) {
+        sendMail(ConfClient.get(), key,executor,attachFilePathList,placeHolder);
     }
     public static void sendMail(Properties properties, String key, Executor executor, List<String> attachFilePathList, String... placeHolder) {
     	
