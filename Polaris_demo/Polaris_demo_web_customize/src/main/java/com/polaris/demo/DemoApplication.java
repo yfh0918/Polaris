@@ -2,6 +2,7 @@ package com.polaris.demo;
 
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Properties;
 
 import javax.servlet.Filter;
@@ -126,10 +127,25 @@ public class DemoApplication
     static public class RegistServlet extends HttpServlet{
         private static final long serialVersionUID = 1L;
         public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            doPrint(response.getWriter());
             System.out.println("================get---RegistServlet===============");
         }
         public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            doPrint(response.getWriter());
             System.out.println("================post---RegistServlet===============");
+        }
+        
+        private void doPrint(PrintWriter out) {
+            out.print("<html><head>"
+                    + "<META http-equiv=Content-Type CONTENT=text/html;charset=utf-8></head>"
+                    + "<body>     html内容 </body>");
+            out.println("<html>");
+            out.println("<title>");
+            out.println("</title>");
+            out.println("<body>");
+            out.println(" servlet out print test");
+            out.println("</body>");
+            out.println("</html>");
         }
     
     }
@@ -142,6 +158,5 @@ public class DemoApplication
         public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
             System.out.println("================post---RegistServlet2===============");
         }
-    
     }
 }
