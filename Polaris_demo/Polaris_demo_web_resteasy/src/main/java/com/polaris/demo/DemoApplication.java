@@ -42,7 +42,7 @@ public class DemoApplication
             @Override
             public void starting(LifeCycle event) {
                 //iniParam
-                WebInitParamRegister.register("testdemo", "testdemo");
+                WebInitParamRegister.register("resteasy.providers", "com.polaris.container.servlet.resteasy.ResteasyExceptionHandler");
                 
                 //listen
                 WebListenerRegister.register(MyServletContextListener2.class);
