@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import com.polaris.core.Constant;
 import com.polaris.core.config.provider.ConfHandlerComposite;
+import com.polaris.core.util.AppNameUtil;
 
 /**
 *
@@ -72,7 +73,7 @@ public abstract class ConfClient {
 	* @since 
 	*/
 	public static String getAppName() {
-		return get(Constant.PROJECT_NAME,get(Constant.SPRING_BOOT_NAME));
+		return AppNameUtil.getAppName();
 	}
 	
 	/**

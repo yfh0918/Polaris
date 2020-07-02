@@ -57,10 +57,13 @@ public class Constant {
 	public static String PROJECT_CONFIG_NAME = "project.config.name";
 	public static String SPRING_CONFIG_LOCACTION = "spring.config.location";	
 	
-	// 应用名称
-	public static String PROJECT_NAME = "project.name";
-	public static String SPRING_BOOT_NAME = "spring.application.name";//融合springboot
-	
+	// appName关联
+    public static final String PARAM_MARKING_PROJECT = "project.name";
+    public static final String PARAM_MARKING_SPRINGBOOT = "spring.application.name";
+    public static final String SUN_JAVA_COMMAND = "sun.java.command";
+    public static final String JAR_SUFFIX_LOWER = ".jar";
+    public static final String JAR_SUFFIX_UPPER = ".JAR";
+    
 	// serverContext
 	public static String SERVER_CONTEXT = "server.contextPath";
 	public static String SERVER_SPRING_CONTEXT = "server.servlet.context-path";

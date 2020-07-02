@@ -28,9 +28,7 @@ public class SpringbootServer extends SpringContextServer{
     public void start() throws Exception{
         
         //projectName is must require
-        String projectName = ConfClient.get(Constant.SPRING_BOOT_NAME, ConfClient.get(Constant.PROJECT_NAME));
-        ConfClient.set(Constant.SPRING_BOOT_NAME, projectName);
-        System.setProperty(Constant.SPRING_BOOT_NAME, projectName);
+        System.setProperty(Constant.PARAM_MARKING_SPRINGBOOT, ConfClient.getAppName());
         
         //context
         String serverContext = ConfClient.get(Constant.SERVER_SPRING_CONTEXT,ConfClient.get(Constant.SERVER_CONTEXT));
