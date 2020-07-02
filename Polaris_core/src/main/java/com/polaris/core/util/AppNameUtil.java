@@ -17,6 +17,9 @@ public class AppNameUtil {
     private static String appName = null;
     
     public static String getAppName() {
+        if (appName != null) {
+            return appName;
+        }
         appName = getAppNameByProjectName();
         if (appName != null) {
             return appName;
