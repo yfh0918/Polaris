@@ -60,20 +60,22 @@
             <DefaultRolloverStrategy compressionLevel="0" max="10"/>
         </RollingFile>
 
-        <!-- 配置mongdb appender -->
+        <!-- 异步日志 -->
+        <Async name="AsyncAppender">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFileInfo"/>
+            <AppenderRef ref="RollingFileWarn"/>
+            <AppenderRef ref="RollingFileError"/>
+        </Async>
+        
     </appenders>
 
     <loggers>
+    
         <!--过滤掉spring和hibernate的一些无用的debug信息 -->
-
         <root level="info">
-            <appender-ref ref="Console"/>
-            <appender-ref ref="RollingFileInfo"/>
-            <appender-ref ref="RollingFileWarn"/>
-            <appender-ref ref="RollingFileError"/>
-            <!-- 输出日志到mongodb -->
+            <AppenderRef ref="AsyncAppender" /> 
         </root>
-
     </loggers>
 
 </configuration>
