@@ -29,6 +29,11 @@
 		<artifactId>Polaris_logger</artifactId>
 	  </dependency>  
 	  
+	   <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_conf_file</artifactId>
+        </dependency>
+        
 	  <dependency>
 	        <groupId>org.apache.dubbo</groupId>
 	        <artifactId>dubbo-registry-nacos</artifactId>

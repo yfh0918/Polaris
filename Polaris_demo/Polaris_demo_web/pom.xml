@@ -28,6 +28,10 @@
 			<groupId>com.polaris</groupId>
 			<artifactId>Polaris_container_dubbo</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_conf_file</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>com.polaris_demo</groupId>
 			<artifactId>Polaris_demo_api</artifactId>

@@ -21,6 +21,10 @@
             <artifactId>Polaris_container_webflux</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_conf_file</artifactId>
+        </dependency>
 						
     </dependencies>
 
