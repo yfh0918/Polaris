@@ -82,7 +82,7 @@ public final class ExtendedLogger extends ExtendedLoggerCallBack implements Seri
 	}
 	
 	public String getName() {
-		return "Polaris.log";
+		return name;
 	}
 
 	@Override

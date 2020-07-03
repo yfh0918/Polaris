@@ -326,11 +326,17 @@ public class ExtendedLoggerCallBack implements LocationAwareLogger {
 	
 	private void callBack(Level level, String message, Object... args) {
 		for (Log4jCallBack callBackObj : callBacks) {
+		    if (this.getName().equals(callBackObj.getClass().getName())) {
+		        continue;
+		    }
 			callBackObj.call(level, message, args);
         }
 	}
 	private void callBack(Level level, String message, Throwable t) {
 		for (Log4jCallBack callBackObj : callBacks) {
+		    if (this.getName().equals(callBackObj.getClass().getName())) {
+                continue;
+            }
 			callBackObj.call(level, message,t);
         }
 	}
