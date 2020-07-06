@@ -285,7 +285,6 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
             
             //统计
             saveStatisticsLog(url, realIp);
-            
         }
         return false;
     }
@@ -332,16 +331,12 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
     }
     
     public static String getUrl(HttpRequest httpRequest) {
-    	//获取url
         String uri = httpRequest.uri();
-        String url;
         int index = uri.indexOf("?");
         if (index > 0) {
-            url = uri.substring(0, index);
-        } else {
-            url = uri;
-        }
-        return url;
+            return uri.substring(0, index);
+        } 
+        return uri;
     }
     
     public boolean ccHack(String url, String realIp) {
