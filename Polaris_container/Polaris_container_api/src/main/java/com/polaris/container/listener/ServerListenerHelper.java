@@ -90,6 +90,12 @@ public abstract class ServerListenerHelper {
 	}
 	
 	protected static class ThreadPoolListerner implements ServerListener {
+	    @Override
+        public void started(LifeCycle event) {
+	        ThreadPoolBuilder.init();
+            
+        }
+	    
 		@Override
 		public void stopped(LifeCycle event) {
 			ThreadPoolBuilder.destroy();

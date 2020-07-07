@@ -36,6 +36,10 @@ public final class ThreadPoolBuilder {
        return new ScheduledPoolBuilder();
    }
 
+   public static void init() {
+       //nothing
+   }
+   
    public static void destroy() {
        if (!CLOSED.compareAndSet(false, true)) {
            return;
@@ -46,6 +50,7 @@ public final class ThreadPoolBuilder {
     	   destroy(executor);
         }
    }
+   
    public static void destroy(ThreadPoolExecutor executor) {
        executor.shutdown();
        int retry = 3;
