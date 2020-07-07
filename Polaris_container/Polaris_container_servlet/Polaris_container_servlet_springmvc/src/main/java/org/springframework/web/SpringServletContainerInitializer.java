@@ -14,9 +14,8 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.container.servlet.initializer.ServletContextHelper;
-import com.polaris.container.servlet.initializer.WebFilterRegister;
-import com.polaris.container.servlet.initializer.WebInitParamRegister;
-import com.polaris.container.servlet.initializer.WebListenerRegister;
+import com.polaris.container.servlet.initializer.WebComponentFactory;
+import com.polaris.container.servlet.initializer.WebComponentFactory.WebComponent;
 
 public class SpringServletContainerInitializer implements ServletContainerInitializer {
 
@@ -28,20 +27,16 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
 	@EnableWebMvc
     protected static class SpringMvcInnerInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
         private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
-        private ServletContext servletContext;
         private WebApplicationContext context;
 
         @Override
-        public void onStartup(ServletContext servletContextImpl) throws ServletException {
+        public void onStartup(ServletContext servletContext) throws ServletException {
             if (!initialized.compareAndSet(false, true)) {
                 return;
             }
-            servletContext = servletContextImpl;
             super.onStartup(servletContext);
             ServletContextHelper.loadServletContext((ConfigurableApplicationContext)context, servletContext,false);
-            new WebInitParamRegister((ConfigurableApplicationContext)context,servletContext).init();
-            new WebListenerRegister((ConfigurableApplicationContext)context,servletContext).init();
-            new WebFilterRegister((ConfigurableApplicationContext)context,servletContext).init();
+            WebComponentFactory.init(WebComponent.INIT,WebComponent.LISTENER,WebComponent.FILTER);
         }
         
         @Override

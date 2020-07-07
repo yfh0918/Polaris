@@ -6,10 +6,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
 import com.polaris.container.servlet.initializer.ServletContextHelper;
-import com.polaris.container.servlet.initializer.WebFilterRegister;
-import com.polaris.container.servlet.initializer.WebInitParamRegister;
-import com.polaris.container.servlet.initializer.WebListenerRegister;
-import com.polaris.core.util.SpringUtil;
+import com.polaris.container.servlet.initializer.WebComponentFactory;
+import com.polaris.container.servlet.initializer.WebComponentFactory.WebComponent;
 
 public class ResteasyInitializer implements javax.servlet.ServletContainerInitializer { 
 	
@@ -26,9 +24,7 @@ public class ResteasyInitializer implements javax.servlet.ServletContainerInitia
                 servletRegistration.setLoadOnStartup(1);
                 servletRegistration.addMapping(MAPPING_ALL);
         ServletContextHelper.loadServletContext(servletContext,true);
-        new WebInitParamRegister(SpringUtil.getApplicationContext(),servletContext).init();
-        new WebListenerRegister(SpringUtil.getApplicationContext(),servletContext).init();
-        new WebFilterRegister(SpringUtil.getApplicationContext(),servletContext).init();
+        WebComponentFactory.init(WebComponent.INIT,WebComponent.LISTENER,WebComponent.FILTER);
     }
 	
 

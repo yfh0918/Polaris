@@ -35,7 +35,7 @@ public class WebSocketRegister implements ServerListenerExtension {
                 types = new Class<?>[] {ServerEndpoint.class,ServerEndpointConfig.class};
                 if (servletContext != null) {
                     serverContainer = (ServerContainer) servletContext.getAttribute("javax.websocket.server.ServerContainer");
-                    init();
+                    WebComponentFactory.init(this);;
                 }
             }
         }

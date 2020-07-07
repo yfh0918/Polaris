@@ -1,4 +1,4 @@
-package com.polaris.container.servlet.customize;
+package com.polaris.container.servlet.initializer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +17,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
-import com.polaris.container.servlet.initializer.WebComponentRegister;
 import com.polaris.core.exception.ServletContextException;
 
 public class WebServletRegister extends WebComponentRegister{
