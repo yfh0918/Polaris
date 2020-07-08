@@ -2,6 +2,7 @@ package com.polaris.extension.sentinel;
 
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.ConfEndPoint;
+import com.polaris.core.config.provider.ConfHandlerSystem;
 import com.polaris.core.util.StringUtil;
 
 /**
@@ -23,18 +24,18 @@ public class SentinelEndPoint implements ConfEndPoint {
 	public void init() {
 		//sentinel设置
 		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.dashboard.server"))) {
-			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.dashboard.server"))) {
-				System.setProperty("csp.sentinel.dashboard.server", ConfClient.get("csp.sentinel.dashboard.server"));
+			if (StringUtil.isNotEmpty(ConfHandlerSystem.getProperties().getProperty("csp.sentinel.dashboard.server"))) {
+				System.setProperty("csp.sentinel.dashboard.server", ConfHandlerSystem.getProperties().getProperty("csp.sentinel.dashboard.server"));
 			}
 		}
 		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.api.port"))) {
-			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.api.port"))) {
-				System.setProperty("csp.sentinel.api.port", ConfClient.get("csp.sentinel.api.port"));
+			if (StringUtil.isNotEmpty(ConfHandlerSystem.getProperties().getProperty("csp.sentinel.api.port"))) {
+				System.setProperty("csp.sentinel.api.port", ConfHandlerSystem.getProperties().getProperty("csp.sentinel.api.port"));
 			}
 		}
 		if (StringUtil.isEmpty(System.getProperty("csp.sentinel.heartbeat.interval.ms"))) {
-			if (StringUtil.isNotEmpty(ConfClient.get("csp.sentinel.heartbeat.interval.ms"))) {
-				System.setProperty("csp.sentinel.heartbeat.interval.ms", ConfClient.get("csp.sentinel.heartbeat.interval.ms"));
+			if (StringUtil.isNotEmpty(ConfHandlerSystem.getProperties().getProperty("csp.sentinel.heartbeat.interval.ms"))) {
+				System.setProperty("csp.sentinel.heartbeat.interval.ms", ConfHandlerSystem.getProperties().getProperty("csp.sentinel.heartbeat.interval.ms"));
 			}
 		}
 		System.setProperty("project.name", ConfClient.getAppName());
@@ -43,7 +44,7 @@ public class SentinelEndPoint implements ConfEndPoint {
 			//获取类型参数
 			String datasource = System.getProperty("csp.sentinel.datasource");
 			if (StringUtil.isEmpty(datasource)) {
-				datasource = ConfClient.get("csp.sentinel.datasource");
+				datasource = ConfHandlerSystem.getProperties().getProperty("csp.sentinel.datasource");
 				if (StringUtil.isEmpty(datasource)) {
 					datasource = "file";
 				}

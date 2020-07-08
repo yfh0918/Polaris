@@ -5,7 +5,7 @@ import java.io.File;
 import org.apache.commons.lang3.StringUtils;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.provider.ConfHandlerSystem;
 
 /**
  * appName util
@@ -36,17 +36,17 @@ public class AppNameUtil {
     }
 
     private static String getAppNameByProjectName() {
-        return ConfClient.get(Constant.PARAM_MARKING_PROJECT);
+        return ConfHandlerSystem.getProperties().getProperty(Constant.PARAM_MARKING_PROJECT);
     }
     
     private static String getAppNameBySpringBoot() {
-        return ConfClient.get(Constant.PARAM_MARKING_SPRINGBOOT);
+        return ConfHandlerSystem.getProperties().getProperty(Constant.PARAM_MARKING_SPRINGBOOT);
     }
 
     private static String getAppNameByJavaCommond() {
         
         // parse sun.java.command property
-        String command = System.getProperty(Constant.SUN_JAVA_COMMAND);
+        String command = ConfHandlerSystem.getProperties().getProperty(Constant.SUN_JAVA_COMMAND);
         if (StringUtils.isEmpty(command)) {
             return null;
         }

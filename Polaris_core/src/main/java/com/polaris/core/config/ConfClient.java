@@ -37,7 +37,7 @@ public class ConfClient implements ConfigChangeListener{
 	* @since 
 	*/
 	public static void init() {
-	    ConfEndPointProxy.INSTANCE.init();
+        ConfEndPointProxy.INSTANCE.init();
 	    ConfHandlerFactory.getOrCreate(Type.SYS, INSTANCE, ConfEndPointProxy.INSTANCE).init();
         ConfHandlerFactory.getOrCreate(Type.EXT, INSTANCE, ConfEndPointProxy.INSTANCE).init();
         ConfHandlerFactory.getOrCreate(Type.GBL, INSTANCE, ConfEndPointProxy.INSTANCE).init();
