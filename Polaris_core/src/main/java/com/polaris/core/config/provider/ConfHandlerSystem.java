@@ -17,7 +17,7 @@ import com.polaris.core.util.StringUtil;
 public class ConfHandlerSystem extends ConfHandlerProxy{
 	private static volatile String CONFIG_NAME = "application";
 	private static String SYSTEM_SEQUENCE = "system";
-    private Properties properties;
+    private static Properties properties;
 	public ConfHandlerSystem(Type type, ConfigChangeListener... configListeners) {
 	    super(type,configListeners);
 	}
@@ -36,16 +36,16 @@ public class ConfHandlerSystem extends ConfHandlerProxy{
         }
 	}
 	
-	public Properties getProperties() {
-		if (this.properties != null) {
-			return this.properties;
+	public static Properties getProperties() {
+		if (properties != null) {
+			return properties;
 		}
-		synchronized(this) {
+		synchronized(ConfHandlerSystem.class) {
 			//encode
 	    	System.setProperty(Constant.FILE_ENCODING, Constant.UTF_CODE);
 
 	    	//spring.config.location or project.config.name
-	    	Properties propeties = null;
+	    	Properties localProperties = null;
 	    	String file = null;
 	    	String projectConfigLocation = System.getProperty(Constant.SPRING_CONFIG_LOCACTION);
 	    	if (StringUtil.isNotEmpty(projectConfigLocation)) {
@@ -54,30 +54,30 @@ public class ConfHandlerSystem extends ConfHandlerProxy{
 	    		file = System.getProperty(Constant.PROJECT_CONFIG_NAME);
 	    	}
 	    	if (StringUtil.isNotEmpty(file)) {
-	    		propeties = ConfReaderStrategyFactory.get().getProperties(file);
+	    	    localProperties = ConfReaderStrategyFactory.get().getProperties(file);
 	    	} 
 	    	
 			//folder-scan
-	    	if (propeties == null) {
-	    		propeties = ConfReaderStrategyFactory.get().getProperties(CONFIG_NAME);
+	    	if (localProperties == null) {
+	    	    localProperties = ConfReaderStrategyFactory.get().getProperties(CONFIG_NAME);
 	    	}
 	    	
 	    	if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
-	    		propeties.put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
+	    	    localProperties.put(Constant.IP_ADDRESS, System.getProperty(Constant.IP_ADDRESS));
 			} else {
-				if (StringUtil.isEmpty(propeties.getProperty(Constant.IP_ADDRESS))) {
-					propeties.put(Constant.IP_ADDRESS, NetUtils.getLocalHost());
+				if (StringUtil.isEmpty(localProperties.getProperty(Constant.IP_ADDRESS))) {
+				    localProperties.put(Constant.IP_ADDRESS, NetUtils.getLocalHost());
 				}
 			}
 			
 			//system-environment
-	    	propeties.putAll(EnvironmentUtil.getSystemEnvironment());
+	    	localProperties.putAll(EnvironmentUtil.getSystemEnvironment());
 			
 			//system-properties
-			propeties.putAll(EnvironmentUtil.getSystemProperties());
-	     	this.properties = propeties;
+	    	localProperties.putAll(EnvironmentUtil.getSystemProperties());
+	     	properties = localProperties;
 		}
-    	return this.properties;
+    	return properties;
 	}
 	
 	@Override
