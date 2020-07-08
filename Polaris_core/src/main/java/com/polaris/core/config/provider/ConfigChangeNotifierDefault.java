@@ -22,7 +22,7 @@ public class ConfigChangeNotifierDefault implements ConfigChangeNotifier {
 	private ConfigChangeNotifierDefault() {}
 	
 	@Override
-	public void notify(ConfigChangeListener configListener, Config config, String file, String contents) {
+	public void notify(Config config, String file, String contents, ConfigChangeListener... configListeners) {
 		Properties oldProperties = config.getProperties(file);
 		Properties newProperties = ConfReaderFactory.get(file).getProperties(contents);
 		String sequence = UuidUtil.generateUuid();
@@ -31,7 +31,11 @@ public class ConfigChangeNotifierDefault implements ConfigChangeNotifier {
 			if (oldProperties == null || !oldProperties.containsKey(entry.getKey())) {
 				if (canUpdate(sequence, config, file, entry.getKey(), entry.getValue(), Opt.ADD)) {
 					isUpdate = true;
-					configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.ADD);
+                    if (configListeners != null) {
+                        for (ConfigChangeListener configListener : configListeners) {
+                            configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.ADD);
+                        }
+                    }
 					if (oldProperties != null) {
 						logger.info("type:{} file:{} key:{} newValue:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.ADD.name());
 					}
@@ -39,7 +43,11 @@ public class ConfigChangeNotifierDefault implements ConfigChangeNotifier {
 			} else if (!Objects.equals(oldProperties.get(entry.getKey()), newProperties.get(entry.getKey()))) {
 				if (canUpdate(sequence, config, file, entry.getKey(), entry.getValue(), Opt.UPD)) {
 					isUpdate = true;
-					configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.UPD);
+                    if (configListeners != null) {
+                        for (ConfigChangeListener configListener : configListeners) {
+                            configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.UPD);
+                        }
+                    }
 					logger.info("type:{} file:{} key:{} oldValue:{} newvalue:{} opt:{}", config.getType(),file,entry.getKey(),oldProperties.get(entry.getKey()), entry.getValue(),Opt.UPD.name());
 				}
 			}
@@ -51,14 +59,22 @@ public class ConfigChangeNotifierDefault implements ConfigChangeNotifier {
 			for (Map.Entry entry : oldProperties.entrySet()) {
 				if (canUpdate(sequence, config, file, entry.getKey(), entry.getValue(), Opt.DEL)) {
 					isUpdate = true;
-					configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.DEL);
+		            if (configListeners != null) {
+		                for (ConfigChangeListener configListener : configListeners) {
+		                    configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.DEL);
+		                }
+		            }
 					logger.info("type:{} file:{}, key:{} value:{} opt:{}", config.getType(),file,entry.getKey(),entry.getValue(),Opt.DEL.name());
 				}
 			}
 		}
 		config.put(file, newProperties);
 		if (isUpdate) {
-			configListener.onComplete(sequence);
+		    if (configListeners != null) {
+		        for (ConfigChangeListener configListener : configListeners) {
+		            configListener.onComplete(sequence);
+		        }
+		    }
 		}
 	}
 	

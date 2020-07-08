@@ -23,19 +23,31 @@ public class ConfHandlerProxy implements ConfHandler{
     private static ConfHandler handler;
 
     //instance-var
-    protected ConfigChangeListener configChangeListener;
+    protected ConfigChangeListener[] configChangeListeners;
     protected Type type;
 	protected ConfigChangeNotifier notifier = ConfigChangeNotifierFactory.get();
-	public ConfHandlerProxy(Type type, ConfigChangeListener configChangeListener) {
+	public ConfHandlerProxy(Type type, ConfigChangeListener... configChangeListeners) {
 	    this.type = type;
-	    this.configChangeListener = configChangeListener;
+	    this.configChangeListeners = configChangeListeners;
 	}
 	
 	@Override
 	public void init() {
         
         //initial config handler
-        initHandler();
+	    if (!initialized.compareAndSet(false, true)) {
+            return;
+        }
+        List<OrderWrapper> configHandlerList = new ArrayList<OrderWrapper>();
+        for (ConfHandler configHandler : handlerLoader) {
+            OrderWrapper.insertSorted(configHandlerList, configHandler);
+        }
+        if (configHandlerList.size() > 0) {
+            handler = (ConfHandler)configHandlerList.get(0).getHandler();
+        }
+        if (handler == null) {
+            throw new ConfigException("Excepiton caused by ConfHandler is null");
+        }
         
         //get target files from system properties
         String files = ConfigFactory.get(Type.SYS).getProperties(Type.SYS.name()).getProperty(type.getPropertyType());
@@ -52,37 +64,20 @@ public class ConfHandlerProxy implements ConfHandler{
         }
     }
 	
-    private ConfHandler initHandler() {
-        if (!initialized.compareAndSet(false, true)) {
-            return handler;
-        }
-        List<OrderWrapper> configHandlerList = new ArrayList<OrderWrapper>();
-        for (ConfHandler configHandler : handlerLoader) {
-            OrderWrapper.insertSorted(configHandlerList, configHandler);
-        }
-        if (configHandlerList.size() > 0) {
-            handler = (ConfHandler)configHandlerList.get(0).getHandler();
-        }
-        if (handler == null) {
-            throw new ConfigException("Excepiton caused by ConfHandler is null");
-        }
-        return handler;
-    }
-
 	@Override
     public String getAndListen(String fileName,String group, ConfHandlerListener... listener) {
     	
 		//get
 		String contents = get(fileName,group);
 		if (StringUtil.isNotEmpty(contents)) {
-			notifier.notify(configChangeListener, ConfigFactory.get(type), fileName, contents);
+			notifier.notify(ConfigFactory.get(type), fileName, contents,configChangeListeners);
 		}
 		
 		//listen
     	listen(fileName, group, new ConfHandlerListener() {
 			@Override
 			public void receive(String contents) {
-			    notifier.notify(configChangeListener, ConfigFactory.get(type), fileName, contents);
+			    notifier.notify(ConfigFactory.get(type), fileName, contents,configChangeListeners);
 			}
 		});
     	

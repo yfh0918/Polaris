@@ -2,23 +2,19 @@ package com.polaris.core.config.provider;
 
 import java.util.Properties;
 
-import com.polaris.core.config.ConfEndPoint;
-import com.polaris.core.config.ConfigChangeListener;
 import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.Config.Type;
+import com.polaris.core.config.ConfigChangeListener;
 
-
-public class ConfHandlerComposite implements ConfigChangeListener {
+public class ConfHandlerComposite implements ConfigChangeListener{
     public static final ConfHandlerComposite INSTANCE = new ConfHandlerComposite();
-    private static final ConfEndPoint INSTANCE_ENDPOINT = ConfEndPointProxy.INSTANCE;
     private Properties cache = new Properties();
     private ConfHandlerComposite() {}
     
     public void init() {
-        ConfHandlerFactory.getOrCreate(Type.SYS).init();
-        ConfHandlerFactory.getOrCreate(Type.EXT).init();
-        ConfHandlerFactory.getOrCreate(Type.GBL).init();
-    	INSTANCE_ENDPOINT.init();
+        ConfHandlerFactory.getOrCreate(Type.SYS, this, ConfEndPointProxy.INSTANCE).init();
+        ConfHandlerFactory.getOrCreate(Type.EXT, this, ConfEndPointProxy.INSTANCE).init();
+        ConfHandlerFactory.getOrCreate(Type.GBL, this, ConfEndPointProxy.INSTANCE).init();
     }
 	public String getProperty(String key, String... defaultValue) {
 		if (defaultValue == null || defaultValue.length == 0) {
@@ -32,12 +28,7 @@ public class ConfHandlerComposite implements ConfigChangeListener {
 	public void putProperty(Object key, Object value) {
 		cache.put(key, value);
 	}
-	
-	@Override
-    public void onStart(String sequence) {
-        INSTANCE_ENDPOINT.onStart(sequence);
-    }
-	
+
 	@Override
 	public void onChange(String sequence, Object key, Object value, Opt opt) {
 		if (opt != Opt.DEL) {
@@ -45,11 +36,5 @@ public class ConfHandlerComposite implements ConfigChangeListener {
 		} else {
 			cache.remove(key);
 		}
-		INSTANCE_ENDPOINT.onChange(sequence, key, value ,opt);
-	}
-	
-	@Override
-	public void onComplete(String sequence) {
-		INSTANCE_ENDPOINT.onComplete(sequence);
 	}
 }

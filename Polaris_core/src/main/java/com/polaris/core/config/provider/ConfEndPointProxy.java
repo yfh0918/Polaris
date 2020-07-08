@@ -1,21 +1,30 @@
 package com.polaris.core.config.provider;
 
 import java.util.ServiceLoader;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.polaris.core.config.ConfEndPoint;
 import com.polaris.core.config.Config.Opt;
 
 public class ConfEndPointProxy implements ConfEndPoint{
     protected final ServiceLoader<ConfEndPoint> endPointLoader = ServiceLoader.load(ConfEndPoint.class);
-    private ConfEndPointProxy() {}
-    public static ConfEndPointProxy INSTANCE = new ConfEndPointProxy();
+    public static ConfEndPoint INSTANCE = new ConfEndPointProxy();
+    private volatile AtomicBoolean initialized = new AtomicBoolean(false);
     
+    private ConfEndPointProxy() {
+        init();
+    }
+
     @Override
     public void init() {
+        if (!initialized.compareAndSet(false, true)) {
+            return;
+        }
     	for (ConfEndPoint confEndPoint : endPointLoader) {
 	    	confEndPoint.init();
         }
     }
+    
     @Override
     public void onStart(String sequence) {
         for (ConfEndPoint confEndPoint : endPointLoader) {
