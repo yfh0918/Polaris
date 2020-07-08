@@ -11,9 +11,7 @@ public class ConfEndPointProxy implements ConfEndPoint{
     public static ConfEndPoint INSTANCE = new ConfEndPointProxy();
     private volatile AtomicBoolean initialized = new AtomicBoolean(false);
     
-    private ConfEndPointProxy() {
-        init();
-    }
+    private ConfEndPointProxy() {}
 
     @Override
     public void init() {
