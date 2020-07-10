@@ -1,10 +1,18 @@
 package com.polaris.demo.rest.controller;
 
-import com.polaris.core.naming.NamingClient;
+//import com.netflix.client.ClientFactory;
+//import com.netflix.client.config.IClientConfig;
+//import com.netflix.config.ConfigurationManager;
+//import com.netflix.loadbalancer.ILoadBalancer;
+//import com.netflix.loadbalancer.RandomRule;
+//import com.netflix.loadbalancer.ZoneAwareLoadBalancer;
 
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
+//import feign.ribbon.LBClient;
+//import feign.ribbon.LBClientFactory;
+//import feign.ribbon.RibbonClient;
 
 public class FeignConsumer {
     public static void main(String[] args) throws Exception {
@@ -33,7 +41,8 @@ public class FeignConsumer {
 //
 //        sample-client.ribbon.MaxAutoRetriesNextServer=1
 //
-//        sample-client.ribbon.OkToRetryOnAllOperations=truesample-client.ribbon.ServerListRefreshInterval=2000
+//        sample-client.ribbon.OkToRetryOnAllOperations=true
+//        sample-client.ribbon.ServerListRefreshInterval=2000
 //
 //        sample-client.ribbon.ConnectTimeout=3000
 //
@@ -42,9 +51,20 @@ public class FeignConsumer {
 //        sample-client.ribbon.listOfServers=127.0.0.1:8080,127.0.0.1:8085
 //
 //        sample-client.ribbon.EnablePrimeConnections=false
-
 //        ConfigurationManager.loadPropertiesFromResources("sample-client.properties");
-//        RemoteService service = Feign.builder().client(RibbonClient.create()
+//        RibbonClient client = RibbonClient.builder().lbClientFactory(new LBClientFactory() {            
+//            @Override
+//            public LBClient create(String clientName) {
+//                IClientConfig config = ClientFactory.getNamedConfig(clientName);
+//                ILoadBalancer lb = ClientFactory.getNamedLoadBalancer(clientName);
+//                ZoneAwareLoadBalancer zb = (ZoneAwareLoadBalancer) lb;
+//                zb.setRule(new RandomRule());                
+//                return LBClient.create(lb, config);
+//            }
+//        }).build();
+//
+//        RemoteService service2 = Feign.builder()
+//                .client(RibbonClient.create())
 //                .encoder(new JacksonEncoder())
 //                .decoder(new JacksonDecoder())
 //                .target(RemoteService.class, "http://Polaris_demo_web_springmvc/demospringmvc");        
