@@ -3,6 +3,8 @@ package com.polaris.core.pojo;
 public class ServerHost {
 	private static final String HTTP_PREFIX = "http://";
 	private static final String HTTPS_PREFIX = "https://";
+	private static final String WS_PREFIX = "ws://";
+    private static final String WSS_PREFIX = "wss://";
 	private String prefix;
 	private String serviceName;
 	private String uri;
@@ -33,6 +35,12 @@ public class ServerHost {
 		} else if (url.toLowerCase().startsWith(HTTPS_PREFIX)) {
 			serverHost.setPrefix(HTTPS_PREFIX);
 			url = url.substring(HTTPS_PREFIX.length());
+        } else if (url.toLowerCase().startsWith(WS_PREFIX)) {
+            serverHost.setPrefix(WS_PREFIX);
+            url = url.substring(WS_PREFIX.length());
+        } else if (url.toLowerCase().startsWith(WSS_PREFIX)) {
+            serverHost.setPrefix(WSS_PREFIX);
+            url = url.substring(WSS_PREFIX.length());
 		} else {
 			serverHost.setPrefix("");
 		}
