@@ -25,12 +25,21 @@ public class ConfigChangeNotifierDefault implements ConfigChangeNotifier {
 	public void notify(Config config, String file, String contents, ConfigChangeListener... configListeners) {
 		Properties oldProperties = config.getProperties(file);
 		Properties newProperties = ConfReaderFactory.get(file).getProperties(contents);
+		
+		//generate id for one notify
 		String sequence = UuidUtil.generateUuid();
-		boolean isUpdate = false;
+		
+		//start
+		if (configListeners != null) {
+            for (ConfigChangeListener configListener : configListeners) {
+                configListener.onStart(sequence);
+            }
+        }
+		
+		//add or update or delete
 		for (Map.Entry entry : newProperties.entrySet()) {
 			if (oldProperties == null || !oldProperties.containsKey(entry.getKey())) {
 				if (canUpdate(sequence, config, file, entry.getKey(), entry.getValue(), Opt.ADD)) {
-					isUpdate = true;
                     if (configListeners != null) {
                         for (ConfigChangeListener configListener : configListeners) {
                             configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.ADD);
@@ -42,7 +51,6 @@ public class ConfigChangeNotifierDefault implements ConfigChangeNotifier {
 				}
 			} else if (!Objects.equals(oldProperties.get(entry.getKey()), newProperties.get(entry.getKey()))) {
 				if (canUpdate(sequence, config, file, entry.getKey(), entry.getValue(), Opt.UPD)) {
-					isUpdate = true;
                     if (configListeners != null) {
                         for (ConfigChangeListener configListener : configListeners) {
                             configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.UPD);
@@ -58,7 +66,6 @@ public class ConfigChangeNotifierDefault implements ConfigChangeNotifier {
 		if (oldProperties != null) {
 			for (Map.Entry entry : oldProperties.entrySet()) {
 				if (canUpdate(sequence, config, file, entry.getKey(), entry.getValue(), Opt.DEL)) {
-					isUpdate = true;
 		            if (configListeners != null) {
 		                for (ConfigChangeListener configListener : configListeners) {
 		                    configListener.onChange(sequence, entry.getKey(), entry.getValue(), Opt.DEL);
@@ -69,15 +76,17 @@ public class ConfigChangeNotifierDefault implements ConfigChangeNotifier {
 			}
 		}
 		config.put(file, newProperties);
-		if (isUpdate) {
-		    if (configListeners != null) {
-		        for (ConfigChangeListener configListener : configListeners) {
-		            configListener.onComplete(sequence);
-		        }
-		    }
-		}
+		
+		//complete
+		if (configListeners != null) {
+            for (ConfigChangeListener configListener : configListeners) {
+                configListener.onComplete(sequence);
+            }
+        }
 	}
 	
+	
+	//update strategy
 	public boolean canUpdate(String sequence, Config config,String file, Object key, Object value,Opt opt) {
 		//优先级-ext
 		if (config == ConfigFactory.get(Type.EXT)) {
