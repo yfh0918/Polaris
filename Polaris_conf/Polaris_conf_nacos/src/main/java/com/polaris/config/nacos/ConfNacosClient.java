@@ -17,7 +17,6 @@ import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.util.StringUtil;
 
 public class ConfNacosClient { 
-	
 	private static final Logger logger = LoggerFactory.getLogger(ConfNacosClient.class);
 	private volatile static ConfNacosClient INSTANCE;
 	private volatile ConfigService configService;
@@ -69,8 +68,7 @@ public class ConfNacosClient {
     			}
     		}
     	}
-    	
-		
+ 		
 		try {
 			String propertyContent = configService.getConfig(fileName, getGroup(group), 5000);
 			return propertyContent;
