@@ -1,4 +1,4 @@
-package com.polaris.core.config.value;
+package com.polaris.core.config.spring.value;
 
 import com.polaris.core.config.ConfEndPoint;
 import com.polaris.core.config.Config.Opt;

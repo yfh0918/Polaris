@@ -1,4 +1,4 @@
-package com.polaris.core.config.reader;
+package com.polaris.core.config.reader.launcher;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.polaris.core.config.reader.ConfReaderFactory;
 import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -19,10 +20,10 @@ import com.polaris.core.util.StringUtil;
  *    third order : classpath config/fileName
  *    fourth order: classpath fileName
  */
-public class ConfReaderStrategyDefault implements ConfReaderStrategy {
-	public static final ConfReaderStrategy INSTANCE = new ConfReaderStrategyDefault();
+public class ConfLauncherReaderStrategyDefault implements ConfLauncherReaderStrategy {
+	public static final ConfLauncherReaderStrategy INSTANCE = new ConfLauncherReaderStrategyDefault();
 	private static String CONFIG = "config";
-	private ConfReaderStrategyDefault() {}
+	private ConfLauncherReaderStrategyDefault() {}
 
 	@Override
 	public String getContents (String fileN) {

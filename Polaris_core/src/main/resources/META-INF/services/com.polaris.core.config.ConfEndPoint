@@ -1,2 +1,2 @@
 com.polaris.core.config.properties.ConfigurationPropertiesEndPoint
-com.polaris.core.config.value.SpringValueEndPoint
+com.polaris.core.config.spring.value.SpringValueEndPoint

@@ -7,8 +7,8 @@ import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.Config.Type;
+import com.polaris.core.config.reader.launcher.ConfLauncherReaderStrategyFactory;
 import com.polaris.core.config.ConfigChangeListener;
-import com.polaris.core.config.reader.ConfReaderStrategyFactory;
 import com.polaris.core.exception.ConfigException;
 import com.polaris.core.util.EnvironmentUtil;
 import com.polaris.core.util.NetUtils;
@@ -54,12 +54,12 @@ public class ConfHandlerSystem extends ConfHandlerProxy{
 	    		file = System.getProperty(Constant.PROJECT_CONFIG_NAME);
 	    	}
 	    	if (StringUtil.isNotEmpty(file)) {
-	    	    localProperties = ConfReaderStrategyFactory.get().getProperties(file);
+	    	    localProperties = ConfLauncherReaderStrategyFactory.get().getProperties(file);
 	    	} 
 	    	
 			//folder-scan
 	    	if (localProperties == null) {
-	    	    localProperties = ConfReaderStrategyFactory.get().getProperties(CONFIG_NAME);
+	    	    localProperties = ConfLauncherReaderStrategyFactory.get().getProperties(CONFIG_NAME);
 	    	}
 	    	
 	    	if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {

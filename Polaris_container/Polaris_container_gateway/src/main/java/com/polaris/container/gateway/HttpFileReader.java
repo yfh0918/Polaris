@@ -10,7 +10,7 @@ import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.provider.ConfHandlerFactory;
-import com.polaris.core.config.reader.ConfReaderStrategyFactory;
+import com.polaris.core.config.reader.launcher.ConfLauncherReaderStrategyFactory;
 import com.polaris.core.util.StringUtil;
 
 public class HttpFileReader {
@@ -25,7 +25,7 @@ public class HttpFileReader {
     	
     	//获取不到-从本地文件系统获取
     	if (StringUtil.isEmpty(content)) {
-    		content = ConfReaderStrategyFactory.get().getContents(file.getName());
+    		content = ConfLauncherReaderStrategyFactory.get().getContents(file.getName());
     	}
     	
     	//load

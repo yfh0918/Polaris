@@ -1,10 +1,13 @@
-package com.polaris.core.config.reader;
+package com.polaris.core.config.reader.launcher;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.Properties;
 
-public interface ConfReaderStrategy {
+/**
+ * Application Launcher Configuration ex:application.propertis
+ */
+public interface ConfLauncherReaderStrategy {
 	
 	/**
 	 * get file contents from fileName according to strategy rule

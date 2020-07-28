@@ -1,4 +1,4 @@
-package com.polaris.core.config.value;
+package com.polaris.core.config.spring.value;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
