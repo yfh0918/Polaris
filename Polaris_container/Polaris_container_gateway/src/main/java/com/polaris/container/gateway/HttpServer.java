@@ -99,7 +99,7 @@ public class HttpServer extends SpringContextServer{
                 .withFiltersSource(new HttpFiltersSourceAdapter() {
                     @Override
                     public HttpFilters filterRequest(HttpRequest originalRequest, ChannelHandlerContext ctx) {
-                        return new HttpFilterAdapterImpl(originalRequest, ctx);
+                        return HttpFilterAdapterFactory.get(originalRequest, ctx);
                     }
                 }).start();
         logger.info("Gateway started on port(s) " + inetSocketAddress.getPort() + " with context path '/'");
