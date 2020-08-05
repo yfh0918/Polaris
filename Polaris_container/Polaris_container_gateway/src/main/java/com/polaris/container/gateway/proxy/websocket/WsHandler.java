@@ -1,7 +1,6 @@
 package com.polaris.container.gateway.proxy.websocket;
 
 import java.net.InetSocketAddress;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.java_websocket.enums.ReadyState;
@@ -10,13 +9,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.common.net.HostAndPort;
-import com.polaris.container.gateway.HttpResolverFactory;
 import com.polaris.container.gateway.pojo.HttpHostContext;
+import com.polaris.container.gateway.proxy.HostResolver;
+import com.polaris.container.gateway.proxy.HttpFilters;
 import com.polaris.core.pojo.ServerHost;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
@@ -33,30 +33,28 @@ public class WsHandler {
     /**
      * 处理http请求为websocket握手时升级为websocket
      * */
-    public boolean upgrade(HttpRequest req, ChannelHandlerContext ctx, String serverHostAndPort) {
+    public boolean upgrade(
+            HttpRequest req, 
+            ChannelHandlerContext ctx, 
+            HostResolver hostResolver, 
+            HttpFilters filters, 
+            String serverHostAndPort) {
         boolean flag = false;
-        HttpHeaders headers = req.headers();
-        if (headers == null) {
-            return flag;
-        }
-        boolean wsFlag = false;
-        String connection = headers.get("Connection");
-        String upgrade = headers.get("Upgrade");
-        if (Objects.equals("Upgrade", connection) &&
-                Objects.equals("websocket", upgrade)) {
-            wsFlag = true;
-        }
-        if (wsFlag) {
-            log.debug("websocket 请求接入");
-            WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
-                    req.uri(), null, false);
-            WebSocketServerHandshaker handshaker = wsFactory.newHandshaker(req);
-            if (handshaker == null) {
-                flag = false;
-                WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
+        log.debug("websocket 请求接入");
+        WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
+                req.uri(), null, false);
+        WebSocketServerHandshaker handshaker = wsFactory.newHandshaker(req);
+        if (handshaker == null) {
+            WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
+        } else {
+            
+            //建立http连接需要filter
+            HttpResponse response = filters.clientToProxyRequest(req);
+            if (response != null) {
+                ctx.writeAndFlush(response,ctx.channel().newPromise());
             } else {
                 //与远程的websocket建立连接
-                if (connectToRemoteWs(req, ctx, serverHostAndPort)) {
+                if (connectToRemoteWs(req, ctx, hostResolver,serverHostAndPort)) {
                     //本机websocket建联
                     handshaker.handshake(ctx.channel(), req);
                     WsConstant.wsHandshakerMap.put(req.uri(), handshaker);
@@ -65,7 +63,7 @@ public class WsHandler {
                     flag = true;
                 } else {
                     WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
-                }
+                }  
             }
         }
         return flag;
@@ -111,13 +109,16 @@ public class WsHandler {
     /**
      * 与远程websocket建立连接
      * */
-    private boolean connectToRemoteWs(HttpRequest req, ChannelHandlerContext ctx, String serverHostAndPort) {
+    private boolean connectToRemoteWs(HttpRequest req, 
+            ChannelHandlerContext ctx, 
+            HostResolver hostResolver, 
+            String serverHostAndPort) {
         boolean flag = false;
         try {
             //context
             String contextPath = HttpHostContext.getContextPath(req.uri());
             HostAndPort parsedHostAndPort = HostAndPort.fromString(serverHostAndPort);
-            InetSocketAddress address = HttpResolverFactory.get().resolve(parsedHostAndPort.getHost(), parsedHostAndPort.getPortOrDefault(80), contextPath);
+            InetSocketAddress address = hostResolver.resolve(parsedHostAndPort.getHost(), parsedHostAndPort.getPortOrDefault(80), contextPath);
             String websocketStr = ServerHost.HTTP_PREFIX +address.getHostName() + ":" + address.getPort() + contextPath;
             WebsocketClientImpl client = new WebsocketClientImpl(websocketStr, ctx);
             client.connect();
