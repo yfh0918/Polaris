@@ -583,7 +583,7 @@ public abstract class ProxyConnection<I extends HttpObject> extends
      * Adapting the Netty API
      **************************************************************************/
     @Override
-    protected final void channelRead0(ChannelHandlerContext ctx, Object msg)
+    protected void channelRead0(ChannelHandlerContext ctx, Object msg)
             throws Exception {
         read(msg);
     }

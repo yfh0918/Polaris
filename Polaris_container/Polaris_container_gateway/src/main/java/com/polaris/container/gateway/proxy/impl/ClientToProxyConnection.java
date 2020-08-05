@@ -148,7 +148,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
      */
     private volatile HttpRequest currentRequest;
 
-    ClientToProxyConnection(
+    public ClientToProxyConnection(
             final DefaultHttpProxyServer proxyServer,
             SslEngineSource sslEngineSource,
             boolean authenticateClients,
@@ -1313,7 +1313,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
      * @param httpRequest
      * @return
      */
-    private String identifyHostAndPort(HttpRequest httpRequest) {
+    protected String identifyHostAndPort(HttpRequest httpRequest) {
         String hostAndPort = ProxyUtils.parseHostAndPort(httpRequest);
         if (StringUtils.isBlank(hostAndPort)) {
             List<String> hosts = httpRequest.headers().getAll(

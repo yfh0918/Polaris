@@ -479,14 +479,11 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
     private HttpProxyServer start() {
         if (!serverGroup.isStopped()) {
             LOG.info("Starting proxy at address: " + this.requestedAddress);
-
             serverGroup.registerProxyServer(this);
-
             doStart();
         } else {
             throw new IllegalStateException("Attempted to start proxy, but proxy's server group is already stopped");
         }
-
         return this;
     }
 
@@ -497,7 +494,7 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
 
         ChannelInitializer<Channel> initializer = new ChannelInitializer<Channel>() {
             protected void initChannel(Channel ch) throws Exception {
-                new ClientToProxyConnection(
+                new ClientToProxyConnectionAdapt(
                         DefaultHttpProxyServer.this,
                         sslEngineSource,
                         authenticateSslClients,

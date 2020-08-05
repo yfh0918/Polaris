@@ -1,10 +1,10 @@
 package com.polaris.core.pojo;
 
 public class ServerHost {
-	private static final String HTTP_PREFIX = "http://";
-	private static final String HTTPS_PREFIX = "https://";
-	private static final String WS_PREFIX = "ws://";
-    private static final String WSS_PREFIX = "wss://";
+	public static final String HTTP_PREFIX = "http://";
+	public static final String HTTPS_PREFIX = "https://";
+	public static final String WS_PREFIX = "ws://";
+	public static final String WSS_PREFIX = "wss://";
 	private String prefix;
 	private String serviceName;
 	private String uri;
