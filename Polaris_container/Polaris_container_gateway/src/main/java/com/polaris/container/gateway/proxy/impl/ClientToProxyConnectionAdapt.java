@@ -25,7 +25,10 @@ public class ClientToProxyConnectionAdapt  extends ClientToProxyConnection{
      */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (msg instanceof HttpRequest) {
+        if (msg instanceof WebSocketFrame) {
+            wsHandler.handle(ctx, (WebSocketFrame) msg);
+            return;
+        } else if (msg instanceof HttpRequest) {
             if (wsHandler.isWsRequest((HttpRequest) msg)) {
                 String serverHostAndPort = identifyHostAndPort((HttpRequest) msg);
                 if (wsHandler.upgrade((HttpRequest) msg, 
@@ -36,12 +39,8 @@ public class ClientToProxyConnectionAdapt  extends ClientToProxyConnection{
                 }
                 return;
             } 
-            super.channelRead0(ctx, msg);
-        } else if (msg instanceof HttpObject) {
-            super.channelRead0(ctx, msg);
-        } else if (msg instanceof WebSocketFrame) {
-            wsHandler.handle(ctx, (WebSocketFrame) msg);
-        }
+        } 
+        super.channelRead0(ctx, msg);
     }
     
     @Override
