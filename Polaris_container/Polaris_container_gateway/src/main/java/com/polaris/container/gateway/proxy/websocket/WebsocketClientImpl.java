@@ -63,23 +63,4 @@ public class WebsocketClientImpl extends WebSocketClient {
             WsComponent.close(ctx, new CloseWebSocketFrame());
         }
     }
-
-    /*
-    public static void main(String[] args) {
-        try {
-            WebSocketClient myWebsocketClient = new WebsocketClientImpl("http://192.168.100.88:7601/demo/websocket", null);
-            myWebsocketClient.connect();
-            while(!myWebsocketClient.getReadyState().equals(ReadyState.OPEN)){
-                System.out.println("还没有打开");
-            }
-            System.out.println("打开了");
-            myWebsocketClient.send("111111");
-            Thread.currentThread().join();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-    */
 }

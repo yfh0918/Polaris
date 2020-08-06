@@ -56,15 +56,17 @@ public class WsHandler {
             //建立http连接需要filter
             List<KeyValuePair> list = ServerHost.getKeyValuePairs(req.uri());
             for (KeyValuePair kv : list) {
-                req.headers().add(kv.getKey(), kv.getValue());
+                req.headers().add(kv.getKey(), kv.getValue());//websokcet认证参数设置到header中
             }
             HttpResponse response = filters.clientToProxyRequest(req);
             if (response != null) {
+                
+                //filter不通过，直接返回
                 ctx.writeAndFlush(response,ctx.channel().newPromise());
             } else {
                 //与远程的websocket建立连接
                 WsComponent wsComponent = new WsComponent();
-                if (connectToRemoteWs(req, ctx, hostResolver,serverHostAndPort,wsComponent)) {
+                if (connectToRemote(req, ctx, hostResolver,serverHostAndPort,wsComponent)) {
                     //本机websocket建联
                     handshaker.handshake(ctx.channel(), req);
                     wsComponent.setUri(req.uri());
@@ -78,7 +80,7 @@ public class WsHandler {
         return flag;
     }
 
-    // 处理Websocket的代码
+    //处理Websocket的代码
     public void handle(ChannelHandlerContext ctx, WebSocketFrame frame) {
         
         //close
@@ -100,7 +102,7 @@ public class WsHandler {
         }
         
         // text
-        if (frame instanceof TextWebSocketFrame) {
+        else if (frame instanceof TextWebSocketFrame) {
             WsComponent wsComponent = WsComponent.get(ctx);
             if (wsComponent != null) {
                 wsComponent.getWebSocketClient().send(((TextWebSocketFrame) frame).text());
@@ -111,7 +113,7 @@ public class WsHandler {
         }
         
         //byte
-        if (frame instanceof BinaryWebSocketFrame) {
+        else if (frame instanceof BinaryWebSocketFrame) {
             WsComponent wsComponent = WsComponent.get(ctx);
             if (wsComponent != null) {
                 BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) frame;
@@ -131,7 +133,7 @@ public class WsHandler {
     /**
      * 与远程websocket建立连接
      * */
-    private boolean connectToRemoteWs(HttpRequest req, 
+    private boolean connectToRemote(HttpRequest req, 
             ChannelHandlerContext ctx, 
             HostResolver hostResolver, 
             String serverHostAndPort,
