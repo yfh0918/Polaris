@@ -108,20 +108,18 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     @Override
     public HttpObject proxyToClientResponse(HttpObject httpObject) {
         if (httpObject instanceof HttpResponse) {
-        	
         	if (((HttpResponse) httpObject).status().code() == HttpResponseStatus.BAD_GATEWAY.code()) {
-                ctx.writeAndFlush(createResponse(originalRequest, 
-                		HttpFilterMessage.of(
-                				ResultUtil.create(
-                						Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(),
-                						HttpResponseStatus.BAD_GATEWAY)));
+        	    httpObject = createResponse(originalRequest, 
+                        HttpFilterMessage.of(
+                                ResultUtil.create(
+                                        Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(),
+                                        HttpResponseStatus.BAD_GATEWAY));
                 return httpObject;
         	}
 
         	ImmutablePair<Boolean, HttpFilterMessage> immutablePair = HttpResponseFilterChain.INSTANCE.doFilter(originalRequest, (HttpResponse) httpObject);
-        	
         	if (immutablePair.left) {
-        		ctx.writeAndFlush(createResponse(originalRequest, immutablePair.right));
+        	    httpObject = createResponse(originalRequest, immutablePair.right);
                 return httpObject;
         	}
         }
