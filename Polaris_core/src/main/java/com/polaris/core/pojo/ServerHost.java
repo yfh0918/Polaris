@@ -1,5 +1,8 @@
 package com.polaris.core.pojo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ServerHost {
 	public static final String HTTP_PREFIX = "http://";
 	public static final String HTTPS_PREFIX = "https://";
@@ -25,6 +28,21 @@ public class ServerHost {
 	}
 	public void setUri(String uri) {
 		this.uri = uri;
+	}
+	public static List<KeyValuePair> getKeyValuePairs(String uri) {
+	    List<KeyValuePair> result = new ArrayList<>();
+	    int index = uri.indexOf("?");
+        if (index > -1) {
+            String argsStr = uri.substring(index + 1);
+            String[] args = argsStr.split("&");
+            for (String arg : args) {
+                String[] kv = arg.split("=");
+                if (kv.length == 2) {
+                    result.add(KeyValuePair.of(kv[0].trim(), kv[1].trim()));
+                }
+            }
+        }
+        return result;
 	}
 	public static ServerHost of(String url) {
 		//example:url = http://myservice/abc/cc?aa=bb

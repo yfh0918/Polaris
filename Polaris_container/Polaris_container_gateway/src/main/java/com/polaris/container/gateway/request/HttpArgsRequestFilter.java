@@ -2,6 +2,7 @@ package com.polaris.container.gateway.request;
 
 import java.net.URLDecoder;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,6 +14,8 @@ import com.polaris.container.gateway.HttpConstant;
 import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
 import com.polaris.container.gateway.util.RequestUtil;
+import com.polaris.core.pojo.KeyValuePair;
+import com.polaris.core.pojo.ServerHost;
 
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
@@ -50,24 +53,18 @@ public class HttpArgsRequestFilter extends HttpRequestFilter {
                 logger.warn("URL:{} is inconsistent with the rules", httpRequest.uri(), e);
             }
             if (url != null) {
-                int index = url.indexOf("?");
-                if (index > -1) {
-                    String argsStr = url.substring(index + 1);
-                    String[] args = argsStr.split("&");
-                    for (String arg : args) {
-                        String[] kv = arg.split("=");
-                        if (kv.length == 2) {
-                        	RequestUtil.setQueryString(kv[0].trim(), kv[1].trim());
-                            for (Pattern pat : patterns) {
-                                Matcher matcher = pat.matcher(kv[1].toLowerCase());
-                                if (matcher.find()) {
-                                    hackLog(logger, HttpConstant.getRealIp(httpRequest), HttpArgsRequestFilter.class.getSimpleName(), pat.toString());
-                                    return true;
-                                }
-                            }
+                List<KeyValuePair> list = ServerHost.getKeyValuePairs(url);
+                for (KeyValuePair kv : list) {
+                    RequestUtil.setQueryString(kv.getKey(), kv.getValue());
+                    for (Pattern pat : patterns) {
+                        Matcher matcher = pat.matcher(kv.getValue().toLowerCase());
+                        if (matcher.find()) {
+                            hackLog(logger, HttpConstant.getRealIp(httpRequest), HttpArgsRequestFilter.class.getSimpleName(), pat.toString());
+                            return true;
                         }
                     }
                 }
+                
             }
         }
         return false;

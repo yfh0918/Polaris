@@ -1,6 +1,7 @@
 package com.polaris.container.gateway.proxy.websocket;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -13,6 +14,7 @@ import com.google.common.net.HostAndPort;
 import com.polaris.container.gateway.pojo.HttpHostContext;
 import com.polaris.container.gateway.proxy.HostResolver;
 import com.polaris.container.gateway.proxy.HttpFilters;
+import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.pojo.ServerHost;
 
 import io.netty.buffer.ByteBuf;
@@ -52,6 +54,10 @@ public class WsHandler {
         } else {
             
             //建立http连接需要filter
+            List<KeyValuePair> list = ServerHost.getKeyValuePairs(req.uri());
+            for (KeyValuePair kv : list) {
+                req.headers().add(kv.getKey(), kv.getValue());
+            }
             HttpResponse response = filters.clientToProxyRequest(req);
             if (response != null) {
                 ctx.writeAndFlush(response,ctx.channel().newPromise());
