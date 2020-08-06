@@ -6,7 +6,6 @@ import com.polaris.container.gateway.proxy.websocket.WsHandler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
-import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.traffic.GlobalTrafficShapingHandler;
