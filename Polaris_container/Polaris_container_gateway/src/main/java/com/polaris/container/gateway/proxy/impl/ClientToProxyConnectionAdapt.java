@@ -1,13 +1,11 @@
 package com.polaris.container.gateway.proxy.impl;
 
-import java.util.Objects;
-
+import com.esotericsoftware.minlog.Log;
 import com.polaris.container.gateway.proxy.SslEngineSource;
 import com.polaris.container.gateway.proxy.websocket.WsHandler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
-import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
@@ -28,7 +26,7 @@ public class ClientToProxyConnectionAdapt  extends ClientToProxyConnection{
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof HttpRequest) {
-            if (isWsRequest((HttpRequest) msg)) {
+            if (wsHandler.isWsRequest((HttpRequest) msg)) {
                 String serverHostAndPort = identifyHostAndPort((HttpRequest) msg);
                 if (wsHandler.upgrade((HttpRequest) msg, 
                         ctx, 
@@ -46,16 +44,13 @@ public class ClientToProxyConnectionAdapt  extends ClientToProxyConnection{
         }
     }
     
-    private boolean isWsRequest(HttpRequest req) {
-        HttpHeaders headers = req.headers();
-        if (headers == null) {
-            return false;
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt)
+            throws Exception {
+        Log.debug("userEventTriggered");
+        if (wsHandler.isWsChannelHandlerContext(ctx)) {
+            return;
         }
-        String connection = headers.get("Connection");
-        String upgrade = headers.get("Upgrade");
-        if (Objects.equals("Upgrade", connection) && Objects.equals("websocket", upgrade)) {
-            return true;
-        }
-        return false;
+        super.userEventTriggered(ctx, evt);
     }
 }

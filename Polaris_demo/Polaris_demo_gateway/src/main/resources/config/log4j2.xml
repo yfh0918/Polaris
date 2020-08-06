@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--设置log4j2的自身log级别为warn -->
-<configuration status="info">
+<configuration status="debug">
     <properties>
         <Property name="app_name">BanyanProcessor</Property>
         <Property name="log_path">c:/logs/${app_name}</Property>
@@ -66,7 +66,7 @@
     <loggers>
         <!--过滤掉spring和hibernate的一些无用的debug信息 -->
 
-        <root level="info">
+        <root level="debug">
             <appender-ref ref="Console"/>
             <appender-ref ref="RollingFileInfo"/>
             <appender-ref ref="RollingFileWarn"/>

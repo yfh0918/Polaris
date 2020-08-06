@@ -32,11 +32,13 @@ public class WebsocketClientImpl extends WebSocketClient {
     @Override
     public void onClose(int arg0, String arg1, boolean arg2) {
         log.debug("------ WebsocketClientImpl onClose ------");
+        WsComponent.close(ctx, new CloseWebSocketFrame());
     }
 
     @Override
     public void onError(Exception arg0) {
         log.debug("------ WebsocketClientImpl onError ------");
+        WsComponent.close(ctx, new CloseWebSocketFrame());
     }
 
     @Override
@@ -48,7 +50,7 @@ public class WebsocketClientImpl extends WebSocketClient {
             bytes.get(newBytes);
             ctx.writeAndFlush(new BinaryWebSocketFrame(io.netty.buffer.Unpooled.copiedBuffer(newBytes)));
         } else {
-            WsConstant.ctxWs.get(ctx).close(ctx.channel(), new CloseWebSocketFrame());
+            WsComponent.close(ctx, new CloseWebSocketFrame());
         }
     }
     
@@ -58,7 +60,7 @@ public class WebsocketClientImpl extends WebSocketClient {
         if (ctx != null && ctx.channel() != null && ctx.channel().isActive()) {
             ctx.writeAndFlush(new TextWebSocketFrame(message));
         } else {
-            WsConstant.ctxWs.get(ctx).close(ctx.channel(), new CloseWebSocketFrame());
+            WsComponent.close(ctx, new CloseWebSocketFrame());
         }
     }
 

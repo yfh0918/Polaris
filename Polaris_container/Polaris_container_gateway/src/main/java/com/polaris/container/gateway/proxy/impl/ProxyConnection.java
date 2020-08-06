@@ -658,7 +658,7 @@ public abstract class ProxyConnection<I extends HttpObject> extends
      * </p>
      */
     @Override
-    public final void userEventTriggered(ChannelHandlerContext ctx, Object evt)
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt)
             throws Exception {
         try {
             if (evt instanceof IdleStateEvent) {
