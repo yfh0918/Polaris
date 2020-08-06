@@ -1,5 +1,6 @@
 package com.polaris.demo.rest.controller;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import javax.websocket.OnClose;
@@ -30,6 +31,7 @@ public class WsProtocol  {
      */  
     @OnOpen  
     public void start(Session session) { 
+        System.out.println(" start ");
     	logger.info("open session_id:{}, parameter:{}",session.getId(),session.getRequestParameterMap());
     }  
   
@@ -41,6 +43,13 @@ public class WsProtocol  {
      */  
     @OnMessage  
     public void echoTextMessage(Session session, String msg, boolean last) {  
+        System.out.println(msg);
+        try {
+            session.getBasicRemote().sendText("have received "+ msg);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }  
   
     /**  
@@ -51,11 +60,20 @@ public class WsProtocol  {
      */  
     @OnMessage  
     public void echoBinaryMessage(Session session, ByteBuffer byteBuffer, boolean last) {  
+        System.out.println("receive bytebuffer");
+        try {
+            String aaa = "received";
+            session.getBasicRemote().sendBinary(ByteBuffer.wrap(aaa.getBytes()));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }  
 
       
     @OnClose  
     public void end(Session session) { 
+        System.out.println("end");
      	logger.info("close session_id:{}",session.getId());
     }
     
@@ -66,6 +84,7 @@ public class WsProtocol  {
      */
     @OnError
     public void onError(Session session, Throwable error){
+        System.out.println("error");
         logger.info("session_id:{},error:{}",session.getId(),error.toString());
     }
 

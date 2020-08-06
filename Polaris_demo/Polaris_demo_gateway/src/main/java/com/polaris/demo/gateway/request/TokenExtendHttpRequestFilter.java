@@ -16,7 +16,6 @@ public class TokenExtendHttpRequestFilter extends HttpRequestFilter {
 
 	@Override
     public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpFilterMessage httpMessage) {
-        //test shutdownhoot System.exit(0);
         return false;
     }
 }

@@ -140,7 +140,7 @@ public class WsHandler {
             String contextPath = HttpHostContext.getContextPath(req.uri());
             HostAndPort parsedHostAndPort = HostAndPort.fromString(serverHostAndPort);
             InetSocketAddress address = hostResolver.resolve(parsedHostAndPort.getHost(), parsedHostAndPort.getPortOrDefault(80), contextPath);
-            String websocketStr = ServerHost.HTTP_PREFIX +address.getHostName() + ":" + address.getPort() + contextPath;
+            String websocketStr = ServerHost.HTTP_PREFIX +address.getHostName() + ":" + address.getPort() + req.uri();
             WebSocketClient client = new WebsocketClientImpl(websocketStr, ctx);
             client.connect();
             for (int i = 0; i < 10 ; i++) {
