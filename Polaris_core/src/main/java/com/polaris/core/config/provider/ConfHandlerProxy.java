@@ -19,7 +19,7 @@ public class ConfHandlerProxy implements ConfHandler{
     
     //global-var
     private static final ServiceLoader<ConfHandler> handlerLoader = ServiceLoader.load(ConfHandler.class);
-    private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
+    private volatile AtomicBoolean initialized = new AtomicBoolean(false);
     private static ConfHandler handler;
 
     //instance-var
