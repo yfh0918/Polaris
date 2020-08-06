@@ -3,6 +3,7 @@ package com.polaris.container.gateway.proxy.websocket;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
+import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.enums.ReadyState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +15,11 @@ import com.polaris.container.gateway.proxy.HostResolver;
 import com.polaris.container.gateway.proxy.HttpFilters;
 import com.polaris.core.pojo.ServerHost;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
@@ -71,21 +74,22 @@ public class WsHandler {
 
     // 处理Websocket的代码
     public void handle(ChannelHandlerContext ctx, WebSocketFrame frame) {
-        // 判断是否是关闭链路的指令
-        log.debug("接收到websocket信息");
+        
+        //close
         if (frame instanceof CloseWebSocketFrame) {
             //先关闭远程websocket的连接
-            WebsocketClientImpl myWebsocketClient = WsConstant.wsCtxClient.get(ctx);
+            WebSocketClient myWebsocketClient = WsConstant.wsCtxClient.get(ctx);
             if (myWebsocketClient != null) {
                 myWebsocketClient.close();
             }
             WsConstant.ctxWs.get(ctx).close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
             return;
         }
-        // 判断是否是Ping消息
+        
+        // ping
         if (frame instanceof PingWebSocketFrame) {
             ctx.channel().write(new PongWebSocketFrame(frame.content().retain()));
-            WebsocketClientImpl myWebsocketClient = WsConstant.wsCtxClient.get(ctx);
+            WebSocketClient myWebsocketClient = WsConstant.wsCtxClient.get(ctx);
             if (myWebsocketClient != null) {
                 myWebsocketClient.sendPing();
             } else {
@@ -93,12 +97,29 @@ public class WsHandler {
             }
             return;
         }
-        // 文本消息，不支持二进制消息
+        
+        // text
         if (frame instanceof TextWebSocketFrame) {
             String request = ((TextWebSocketFrame) frame).text();
-            WebsocketClientImpl myWebsocketClient = WsConstant.wsCtxClient.get(ctx);
+            WebSocketClient myWebsocketClient = WsConstant.wsCtxClient.get(ctx);
             if (myWebsocketClient != null) {
                 myWebsocketClient.send(request);
+            } else {
+                WsConstant.ctxWs.get(ctx).close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
+            }
+            return;
+        }
+        
+        //byte
+        if (frame instanceof BinaryWebSocketFrame) {
+            BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) frame;
+            ByteBuf content = binaryWebSocketFrame.content();
+            final int length = content.readableBytes();
+            final byte[] array = new byte[length];
+            content.getBytes(content.readerIndex(), array, 0, length);
+            WebSocketClient myWebsocketClient = WsConstant.wsCtxClient.get(ctx);
+            if (myWebsocketClient != null) {
+                myWebsocketClient.send(array);
             } else {
                 WsConstant.ctxWs.get(ctx).close(ctx.channel(), (CloseWebSocketFrame) frame.retain());
             }
@@ -120,7 +141,7 @@ public class WsHandler {
             HostAndPort parsedHostAndPort = HostAndPort.fromString(serverHostAndPort);
             InetSocketAddress address = hostResolver.resolve(parsedHostAndPort.getHost(), parsedHostAndPort.getPortOrDefault(80), contextPath);
             String websocketStr = ServerHost.HTTP_PREFIX +address.getHostName() + ":" + address.getPort() + contextPath;
-            WebsocketClientImpl client = new WebsocketClientImpl(websocketStr, ctx);
+            WebSocketClient client = new WebsocketClientImpl(websocketStr, ctx);
             client.connect();
             for (int i = 0; i < 10 ; i++) {
                 if (client.getReadyState().equals(ReadyState.OPEN)) {
@@ -137,7 +158,6 @@ public class WsHandler {
         } catch (Exception e) {
             log.error("ERROR:",e);
         }
-
         return flag;
     }
 

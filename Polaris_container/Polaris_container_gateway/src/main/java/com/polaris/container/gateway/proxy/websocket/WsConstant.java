@@ -3,6 +3,8 @@ package com.polaris.container.gateway.proxy.websocket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.java_websocket.client.WebSocketClient;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 
@@ -28,12 +30,12 @@ public class WsConstant {
     /**
      * 将ctx和handshaker
      * */
-    public static final Map<WebsocketClientImpl, ChannelHandlerContext> wsClientCtx =
+    public static final Map<WebSocketClient, ChannelHandlerContext> wsClientCtx =
             new ConcurrentHashMap<>();
 
     /**
      * 将ctx和handshaker
      * */
-    public static final Map<ChannelHandlerContext, WebsocketClientImpl> wsCtxClient =
+    public static final Map<ChannelHandlerContext, WebSocketClient> wsCtxClient =
             new ConcurrentHashMap<>();
 }
