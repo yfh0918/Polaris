@@ -3,39 +3,41 @@ package com.polaris.container.gateway.proxy.websocket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.java_websocket.client.WebSocketClient;
+import com.polaris.container.gateway.proxy.websocket.client.WebSocketInf;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 
-public class WsComponent {
+public class WsAdmin {
 
     /**
      * 将ctx关联
      * */
-    private static final Map<ChannelHandlerContext, WsComponent> contextMap =
+    private static final Map<ChannelHandlerContext, WsAdmin> contextMap =
             new ConcurrentHashMap<>();
 
-    public static WsComponent get(ChannelHandlerContext context) {
+    public static WsAdmin get(ChannelHandlerContext context) {
         return contextMap.get(context);
     }
     public static void close(ChannelHandlerContext context,CloseWebSocketFrame frame) {
-        WsComponent ws = contextMap.remove(context);
+        WsAdmin ws = contextMap.remove(context);
         if (ws == null) {
             return;
         }
         ws.getWebSocketClient().close();
         ws.getWebSocketServerHandshaker().close(context.channel(), frame);
     }
-    
+    public static int size() {
+        return contextMap.size();
+    }
     private String uri;
     
     private WebSocketServerHandshaker webSocketServerHandshaker;
     
     private ChannelHandlerContext channelHandlerContext;
     
-    private WebSocketClient webSocketClient;
+    private WebSocketInf webSocketClient;
 
     public String getUri() {
         return uri;
@@ -62,11 +64,12 @@ public class WsComponent {
         contextMap.put(channelHandlerContext, this);
     }
 
-    public WebSocketClient getWebSocketClient() {
+    public WebSocketInf getWebSocketClient() {
         return webSocketClient;
     }
 
-    public void setWebSocketClient(WebSocketClient webSocketClient) {
+    public void setWebSocketClient(WebSocketInf webSocketClient) {
         this.webSocketClient = webSocketClient;
     }
+
 }

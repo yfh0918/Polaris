@@ -1,11 +1,10 @@
 package com.polaris.container.gateway.proxy.websocket;
 
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.enums.ReadyState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +12,8 @@ import com.google.common.net.HostAndPort;
 import com.polaris.container.gateway.pojo.HttpHostContext;
 import com.polaris.container.gateway.proxy.HostResolver;
 import com.polaris.container.gateway.proxy.HttpFilters;
+import com.polaris.container.gateway.proxy.websocket.client.WebSocketFactory;
+import com.polaris.container.gateway.proxy.websocket.client.WebSocketInf;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.pojo.ServerHost;
 
@@ -64,7 +65,7 @@ public class WsHandler {
                 ctx.writeAndFlush(response,ctx.channel().newPromise());
             } else {
                 //与远程的websocket建立连接
-                WsComponent wsComponent = new WsComponent();
+                WsAdmin wsComponent = new WsAdmin();
                 if (connectToRemote(req, ctx, hostResolver,serverHostAndPort,wsComponent)) {
                     //本机websocket建联
                     handshaker.handshake(ctx.channel(), req);
@@ -84,46 +85,46 @@ public class WsHandler {
         
         //close
         if (frame instanceof CloseWebSocketFrame) {
-            WsComponent.close(ctx,(CloseWebSocketFrame) frame.retain());
+            WsAdmin.close(ctx,(CloseWebSocketFrame) frame.retain());
             return;
         }
         
         // ping
         if (frame instanceof PingWebSocketFrame) {
             ctx.channel().write(new PongWebSocketFrame(frame.content().retain()));
-            WsComponent wsComponent = WsComponent.get(ctx);
+            WsAdmin wsComponent = WsAdmin.get(ctx);
             if (wsComponent != null) {
                 wsComponent.getWebSocketClient().sendPing();
             } else {
-                WsComponent.close(ctx,(CloseWebSocketFrame) frame.retain());
+                WsAdmin.close(ctx,(CloseWebSocketFrame) frame.retain());
             }
             return;
         }
         
         // text
         else if (frame instanceof TextWebSocketFrame) {
-            WsComponent wsComponent = WsComponent.get(ctx);
+            WsAdmin wsComponent = WsAdmin.get(ctx);
             if (wsComponent != null) {
                 wsComponent.getWebSocketClient().send(((TextWebSocketFrame) frame).text());
             } else {
-                WsComponent.close(ctx,(CloseWebSocketFrame) frame.retain());
+                WsAdmin.close(ctx,(CloseWebSocketFrame) frame.retain());
             }
             return;
         }
         
         //byte
         else if (frame instanceof BinaryWebSocketFrame) {
-            WsComponent wsComponent = WsComponent.get(ctx);
+            WsAdmin wsComponent = WsAdmin.get(ctx);
             if (wsComponent != null) {
                 BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) frame;
                 ByteBuf content = binaryWebSocketFrame.content();
                 final int length = content.readableBytes();
                 final byte[] array = new byte[length];
                 content.getBytes(content.readerIndex(), array, 0, length);
-                wsComponent.getWebSocketClient().send(array);
+                wsComponent.getWebSocketClient().send(ByteBuffer.wrap(array));
             } else {
                 
-                WsComponent.close(ctx,(CloseWebSocketFrame) frame.retain());
+                WsAdmin.close(ctx,(CloseWebSocketFrame) frame.retain());
             }
             return;
         }
@@ -136,7 +137,7 @@ public class WsHandler {
             ChannelHandlerContext ctx, 
             HostResolver hostResolver, 
             String serverHostAndPort,
-            WsComponent wsComponent) {
+            WsAdmin wsComponent) {
         boolean flag = false;
         try {
             //context
@@ -144,10 +145,10 @@ public class WsHandler {
             HostAndPort parsedHostAndPort = HostAndPort.fromString(serverHostAndPort);
             InetSocketAddress address = hostResolver.resolve(parsedHostAndPort.getHost(), parsedHostAndPort.getPortOrDefault(80), contextPath);
             String websocketStr = ServerHost.HTTP_PREFIX +address.getHostName() + ":" + address.getPort() + req.uri();
-            WebSocketClient client = new WebsocketClientImpl(websocketStr, ctx);
+            WebSocketInf client = WebSocketFactory.create(websocketStr, ctx);
             client.connect();
             for (int i = 0; i < 10 ; i++) {
-                if (client.getReadyState().equals(ReadyState.OPEN)) {
+                if (client.getState().equals(WsStatus.OPEN)) {
                     flag = true;
                     wsComponent.setChannelHandlerContext(ctx);
                     wsComponent.setWebSocketClient(client);
@@ -184,7 +185,7 @@ public class WsHandler {
     }
     
     public boolean isWsChannelHandlerContext(ChannelHandlerContext ctx) {
-        if (WsComponent.get(ctx) != null) {
+        if (WsAdmin.get(ctx) != null) {
             return true;
         }
         return false;
