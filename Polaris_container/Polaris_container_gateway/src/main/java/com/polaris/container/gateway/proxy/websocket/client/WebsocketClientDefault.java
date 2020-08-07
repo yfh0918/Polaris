@@ -30,24 +30,24 @@ public class WebsocketClientDefault extends WebSocketClient implements WebSocket
 
     @Override
     public void onOpen(ServerHandshake arg0) {
-        log.debug("------ WebsocketClientImpl onOpen ------");
+        log.debug("------ WebsocketClientDefault onOpen ------");
     }
 
     @Override
     public void onClose(int arg0, String arg1, boolean arg2) {
-        log.debug("------ WebsocketClientImpl onClose ------");
+        log.debug("------ WebsocketClientDefault onClose ------");
         WsAdmin.close(ctx, new CloseWebSocketFrame());
     }
 
     @Override
     public void onError(Exception arg0) {
-        log.debug("------ WebsocketClientImpl onError ------");
+        log.debug("------ WebsocketClientDefault onError ------");
         WsAdmin.close(ctx, new CloseWebSocketFrame());
     }
 
     @Override
     public void onMessage(ByteBuffer bytes) {
-        log.debug("------ WebsocketClientImpl onMessage ByteBuffer ------");
+        log.debug("------ WebsocketClientDefault onMessage ByteBuffer ------");
         if (ctx != null && ctx.channel() != null && ctx.channel().isActive()) {
             int len = bytes.limit() - bytes.position();
             byte[] newBytes = new byte[len];
@@ -60,7 +60,7 @@ public class WebsocketClientDefault extends WebSocketClient implements WebSocket
     
     @Override
     public void onMessage(String message) {
-        log.debug("------ WebsocketClientImpl onMessage text ------");
+        log.debug("------ WebsocketClientDefault onMessage text ------");
         if (ctx != null && ctx.channel() != null && ctx.channel().isActive()) {
             ctx.writeAndFlush(new TextWebSocketFrame(message));
         } else {
