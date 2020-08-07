@@ -36,7 +36,7 @@
 5:Polaris_extension_workflow是现有的服务（工作流activity内核）
  具体请参考模块的配置,详细参考Polaris_demo目录下的workflow
 
-6:Polaris_container_gateway是现有的api网管，提供api的统一入口服务(基于netty http实现)
+6:Polaris_container_gateway是现有的api网管，提供api的统一入口服务(基于netty 实现),目前支持http1.0.1.1和websocket协议
   支持之定义过滤器扩展，详细请参考Polaris_demo_gateway
 
 7:支持Sentinel（流量监控类），需要在自己的配置文件中设置如下
