@@ -4,7 +4,7 @@ import java.net.URISyntaxException;
 
 import io.netty.channel.ChannelHandlerContext;
 
-public abstract class WebSocketAbstract implements WebSocketInf {
+public abstract class AbstractWebSocketClient implements WebSocketClientInf {
     
     protected String uri;
     protected ChannelHandlerContext ctx;
@@ -16,7 +16,7 @@ public abstract class WebSocketAbstract implements WebSocketInf {
      *
      * @param serverUri the server URI to connect to
      */
-    public WebSocketAbstract(String uri, ChannelHandlerContext ctx) throws URISyntaxException {
+    public AbstractWebSocketClient(String uri, ChannelHandlerContext ctx) throws URISyntaxException {
         this.ctx = ctx;
         this.uri = uri;
     }

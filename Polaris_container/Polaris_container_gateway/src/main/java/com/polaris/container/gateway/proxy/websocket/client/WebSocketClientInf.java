@@ -6,7 +6,7 @@ import org.java_websocket.exceptions.WebsocketNotConnectedException;
 
 import com.polaris.container.gateway.proxy.websocket.WsStatus;
 
-public interface WebSocketInf {
+public interface WebSocketClientInf {
     
     /**  connect */
     void connect();

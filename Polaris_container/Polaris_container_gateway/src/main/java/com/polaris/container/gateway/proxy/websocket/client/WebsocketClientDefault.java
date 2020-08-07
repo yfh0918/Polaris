@@ -18,7 +18,7 @@ import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 
-public class WebsocketClientDefault extends WebSocketClient implements WebSocketInf {
+public class WebsocketClientDefault extends WebSocketClient implements WebSocketClientInf {
     private ChannelHandlerContext ctx;
     
     private static final Logger log = LoggerFactory.getLogger(WebsocketClientDefault.class);

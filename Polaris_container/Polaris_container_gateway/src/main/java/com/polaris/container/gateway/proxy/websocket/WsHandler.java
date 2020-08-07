@@ -12,8 +12,8 @@ import com.google.common.net.HostAndPort;
 import com.polaris.container.gateway.pojo.HttpHostContext;
 import com.polaris.container.gateway.proxy.HostResolver;
 import com.polaris.container.gateway.proxy.HttpFilters;
-import com.polaris.container.gateway.proxy.websocket.client.WebSocketFactory;
-import com.polaris.container.gateway.proxy.websocket.client.WebSocketInf;
+import com.polaris.container.gateway.proxy.websocket.client.WebSocketClientFactory;
+import com.polaris.container.gateway.proxy.websocket.client.WebSocketClientInf;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.pojo.ServerHost;
 
@@ -145,7 +145,7 @@ public class WsHandler {
             HostAndPort parsedHostAndPort = HostAndPort.fromString(serverHostAndPort);
             InetSocketAddress address = hostResolver.resolve(parsedHostAndPort.getHost(), parsedHostAndPort.getPortOrDefault(80), contextPath);
             String websocketStr = ServerHost.HTTP_PREFIX +address.getHostName() + ":" + address.getPort() + req.uri();
-            WebSocketInf client = WebSocketFactory.create(websocketStr, ctx);
+            WebSocketClientInf client = WebSocketClientFactory.create(websocketStr, ctx);
             client.connect();
             for (int i = 0; i < 10 ; i++) {
                 if (client.getState().equals(WsStatus.OPEN)) {

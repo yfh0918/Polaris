@@ -3,7 +3,7 @@ package com.polaris.container.gateway.proxy.websocket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.polaris.container.gateway.proxy.websocket.client.WebSocketInf;
+import com.polaris.container.gateway.proxy.websocket.client.WebSocketClientInf;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
@@ -37,7 +37,7 @@ public class WsAdmin {
     
     private ChannelHandlerContext channelHandlerContext;
     
-    private WebSocketInf webSocketClient;
+    private WebSocketClientInf webSocketClient;
 
     public String getUri() {
         return uri;
@@ -64,11 +64,11 @@ public class WsAdmin {
         contextMap.put(channelHandlerContext, this);
     }
 
-    public WebSocketInf getWebSocketClient() {
+    public WebSocketClientInf getWebSocketClient() {
         return webSocketClient;
     }
 
-    public void setWebSocketClient(WebSocketInf webSocketClient) {
+    public void setWebSocketClient(WebSocketClientInf webSocketClient) {
         this.webSocketClient = webSocketClient;
     }
 
