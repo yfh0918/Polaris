@@ -177,7 +177,7 @@ public class WsHandler {
         if (upgrade == null) {
             upgrade = headers.get("upgrade");
         }
-        if ("upgrade".equalsIgnoreCase(connection) && "websocket".equals(upgrade)) {
+        if ("upgrade".equalsIgnoreCase(connection) && "websocket".equalsIgnoreCase(upgrade)) {
             return true;
         }
         return false;
