@@ -21,13 +21,12 @@ public class WsComponent {
         return contextMap.get(context);
     }
     public static void close(ChannelHandlerContext context,CloseWebSocketFrame frame) {
-        WsComponent ws = contextMap.get(context);
+        WsComponent ws = contextMap.remove(context);
         if (ws == null) {
             return;
         }
         ws.getWebSocketClient().close();
         ws.getWebSocketServerHandshaker().close(context.channel(), frame);
-        contextMap.remove(context);
     }
     
     private String uri;

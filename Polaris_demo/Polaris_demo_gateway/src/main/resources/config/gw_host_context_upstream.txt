@@ -4,3 +4,4 @@
 /paycatt=serviceName1222
 /paycatr=127.0.0.1:8082:1,127.0.0.1:8083:1
 /demospringmvc=127.0.0.1:9045
+/banyanNDI=127.0.0.1:60008

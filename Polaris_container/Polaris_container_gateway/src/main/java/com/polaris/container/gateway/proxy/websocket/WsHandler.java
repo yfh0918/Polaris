@@ -2,7 +2,6 @@ package com.polaris.container.gateway.proxy.websocket;
 
 import java.net.InetSocketAddress;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.java_websocket.client.WebSocketClient;
@@ -171,8 +170,14 @@ public class WsHandler {
             return false;
         }
         String connection = headers.get("Connection");
+        if (connection == null) {
+            connection = headers.get("connection");
+        }
         String upgrade = headers.get("Upgrade");
-        if (Objects.equals("Upgrade", connection) && Objects.equals("websocket", upgrade)) {
+        if (upgrade == null) {
+            upgrade = headers.get("upgrade");
+        }
+        if ("upgrade".equalsIgnoreCase(connection) && "websocket".equals(upgrade)) {
             return true;
         }
         return false;
