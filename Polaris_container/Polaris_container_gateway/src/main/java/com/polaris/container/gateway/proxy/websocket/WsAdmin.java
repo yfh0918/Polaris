@@ -25,8 +25,8 @@ public class WsAdmin {
         if (ws == null) {
             return;
         }
-        ws.getWebSocketClient().close();
         ws.getWebSocketServerHandshaker().close(context.channel(), frame);
+        ws.getWebSocketClient().close();
     }
     public static int size() {
         return contextMap.size();

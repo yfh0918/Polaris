@@ -3,6 +3,7 @@ package com.polaris.container.gateway.proxy.websocket.client;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.enums.ReadyState;
@@ -23,6 +24,8 @@ public class WebsocketClientDefault extends WebSocketClient implements WebSocket
     
     private static final Logger log = LoggerFactory.getLogger(WebsocketClientDefault.class);
     
+    private volatile AtomicBoolean closed = new AtomicBoolean(false);
+    
     public WebsocketClientDefault(String uri, ChannelHandlerContext ctx) throws URISyntaxException {
         super(new URI(uri));
         this.ctx = ctx;
@@ -35,6 +38,9 @@ public class WebsocketClientDefault extends WebSocketClient implements WebSocket
 
     @Override
     public void onClose(int arg0, String arg1, boolean arg2) {
+        if (!closed.compareAndSet(false, true)) {
+            return;
+        }
         log.debug("------ WebsocketClientDefault onClose ------");
         WsAdmin.close(ctx, new CloseWebSocketFrame());
     }
