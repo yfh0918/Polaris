@@ -38,13 +38,12 @@ public class WsHandler {
     /**
      * 处理http请求为websocket握手时升级为websocket
      * */
-    public boolean upgrade(
+    public void upgrade(
             HttpRequest req, 
             ChannelHandlerContext ctx, 
             HostResolver hostResolver, 
             HttpFilters filters, 
             String serverHostAndPort) {
-        boolean flag = false;
         log.debug("websocket 请求接入");
         WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
                 req.uri(), null, false);
@@ -52,6 +51,12 @@ public class WsHandler {
         if (handshaker == null) {
             WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
         } else {
+            
+            //最大连接数
+            if (WsAdmin.size() > WsConfigReader.WS_REQUEST_MAX_NMBER) {
+                WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
+                return;
+            }
             
             //建立http连接需要filter
             List<KeyValuePair> list = ServerHost.getKeyValuePairs(req.uri());
@@ -71,13 +76,12 @@ public class WsHandler {
                     handshaker.handshake(ctx.channel(), req);
                     wsComponent.setUri(req.uri());
                     wsComponent.setWebSocketServerHandshaker(handshaker);
-                    flag = true;
                 } else {
                     WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
                 }  
             }
         }
-        return flag;
+        return;
     }
 
     //处理Websocket的代码

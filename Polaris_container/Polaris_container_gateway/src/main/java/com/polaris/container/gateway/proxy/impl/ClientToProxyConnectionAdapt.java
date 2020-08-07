@@ -30,12 +30,11 @@ public class ClientToProxyConnectionAdapt  extends ClientToProxyConnection{
         } else if (msg instanceof HttpRequest) {
             if (wsHandler.isWsRequest((HttpRequest) msg)) {
                 String serverHostAndPort = identifyHostAndPort((HttpRequest) msg);
-                if (wsHandler.upgrade((HttpRequest) msg, 
+                wsHandler.upgrade((HttpRequest) msg, 
                         ctx, 
                         this.proxyServer.getServerResolver(),
                         this.getHttpFiltersFromProxyServer((HttpRequest) msg),
-                        serverHostAndPort)) {
-                }
+                        serverHostAndPort);
                 return;
             } 
         } 
