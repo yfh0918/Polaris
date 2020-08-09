@@ -1,4 +1,4 @@
-﻿0:尽量使用稳定分支，不建议使用master和snapshot版本
+﻿0:基于代码安全考量，最新分支将在国内的https://gitee.com/yu_fenghua/Polaris.git维护
  
 1:install 全体
  
