@@ -64,7 +64,9 @@ public class HttpServer extends SpringContextServer{
         } 
         //milliseconds - 40seconds
         int timeout = Integer.parseInt(ConfClient.get("connect.timeout","40000"));
-        httpProxyServerBootstrap.withConnectTimeout(timeout);        
+        int idleConnectionTimeout = Integer.parseInt(ConfClient.get("idle.connect.timeout","60"));
+        httpProxyServerBootstrap.withConnectTimeout(timeout);
+        httpProxyServerBootstrap.withIdleConnectionTimeout(idleConnectionTimeout);
         httpProxyServerBootstrap.withAllowRequestToOriginServer(true)
                 .withProxyAlias(ConfClient.get("server.tls.alias"))
                 .withThreadPoolConfiguration(threadPoolConfiguration)

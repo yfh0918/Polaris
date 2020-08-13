@@ -1,1 +1,5 @@
-websocket.request.maxNumber=2000;
+#max request number
+websocket.request.maxNumber=2000
+
+#seconds
+websocket.idle.connect.timeout=600

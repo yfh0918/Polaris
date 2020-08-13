@@ -45,7 +45,7 @@ public class ClientToProxyConnectionAdapt  extends ClientToProxyConnection{
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt)
             throws Exception {
         Log.debug("userEventTriggered");
-        if (wsHandler.isWsChannelHandlerContext(ctx)) {
+        if (!wsHandler.userEventTriggered(ctx,this.proxyServer.getIdleConnectionTimeout())) {
             return;
         }
         super.userEventTriggered(ctx, evt);

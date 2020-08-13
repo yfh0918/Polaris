@@ -11,7 +11,9 @@ public class WsConfigReader implements HttpFileListener{
     
     private static String fileName = "gw_ws.txt";
     
-    public static int WS_REQUEST_MAX_NMBER = 2000;
+    private static int WS_REQUEST_MAX_NMBER = 2000;
+    
+    private static int WS_IDLE_CONNECT_TIMEOUT = 600;
     
     static {
         new WsConfigReader();
@@ -25,7 +27,17 @@ public class WsConfigReader implements HttpFileListener{
                 if ("websocket.request.maxNumber".equals(kv.getKey())) {
                     try {
                         WS_REQUEST_MAX_NMBER = Integer.parseInt(kv.getValue());
-                    } catch (Exception ex) {}
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    
+                }
+                if ("websocket.idle.connect.timeout".equals(kv.getKey())) {
+                    try {
+                        WS_IDLE_CONNECT_TIMEOUT = Integer.parseInt(kv.getValue());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                     
                 }
             }
@@ -34,5 +46,12 @@ public class WsConfigReader implements HttpFileListener{
     
     public WsConfigReader() {
         HttpFileReader.INSTANCE.readFile(this, new HttpFile(fileName));
+    }
+    
+    public static int getRequestMaxNumber() {
+        return WS_REQUEST_MAX_NMBER;
+    }
+    public static int getIdleConnectTimeout() {
+        return WS_IDLE_CONNECT_TIMEOUT;
     }
 }

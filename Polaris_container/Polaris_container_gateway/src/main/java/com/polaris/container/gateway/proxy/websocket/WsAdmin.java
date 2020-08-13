@@ -25,6 +25,9 @@ public class WsAdmin {
         if (ws == null) {
             return;
         }
+        if (frame == null) {
+            frame = new CloseWebSocketFrame();
+        }
         ws.getWebSocketServerHandshaker().close(context.channel(), frame);
         ws.getWebSocketClient().close();
     }
@@ -43,33 +46,37 @@ public class WsAdmin {
         return uri;
     }
 
-    public void setUri(String uri) {
+    public WsAdmin setUri(String uri) {
         this.uri = uri;
+        return this;
     }
 
     public WebSocketServerHandshaker getWebSocketServerHandshaker() {
         return webSocketServerHandshaker;
     }
 
-    public void setWebSocketServerHandshaker(WebSocketServerHandshaker webSocketServerHandshaker) {
+    public WsAdmin setWebSocketServerHandshaker(WebSocketServerHandshaker webSocketServerHandshaker) {
         this.webSocketServerHandshaker = webSocketServerHandshaker;
+        return this;
     }
 
     public ChannelHandlerContext getChannelHandlerContext() {
         return channelHandlerContext;
     }
 
-    public void setChannelHandlerContext(ChannelHandlerContext channelHandlerContext) {
+    public WsAdmin setChannelHandlerContext(ChannelHandlerContext channelHandlerContext) {
         this.channelHandlerContext = channelHandlerContext;
         contextMap.put(channelHandlerContext, this);
+        return this;
     }
 
     public WebSocketClientInf getWebSocketClient() {
         return webSocketClient;
     }
 
-    public void setWebSocketClient(WebSocketClientInf webSocketClient) {
+    public WsAdmin setWebSocketClient(WebSocketClientInf webSocketClient) {
         this.webSocketClient = webSocketClient;
+        return this;
     }
 
 }

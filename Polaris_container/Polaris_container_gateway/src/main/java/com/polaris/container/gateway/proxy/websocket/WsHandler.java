@@ -44,7 +44,7 @@ public class WsHandler {
             HostResolver hostResolver, 
             HttpFilters filters, 
             String serverHostAndPort) {
-        log.debug("websocket 请求接入");
+        log.debug("websocket connecting...");
         WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
                 req.uri(), null, false);
         WebSocketServerHandshaker handshaker = wsFactory.newHandshaker(req);
@@ -53,7 +53,7 @@ public class WsHandler {
         } else {
             
             //最大连接数
-            if (WsAdmin.size() > WsConfigReader.WS_REQUEST_MAX_NMBER) {
+            if (WsAdmin.size() > WsConfigReader.getRequestMaxNumber()) {
                 WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
                 return;
             }
@@ -70,12 +70,13 @@ public class WsHandler {
                 ctx.writeAndFlush(response,ctx.channel().newPromise());
             } else {
                 //与远程的websocket建立连接
-                WsAdmin wsComponent = new WsAdmin();
-                if (connectToRemote(req, ctx, hostResolver,serverHostAndPort,wsComponent)) {
-                    //本机websocket建联
+                WebSocketClientInf client = proxyToServer(req, ctx, hostResolver,serverHostAndPort);
+                if (client != null) {
                     handshaker.handshake(ctx.channel(), req);
-                    wsComponent.setUri(req.uri());
-                    wsComponent.setWebSocketServerHandshaker(handshaker);
+                    new WsAdmin().setWebSocketClient(client)
+                                 .setUri(req.uri())
+                                 .setWebSocketServerHandshaker(handshaker)
+                                 .setChannelHandlerContext(ctx);
                 } else {
                     WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
                 }  
@@ -84,7 +85,6 @@ public class WsHandler {
         return;
     }
 
-    //处理Websocket的代码
     public void handle(ChannelHandlerContext ctx, WebSocketFrame frame) {
         
         //close
@@ -98,6 +98,7 @@ public class WsHandler {
             ctx.channel().write(new PongWebSocketFrame(frame.content().retain()));
             WsAdmin wsComponent = WsAdmin.get(ctx);
             if (wsComponent != null) {
+                wsComponent.getWebSocketClient().resetIdleConnectTimeout();
                 wsComponent.getWebSocketClient().sendPing();
             } else {
                 WsAdmin.close(ctx,(CloseWebSocketFrame) frame.retain());
@@ -109,6 +110,7 @@ public class WsHandler {
         else if (frame instanceof TextWebSocketFrame) {
             WsAdmin wsComponent = WsAdmin.get(ctx);
             if (wsComponent != null) {
+                wsComponent.getWebSocketClient().resetIdleConnectTimeout();
                 wsComponent.getWebSocketClient().send(((TextWebSocketFrame) frame).text());
             } else {
                 WsAdmin.close(ctx,(CloseWebSocketFrame) frame.retain());
@@ -125,48 +127,39 @@ public class WsHandler {
                 final int length = content.readableBytes();
                 final byte[] array = new byte[length];
                 content.getBytes(content.readerIndex(), array, 0, length);
+                wsComponent.getWebSocketClient().resetIdleConnectTimeout();
                 wsComponent.getWebSocketClient().send(ByteBuffer.wrap(array));
             } else {
-                
                 WsAdmin.close(ctx,(CloseWebSocketFrame) frame.retain());
             }
             return;
         }
     }
 
-    /**
-     * 与远程websocket建立连接
-     * */
-    private boolean connectToRemote(HttpRequest req, 
+    private WebSocketClientInf proxyToServer(HttpRequest req, 
             ChannelHandlerContext ctx, 
             HostResolver hostResolver, 
-            String serverHostAndPort,
-            WsAdmin wsComponent) {
-        boolean flag = false;
+            String serverHostAndPortt) {
         try {
             //context
             String contextPath = HttpHostContext.getContextPath(req.uri());
-            HostAndPort parsedHostAndPort = HostAndPort.fromString(serverHostAndPort);
+            HostAndPort parsedHostAndPort = HostAndPort.fromString(serverHostAndPortt);
             InetSocketAddress address = hostResolver.resolve(parsedHostAndPort.getHost(), parsedHostAndPort.getPortOrDefault(80), contextPath);
             String websocketStr = ServerHost.HTTP_PREFIX +address.getHostName() + ":" + address.getPort() + req.uri();
             WebSocketClientInf client = WebSocketClientFactory.create(websocketStr, ctx);
             client.connect();
             for (int i = 0; i < 10 ; i++) {
                 if (client.getState().equals(WsStatus.OPEN)) {
-                    flag = true;
-                    wsComponent.setChannelHandlerContext(ctx);
-                    wsComponent.setWebSocketClient(client);
-                    break;
+                    return client;
                 }
                 TimeUnit.MILLISECONDS.sleep(200);
             }
-            if (!flag) {
-                client.close();
-            }
+            client.close();
         } catch (Exception e) {
             log.error("ERROR:",e);
         }
-        return flag;
+        
+        return null;
     }
     
     public boolean isWsRequest(HttpRequest req) {
@@ -188,11 +181,18 @@ public class WsHandler {
         return false;
     }
     
-    public boolean isWsChannelHandlerContext(ChannelHandlerContext ctx) {
-        if (WsAdmin.get(ctx) != null) {
+    public boolean userEventTriggered(ChannelHandlerContext ctx,int idleConnectTimeout) {
+        WsAdmin wsAdmin = WsAdmin.get(ctx);
+        if (wsAdmin == null) {
+            return true;//timeout
+        }
+        int newIdleConnectTimeout = wsAdmin.getWebSocketClient()
+                                           .addAndGetIdleConnectTimeout(idleConnectTimeout);
+        if (newIdleConnectTimeout >= WsConfigReader.getIdleConnectTimeout()) {
+            WsAdmin.close(ctx, new CloseWebSocketFrame());
             return true;
         }
-        return false;
+        return false;//connect
     }
 
 }

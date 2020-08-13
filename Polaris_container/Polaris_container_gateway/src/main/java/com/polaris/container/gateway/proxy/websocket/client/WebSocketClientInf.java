@@ -42,4 +42,14 @@ public interface WebSocketClientInf {
      * This represents the state of the connection.
      */
     WsStatus getState();
+    
+    /**
+     * add Idle Connect Timeout and get it
+     */
+    int addAndGetIdleConnectTimeout(int idleConnectTimeout);
+    
+    /**
+     * reset Idle Connect Timeout
+     */
+    void resetIdleConnectTimeout();
 }
