@@ -1,7 +1,7 @@
 package com.polaris.container.gateway.proxy.websocket.client.netty;
 
-import com.polaris.container.gateway.proxy.websocket.WsAdmin;
-import com.polaris.container.gateway.proxy.websocket.WsConfigReader;
+import com.polaris.container.gateway.proxy.websocket.WebSocketAdmin;
+import com.polaris.container.gateway.proxy.websocket.WebSocketConfigReader;
 
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -12,8 +12,8 @@ public class WebSocketNettyGroup {
         if (group == null) {
             synchronized(EventLoopGroup.class) {
                 if (group == null) {
-                    if (WsConfigReader.getGroupThreadNumber() > 0) {
-                        group = new NioEventLoopGroup(WsConfigReader.getGroupThreadNumber());
+                    if (WebSocketConfigReader.getGroupThreadNumber() > 0) {
+                        group = new NioEventLoopGroup(WebSocketConfigReader.getGroupThreadNumber());
                     } else {
                         group = new NioEventLoopGroup();
                     }
@@ -23,7 +23,7 @@ public class WebSocketNettyGroup {
         return group;
     }
     public static void shutdown() {
-        if (WsAdmin.size() < 1) {
+        if (WebSocketAdmin.size() < 1) {
             synchronized(EventLoopGroup.class) {
                 if (group != null) {
                     group.shutdownGracefully();

@@ -5,9 +5,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.proxy.websocket.WsAdmin;
+import com.polaris.container.gateway.proxy.websocket.WebSocketAdmin;
+import com.polaris.container.gateway.proxy.websocket.WebSocketStatus;
 import com.polaris.container.gateway.proxy.websocket.client.AbstractWebSocketClient;
-import com.polaris.container.gateway.proxy.websocket.client.WebSocketStatus;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
@@ -21,8 +21,6 @@ public class WebSocketNettyClient extends AbstractWebSocketClient{
     private WebSocketStatus status = WebSocketStatus.NOT_YET_CONNECTED;
     private WebSocketNettyConnect connect;
     
-    private volatile AtomicBoolean closed = new AtomicBoolean(false);
-
     public WebSocketNettyClient(String uri, ChannelHandlerContext ctx) throws URISyntaxException {
         super(uri, ctx);
     }
@@ -35,7 +33,7 @@ public class WebSocketNettyClient extends AbstractWebSocketClient{
 
     @Override
     public void close() {
-        close0();
+        connect.getChannelClient().close();
     }
 
     @Override
@@ -92,23 +90,15 @@ public class WebSocketNettyClient extends AbstractWebSocketClient{
     }
     @Override
     public void onClose(CloseWebSocketFrame frame) {
-        close0();
+        log.debug("------WebSocketClientNetty CloseWebSocketFrame ------");
+        WebSocketAdmin.close(ctx);
     }
     
     public void onResponse(WebSocketFrame frame) {
         if (ctx != null && ctx.channel() != null && ctx.channel().isActive()) {
             ctx.writeAndFlush(frame.retain());
         } else {
-            close0();
+            WebSocketAdmin.close(ctx);
         }
-    }
-    
-    private void close0() {
-        if (!closed.compareAndSet(false, true)) {
-            return;
-        }
-        log.debug("------WebSocketClientNetty CloseWebSocketFrame ------");
-        WsAdmin.close(ctx);
-        connect.getChannelClient().close();
     }
 }

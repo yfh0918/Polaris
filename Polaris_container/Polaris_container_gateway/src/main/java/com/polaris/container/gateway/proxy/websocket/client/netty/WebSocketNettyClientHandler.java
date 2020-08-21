@@ -1,7 +1,5 @@
 package com.polaris.container.gateway.proxy.websocket.client.netty;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.polaris.container.gateway.proxy.websocket.client.WebSocketClientListener;
 
 import io.netty.channel.Channel;
@@ -23,7 +21,6 @@ public class WebSocketNettyClientHandler extends SimpleChannelInboundHandler<Obj
     private final WebSocketClientHandshaker handshaker;
     private ChannelPromise handshakeFuture;
     private WebSocketClientListener clientListener;
-    private volatile AtomicBoolean closed = new AtomicBoolean(false);
 
     public WebSocketNettyClientHandler(WebSocketClientHandshaker handshaker, WebSocketClientListener clientListener) {
         this.handshaker = handshaker;
@@ -46,7 +43,7 @@ public class WebSocketNettyClientHandler extends SimpleChannelInboundHandler<Obj
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        close(ctx);
+        clientListener.onClose(null);
     }
 
     @Override
@@ -72,20 +69,12 @@ public class WebSocketNettyClientHandler extends SimpleChannelInboundHandler<Obj
         } else if (frame instanceof PingWebSocketFrame) {
             clientListener.onPing((PingWebSocketFrame)frame);
         } else if (frame instanceof CloseWebSocketFrame) {
-            close(ctx);
+            clientListener.onClose((CloseWebSocketFrame)frame);
         }
     }
     
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        close(ctx);
-    }
-    
-    private void close(ChannelHandlerContext ctx) {
-        if (!closed.compareAndSet(false, true)) {
-            return;
-        }
         clientListener.onClose(null);
-        ctx.close();
     }
 }

@@ -7,7 +7,7 @@ import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.util.PropertyUtil;
 import com.polaris.core.util.StringUtil;
 
-public class WsConfigReader implements HttpFileListener{
+public class WebSocketConfigReader implements HttpFileListener{
     
     private static String fileName = "gw_ws.txt";
     
@@ -18,7 +18,7 @@ public class WsConfigReader implements HttpFileListener{
     private static int WS_GROUP_THREAD_NUMBER = 0;
     
     static {
-        new WsConfigReader();
+        new WebSocketConfigReader();
     }
     
     @Override
@@ -52,7 +52,7 @@ public class WsConfigReader implements HttpFileListener{
         }
     }
     
-    public WsConfigReader() {
+    public WebSocketConfigReader() {
         HttpFileReader.INSTANCE.readFile(this, new HttpFile(fileName));
     }
     
