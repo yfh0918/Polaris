@@ -1,5 +1,5 @@
 #跳过cc的IP(/gateway/cc/ip可以查看被block的ip列表)
-cc.skip.ip=192.168.1.99
+cc.skip.ip=127.0.0.1
 
 #单个IP的每秒+每分钟访问次数
 cc.ip.rate=10,60

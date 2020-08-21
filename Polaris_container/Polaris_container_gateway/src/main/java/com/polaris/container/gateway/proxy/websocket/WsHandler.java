@@ -1,7 +1,6 @@
 package com.polaris.container.gateway.proxy.websocket;
 
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -13,11 +12,11 @@ import com.polaris.container.gateway.pojo.HttpHostContext;
 import com.polaris.container.gateway.proxy.HostResolver;
 import com.polaris.container.gateway.proxy.HttpFilters;
 import com.polaris.container.gateway.proxy.websocket.client.WebSocketClientFactory;
-import com.polaris.container.gateway.proxy.websocket.client.WebSocketClientInf;
+import com.polaris.container.gateway.proxy.websocket.client.WebSocketStatus;
+import com.polaris.container.gateway.proxy.websocket.client.WebSocketClient;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.pojo.ServerHost;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
@@ -70,7 +69,7 @@ public class WsHandler {
                 ctx.writeAndFlush(response,ctx.channel().newPromise());
             } else {
                 //与远程的websocket建立连接
-                WebSocketClientInf client = proxyToServer(req, ctx, hostResolver,serverHostAndPort);
+                WebSocketClient client = proxyToServer(req, ctx, hostResolver,serverHostAndPort);
                 if (client != null) {
                     handshaker.handshake(ctx.channel(), req);
                     new WsAdmin().setWebSocketClient(client)
@@ -89,31 +88,39 @@ public class WsHandler {
         
         //close
         if (frame instanceof CloseWebSocketFrame) {
-            WsAdmin.close(ctx,(CloseWebSocketFrame) frame.retain());
+            WsAdmin.close(ctx);
             return;
         }
         
         // ping
         if (frame instanceof PingWebSocketFrame) {
-            ctx.channel().write(new PongWebSocketFrame(frame.content().retain()));
             WsAdmin wsComponent = WsAdmin.get(ctx);
             if (wsComponent != null) {
-                wsComponent.getWebSocketClient().resetIdleConnectTimeout();
-                wsComponent.getWebSocketClient().sendPing();
+                wsComponent.getWebSocketClient().sendPing((PingWebSocketFrame)frame);
             } else {
-                WsAdmin.close(ctx,(CloseWebSocketFrame) frame.retain());
+                WsAdmin.close(ctx);
             }
             return;
         }
         
+        // ping
+        else if (frame instanceof PongWebSocketFrame) {
+            WsAdmin wsComponent = WsAdmin.get(ctx);
+            if (wsComponent != null) {
+                wsComponent.getWebSocketClient().sendPong((PongWebSocketFrame)frame);
+            } else {
+                WsAdmin.close(ctx);
+            }
+            return;
+        }
+
         // text
         else if (frame instanceof TextWebSocketFrame) {
             WsAdmin wsComponent = WsAdmin.get(ctx);
             if (wsComponent != null) {
-                wsComponent.getWebSocketClient().resetIdleConnectTimeout();
-                wsComponent.getWebSocketClient().send(((TextWebSocketFrame) frame).text());
+                wsComponent.getWebSocketClient().send(((TextWebSocketFrame) frame));
             } else {
-                WsAdmin.close(ctx,(CloseWebSocketFrame) frame.retain());
+                WsAdmin.close(ctx);
             }
             return;
         }
@@ -122,21 +129,15 @@ public class WsHandler {
         else if (frame instanceof BinaryWebSocketFrame) {
             WsAdmin wsComponent = WsAdmin.get(ctx);
             if (wsComponent != null) {
-                BinaryWebSocketFrame binaryWebSocketFrame = (BinaryWebSocketFrame) frame;
-                ByteBuf content = binaryWebSocketFrame.content();
-                final int length = content.readableBytes();
-                final byte[] array = new byte[length];
-                content.getBytes(content.readerIndex(), array, 0, length);
-                wsComponent.getWebSocketClient().resetIdleConnectTimeout();
-                wsComponent.getWebSocketClient().send(ByteBuffer.wrap(array));
+                wsComponent.getWebSocketClient().send((BinaryWebSocketFrame) frame);
             } else {
-                WsAdmin.close(ctx,(CloseWebSocketFrame) frame.retain());
+                WsAdmin.close(ctx);
             }
             return;
         }
     }
 
-    private WebSocketClientInf proxyToServer(HttpRequest req, 
+    private WebSocketClient proxyToServer(HttpRequest req, 
             ChannelHandlerContext ctx, 
             HostResolver hostResolver, 
             String serverHostAndPortt) {
@@ -146,10 +147,10 @@ public class WsHandler {
             HostAndPort parsedHostAndPort = HostAndPort.fromString(serverHostAndPortt);
             InetSocketAddress address = hostResolver.resolve(parsedHostAndPort.getHost(), parsedHostAndPort.getPortOrDefault(80), contextPath);
             String websocketStr = ServerHost.HTTP_PREFIX +address.getHostName() + ":" + address.getPort() + req.uri();
-            WebSocketClientInf client = WebSocketClientFactory.create(websocketStr, ctx);
+            WebSocketClient client = WebSocketClientFactory.create(websocketStr, ctx);
             client.connect();
             for (int i = 0; i < 10 ; i++) {
-                if (client.getState().equals(WsStatus.OPEN)) {
+                if (client.getState().equals(WebSocketStatus.OPEN)) {
                     return client;
                 }
                 TimeUnit.MILLISECONDS.sleep(200);
@@ -189,7 +190,7 @@ public class WsHandler {
         int newIdleConnectTimeout = wsAdmin.getWebSocketClient()
                                            .addAndGetIdleConnectTimeout(idleConnectTimeout);
         if (newIdleConnectTimeout >= WsConfigReader.getIdleConnectTimeout()) {
-            WsAdmin.close(ctx, new CloseWebSocketFrame());
+            WsAdmin.close(ctx);
             return true;
         }
         return false;//connect

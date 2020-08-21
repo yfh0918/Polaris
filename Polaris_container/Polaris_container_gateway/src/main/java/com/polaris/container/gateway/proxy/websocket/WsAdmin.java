@@ -3,7 +3,7 @@ package com.polaris.container.gateway.proxy.websocket;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.polaris.container.gateway.proxy.websocket.client.WebSocketClientInf;
+import com.polaris.container.gateway.proxy.websocket.client.WebSocketClient;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
@@ -20,15 +20,12 @@ public class WsAdmin {
     public static WsAdmin get(ChannelHandlerContext context) {
         return contextMap.get(context);
     }
-    public static void close(ChannelHandlerContext context,CloseWebSocketFrame frame) {
+    public static void close(ChannelHandlerContext context) {
         WsAdmin ws = contextMap.remove(context);
         if (ws == null) {
             return;
         }
-        if (frame == null) {
-            frame = new CloseWebSocketFrame();
-        }
-        ws.getWebSocketServerHandshaker().close(context.channel(), frame);
+        ws.getWebSocketServerHandshaker().close(context.channel(), new CloseWebSocketFrame());
         ws.getWebSocketClient().close();
     }
     public static int size() {
@@ -40,7 +37,7 @@ public class WsAdmin {
     
     private ChannelHandlerContext channelHandlerContext;
     
-    private WebSocketClientInf webSocketClient;
+    private WebSocketClient webSocketClient;
 
     public String getUri() {
         return uri;
@@ -70,11 +67,11 @@ public class WsAdmin {
         return this;
     }
 
-    public WebSocketClientInf getWebSocketClient() {
+    public WebSocketClient getWebSocketClient() {
         return webSocketClient;
     }
 
-    public WsAdmin setWebSocketClient(WebSocketClientInf webSocketClient) {
+    public WsAdmin setWebSocketClient(WebSocketClient webSocketClient) {
         this.webSocketClient = webSocketClient;
         return this;
     }

@@ -1,12 +1,13 @@
 package com.polaris.container.gateway.proxy.websocket.client;
 
-import java.nio.ByteBuffer;
-
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 
-import com.polaris.container.gateway.proxy.websocket.WsStatus;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 
-public interface WebSocketClientInf {
+public interface WebSocketClient {
     
     /**  connect */
     void connect();
@@ -19,7 +20,14 @@ public interface WebSocketClientInf {
      * Send a ping to the other end
      * @throws WebsocketNotConnectedException websocket is not yet connected
      */
-    void sendPing();
+    void sendPing(PingWebSocketFrame frame);
+    
+    /**
+     * Send a ping to the other end
+     * @throws WebsocketNotConnectedException websocket is not yet connected
+     */
+    void sendPong(PongWebSocketFrame frame);
+    
     
     /**
      * Send Binary data (plain bytes) to the other end.
@@ -28,7 +36,7 @@ public interface WebSocketClientInf {
      * @throws IllegalArgumentException the data is null
      * @throws WebsocketNotConnectedException websocket is not yet connected
      */
-    void send( ByteBuffer bytes );
+    void send( BinaryWebSocketFrame frame );
     
     /**
      * Sends <var>text</var> to the connected websocket server.
@@ -36,12 +44,12 @@ public interface WebSocketClientInf {
      * @param text
      *            The string which will be transmitted.
      */
-    void send( String text );
+    void send( TextWebSocketFrame frame );
     
     /**
      * This represents the state of the connection.
      */
-    WsStatus getState();
+    WebSocketStatus getState();
     
     /**
      * add Idle Connect Timeout and get it

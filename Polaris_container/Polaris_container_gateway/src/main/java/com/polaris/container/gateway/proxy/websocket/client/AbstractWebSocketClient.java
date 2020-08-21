@@ -4,8 +4,12 @@ import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 
-public abstract class AbstractWebSocketClient implements WebSocketClientInf {
+public abstract class AbstractWebSocketClient implements WebSocketClient,WebSocketClientListener {
     
     protected String uri;
     protected ChannelHandlerContext ctx;
@@ -31,5 +35,57 @@ public abstract class AbstractWebSocketClient implements WebSocketClientInf {
     @Override
     public void resetIdleConnectTimeout() {
         this.idleConnectTimeout.set(0);
+    }
+
+    @Override
+    public void sendPing(PingWebSocketFrame frame) {
+        resetIdleConnectTimeout();
+        if (frame.refCnt() == 1) {
+            frame.retain();
+        }
+    }
+
+    @Override
+    public void sendPong(PongWebSocketFrame frame) {
+        resetIdleConnectTimeout();
+        if (frame.refCnt() == 1) {
+            frame.retain();
+        }
+    }
+
+    @Override
+    public void send(BinaryWebSocketFrame frame) {
+        resetIdleConnectTimeout();
+        if (frame.refCnt() == 1) {
+            frame.retain();
+        }
+    }
+
+    @Override
+    public void send(TextWebSocketFrame frame) {
+        resetIdleConnectTimeout();
+        if (frame.refCnt() == 1) {
+            frame.retain();
+        }
+    }
+
+    @Override
+    public void onPing(PingWebSocketFrame frame) {
+        resetIdleConnectTimeout();
+    }
+
+    @Override
+    public void onPong(PongWebSocketFrame frame) {
+        resetIdleConnectTimeout();
+    }
+
+    @Override
+    public void onMessage(TextWebSocketFrame frame) {
+        resetIdleConnectTimeout();
+    }
+
+    @Override
+    public void onMessage(BinaryWebSocketFrame frame) {
+        resetIdleConnectTimeout();
     }
 }

@@ -66,7 +66,7 @@
     <loggers>
         <!--过滤掉spring和hibernate的一些无用的debug信息 -->
 
-        <root level="debug">
+        <root level="INFO">
             <appender-ref ref="Console"/>
             <appender-ref ref="RollingFileInfo"/>
             <appender-ref ref="RollingFileWarn"/>

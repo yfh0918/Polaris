@@ -29,7 +29,7 @@ public class WebClientSocketTest {
 
     protected boolean start() {
         WebSocketContainer Container = ContainerProvider.getWebSocketContainer();
-        String uri = "ws://localhost:9045/demospringmvc/websocket?parameter1=1&parmeter2=2";
+        String uri = "ws://127.0.0.1:8081/banyanNDI/ws/ndi";
         System.out.println("Connecting to " + uri);
         try {
         	session = Container.connectToServer(WebClientSocketTest.class, URI.create(uri));
@@ -111,10 +111,11 @@ public class WebClientSocketTest {
 //                break;
 //            } 
 //        }
-    	WebClientSocketTest wSocketTest = new WebClientSocketTest("1");
-        if (!wSocketTest.start()) {
-            System.out.println("测试结束！");
-        } 
+        for (int i = 1; i< 20; i++) {
+            WebClientSocketTest wSocketTest = new WebClientSocketTest("1");
+            wSocketTest.start();
+        }
+    	
 //        wSocketTest.sendMessage(" first hello");
         
 //    	try {
