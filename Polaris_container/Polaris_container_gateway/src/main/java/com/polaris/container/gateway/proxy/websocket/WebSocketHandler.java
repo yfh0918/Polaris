@@ -12,7 +12,6 @@ import com.polaris.container.gateway.pojo.HttpHostContext;
 import com.polaris.container.gateway.proxy.HostResolver;
 import com.polaris.container.gateway.proxy.HttpFilters;
 import com.polaris.container.gateway.proxy.websocket.client.WebSocketClientFactory;
-import com.polaris.container.gateway.proxy.websocket.client.WebSocketStatus;
 import com.polaris.container.gateway.proxy.websocket.client.WebSocketClient;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.pojo.ServerHost;
@@ -30,9 +29,9 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 
-public class WsHandler {
+public class WebSocketHandler {
     
-    private static final Logger log = LoggerFactory.getLogger(WsHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(WebSocketHandler.class);
     
     /**
      * 处理http请求为websocket握手时升级为websocket
@@ -52,7 +51,7 @@ public class WsHandler {
         } else {
             
             //最大连接数
-            if (WsAdmin.size() > WsConfigReader.getRequestMaxNumber()) {
+            if (WebSocketAdmin.size() > WebSocketConfigReader.getRequestMaxNumber()) {
                 WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
                 return;
             }
@@ -72,7 +71,7 @@ public class WsHandler {
                 WebSocketClient client = proxyToServer(req, ctx, hostResolver,serverHostAndPort);
                 if (client != null) {
                     handshaker.handshake(ctx.channel(), req);
-                    new WsAdmin().setWebSocketClient(client)
+                    new WebSocketAdmin().setWebSocketClient(client)
                                  .setUri(req.uri())
                                  .setWebSocketServerHandshaker(handshaker)
                                  .setChannelHandlerContext(ctx);
@@ -88,50 +87,50 @@ public class WsHandler {
         
         //close
         if (frame instanceof CloseWebSocketFrame) {
-            WsAdmin.close(ctx);
+            WebSocketAdmin.close(ctx);
             return;
         }
         
         // ping
         if (frame instanceof PingWebSocketFrame) {
-            WsAdmin wsComponent = WsAdmin.get(ctx);
+            WebSocketAdmin wsComponent = WebSocketAdmin.get(ctx);
             if (wsComponent != null) {
                 wsComponent.getWebSocketClient().sendPing((PingWebSocketFrame)frame);
             } else {
-                WsAdmin.close(ctx);
+                WebSocketAdmin.close(ctx);
             }
             return;
         }
         
         // ping
         else if (frame instanceof PongWebSocketFrame) {
-            WsAdmin wsComponent = WsAdmin.get(ctx);
+            WebSocketAdmin wsComponent = WebSocketAdmin.get(ctx);
             if (wsComponent != null) {
                 wsComponent.getWebSocketClient().sendPong((PongWebSocketFrame)frame);
             } else {
-                WsAdmin.close(ctx);
+                WebSocketAdmin.close(ctx);
             }
             return;
         }
 
         // text
         else if (frame instanceof TextWebSocketFrame) {
-            WsAdmin wsComponent = WsAdmin.get(ctx);
+            WebSocketAdmin wsComponent = WebSocketAdmin.get(ctx);
             if (wsComponent != null) {
                 wsComponent.getWebSocketClient().send(((TextWebSocketFrame) frame));
             } else {
-                WsAdmin.close(ctx);
+                WebSocketAdmin.close(ctx);
             }
             return;
         }
         
         //byte
         else if (frame instanceof BinaryWebSocketFrame) {
-            WsAdmin wsComponent = WsAdmin.get(ctx);
+            WebSocketAdmin wsComponent = WebSocketAdmin.get(ctx);
             if (wsComponent != null) {
                 wsComponent.getWebSocketClient().send((BinaryWebSocketFrame) frame);
             } else {
-                WsAdmin.close(ctx);
+                WebSocketAdmin.close(ctx);
             }
             return;
         }
@@ -183,14 +182,14 @@ public class WsHandler {
     }
     
     public boolean userEventTriggered(ChannelHandlerContext ctx,int idleConnectTimeout) {
-        WsAdmin wsAdmin = WsAdmin.get(ctx);
+        WebSocketAdmin wsAdmin = WebSocketAdmin.get(ctx);
         if (wsAdmin == null) {
             return true;//timeout
         }
         int newIdleConnectTimeout = wsAdmin.getWebSocketClient()
                                            .addAndGetIdleConnectTimeout(idleConnectTimeout);
-        if (newIdleConnectTimeout >= WsConfigReader.getIdleConnectTimeout()) {
-            WsAdmin.close(ctx);
+        if (newIdleConnectTimeout >= WebSocketConfigReader.getIdleConnectTimeout()) {
+            WebSocketAdmin.close(ctx);
             return true;
         }
         return false;//connect

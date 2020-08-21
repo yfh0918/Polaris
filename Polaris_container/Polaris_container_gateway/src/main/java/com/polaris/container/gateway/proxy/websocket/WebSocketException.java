@@ -1,4 +1,4 @@
-package com.polaris.container.gateway.proxy.websocket.client;
+package com.polaris.container.gateway.proxy.websocket;
 
 import com.polaris.core.exception.PolarisRuntimeException;
 

@@ -16,8 +16,8 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.proxy.websocket.WsAdmin;
-import com.polaris.container.gateway.proxy.websocket.client.WebSocketStatus;
+import com.polaris.container.gateway.proxy.websocket.WebSocketAdmin;
+import com.polaris.container.gateway.proxy.websocket.WebSocketStatus;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -52,7 +52,7 @@ public class WebsocketClientJavaWs extends WebSocketClient implements com.polari
             ctx.writeAndFlush((PingFrame)f);
             resetIdleConnectTimeout();
         } else {
-            WsAdmin.close(ctx);
+            WebSocketAdmin.close(ctx);
         }
     }
 
@@ -67,7 +67,7 @@ public class WebsocketClientJavaWs extends WebSocketClient implements com.polari
             ctx.writeAndFlush((PongFrame)f);
             resetIdleConnectTimeout();
         } else {
-            WsAdmin.close(ctx);
+            WebSocketAdmin.close(ctx);
         }
     }
     
@@ -77,13 +77,13 @@ public class WebsocketClientJavaWs extends WebSocketClient implements com.polari
             return;
         }
         log.debug("------ WebsocketClientDefault onClose ------");
-        WsAdmin.close(ctx);
+        WebSocketAdmin.close(ctx);
     }
 
     @Override
     public void onError(Exception arg0) {
         log.debug("------ WebsocketClientDefault onError ------");
-        WsAdmin.close(ctx);
+        WebSocketAdmin.close(ctx);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class WebsocketClientJavaWs extends WebSocketClient implements com.polari
             resetIdleConnectTimeout();
             ctx.writeAndFlush(new BinaryWebSocketFrame(io.netty.buffer.Unpooled.copiedBuffer(newBytes)));
         } else {
-            WsAdmin.close(ctx);
+            WebSocketAdmin.close(ctx);
         }
     }
     
@@ -107,7 +107,7 @@ public class WebsocketClientJavaWs extends WebSocketClient implements com.polari
             resetIdleConnectTimeout();
             ctx.writeAndFlush(new TextWebSocketFrame(message));
         } else {
-            WsAdmin.close(ctx);
+            WebSocketAdmin.close(ctx);
         }
     }
 

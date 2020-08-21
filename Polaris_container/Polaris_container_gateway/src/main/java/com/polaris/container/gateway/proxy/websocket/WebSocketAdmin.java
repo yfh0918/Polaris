@@ -9,31 +9,25 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 
-public class WsAdmin {
+public class WebSocketAdmin {
 
     /**
      * 将ctx关联
      * */
-    private static final Map<ChannelHandlerContext, WsAdmin> contextMap =
+    private static final Map<ChannelHandlerContext, WebSocketAdmin> contextMap =
             new ConcurrentHashMap<>();
 
-    public static WsAdmin get(ChannelHandlerContext context) {
+    public static WebSocketAdmin get(ChannelHandlerContext context) {
         return contextMap.get(context);
     }
-    public static void close() {
-        for (Map.Entry<ChannelHandlerContext, WsAdmin> entry : contextMap.entrySet()) {
-            close0(entry.getKey(),entry.getValue());
-        }
-        contextMap.clear();
-    }
     public static void close(ChannelHandlerContext context) {
-        WsAdmin wsAdmin = contextMap.remove(context);
+        WebSocketAdmin wsAdmin = contextMap.remove(context);
         if (wsAdmin == null) {
             return;
         }
         close0(context, wsAdmin);
     }
-    private static void close0(ChannelHandlerContext context, WsAdmin wsAdmin) {
+    private static void close0(ChannelHandlerContext context, WebSocketAdmin wsAdmin) {
         wsAdmin.getWebSocketServerHandshaker().close(context.channel(), new CloseWebSocketFrame());
         wsAdmin.getWebSocketClient().close();
     }
@@ -52,7 +46,7 @@ public class WsAdmin {
         return uri;
     }
 
-    public WsAdmin setUri(String uri) {
+    public WebSocketAdmin setUri(String uri) {
         this.uri = uri;
         return this;
     }
@@ -61,7 +55,7 @@ public class WsAdmin {
         return webSocketServerHandshaker;
     }
 
-    public WsAdmin setWebSocketServerHandshaker(WebSocketServerHandshaker webSocketServerHandshaker) {
+    public WebSocketAdmin setWebSocketServerHandshaker(WebSocketServerHandshaker webSocketServerHandshaker) {
         this.webSocketServerHandshaker = webSocketServerHandshaker;
         return this;
     }
@@ -70,7 +64,7 @@ public class WsAdmin {
         return channelHandlerContext;
     }
 
-    public WsAdmin setChannelHandlerContext(ChannelHandlerContext channelHandlerContext) {
+    public WebSocketAdmin setChannelHandlerContext(ChannelHandlerContext channelHandlerContext) {
         this.channelHandlerContext = channelHandlerContext;
         contextMap.put(channelHandlerContext, this);
         return this;
@@ -80,7 +74,7 @@ public class WsAdmin {
         return webSocketClient;
     }
 
-    public WsAdmin setWebSocketClient(WebSocketClient webSocketClient) {
+    public WebSocketAdmin setWebSocketClient(WebSocketClient webSocketClient) {
         this.webSocketClient = webSocketClient;
         return this;
     }

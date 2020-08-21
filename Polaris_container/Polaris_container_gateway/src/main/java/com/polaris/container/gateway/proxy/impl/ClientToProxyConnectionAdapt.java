@@ -2,7 +2,7 @@ package com.polaris.container.gateway.proxy.impl;
 
 import com.esotericsoftware.minlog.Log;
 import com.polaris.container.gateway.proxy.SslEngineSource;
-import com.polaris.container.gateway.proxy.websocket.WsHandler;
+import com.polaris.container.gateway.proxy.websocket.WebSocketHandler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
@@ -12,7 +12,7 @@ import io.netty.handler.traffic.GlobalTrafficShapingHandler;
 
 public class ClientToProxyConnectionAdapt  extends ClientToProxyConnection{
     
-    private WsHandler wsHandler = new WsHandler();
+    private WebSocketHandler wsHandler = new WebSocketHandler();
 
     ClientToProxyConnectionAdapt(DefaultHttpProxyServer proxyServer, SslEngineSource sslEngineSource, boolean authenticateClients,
             ChannelPipeline pipeline, GlobalTrafficShapingHandler globalTrafficShapingHandler) {
