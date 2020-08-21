@@ -15,6 +15,8 @@ public class WsConfigReader implements HttpFileListener{
     
     private static int WS_IDLE_CONNECT_TIMEOUT = 600;
     
+    private static int WS_GROUP_THREAD_NUMBER = 0;
+    
     static {
         new WsConfigReader();
     }
@@ -38,7 +40,13 @@ public class WsConfigReader implements HttpFileListener{
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
-                    
+                }
+                if ("websocket.group.threadNumber".equals(kv.getKey())) {
+                    try {
+                        WS_GROUP_THREAD_NUMBER = Integer.parseInt(kv.getValue());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
         }
@@ -53,5 +61,8 @@ public class WsConfigReader implements HttpFileListener{
     }
     public static int getIdleConnectTimeout() {
         return WS_IDLE_CONNECT_TIMEOUT;
+    }
+    public static int getGroupThreadNumber() {
+        return WS_GROUP_THREAD_NUMBER;
     }
 }
