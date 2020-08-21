@@ -20,13 +20,22 @@ public class WsAdmin {
     public static WsAdmin get(ChannelHandlerContext context) {
         return contextMap.get(context);
     }
+    public static void close() {
+        for (Map.Entry<ChannelHandlerContext, WsAdmin> entry : contextMap.entrySet()) {
+            close0(entry.getKey(),entry.getValue());
+        }
+        contextMap.clear();
+    }
     public static void close(ChannelHandlerContext context) {
-        WsAdmin ws = contextMap.remove(context);
-        if (ws == null) {
+        WsAdmin wsAdmin = contextMap.remove(context);
+        if (wsAdmin == null) {
             return;
         }
-        ws.getWebSocketServerHandshaker().close(context.channel(), new CloseWebSocketFrame());
-        ws.getWebSocketClient().close();
+        close0(context, wsAdmin);
+    }
+    private static void close0(ChannelHandlerContext context, WsAdmin wsAdmin) {
+        wsAdmin.getWebSocketServerHandshaker().close(context.channel(), new CloseWebSocketFrame());
+        wsAdmin.getWebSocketClient().close();
     }
     public static int size() {
         return contextMap.size();
@@ -75,5 +84,4 @@ public class WsAdmin {
         this.webSocketClient = webSocketClient;
         return this;
     }
-
 }

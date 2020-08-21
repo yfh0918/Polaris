@@ -85,7 +85,7 @@ public class WebSocketNettyClientHandler extends SimpleChannelInboundHandler<Obj
         if (!closed.compareAndSet(false, true)) {
             return;
         }
-        ctx.close();
         clientListener.onClose(null);
+        ctx.close();
     }
 }

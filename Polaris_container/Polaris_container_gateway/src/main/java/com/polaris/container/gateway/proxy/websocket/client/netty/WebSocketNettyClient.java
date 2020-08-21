@@ -108,7 +108,7 @@ public class WebSocketNettyClient extends AbstractWebSocketClient{
             return;
         }
         log.debug("------WebSocketClientNetty CloseWebSocketFrame ------");
-        connect.getChannelClient().close();
         WsAdmin.close(ctx);
+        connect.getChannelClient().close();
     }
 }

@@ -1,3 +1,6 @@
+#group thread nuber
+websocket.group.threadNumber=0
+
 #max request number
 websocket.request.maxNumber=2000
 
