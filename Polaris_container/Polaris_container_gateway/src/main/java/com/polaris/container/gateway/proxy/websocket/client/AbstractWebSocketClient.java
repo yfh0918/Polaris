@@ -4,6 +4,7 @@ import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.EventLoopGroup;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
@@ -13,6 +14,7 @@ public abstract class AbstractWebSocketClient implements WebSocketClient,WebSock
     
     protected String uri;
     protected ChannelHandlerContext ctx;
+    protected EventLoopGroup eventLoopGroup;
     private volatile AtomicInteger idleConnectTimeout = new AtomicInteger(0);
 
     /**
@@ -22,9 +24,10 @@ public abstract class AbstractWebSocketClient implements WebSocketClient,WebSock
      *
      * @param serverUri the server URI to connect to
      */
-    public AbstractWebSocketClient(String uri, ChannelHandlerContext ctx) throws URISyntaxException {
+    public AbstractWebSocketClient(String uri, EventLoopGroup eventLoopGroup, ChannelHandlerContext ctx) throws URISyntaxException {
         this.ctx = ctx;
         this.uri = uri;
+        this.eventLoopGroup = eventLoopGroup;
     }
     
     @Override

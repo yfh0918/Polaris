@@ -17,6 +17,7 @@ import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.pojo.ServerHost;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.EventLoopGroup;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
@@ -40,6 +41,7 @@ public class WebSocketHandler {
             HttpRequest req, 
             ChannelHandlerContext ctx, 
             HostResolver hostResolver, 
+            EventLoopGroup eventLoopGroup,
             HttpFilters filters, 
             String serverHostAndPort) {
         log.debug("websocket connecting...");
@@ -68,11 +70,10 @@ public class WebSocketHandler {
                 ctx.writeAndFlush(response,ctx.channel().newPromise());
             } else {
                 //与远程的websocket建立连接
-                WebSocketClient client = proxyToServer(req, ctx, hostResolver,serverHostAndPort);
+                WebSocketClient client = proxyToServer(req, ctx, hostResolver,eventLoopGroup, serverHostAndPort);
                 if (client != null) {
                     handshaker.handshake(ctx.channel(), req);
                     new WebSocketAdmin().setWebSocketClient(client)
-                                 .setUri(req.uri())
                                  .setWebSocketServerHandshaker(handshaker)
                                  .setChannelHandlerContext(ctx);
                 } else {
@@ -139,6 +140,7 @@ public class WebSocketHandler {
     private WebSocketClient proxyToServer(HttpRequest req, 
             ChannelHandlerContext ctx, 
             HostResolver hostResolver, 
+            EventLoopGroup eventLoopGroup,
             String serverHostAndPortt) {
         try {
             //context
@@ -146,7 +148,7 @@ public class WebSocketHandler {
             HostAndPort parsedHostAndPort = HostAndPort.fromString(serverHostAndPortt);
             InetSocketAddress address = hostResolver.resolve(parsedHostAndPort.getHost(), parsedHostAndPort.getPortOrDefault(80), contextPath);
             String websocketStr = ServerHost.HTTP_PREFIX +address.getHostName() + ":" + address.getPort() + req.uri();
-            WebSocketClient client = WebSocketClientFactory.create(websocketStr, ctx);
+            WebSocketClient client = WebSocketClientFactory.create(websocketStr, eventLoopGroup, ctx);
             client.connect();
             for (int i = 0; i < 10 ; i++) {
                 if (client.getState().equals(WebSocketStatus.OPEN)) {
