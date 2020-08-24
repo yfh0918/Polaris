@@ -5,7 +5,7 @@ import com.polaris.core.exception.PolarisRuntimeException;
 public class WebSocketException extends PolarisRuntimeException{
     private static final long serialVersionUID = 1L;
 
-    public static final int ERROR_CODE = 300;
+    public static final int ERROR_CODE = 301;
 
     private static final String DEFAULT_MSG = "websocket failed. ";
 
@@ -15,5 +15,9 @@ public class WebSocketException extends PolarisRuntimeException{
 
     public WebSocketException(Throwable throwable) {
         super(ERROR_CODE, DEFAULT_MSG, throwable);
+    }
+
+    public WebSocketException(String message, Throwable throwable) {
+        super(ERROR_CODE, message, throwable);
     }
 }

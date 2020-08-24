@@ -14,7 +14,6 @@ import com.polaris.container.gateway.request.HttpUrlRequestFilter;
 import com.polaris.container.gateway.request.HttpWIpRequestFilter;
 import com.polaris.container.gateway.request.HttpWUrlRequestFilter;
 import com.polaris.container.gateway.response.HttpCorsResponseFilter;
-import com.polaris.container.gateway.response.HttpTokenResponseFilter;
 
 public enum HttpFilterEntityEnum {
 		
@@ -34,8 +33,7 @@ public enum HttpFilterEntityEnum {
 	Token(new HttpFilterEntity(new HttpTokenRequestFilter(), "gateway.token", 24,new HttpFile("gw_token.txt"))),
 
 	//responseFilter
-	CorsResponse(new HttpFilterEntity(new HttpCorsResponseFilter(), "gateway.cors", 0)),
-	TokenResponse(new HttpFilterEntity(new HttpTokenResponseFilter(), "gateway.token", 2));
+	CorsResponse(new HttpFilterEntity(new HttpCorsResponseFilter(), "gateway.cors", 0));
 	
     // 构造方法  
 	private HttpFilterEntity filterEntity;

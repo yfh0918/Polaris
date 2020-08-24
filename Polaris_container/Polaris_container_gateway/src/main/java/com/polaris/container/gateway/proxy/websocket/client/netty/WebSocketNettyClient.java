@@ -8,6 +8,7 @@ import com.polaris.container.gateway.proxy.websocket.WebSocketAdmin;
 import com.polaris.container.gateway.proxy.websocket.WebSocketStatus;
 import com.polaris.container.gateway.proxy.websocket.client.AbstractWebSocketClient;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoopGroup;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
@@ -19,7 +20,7 @@ import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 public class WebSocketNettyClient extends AbstractWebSocketClient{
     private static final Logger log = LoggerFactory.getLogger(WebSocketNettyClientHandler.class);
     private WebSocketStatus status = WebSocketStatus.NOT_YET_CONNECTED;
-    private WebSocketNettyConnect connect;
+    private Channel channel;
     
     public WebSocketNettyClient(String uri, EventLoopGroup eventLoopGroup, ChannelHandlerContext ctx) throws URISyntaxException {
         super(uri, eventLoopGroup, ctx);
@@ -27,31 +28,31 @@ public class WebSocketNettyClient extends AbstractWebSocketClient{
     
     @Override
     public void connect() {
-        connect = WebSocketNettyConnect.getConnect(uri,eventLoopGroup, this);
+        channel = WebSocketNettyConnector.getChannel(uri,eventLoopGroup, this);
         status = WebSocketStatus.OPEN;
     }
 
     @Override
     public void close() {
-        connect.getChannelClient().close();
+        channel.close();
     }
 
     @Override
     public void sendPing(PingWebSocketFrame frame) {
         super.sendPing(frame);
-        connect.getChannelClient().writeAndFlush(frame);
+        channel.writeAndFlush(frame);
     }
 
     @Override
     public void send(BinaryWebSocketFrame frame) {
         super.send(frame);
-        connect.getChannelClient().writeAndFlush(frame);
+        channel.writeAndFlush(frame);
     }
 
     @Override
     public void send(TextWebSocketFrame frame) {
         super.send(frame);
-        connect.getChannelClient().writeAndFlush(frame);
+        channel.writeAndFlush(frame);
     }
 
     @Override
@@ -62,7 +63,7 @@ public class WebSocketNettyClient extends AbstractWebSocketClient{
     @Override
     public void sendPong(PongWebSocketFrame frame) {
         super.sendPong(frame);
-        connect.getChannelClient().writeAndFlush(frame);
+        channel.writeAndFlush(frame);
     }
     @Override
     public void onPing(PingWebSocketFrame frame) {
