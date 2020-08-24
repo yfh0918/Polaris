@@ -9,6 +9,7 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
@@ -22,7 +23,7 @@ public class WebSocketNettyConnect {
     private Channel channelClient;
     private WebSocketNettyClientHandler handler;
     private WebSocketNettyConnect() {}
-    private void connect(String url, WebSocketClientListener clientListener) {
+    private void connect(String url, EventLoopGroup eventLoopGroup, WebSocketClientListener clientListener) {
         try {
             URI uri = new URI(url);
             final int port = uri.getPort();
@@ -31,7 +32,7 @@ public class WebSocketNettyConnect {
                     clientListener);
 
             Bootstrap boot = new Bootstrap();
-            boot.group(WebSocketNettyGroup.getGroup()).channel(NioSocketChannel.class).handler(new ChannelInitializer<SocketChannel>() {
+            boot.group(eventLoopGroup).channel(NioSocketChannel.class).handler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 protected void initChannel(SocketChannel ch) {
                     ChannelPipeline p = ch.pipeline();
@@ -40,17 +41,15 @@ public class WebSocketNettyConnect {
             });
             channelClient = boot.connect(uri.getHost(), port).sync().channel();
             handler.handshakeFuture().sync();
-            channelClient.closeFuture().addListener((r) -> {
-                WebSocketNettyGroup.shutdown();
-            });
         } catch (Exception e) {
+            e.printStackTrace();
             throw new WebSocketException(e);
         }
     }
     
-    public static WebSocketNettyConnect getConnect(String url,WebSocketClientListener clientListener) {
+    public static WebSocketNettyConnect getConnect(String url,EventLoopGroup eventLoopGroup,WebSocketClientListener clientListener) {
         WebSocketNettyConnect connect = new WebSocketNettyConnect();
-        connect.connect(url, clientListener);
+        connect.connect(url, eventLoopGroup, clientListener);
         return connect;
     }
 

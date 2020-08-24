@@ -21,6 +21,7 @@ import com.polaris.container.gateway.proxy.websocket.WebSocketStatus;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.EventLoopGroup;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
@@ -36,7 +37,7 @@ public class WebsocketClientJavaWs extends WebSocketClient implements com.polari
     
     private volatile AtomicInteger idleConnectTimeout = new AtomicInteger(0);
     
-    public WebsocketClientJavaWs(String uri, ChannelHandlerContext ctx) throws URISyntaxException {
+    public WebsocketClientJavaWs(String uri, EventLoopGroup eventLoopGroup, ChannelHandlerContext ctx) throws URISyntaxException {
         super(new URI(uri));
         this.ctx = ctx;
     }

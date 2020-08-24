@@ -2,6 +2,7 @@ package com.polaris.container.gateway.proxy.impl;
 
 import com.esotericsoftware.minlog.Log;
 import com.polaris.container.gateway.proxy.SslEngineSource;
+import com.polaris.container.gateway.proxy.TransportProtocol;
 import com.polaris.container.gateway.proxy.websocket.WebSocketHandler;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -33,6 +34,7 @@ public class ClientToProxyConnectionAdapt  extends ClientToProxyConnection{
                 wsHandler.upgrade((HttpRequest) msg, 
                         ctx, 
                         this.proxyServer.getServerResolver(),
+                        this.proxyServer.getProxyToServerWorkerFor(TransportProtocol.TCP),
                         this.getHttpFiltersFromProxyServer((HttpRequest) msg),
                         serverHostAndPort);
                 return;

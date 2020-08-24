@@ -34,23 +34,12 @@ public class WebSocketAdmin {
     public static int size() {
         return contextMap.size();
     }
-    private String uri;
-    
     private WebSocketServerHandshaker webSocketServerHandshaker;
     
     private ChannelHandlerContext channelHandlerContext;
     
     private WebSocketClient webSocketClient;
-
-    public String getUri() {
-        return uri;
-    }
-
-    public WebSocketAdmin setUri(String uri) {
-        this.uri = uri;
-        return this;
-    }
-
+    
     public WebSocketServerHandshaker getWebSocketServerHandshaker() {
         return webSocketServerHandshaker;
     }
