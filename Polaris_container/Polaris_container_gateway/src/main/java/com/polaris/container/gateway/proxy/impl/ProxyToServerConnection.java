@@ -1,7 +1,6 @@
 package com.polaris.container.gateway.proxy.impl;
 
 import static com.polaris.container.gateway.proxy.impl.ConnectionState.AWAITING_CHUNK;
-import static com.polaris.container.gateway.proxy.impl.ConnectionState.AWAITING_CONNECT_OK;
 import static com.polaris.container.gateway.proxy.impl.ConnectionState.AWAITING_INITIAL;
 import static com.polaris.container.gateway.proxy.impl.ConnectionState.CONNECTING;
 import static com.polaris.container.gateway.proxy.impl.ConnectionState.DISCONNECTED;
@@ -10,30 +9,21 @@ import static com.polaris.container.gateway.proxy.impl.ConnectionState.HANDSHAKI
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.RejectedExecutionException;
 
 import javax.net.ssl.SSLProtocolException;
-import javax.net.ssl.SSLSession;
 
 import com.barchart.udt.nio.SelectorProviderUDT;
 import com.google.common.net.HostAndPort;
 import com.polaris.container.gateway.proxy.ActivityTracker;
-import com.polaris.container.gateway.proxy.ChainedProxy;
-import com.polaris.container.gateway.proxy.ChainedProxyAdapter;
-import com.polaris.container.gateway.proxy.ChainedProxyManager;
 import com.polaris.container.gateway.proxy.FullFlowContext;
 import com.polaris.container.gateway.proxy.HttpFilters;
-import com.polaris.container.gateway.proxy.MitmManager;
 import com.polaris.container.gateway.proxy.TransportProtocol;
 import com.polaris.container.gateway.proxy.UnknownTransportProtocolException;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -57,7 +47,6 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.traffic.GlobalTrafficShapingHandler;
 import io.netty.util.ReferenceCounted;
 import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 
 /**
  * <p>
@@ -84,10 +73,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private volatile InetSocketAddress localAddress;
     private final String serverHostAndPort;
     private final String contextPath;
-    private volatile ChainedProxy chainedProxy;
-    private final Queue<ChainedProxy> availableChainedProxies;
-    
-
 
     /**
      * The filters to apply to response/chunks received from server.
@@ -161,23 +146,10 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
                                           HttpRequest initialHttpRequest,
                                           GlobalTrafficShapingHandler globalTrafficShapingHandler)
             throws UnknownHostException {
-        Queue<ChainedProxy> chainedProxies = new ConcurrentLinkedQueue<ChainedProxy>();
-        ChainedProxyManager chainedProxyManager = proxyServer
-                .getChainProxyManager();
-        if (chainedProxyManager != null) {
-            chainedProxyManager.lookupChainedProxies(initialHttpRequest,
-                    chainedProxies);
-            if (chainedProxies.size() == 0) {
-                // ChainedProxyManager returned no proxies, can't connect
-                return null;
-            }
-        }
         return new ProxyToServerConnection(proxyServer,
                 clientConnection,
                 serverHostAndPort,
                 contextPath,
-                chainedProxies.poll(),
-                chainedProxies,
                 initialFilters,
                 globalTrafficShapingHandler,
                 initialHttpRequest
@@ -189,18 +161,14 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
             ClientToProxyConnection clientConnection,
             String serverHostAndPort,
             String contextPath,
-            ChainedProxy chainedProxy,
-            Queue<ChainedProxy> availableChainedProxies,
             HttpFilters initialFilters,
             GlobalTrafficShapingHandler globalTrafficShapingHandler,
             HttpRequest initialHttpRequest)
             throws UnknownHostException {
-        super(DISCONNECTED, proxyServer, true);
+        super(DISCONNECTED, proxyServer);
         this.clientConnection = clientConnection;
         this.serverHostAndPort = serverHostAndPort;
         this.contextPath = contextPath;
-        this.chainedProxy = chainedProxy;
-        this.availableChainedProxies = availableChainedProxies;
         this.trafficHandler = globalTrafficShapingHandler;
         this.currentFilters = initialFilters;
         this.flowContext = new FullFlowContext(clientConnection,this);
@@ -363,9 +331,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
 
     @Override
     protected void writeHttp(HttpObject httpObject) {
-        if (chainedProxy != null) {
-            chainedProxy.filterRequest(httpObject);
-        }
         if (httpObject instanceof HttpRequest) {
             HttpRequest httpRequest = (HttpRequest) httpObject;
             // Remember that we issued this HttpRequest for later
@@ -426,14 +391,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     @Override
     protected void disconnected() {
         super.disconnected();
-        if (this.chainedProxy != null) {
-            // Let the ChainedProxy know that we disconnected
-            try {
-                this.chainedProxy.disconnected();
-            } catch (Exception e) {
-                LOG.error("Unable to record connectionFailed", e);
-            }
-        }
         clientConnection.serverDisconnected(this);
     }
 
@@ -477,19 +434,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
 
     public String getServerHostAndPort() {
         return serverHostAndPort;
-    }
-
-    public boolean hasUpstreamChainedProxy() {
-        return getChainedProxyAddress() != null;
-    }
-
-    public InetSocketAddress getChainedProxyAddress() {
-        return chainedProxy == null ? null : chainedProxy
-                .getChainedProxyAddress();
-    }
-
-    public ChainedProxy getChainedProxy() {
-        return chainedProxy;
     }
 
     public HttpRequest getInitialRequest() {
@@ -558,45 +502,10 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
                 connectLock)
                 .then(ConnectChannel);
 
-        if (chainedProxy != null && chainedProxy.requiresEncryption()) {
-            connectionFlow.then(serverConnection.EncryptChannel(chainedProxy
-                    .newSslEngine()));
-        }
-
         if (ProxyUtils.isCONNECT(initialRequest)) {
-            // If we're chaining, forward the CONNECT request
-            if (hasUpstreamChainedProxy()) {
-                connectionFlow.then(
-                        serverConnection.HTTPCONNECTWithChainedProxy);
-            }
-
-            MitmManager mitmManager = proxyServer.getMitmManager();
-            boolean isMitmEnabled = mitmManager != null;
-
-            if (isMitmEnabled) {
-                // When MITM is enabled and when chained proxy is set up, remoteAddress
-                // will be the chained proxy's address. So we use serverHostAndPort
-                // which is the end server's address.
-                HostAndPort parsedHostAndPort = HostAndPort.fromString(serverHostAndPort);
-
-                // SNI may be disabled for this request due to a previous failed attempt to connect to the server
-                // with SNI enabled.
-                if (disableSni) {
-                    connectionFlow.then(serverConnection.EncryptChannel(proxyServer.getMitmManager()
-                            .serverSslEngine()));
-                } else {
-                    connectionFlow.then(serverConnection.EncryptChannel(proxyServer.getMitmManager()
-                            .serverSslEngine(parsedHostAndPort.getHost(), parsedHostAndPort.getPort())));
-                }
-
-                connectionFlow
-                        .then(clientConnection.RespondCONNECTSuccessful)
-                        .then(serverConnection.MitmEncryptClientChannel);
-            } else {
-                connectionFlow.then(serverConnection.StartTunneling)
-                        .then(clientConnection.RespondCONNECTSuccessful)
-                        .then(clientConnection.StartTunneling);
-            }
+            connectionFlow.then(serverConnection.StartTunneling)
+            .then(clientConnection.RespondCONNECTSuccessful)
+            .then(clientConnection.StartTunneling);
         }
     }
 
@@ -657,107 +566,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     };
 
     /**
-     * Writes the HTTP CONNECT to the server and waits for a 200 response.
-     */
-    private ConnectionFlowStep HTTPCONNECTWithChainedProxy = new ConnectionFlowStep(
-            this, AWAITING_CONNECT_OK) {
-        protected Future<?> execute() {
-            LOG.debug("Handling CONNECT request through Chained Proxy");
-            chainedProxy.filterRequest(initialRequest);
-            MitmManager mitmManager = proxyServer.getMitmManager();
-            boolean isMitmEnabled = mitmManager != null;
-            /*
-             * We ignore the LastHttpContent which we read from the client
-             * connection when we are negotiating connect (see readHttp()
-             * in ProxyConnection). This cannot be ignored while we are
-             * doing MITM + Chained Proxy because the HttpRequestEncoder
-             * of the ProxyToServerConnection will be in an invalid state
-             * when the next request is written. Writing the EmptyLastContent
-             * resets its state.
-             */
-            if(isMitmEnabled){
-                ChannelFuture future = writeToChannel(initialRequest);
-                future.addListener(new ChannelFutureListener() {
-
-                    @Override
-                    public void operationComplete(ChannelFuture arg0) throws Exception {
-                        if(arg0.isSuccess()){
-                            writeToChannel(LastHttpContent.EMPTY_LAST_CONTENT);
-                        }
-                    }
-                });
-                return future;
-            } else {
-                return writeToChannel(initialRequest);
-            }
-        }
-
-        void onSuccess(ConnectionFlow flow) {
-            // Do nothing, since we want to wait for the CONNECT response to
-            // come back
-        }
-
-        void read(ConnectionFlow flow, Object msg) {
-            // Here we're handling the response from a chained proxy to our
-            // earlier CONNECT request
-            boolean connectOk = false;
-            if (msg instanceof HttpResponse) {
-                HttpResponse httpResponse = (HttpResponse) msg;
-                int statusCode = httpResponse.status().code();
-                if (statusCode >= 200 && statusCode <= 299) {
-                    connectOk = true;
-                }
-            }
-            if (connectOk) {
-                flow.advance();
-            } else {
-                flow.fail();
-            }
-        }
-    };
-
-    /**
-     * <p>
-     * Encrypts the client channel based on our server {@link SSLSession}.
-     * </p>
-     *
-     * <p>
-     * This does not wait for the handshake to finish so that we can go on and
-     * respond to the CONNECT request.
-     * </p>
-     */
-    private ConnectionFlowStep MitmEncryptClientChannel = new ConnectionFlowStep(
-            this, HANDSHAKING) {
-        @Override
-        boolean shouldExecuteOnEventLoop() {
-            return false;
-        }
-
-        @Override
-        boolean shouldSuppressInitialRequest() {
-            return true;
-        }
-
-        @Override
-        protected Future<?> execute() {
-            return clientConnection
-                    .encrypt(proxyServer.getMitmManager()
-                            .clientSslEngineFor(initialRequest, sslEngine.getSession()), false)
-                    .addListener(
-                            new GenericFutureListener<Future<? super Channel>>() {
-                                @Override
-                                public void operationComplete(
-                                        Future<? super Channel> future)
-                                        throws Exception {
-                                    if (future.isSuccess()) {
-                                        clientConnection.setMitming(true);
-                                    }
-                                }
-                            });
-        }
-    };
-
-    /**
      * Called when the connection to the server or upstream chained proxy fails. This method may return true to indicate
      * that the connection should be retried. If returning true, this method must set up the connection itself.
      *
@@ -788,25 +596,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         // the connection issue wasn't due to an unrecognized_name error, or the connection attempt failed even after
         // disabling SNI. before falling back to a chained proxy, re-enable SNI.
         disableSni = false;
-
-        if (chainedProxy != null) {
-            LOG.info("Connection to upstream server via chained proxy failed", cause);
-            // Let the ChainedProxy know that we were unable to connect
-            chainedProxy.connectionFailed(cause);
-        } else {
-            LOG.info("Connection to upstream server failed", cause);
-        }
-
-        // attempt to connect using a chained proxy, if available
-        chainedProxy = availableChainedProxies.poll();
-        if (chainedProxy != null) {
-            LOG.info("Retrying connecting using the next available chained proxy");
-
-            resetConnectionForRetry();
-
-            connectAndWrite(initialRequest);
-            return true;
-        }
+        LOG.info("Connection to upstream server failed", cause);
 
         // no chained proxy fallback or other retry mechanism available
         return false;
@@ -834,43 +624,32 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      * @throws UnknownHostException when unable to resolve the hostname to an IP address
      */
     private void setupConnectionParameters() throws UnknownHostException {
-        if (chainedProxy != null
-                && chainedProxy != ChainedProxyAdapter.FALLBACK_TO_DIRECT_CONNECTION) {
-            this.transportProtocol = chainedProxy.getTransportProtocol();
-            this.remoteAddress = chainedProxy.getChainedProxyAddress();
-            this.localAddress = chainedProxy.getLocalAddress();
-        } else {
-            this.transportProtocol = TransportProtocol.TCP;
+        this.transportProtocol = TransportProtocol.TCP;
 
-            // Report DNS resolution to HttpFilters
-            this.remoteAddress = this.currentFilters.proxyToServerResolutionStarted(flowContext,serverHostAndPort);
+        // Report DNS resolution to HttpFilters
+        this.remoteAddress = this.currentFilters.proxyToServerResolutionStarted(flowContext,serverHostAndPort);
 
-            // save the hostname and port of the unresolved address in hostAndPort, in case name resolution fails
-            String hostAndPort = null;
-            try {
-                if (this.remoteAddress == null) {
-                    hostAndPort = serverHostAndPort;
-                    this.remoteAddress = addressFor(serverHostAndPort, proxyServer);
-                } else if (this.remoteAddress.isUnresolved()) {
-                    // filter returned an unresolved address, so resolve it using the proxy server's resolver
-                    hostAndPort = HostAndPort.fromParts(this.remoteAddress.getHostName(), this.remoteAddress.getPort()).toString();
-                    
-                    this.remoteAddress = proxyServer.getServerResolver().resolve(this.remoteAddress.getHostName(),
-                            this.remoteAddress.getPort(),contextPath);
-                }
-            } catch (UnknownHostException e) {
-                // unable to resolve the hostname to an IP address. notify the filters of the failure before allowing the
-                // exception to bubble up.
-                this.currentFilters.proxyToServerResolutionFailed(flowContext,hostAndPort);
-
-                throw e;
+        // save the hostname and port of the unresolved address in hostAndPort, in case name resolution fails
+        String hostAndPort = null;
+        try {
+            if (this.remoteAddress == null) {
+                hostAndPort = serverHostAndPort;
+                this.remoteAddress = addressFor(serverHostAndPort, proxyServer);
+            } else if (this.remoteAddress.isUnresolved()) {
+                // filter returned an unresolved address, so resolve it using the proxy server's resolver
+                hostAndPort = HostAndPort.fromParts(this.remoteAddress.getHostName(), this.remoteAddress.getPort()).toString();
+                
+                this.remoteAddress = proxyServer.getServerResolver().resolve(this.remoteAddress.getHostName(),
+                        this.remoteAddress.getPort(),contextPath);
             }
-
-            this.currentFilters.proxyToServerResolutionSucceeded(flowContext,serverHostAndPort, this.remoteAddress);
-
-
-            this.localAddress = proxyServer.getLocalAddress();
+        } catch (UnknownHostException e) {
+            // unable to resolve the hostname to an IP address. notify the filters of the failure before allowing the
+            // exception to bubble up.
+            this.currentFilters.proxyToServerResolutionFailed(flowContext,hostAndPort);
+            throw e;
         }
+        this.currentFilters.proxyToServerResolutionSucceeded(flowContext,serverHostAndPort, this.remoteAddress);
+        this.localAddress = proxyServer.getLocalAddress();
     }
 
     /**
@@ -935,14 +714,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      */
     void connectionSucceeded(boolean shouldForwardInitialRequest) {
         become(AWAITING_INITIAL);
-        if (this.chainedProxy != null) {
-            // Notify the ChainedProxy that we successfully connected
-            try {
-                this.chainedProxy.connectionSucceeded();
-            } catch (Exception e) {
-                LOG.error("Unable to record connectionSucceeded", e);
-            }
-        }
         clientConnection.serverConnectionSucceeded(this,
                 shouldForwardInitialRequest);
 

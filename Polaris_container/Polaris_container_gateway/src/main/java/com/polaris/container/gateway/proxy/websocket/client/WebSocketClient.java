@@ -1,7 +1,5 @@
 package com.polaris.container.gateway.proxy.websocket.client;
 
-import org.java_websocket.exceptions.WebsocketNotConnectedException;
-
 import com.polaris.container.gateway.proxy.websocket.WebSocketStatus;
 
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;

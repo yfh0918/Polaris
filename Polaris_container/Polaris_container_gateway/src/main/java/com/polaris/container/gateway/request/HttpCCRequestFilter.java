@@ -42,7 +42,6 @@ import com.polaris.extension.cache.Cache;
 import com.polaris.extension.cache.CacheFactory;
 
 import cn.hutool.core.io.FileUtil;
-import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -246,7 +245,7 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
     public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpFilterMessage httpMessage) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
-            String realIp = HttpConstant.getRealIp((DefaultHttpRequest) httpObject);
+            String realIp = HttpConstant.getRealIp((HttpRequest) httpObject);
             
             //控制总流量，超标直接返回
             HttpRequest httpRequest = (HttpRequest)httpObject;

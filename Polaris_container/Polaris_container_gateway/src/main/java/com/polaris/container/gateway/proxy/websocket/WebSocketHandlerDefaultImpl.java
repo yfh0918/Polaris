@@ -125,8 +125,6 @@ public class WebSocketHandlerDefaultImpl implements WebSocketHandler {
         }
     }
 
-    
-    
     @Override
     public boolean isWSProtocol(HttpRequest req) {
         return WebSocketSupport.isWSProtocol(req);

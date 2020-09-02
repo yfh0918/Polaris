@@ -93,7 +93,7 @@ public class WebfluxServer extends SpringContextServer{
     }
     
     private HttpProtocol[] listProtocols() {
-        boolean ssl = Boolean.parseBoolean(ConfClient.get("server.ssl.enable","false"));
+        boolean ssl = Boolean.parseBoolean(ConfClient.get("server.tls.enable","false"));
         boolean http2 = Boolean.parseBoolean(ConfClient.get("server.http2.enable","false"));
         if (http2) {
             if (ssl) {
@@ -134,8 +134,8 @@ public class WebfluxServer extends SpringContextServer{
             certificateFile = cert.certificate();
             privateKeyFile = cert.privateKey();
         }
-         SslContextBuilder sslContextBuilder =
-         SslContextBuilder.forServer(certificateFile, privateKeyFile);
+        SslContextBuilder sslContextBuilder =
+        SslContextBuilder.forServer(certificateFile, privateKeyFile);
         server.secure(sslContextSpec -> sslContextSpec.sslContext(sslContextBuilder));
         return server;
     }

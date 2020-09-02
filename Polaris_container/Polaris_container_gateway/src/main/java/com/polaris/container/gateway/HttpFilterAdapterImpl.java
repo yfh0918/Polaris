@@ -25,12 +25,14 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
+import io.netty.handler.codec.http2.HttpConversionUtil;
 import io.netty.util.CharsetUtil;
 
 /**
@@ -66,7 +68,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             logger.error("client's request failed", e);
         } 
         
-        return httpResponse;
+        return wrapperHttp2(httpResponse);
     }
     
     @Override
@@ -74,11 +76,11 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
                                                  InetSocketAddress resolvedRemoteAddress) {
         if (resolvedRemoteAddress == null) {
         	if (ctx.channel().isWritable()) {
-                ctx.writeAndFlush(createResponse(originalRequest, 
+                ctx.writeAndFlush(wrapperHttp2(createResponse(originalRequest, 
                 		HttpFilterMessage.of(
                 				ResultUtil.create(
                 						Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(),
-                						HttpResponseStatus.BAD_GATEWAY)));
+                						HttpResponseStatus.BAD_GATEWAY))));
         	}
         } 
     }
@@ -114,14 +116,16 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
                                 ResultUtil.create(
                                         Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(),
                                         HttpResponseStatus.BAD_GATEWAY));
-                return httpObject;
+                return wrapperHttp2((HttpResponse)httpObject);
         	}
 
         	ImmutablePair<Boolean, HttpFilterMessage> immutablePair = HttpResponseFilterChain.INSTANCE.doFilter(originalRequest, (HttpResponse) httpObject);
         	if (immutablePair.left) {
         	    httpObject = createResponse(originalRequest, immutablePair.right);
-                return httpObject;
+                return wrapperHttp2((HttpResponse)httpObject);
         	}
+        	
+        	return wrapperHttp2((HttpResponse)httpObject);
         }
         return httpObject;
     }
@@ -146,8 +150,8 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         NamingClient.onConnectionFail(Server.of(remoteIp, remotePort));
     }
 
-	private HttpResponse createResponse(HttpRequest originalRequest, HttpFilterMessage message) {
-        HttpResponse httpResponse;
+	private FullHttpResponse createResponse(HttpRequest originalRequest, HttpFilterMessage message) {
+	    FullHttpResponse httpResponse;
         if (StringUtil.isNotEmpty(message.getResult())) {
         	ByteBuf buf = io.netty.buffer.Unpooled.copiedBuffer(message.getResult(), CharsetUtil.UTF_8); 
         	httpResponse  = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, message.getStatus(), buf);
@@ -157,6 +161,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         HttpHeaders httpHeaders=new DefaultHttpHeaders();
         httpHeaders.add("Transfer-Encoding","chunked");
     	httpHeaders.set("Content-Type", "application/json");
+    	
     	if (message.getHeader() != null) {
     		for (Map.Entry<String, Object> entry : message.getHeader().entrySet()) {
     			httpHeaders.set(entry.getKey(), entry.getValue());
@@ -165,4 +170,16 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         httpResponse.headers().add(httpHeaders);
         return httpResponse;
     }
+	
+	private HttpResponse wrapperHttp2(HttpResponse response) {
+	    if (response == null) {
+	        return response;
+	    }
+	    String streamId = originalRequest.headers().get(HttpConversionUtil.ExtensionHeaderNames.STREAM_ID.text());
+        if (streamId != null) {
+            response.headers().add(HttpConversionUtil.ExtensionHeaderNames.STREAM_ID.text(),streamId);
+        }
+	    return response;
+	}
+
 }

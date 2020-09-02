@@ -33,7 +33,7 @@ public class WebSocketNettyConnector {
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             ChannelPipeline p = ch.pipeline();
-                            p.addLast(new HttpClientCodec(), new HttpObjectAggregator(8192), handler);
+                            p.addLast(new HttpClientCodec(), new HttpObjectAggregator(Integer.MAX_VALUE), handler);
                         }
                     })
                     .connect(uri.getHost(), port).sync().channel();

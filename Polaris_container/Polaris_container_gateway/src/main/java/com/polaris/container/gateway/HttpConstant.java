@@ -101,10 +101,7 @@ public class HttpConstant {
             if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
                 ip = request.headers().get("HTTP_X_FORWARDED_FOR");
             }
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            	ip = HttpConstant.getRealIp(request);
-            }
-            if ("127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
+            if (ip == null || ip.length() == 0 || "127.0.0.1".equals(ip) || "0:0:0:0:0:0:0:1".equals(ip)) {
                 try {
                     ip = InetAddress.getLocalHost().getHostAddress();
                 } catch (UnknownHostException unknownhostexception) {

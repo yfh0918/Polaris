@@ -108,22 +108,6 @@ public interface HttpProxyServerBootstrap {
 
     /**
      * <p>
-     * Specify whether or not to authenticate inbound SSL clients (only applies
-     * if {@link #withSslEngineSource(SslEngineSource)} has been set).
-     * </p>
-     * 
-     * <p>
-     * Default = true
-     * </p>
-     * 
-     * @param authenticateSslClients
-     * @return
-     */
-    HttpProxyServerBootstrap withAuthenticateSslClients(
-            boolean authenticateSslClients);
-
-    /**
-     * <p>
      * Specify a {@link ProxyAuthenticator} to use for doing basic HTTP
      * authentication of clients.
      * </p>
@@ -137,43 +121,6 @@ public interface HttpProxyServerBootstrap {
      */
     HttpProxyServerBootstrap withProxyAuthenticator(
             ProxyAuthenticator proxyAuthenticator);
-
-    /**
-     * <p>
-     * Specify a {@link ChainedProxyManager} to use for chaining requests to
-     * another proxy.
-     * </p>
-     * 
-     * <p>
-     * Default = null
-     * </p>
-     * 
-     * @param chainProxyManager
-     * @return
-     */
-    HttpProxyServerBootstrap withChainProxyManager(
-            ChainedProxyManager chainProxyManager);
-
-    /**
-     * <p>
-     * Specify an {@link MitmManager} to use for making this proxy act as an SSL
-     * man in the middle
-     * </p>
-     * 
-     * <p>
-     * Default = null
-     * </p>
-     * 
-     * <p>
-     * Note - This and {@link #withSslEngineSource(SslEngineSource)} are
-     * mutually exclusive.
-     * </p>
-     * 
-     * @param mitmManager
-     * @return
-     */
-    HttpProxyServerBootstrap withManInTheMiddle(
-            MitmManager mitmManager);
 
     /**
      * <p>

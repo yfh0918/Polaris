@@ -1,21 +1,37 @@
 package com.polaris.container.gateway.proxy.impl;
 
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.AWAITING_CHUNK;
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.AWAITING_INITIAL;
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.DISCONNECTED;
+import static com.polaris.container.gateway.proxy.impl.ConnectionState.NEGOTIATING_CONNECT;
+
+import javax.net.ssl.SSLEngine;
+
+import com.polaris.container.gateway.proxy.HttpFilters;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import io.netty.channel.*;
-import io.netty.handler.codec.http.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelOutboundHandlerAdapter;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.ChannelPromise;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.HttpContent;
+import io.netty.handler.codec.http.HttpContentDecompressor;
+import io.netty.handler.codec.http.HttpMessage;
+import io.netty.handler.codec.http.HttpObject;
+import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.ReferenceCounted;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import io.netty.util.concurrent.Promise;
-
-import static com.polaris.container.gateway.proxy.impl.ConnectionState.*;
-
-import javax.net.ssl.SSLEngine;
-
-import com.polaris.container.gateway.proxy.HttpFilters;
 
 /**
  * <p>
@@ -67,7 +83,6 @@ public abstract class ProxyConnection<I extends HttpObject> extends
     protected final ProxyConnectionLogger LOG = new ProxyConnectionLogger(this);
 
     protected final DefaultHttpProxyServer proxyServer;
-    protected final boolean runsAsSslClient;
 
     protected volatile ChannelHandlerContext ctx;
     protected volatile Channel channel;
@@ -93,11 +108,9 @@ public abstract class ProxyConnection<I extends HttpObject> extends
      *            server (determines who does the handshake)
      */
     protected ProxyConnection(ConnectionState initialState,
-            DefaultHttpProxyServer proxyServer,
-            boolean runsAsSslClient) {
+            DefaultHttpProxyServer proxyServer) {
         become(initialState);
         this.proxyServer = proxyServer;
-        this.runsAsSslClient = runsAsSslClient;
     }
 
     /***************************************************************************
@@ -350,9 +363,8 @@ public abstract class ProxyConnection<I extends HttpObject> extends
      *            determines whether to authenticate clients or not
      * @return a Future for when the SSL handshake has completed
      */
-    protected Future<Channel> encrypt(SSLEngine sslEngine,
-            boolean authenticateClients) {
-        return encrypt(ctx.pipeline(), sslEngine, authenticateClients);
+    protected Future<Channel> encrypt(SSLEngine sslEngine) {
+        return encrypt(ctx.pipeline(), sslEngine);
     }
 
     /**
@@ -367,16 +379,11 @@ public abstract class ProxyConnection<I extends HttpObject> extends
      * @return a Future for when the SSL handshake has completed
      */
     protected Future<Channel> encrypt(ChannelPipeline pipeline,
-            SSLEngine sslEngine,
-            boolean authenticateClients) {
+            SSLEngine sslEngine) {
         LOG.debug("Enabling encryption with SSLEngine: {}",
                 sslEngine);
         this.sslEngine = sslEngine;
-        sslEngine.setUseClientMode(runsAsSslClient);
-        sslEngine.setNeedClientAuth(authenticateClients);
-        if (null != channel) {
-            channel.config().setAutoRead(true);
-        }
+        pipeline.channel().config().setAutoRead(true);
         SslHandler handler = new SslHandler(sslEngine);
         if(pipeline.get("ssl") == null) {
             pipeline.addFirst("ssl", handler);
@@ -389,28 +396,6 @@ public abstract class ProxyConnection<I extends HttpObject> extends
         }
         return handler.handshakeFuture();
     }
-
-    /**
-     * Encrypts the channel using the provided {@link SSLEngine}.
-     * 
-     * @param sslEngine
-     *            the {@link SSLEngine} for doing the encryption
-     */
-    protected ConnectionFlowStep EncryptChannel(
-            final SSLEngine sslEngine) {
-
-        return new ConnectionFlowStep(this, HANDSHAKING) {
-            @Override
-            boolean shouldExecuteOnEventLoop() {
-                return false;
-            }
-
-            @Override
-            protected Future<?> execute() {
-                return encrypt(sslEngine, !runsAsSslClient);
-            }
-        };
-    };
 
     /**
      * Enables decompression and aggregation of content, which is useful for
@@ -591,12 +576,19 @@ public abstract class ProxyConnection<I extends HttpObject> extends
     @Override
     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
         try {
-            this.ctx = ctx;
-            this.channel = ctx.channel();
-            this.proxyServer.registerChannel(ctx.channel());
+            channelRegistered0(ctx);
         } finally {
             super.channelRegistered(ctx);
         }
+    }
+    
+    protected void channelRegistered0(ChannelHandlerContext ctx) throws Exception {
+        if (channel != null) {
+            return;
+        }
+        this.ctx = ctx;
+        this.channel = ctx.channel();
+        this.proxyServer.registerChannel(ctx.channel());
     }
 
     /**
@@ -604,7 +596,7 @@ public abstract class ProxyConnection<I extends HttpObject> extends
      * as connected.
      */
     @Override
-    public final void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
         try {
             connected();
         } finally {

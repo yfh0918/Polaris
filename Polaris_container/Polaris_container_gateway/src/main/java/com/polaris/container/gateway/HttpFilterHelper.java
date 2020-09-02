@@ -5,20 +5,18 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 
-public class HttpFilterHelper {
+public abstract class HttpFilterHelper {
 	private static Logger logger = LoggerFactory.getLogger(HttpFilterHelper.class);
-	public static HttpFilterHelper INSTANCE = new HttpFilterHelper();
-	private HttpFilterHelper() {};
 	
 	//replace
-	public void replaceFilter(HttpFilterEntity httpFilterEntity, HttpFilter newFilter) {
+	public static void replaceFilter(HttpFilterEntity httpFilterEntity, HttpFilter newFilter) {
 		removeFilter(httpFilterEntity);
 		httpFilterEntity.setFilter(newFilter);
 		addFilter(httpFilterEntity);
 	}
 	
 	//add
-	public void addFilter(HttpFilterEntity httpFilterEntity) {
+	public static void addFilter(HttpFilterEntity httpFilterEntity) {
 		logger.info("add filter:{}",httpFilterEntity.getFilter().getClass().getSimpleName());
 		try {
 			httpFilterEntity.getFilter().start();
@@ -28,7 +26,7 @@ public class HttpFilterHelper {
 	}
 	
 	//remove
-	public void removeFilter(HttpFilterEntity httpFilterEntity) {
+	public static void removeFilter(HttpFilterEntity httpFilterEntity) {
 		logger.info("remove filter:{}",httpFilterEntity.getFilter().getClass().getSimpleName());
 		try {
 			httpFilterEntity.getFilter().stop();

@@ -11,11 +11,14 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.traffic.GlobalTrafficShapingHandler;
 
-public class ClientToProxyConnectionAdapt  extends ClientToProxyConnection{
+public class ClientToProxyConnectionWithWebSocket  extends ClientToProxyConnection{
     
-    ClientToProxyConnectionAdapt(DefaultHttpProxyServer proxyServer, SslEngineSource sslEngineSource, boolean authenticateClients,
-            ChannelPipeline pipeline, GlobalTrafficShapingHandler globalTrafficShapingHandler) {
-        super(proxyServer, sslEngineSource, authenticateClients, pipeline, globalTrafficShapingHandler);
+    public ClientToProxyConnectionWithWebSocket(
+            DefaultHttpProxyServer proxyServer, 
+            SslEngineSource sslEngineSource, 
+            ChannelPipeline pipeline, 
+            GlobalTrafficShapingHandler globalTrafficShapingHandler) {
+        super(proxyServer, sslEngineSource, pipeline, globalTrafficShapingHandler);
     }
 
     /**

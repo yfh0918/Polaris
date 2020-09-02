@@ -8,8 +8,6 @@ import com.polaris.container.gateway.proxy.impl.ProxyToServerConnection;
  * we know after actually processing the request from the client).
  */
 public class FullFlowContext extends FlowContext {
-    private final String serverHostAndPort;
-    private final ChainedProxy chainedProxy;
     private final ClientToProxyConnection clientConnection;
     private final ProxyToServerConnection serverConnection;
     
@@ -17,8 +15,6 @@ public class FullFlowContext extends FlowContext {
     public FullFlowContext(ClientToProxyConnection clientConnection,
             ProxyToServerConnection serverConnection) {
         super(clientConnection);
-        this.serverHostAndPort = serverConnection.getServerHostAndPort();
-        this.chainedProxy = serverConnection.getChainedProxy();
         this.clientConnection = clientConnection;
         this.serverConnection = serverConnection;
     }
@@ -29,16 +25,7 @@ public class FullFlowContext extends FlowContext {
      * @return
      */
     public String getServerHostAndPort() {
-        return serverHostAndPort;
-    }
-
-    /**
-     * The chained proxy (if proxy chaining).
-     * 
-     * @return
-     */
-    public ChainedProxy getChainedProxy() {
-        return chainedProxy;
+        return serverConnection.getServerHostAndPort();
     }
 
 	public ClientToProxyConnection getClientConnection() {

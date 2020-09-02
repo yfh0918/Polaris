@@ -151,17 +151,15 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
     public ClientToProxyConnection(
             final DefaultHttpProxyServer proxyServer,
             SslEngineSource sslEngineSource,
-            boolean authenticateClients,
             ChannelPipeline pipeline,
             GlobalTrafficShapingHandler globalTrafficShapingHandler) {
-        super(AWAITING_INITIAL, proxyServer, false);
+        super(AWAITING_INITIAL, proxyServer);
 
         initChannelPipeline(pipeline);
 
         if (sslEngineSource != null) {
             LOG.debug("Enabling encryption of traffic from client to proxy");
-            encrypt(pipeline, sslEngineSource.newSslEngine(),
-                    authenticateClients)
+            encrypt(pipeline, sslEngineSource.newSslEngine(pipeline.channel().alloc()))
                     .addListener(
                             new GenericFutureListener<Future<? super Channel>>() {
                                 @Override
@@ -781,15 +779,9 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
      * 
      * @param pipeline
      */
-    private void initChannelPipeline(ChannelPipeline pipeline) {
+    protected void initChannelPipeline(ChannelPipeline pipeline) {
         LOG.debug("Configuring ChannelPipeline");
-
-        pipeline.addLast("bytesReadMonitor", bytesReadMonitor);
-        pipeline.addLast("bytesWrittenMonitor", bytesWrittenMonitor);
-
         pipeline.addLast("encoder", new HttpResponseEncoder());
-        // We want to allow longer request lines, headers, and chunks
-        // respectively.
         pipeline.addLast("decoder", new HttpRequestDecoder(
                 proxyServer.getMaxInitialLineLength(),
                 proxyServer.getMaxHeaderSize(),
@@ -1077,23 +1069,22 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
      * @param httpRequest
      */
     private void modifyRequestHeadersToReflectProxying(HttpRequest httpRequest) {
-        if (!currentServerConnection.hasUpstreamChainedProxy()) {
-            /*
-             * We are making the request to the origin server, so must modify
-             * the 'absolute-URI' into the 'origin-form' as per RFC 7230
-             * section 5.3.1.
-             *
-             * This must happen even for 'transparent' mode, otherwise the origin
-             * server could infer that the request came via a proxy server.
-             */
-            LOG.debug("Modifying request for proxy chaining");
-            // Strip host from uri
-            String uri = httpRequest.uri();
-            String adjustedUri = ProxyUtils.stripHost(uri);
-            LOG.debug("Stripped host from uri: {}    yielding: {}", uri,
-                    adjustedUri);
-            httpRequest.setUri(adjustedUri);
-        }
+        /*
+         * We are making the request to the origin server, so must modify
+         * the 'absolute-URI' into the 'origin-form' as per RFC 7230
+         * section 5.3.1.
+         *
+         * This must happen even for 'transparent' mode, otherwise the origin
+         * server could infer that the request came via a proxy server.
+         */
+        LOG.debug("Modifying request for proxy chaining");
+        // Strip host from uri
+        String uri = httpRequest.uri();
+        String adjustedUri = ProxyUtils.stripHost(uri);
+        LOG.debug("Stripped host from uri: {}    yielding: {}", uri,
+                adjustedUri);
+        httpRequest.setUri(adjustedUri);
+        
         if (!proxyServer.isTransparent()) {
             LOG.debug("Modifying request headers for proxying");
 
@@ -1274,8 +1265,8 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
         // we are sending a response to the client, so we are done handling this request
         this.currentRequest = null;
 
-        HttpResponse filteredResponse = (HttpResponse) currentFilters.proxyToClientResponse(httpResponse);
-        if (filteredResponse == null) {
+        httpResponse = (HttpResponse) currentFilters.proxyToClientResponse(httpResponse);
+        if (httpResponse == null) {
             disconnect();
             return false;
         }
@@ -1359,17 +1350,6 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
      * We track statistics on bytes, requests and responses by adding handlers
      * at the appropriate parts of the pipeline (see initChannelPipeline()).
      **************************************************************************/
-    private final BytesReadMonitor bytesReadMonitor = new BytesReadMonitor() {
-        @Override
-        protected void bytesRead(int numberOfBytes) {
-            FlowContext flowContext = flowContext();
-            for (ActivityTracker tracker : proxyServer
-                    .getActivityTrackers()) {
-                tracker.bytesReceivedFromClient(flowContext, numberOfBytes);
-            }
-        }
-    };
-
     private RequestReadMonitor requestReadMonitor = new RequestReadMonitor() {
         @Override
         protected void requestRead(HttpRequest httpRequest) {
@@ -1377,17 +1357,6 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
             for (ActivityTracker tracker : proxyServer
                     .getActivityTrackers()) {
                 tracker.requestReceivedFromClient(flowContext, httpRequest);
-            }
-        }
-    };
-
-    private BytesWrittenMonitor bytesWrittenMonitor = new BytesWrittenMonitor() {
-        @Override
-        protected void bytesWritten(int numberOfBytes) {
-            FlowContext flowContext = flowContext();
-            for (ActivityTracker tracker : proxyServer
-                    .getActivityTrackers()) {
-                tracker.bytesSentToClient(flowContext, numberOfBytes);
             }
         }
     };

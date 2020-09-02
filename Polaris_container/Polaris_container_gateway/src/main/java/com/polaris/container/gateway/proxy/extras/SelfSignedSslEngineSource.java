@@ -1,10 +1,11 @@
 package com.polaris.container.gateway.proxy.extras;
 
-import com.google.common.io.ByteStreams;
-import com.polaris.container.gateway.proxy.SslEngineSource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.File;
+import java.io.FileInputStream;
+import java.security.KeyStore;
+import java.security.Security;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
@@ -13,87 +14,145 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.Security;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.Arrays;
+
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.polaris.container.gateway.proxy.SslEngineSource;
+import com.polaris.container.gateway.util.JCEUtil;
+import com.polaris.core.config.ConfClient;
+import com.polaris.core.util.StringUtil;
+
+import io.netty.buffer.ByteBufAllocator;
+import net.lightbody.bmp.mitm.CertificateInfo;
+import net.lightbody.bmp.mitm.RootCertificateGenerator;
+import net.lightbody.bmp.mitm.keys.ECKeyGenerator;
+import net.lightbody.bmp.mitm.keys.RSAKeyGenerator;
 
 /**
- * Basic {@link SslEngineSource} for testing. The {@link SSLContext} uses
- * self-signed certificates that are generated lazily if the given key store
- * file doesn't yet exist.
+ * @author:Tom.Yu
+ *
+ * Description:
+ *
  */
 public class SelfSignedSslEngineSource implements SslEngineSource {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(SelfSignedSslEngineSource.class);
+	private static Logger logger = LoggerFactory.getLogger(SelfSignedSslEngineSource.class);
 
-    private static final String ALIAS = "polaris";
-    private static final String PASSWORD = "Hello1234";
+    public static final String KeyStoreType_STR = "JKS";
     private static final String PROTOCOL = "TLS";
-    private final File keyStoreFile;
+    private static String KEYALG = "EC";
+    public File keyStoreFile;
     private final boolean trustAllServers;
     private final boolean sendCerts;
-
+    private KeyStoreType keyStoreType;
     private SSLContext sslContext;
 
-    public SelfSignedSslEngineSource(String keyStorePath,
-            boolean trustAllServers, boolean sendCerts) {
+    /**
+     * create keystore
+     *
+     * @param trustAllServers
+     * @param sendCerts
+     */
+    @SuppressWarnings("static-access")
+	public SelfSignedSslEngineSource(boolean trustAllServers, boolean sendCerts, String keyalg) {
+        JCEUtil.removeCryptographyRestrictions();
         this.trustAllServers = trustAllServers;
         this.sendCerts = sendCerts;
-        this.keyStoreFile = new File(keyStorePath);
-        initializeKeyStore();
+        if ("jks".equals(ConfClient.get("server.tls.style"))) {
+            this.keyStoreType = KeyStoreType.JKS;
+        } else {
+            this.keyStoreType = KeyStoreType.PKCS12;
+        }
+        
+        //是否外部导入的证书
+        String keystore = ConfClient.get("server.tls.keystore");
+        boolean isFile = false;
+        File tempKeystoreFile = null;
+        if (StringUtil.isNotEmpty(keystore)) {
+        	tempKeystoreFile = new File(keystore);
+        	if (tempKeystoreFile.isFile()) {
+        		isFile = true;
+        	}
+        }
+        
+        //自己生成证书
+        if (!isFile) {
+            this.KEYALG = keyalg;
+            initializeKeyStore();
+        } else {
+        	
+        	//外部导入证书
+        	this.keyStoreFile = tempKeystoreFile;
+        }
+        
+        //初始化ssl
         initializeSSLContext();
     }
 
-    public SelfSignedSslEngineSource(String keyStorePath) {
-        this(keyStorePath, false, true);
-    }
-
-    public SelfSignedSslEngineSource(boolean trustAllServers) {
-        this(trustAllServers, true);
-    }
-
-    public SelfSignedSslEngineSource(boolean trustAllServers, boolean sendCerts) {
-        this("littleproxy_keystore.jks", trustAllServers, sendCerts);
-    }
-
     public SelfSignedSslEngineSource() {
-        this(false);
+        this(false, true, KEYALG);
     }
 
     @Override
-    public SSLEngine newSslEngine() {
-        return sslContext.createSSLEngine();
+    public SSLEngine newSslEngine(ByteBufAllocator alloc) {
+        return engineWapper(sslContext.createSSLEngine());
     }
 
     @Override
-    public SSLEngine newSslEngine(String peerHost, int peerPort) {
-        return sslContext.createSSLEngine(peerHost, peerPort);
+    public SSLEngine newSslEngine(ByteBufAllocator alloc, String peerHost, int peerPort) {
+        return engineWapper(sslContext.createSSLEngine(peerHost, peerPort));
+    }
+    
+    private SSLEngine engineWapper(SSLEngine sslEngine) {
+        sslEngine.setNeedClientAuth(false);
+        sslEngine.setUseClientMode(false);
+        return sslEngine;
     }
 
     public SSLContext getSslContext() {
         return sslContext;
     }
 
-    private void initializeKeyStore() {
+    public void initializeKeyStore() {
+        File crtFile = new File(ConfClient.get("server.tls.alias") + ".crt");
+        if ("jks".equals(ConfClient.get("server.tls.style"))) {
+            File jksFile = new File(ConfClient.get("server.tls.alias") + ".jks");
+            keyStoreFile = jksFile;
+        } else {
+            File p12File = new File(ConfClient.get("server.tls.alias") + ".p12");
+            keyStoreFile = p12File;
+        }
         if (keyStoreFile.isFile()) {
-            LOG.info("Not deleting keystore");
+            logger.info("Not deleting keystore");
             return;
         }
+        CertificateInfo certificateInfo = new CertificateInfo();
+        certificateInfo.countryCode(ConfClient.get("server.certificate.country"));
+        certificateInfo.organization(ConfClient.get("server.certificate.organization"));
+        certificateInfo.email(ConfClient.get("server.certificate.email"));
+        certificateInfo.commonName(ConfClient.get("server.certificate.name"));
+        DateTime dateTime = new DateTime();
+        certificateInfo.notBefore(dateTime.minusDays(1).toDate());
+        certificateInfo.notAfter(dateTime.plusYears(1).toDate());
+        RootCertificateGenerator.Builder rootCertificateGeneratorBuilder = RootCertificateGenerator.builder();
+        rootCertificateGeneratorBuilder.certificateInfo(certificateInfo);
+        RootCertificateGenerator rootCertificateGenerator;
+        if (KEYALG.equals("RSA")) {
+            rootCertificateGenerator = rootCertificateGeneratorBuilder.keyGenerator(new RSAKeyGenerator()).build();
+        } else {
+            rootCertificateGenerator = rootCertificateGeneratorBuilder.keyGenerator(new ECKeyGenerator()).build();
+        }
 
-        nativeCall("keytool", "-genkey", "-alias", ALIAS, "-keysize",
-                "4096", "-validity", "36500", "-keyalg", "RSA", "-dname",
-                "CN=littleproxy", "-keypass", PASSWORD, "-storepass",
-                PASSWORD, "-keystore", keyStoreFile.getName());
-
-        nativeCall("keytool", "-exportcert", "-alias", ALIAS, "-keystore",
-                keyStoreFile.getName(), "-storepass", PASSWORD, "-file",
-                "littleproxy_cert");
+        rootCertificateGenerator.saveRootCertificateAsPemFile(crtFile);
+        logger.info("CRT file created success");
+        if ("jks".equals(ConfClient.get("server.tls.style"))) {
+            rootCertificateGenerator.saveRootCertificateAndKey(KeyStoreType.JKS.name(), keyStoreFile, ConfClient.get("server.tls.alias"), ConfClient.get("server.tls.password"));
+            logger.info("JKS file created success");
+        } else {
+            rootCertificateGenerator.saveRootCertificateAndKey(KeyStoreType.PKCS12.name(), keyStoreFile, ConfClient.get("server.tls.alias"), ConfClient.get("server.tls.password"));
+            logger.info("PKCS12 file created success");
+        }
     }
 
     private void initializeSSLContext() {
@@ -104,15 +163,13 @@ public class SelfSignedSslEngineSource implements SslEngineSource {
         }
 
         try {
-            final KeyStore ks = KeyStore.getInstance("JKS");
-            // ks.load(new FileInputStream("keystore.jks"),
-            // "changeit".toCharArray());
-            ks.load(new FileInputStream(keyStoreFile), PASSWORD.toCharArray());
+            final KeyStore ks = KeyStore.getInstance(keyStoreType.name());
+            ks.load(new FileInputStream(keyStoreFile), ConfClient.get("server.tls.password").toCharArray());
 
             // Set up key manager factory to use our key store
             final KeyManagerFactory kmf =
                     KeyManagerFactory.getInstance(algorithm);
-            kmf.init(ks, PASSWORD.toCharArray());
+            kmf.init(ks, ConfClient.get("server.tls.password").toCharArray());
 
             // Set up a trust manager factory to use our key store
             TrustManagerFactory tmf = TrustManagerFactory
@@ -123,17 +180,17 @@ public class SelfSignedSslEngineSource implements SslEngineSource {
             if (!trustAllServers) {
                 trustManagers = tmf.getTrustManagers();
             } else {
-                trustManagers = new TrustManager[] { new X509TrustManager() {
+                trustManagers = new TrustManager[]{new X509TrustManager() {
                     // TrustManager that trusts all servers
                     @Override
                     public void checkClientTrusted(X509Certificate[] arg0,
-                            String arg1)
+                                                   String arg1)
                             throws CertificateException {
                     }
 
                     @Override
                     public void checkServerTrusted(X509Certificate[] arg0,
-                            String arg1)
+                                                   String arg1)
                             throws CertificateException {
                     }
 
@@ -141,9 +198,9 @@ public class SelfSignedSslEngineSource implements SslEngineSource {
                     public X509Certificate[] getAcceptedIssuers() {
                         return null;
                     }
-                } };
+                }};
             }
-            
+
             KeyManager[] keyManagers = null;
             if (sendCerts) {
                 keyManagers = kmf.getKeyManagers();
@@ -160,23 +217,8 @@ public class SelfSignedSslEngineSource implements SslEngineSource {
         }
     }
 
-    private String nativeCall(final String... commands) {
-        LOG.info("Running '{}'", Arrays.asList(commands));
-        final ProcessBuilder pb = new ProcessBuilder(commands);
-        try {
-            final Process process = pb.start();
-            final InputStream is = process.getInputStream();
-
-            byte[] data = ByteStreams.toByteArray(is);
-            String dataAsString = new String(data);
-
-            LOG.info("Completed native call: '{}'\nResponse: '" + dataAsString + "'",
-                    Arrays.asList(commands));
-            return dataAsString;
-        } catch (final IOException e) {
-            LOG.error("Error running commands: " + Arrays.asList(commands), e);
-            return "";
-        }
+    public enum KeyStoreType {
+        JKS, PKCS12;
     }
 
 }

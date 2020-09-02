@@ -14,15 +14,10 @@ import com.polaris.container.gateway.proxy.impl.ClientToProxyConnection;
  * </p>
  */
 public class FlowContext {
-    private final InetSocketAddress clientAddress;
-    private final SSLSession clientSslSession;
-
+    private final ClientToProxyConnection clientConnection;
     public FlowContext(ClientToProxyConnection clientConnection) {
         super();
-        this.clientAddress = clientConnection.getClientAddress();
-        SSLEngine sslEngine = clientConnection.getSslEngine();
-        this.clientSslSession = sslEngine != null ? sslEngine.getSession()
-                : null;
+        this.clientConnection = clientConnection;
     }
 
     /**
@@ -31,7 +26,7 @@ public class FlowContext {
      * @return
      */
     public InetSocketAddress getClientAddress() {
-        return clientAddress;
+        return clientConnection.getClientAddress();
     }
 
     /**
@@ -41,7 +36,8 @@ public class FlowContext {
      * @return
      */
     public SSLSession getClientSslSession() {
-        return clientSslSession;
+        SSLEngine sslEngine = clientConnection.getSslEngine();
+        return sslEngine != null ? sslEngine.getSession() : null;
     }
 
 }

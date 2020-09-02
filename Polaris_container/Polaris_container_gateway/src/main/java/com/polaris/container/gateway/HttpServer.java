@@ -14,7 +14,7 @@ import com.polaris.container.gateway.proxy.FlowContext;
 import com.polaris.container.gateway.proxy.HttpFilters;
 import com.polaris.container.gateway.proxy.HttpFiltersSourceAdapter;
 import com.polaris.container.gateway.proxy.HttpProxyServerBootstrap;
-import com.polaris.container.gateway.proxy.extras.SelfSignedSslEngineSourceExt;
+import com.polaris.container.gateway.proxy.extras.SslEngineSourceFactory;
 import com.polaris.container.gateway.proxy.impl.DefaultHttpProxyServer;
 import com.polaris.container.gateway.proxy.impl.ThreadPoolConfiguration;
 import com.polaris.container.util.NetUtils;
@@ -44,7 +44,11 @@ public class HttpServer extends SpringContextServer{
     public void start() throws Exception{
     	super.start();
     	
-    	//start
+        //milliseconds - 40seconds
+        int timeout = Integer.parseInt(ConfClient.get("connect.timeout","40000"));
+        int idleConnectionTimeout = Integer.parseInt(ConfClient.get("idle.connect.timeout","60"));
+
+        //start
         ThreadPoolConfiguration threadPoolConfiguration = new ThreadPoolConfiguration();
         threadPoolConfiguration.withAcceptorThreads(HttpConstant.AcceptorThreads);
         threadPoolConfiguration.withClientToProxyWorkerThreads(HttpConstant.ClientToProxyWorkerThreads);
@@ -53,21 +57,11 @@ public class HttpServer extends SpringContextServer{
         inetSocketAddress = new InetSocketAddress(Integer.parseInt(ConfClient.get("server.port")));
         httpProxyServerBootstrap = DefaultHttpProxyServer.bootstrap()
                 .withAddress(inetSocketAddress);
-        httpProxyServerBootstrap.withServerResolver(HttpResolverFactory.get());
-        boolean proxy_tls = HttpConstant.ON.equals(ConfClient.get("server.tls"));
-        if (proxy_tls) {
-            logger.info("开启TLS支持");
-            httpProxyServerBootstrap
-                    //不验证client端证书
-                    .withAuthenticateSslClients(false)
-                    .withSslEngineSource(new SelfSignedSslEngineSourceExt());
-        } 
-        //milliseconds - 40seconds
-        int timeout = Integer.parseInt(ConfClient.get("connect.timeout","40000"));
-        int idleConnectionTimeout = Integer.parseInt(ConfClient.get("idle.connect.timeout","60"));
-        httpProxyServerBootstrap.withConnectTimeout(timeout);
-        httpProxyServerBootstrap.withIdleConnectionTimeout(idleConnectionTimeout);
-        httpProxyServerBootstrap.withAllowRequestToOriginServer(true)
+        httpProxyServerBootstrap.withServerResolver(HttpResolverFactory.get())
+                .withSslEngineSource(SslEngineSourceFactory.get())
+                .withConnectTimeout(timeout)
+                .withIdleConnectionTimeout(idleConnectionTimeout)
+                .withAllowRequestToOriginServer(true)
                 .withProxyAlias(ConfClient.get("server.tls.alias"))
                 .withThreadPoolConfiguration(threadPoolConfiguration)
                 //X-Real-IP,XFF设置
