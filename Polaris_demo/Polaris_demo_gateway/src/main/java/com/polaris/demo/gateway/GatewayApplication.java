@@ -20,9 +20,9 @@ public class GatewayApplication {
     	ServerRunner.run(args,GatewayApplication.class, new ServerListener() {
     		@Override
     		public void started(LifeCycle event) {
-                //HttpFilterHelper.INSTANCE.removeFilter(HttpFilterEntityEnum.CC.getFilterEntity());
-    			HttpFilterHelper.INSTANCE.replaceFilter(HttpFilterEntityEnum.Token.getFilterEntity(), new TokenExtendHttpRequestFilter());
-                HttpFilterHelper.INSTANCE.addFilter(new HttpFilterEntity(new HttpTokenResponseFilter(), "gateway.token", 2));
+                //HttpFilterHelper.removeFilter(HttpFilterEntityEnum.CC.getFilterEntity());
+    			HttpFilterHelper.replaceFilter(HttpFilterEntityEnum.Token.getFilterEntity(), new TokenExtendHttpRequestFilter());
+                HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpTokenResponseFilter(), "gateway.token", 2));
     		}
     	});
     }
