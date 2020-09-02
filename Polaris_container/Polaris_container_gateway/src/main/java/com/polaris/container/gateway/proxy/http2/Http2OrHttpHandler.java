@@ -42,8 +42,8 @@ public class Http2OrHttpHandler extends ApplicationProtocolNegotiationHandler {
         // for h2
         if (ApplicationProtocolNames.HTTP_2.equals(protocol)) {
             ctx.pipeline().addLast(createHttpToHttp2ConnectionHandler());
-            ctx.pipeline().addLast(new Http2SettingsHandler());
-            ctx.pipeline().addLast(new Http2EmptyHandler());
+            ctx.pipeline().addLast(Http2SettingsHandler.INSTANCE);
+            ctx.pipeline().addLast(Http2EmptyHandler.INSTANCE);
             listener.onHttp11(ctx.pipeline(),true);
             return;
         }
@@ -68,7 +68,7 @@ public class Http2OrHttpHandler extends ApplicationProtocolNegotiationHandler {
         // for h2c
         } else if (evt instanceof UpgradeEvent) {
             try {
-                ctx.pipeline().addAfter(Http2SettingsHandler.NAME, null, new Http2EmptyHandler());
+                ctx.pipeline().addAfter(Http2SettingsHandler.NAME, null, Http2EmptyHandler.INSTANCE);
             } catch (Throwable cause) {
                 exceptionCaught(ctx, cause);
             } finally {

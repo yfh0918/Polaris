@@ -2,6 +2,7 @@ package com.polaris.container.gateway.proxy.impl;
 
 import com.polaris.container.gateway.proxy.SslEngineSource;
 import com.polaris.container.gateway.proxy.http2.Http11Listener;
+import com.polaris.container.gateway.proxy.http2.Http2ChannelInboundHandlerAdapter;
 import com.polaris.container.gateway.proxy.http2.Http2OrHttpHandler;
 import com.polaris.container.gateway.proxy.http2.Http2SettingsHandler;
 import com.polaris.container.gateway.proxy.http2.Http2UpgradeCodecFactory;
@@ -9,7 +10,6 @@ import com.polaris.core.config.ConfClient;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerUpgradeHandler;
@@ -47,10 +47,10 @@ public class ClientToProxyConnectionWithHttp2 extends ClientToProxyConnectionWit
         final HttpServerCodec sourceCodec = new HttpServerCodec();
         final HttpServerUpgradeHandler upgradeHandler = new HttpServerUpgradeHandler(sourceCodec, upgradeCodecFactory);
         final CleartextHttp2ServerUpgradeHandler cleartextHttp2ServerUpgradeHandler =
-                new CleartextHttp2ServerUpgradeHandler(sourceCodec, upgradeHandler,new ChannelInboundHandlerAdapter());
+                new CleartextHttp2ServerUpgradeHandler(sourceCodec, upgradeHandler,Http2ChannelInboundHandlerAdapter.INSTANCE);
         p.addLast(cleartextHttp2ServerUpgradeHandler);
         p.addLast(new Http2OrHttpHandler(this));
-        p.addLast(Http2SettingsHandler.NAME, new Http2SettingsHandler());
+        p.addLast(Http2SettingsHandler.NAME, Http2SettingsHandler.INSTANCE);
         onHttp11(p,true);
     }
     

@@ -16,14 +16,18 @@ package com.polaris.container.gateway.proxy.http2;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.handler.codec.http2.Http2Settings;
 
 /**
  * Reads the first {@link Http2Settings} object and notifies a {@link io.netty.channel.ChannelPromise}
  */
+@Sharable
 public class Http2SettingsHandler extends SimpleChannelInboundHandler<Http2Settings> {
 
     public final static String  NAME = "Http2SettingsHandler";
+    public static Http2SettingsHandler INSTANCE = new Http2SettingsHandler();
+    private Http2SettingsHandler() {}
     
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Http2Settings msg) throws Exception {
