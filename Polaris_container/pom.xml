@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.polaris</groupId>
     <artifactId>Polaris_parent</artifactId>
-    <version>1.5.0</version>
+    <version>1.5.1</version>
 	<relativePath>../Polaris_parent/pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>

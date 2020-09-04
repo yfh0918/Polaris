@@ -15,6 +15,8 @@ public class WebSocketConfigReader implements HttpFileListener{
     
     private static int WS_IDLE_CONNECT_TIMEOUT = 600;
     
+    private static int WS_MAX_FRAME_PAYLOAD_LENGTH = 65536;
+    
     static {
         new WebSocketConfigReader();
     }
@@ -39,6 +41,13 @@ public class WebSocketConfigReader implements HttpFileListener{
                         ex.printStackTrace();
                     }
                 }
+                if ("websocket.maxFramePayloadLength".equals(kv.getKey())) {
+                    try {
+                        WS_MAX_FRAME_PAYLOAD_LENGTH = Integer.parseInt(kv.getValue());
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
             }
         }
     }
@@ -52,5 +61,8 @@ public class WebSocketConfigReader implements HttpFileListener{
     }
     public static int getIdleConnectTimeout() {
         return WS_IDLE_CONNECT_TIMEOUT;
+    }
+    public static int getMaxFramePayloadLength() {
+        return WS_MAX_FRAME_PAYLOAD_LENGTH;
     }
 }

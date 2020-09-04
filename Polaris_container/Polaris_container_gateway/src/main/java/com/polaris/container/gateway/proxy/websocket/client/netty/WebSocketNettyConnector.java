@@ -2,6 +2,7 @@ package com.polaris.container.gateway.proxy.websocket.client.netty;
 
 import java.net.URI;
 
+import com.polaris.container.gateway.proxy.websocket.WebSocketConfigReader;
 import com.polaris.container.gateway.proxy.websocket.WebSocketException;
 import com.polaris.container.gateway.proxy.websocket.client.WebSocketClientListener;
 
@@ -26,14 +27,14 @@ public class WebSocketNettyConnector {
             URI uri = new URI(url);
             final int port = uri.getPort();
             WebSocketNettyClientHandler handler = new WebSocketNettyClientHandler(
-                    WebSocketClientHandshakerFactory.newHandshaker(uri, WebSocketVersion.V13, null, false, new DefaultHttpHeaders()), 
+                    WebSocketClientHandshakerFactory.newHandshaker(uri, WebSocketVersion.V13, null, false, new DefaultHttpHeaders(), WebSocketConfigReader.getMaxFramePayloadLength()), 
                     clientListener);
             Channel channelClient = new Bootstrap()
                     .group(eventLoopGroup).channel(NioSocketChannel.class).handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             ChannelPipeline p = ch.pipeline();
-                            p.addLast(new HttpClientCodec(), new HttpObjectAggregator(Integer.MAX_VALUE), handler);
+                            p.addLast(new HttpClientCodec(), new HttpObjectAggregator(WebSocketConfigReader.getMaxFramePayloadLength()), handler);
                         }
                     })
                     .connect(uri.getHost(), port).sync().channel();

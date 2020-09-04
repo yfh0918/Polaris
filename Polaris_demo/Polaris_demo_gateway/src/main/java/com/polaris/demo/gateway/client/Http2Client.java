@@ -48,7 +48,8 @@ public final class Http2Client {
     //static final boolean SSL = System.getProperty("ssl") != null;
     static final String HOST = System.getProperty("host", "127.0.0.1");
     static final int PORT = 8081;
-    static final String URL = System.getProperty("url", "/gateway/cc/ip");
+    //static final String URL = System.getProperty("url", "/gateway/cc/ip");
+    static final String URL = System.getProperty("url", "/");
     //static final String URL2 = System.getProperty("url2");
     static final String URL2DATA = System.getProperty("url2data", "test data!");
 

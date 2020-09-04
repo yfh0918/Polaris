@@ -67,7 +67,6 @@ import io.netty.util.concurrent.Future;
 @Sharable
 public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private final ClientToProxyConnection clientConnection;
-    private final ProxyToServerConnection serverConnection = this;
     private volatile TransportProtocol transportProtocol;
     private volatile InetSocketAddress remoteAddress;
     private volatile InetSocketAddress localAddress;
@@ -501,12 +500,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         this.connectionFlow = new ConnectionFlow(clientConnection, this,
                 connectLock)
                 .then(ConnectChannel);
-
-        if (ProxyUtils.isCONNECT(initialRequest)) {
-            connectionFlow.then(serverConnection.StartTunneling)
-            .then(clientConnection.RespondCONNECTSuccessful)
-            .then(clientConnection.StartTunneling);
-        }
     }
 
     /**
@@ -673,27 +666,13 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         if (trafficHandler != null) {
             pipeline.addLast("global-traffic-shaping", trafficHandler);
         }
-
-        pipeline.addLast("bytesReadMonitor", bytesReadMonitor);
-        pipeline.addLast("bytesWrittenMonitor", bytesWrittenMonitor);
-
         pipeline.addLast("encoder", new HttpRequestEncoder());
         pipeline.addLast("decoder", new HeadAwareHttpResponseDecoder(
                 proxyServer.getMaxInitialLineLength(),
                 proxyServer.getMaxHeaderSize(),
                 proxyServer.getMaxChunkSize()));
-
-        // Enable aggregation for filtering if necessary
-        int numberOfBytesToBuffer = proxyServer.getFiltersSource()
-                .getMaximumResponseBufferSizeInBytes();
-        if (numberOfBytesToBuffer > 0) {
-            aggregateContentForFiltering(pipeline, numberOfBytesToBuffer);
-        }
-
         pipeline.addLast("responseReadMonitor", responseReadMonitor);
         pipeline.addLast("requestWrittenMonitor", requestWrittenMonitor);
-
-        // Set idle timeout
         pipeline.addLast(
                 "idle",
                 new IdleStateHandler(0, 0, proxyServer
@@ -762,32 +741,12 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      * We track statistics on bytes, requests and responses by adding handlers
      * at the appropriate parts of the pipeline (see initChannelPipeline()).
      **************************************************************************/
-    private final BytesReadMonitor bytesReadMonitor = new BytesReadMonitor() {
-        @Override
-        protected void bytesRead(int numberOfBytes) {
-            for (ActivityTracker tracker : proxyServer
-                    .getActivityTrackers()) {
-                tracker.bytesReceivedFromServer(flowContext, numberOfBytes);
-            }
-        }
-    };
-
     private ResponseReadMonitor responseReadMonitor = new ResponseReadMonitor() {
         @Override
         protected void responseRead(HttpResponse httpResponse) {
             for (ActivityTracker tracker : proxyServer
                     .getActivityTrackers()) {
                 tracker.responseReceivedFromServer(flowContext, httpResponse);
-            }
-        }
-    };
-
-    private BytesWrittenMonitor bytesWrittenMonitor = new BytesWrittenMonitor() {
-        @Override
-        protected void bytesWritten(int numberOfBytes) {
-            for (ActivityTracker tracker : proxyServer
-                    .getActivityTrackers()) {
-                tracker.bytesSentToServer(flowContext, numberOfBytes);
             }
         }
     };

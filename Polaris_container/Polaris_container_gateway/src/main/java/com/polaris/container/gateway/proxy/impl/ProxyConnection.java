@@ -3,7 +3,6 @@ package com.polaris.container.gateway.proxy.impl;
 import static com.polaris.container.gateway.proxy.impl.ConnectionState.AWAITING_CHUNK;
 import static com.polaris.container.gateway.proxy.impl.ConnectionState.AWAITING_INITIAL;
 import static com.polaris.container.gateway.proxy.impl.ConnectionState.DISCONNECTED;
-import static com.polaris.container.gateway.proxy.impl.ConnectionState.NEGOTIATING_CONNECT;
 
 import javax.net.ssl.SSLEngine;
 
@@ -20,10 +19,8 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpContent;
-import io.netty.handler.codec.http.HttpContentDecompressor;
 import io.netty.handler.codec.http.HttpMessage;
 import io.netty.handler.codec.http.HttpObject;
-import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.ssl.SslHandler;
@@ -77,7 +74,7 @@ import io.netty.util.concurrent.Promise;
  *            the type of "initial" message. This will be either
  *            {@link HttpResponse} or {@link HttpRequest}.
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "unchecked" })
 public abstract class ProxyConnection<I extends HttpObject> extends
         SimpleChannelInboundHandler<Object> {
     protected final ProxyConnectionLogger LOG = new ProxyConnectionLogger(this);
@@ -88,7 +85,6 @@ public abstract class ProxyConnection<I extends HttpObject> extends
     protected volatile Channel channel;
 
     private volatile ConnectionState currentState;
-    private volatile boolean tunneling = false;
     protected volatile long lastReadTime = 0;
 
     /**
@@ -127,13 +123,7 @@ public abstract class ProxyConnection<I extends HttpObject> extends
 
         lastReadTime = System.currentTimeMillis();
 
-        if (tunneling) {
-            // In tunneling mode, this connection is simply shoveling bytes
-            readRaw((ByteBuf) msg);
-        } else {
-            // If not tunneling, then we are always dealing with HttpObjects.
-            readHTTP((HttpObject) msg);
-        }
+        readHTTP((HttpObject) msg);
     }
 
     /**
@@ -313,48 +303,6 @@ public abstract class ProxyConnection<I extends HttpObject> extends
     }
 
     /**
-     * <p>
-     * Enables tunneling on this connection by dropping the HTTP related
-     * encoders and decoders, as well as idle timers.
-     * </p>
-     * 
-     * <p>
-     * Note - the work is done on the {@link ChannelHandlerContext}'s executor
-     * because {@link ChannelPipeline#remove(String)} can deadlock if called
-     * directly.
-     * </p>
-     */
-    protected ConnectionFlowStep StartTunneling = new ConnectionFlowStep(
-            this, NEGOTIATING_CONNECT) {
-        @Override
-        boolean shouldSuppressInitialRequest() {
-            return true;
-        }
-
-        protected Future execute() {
-            try {
-                ChannelPipeline pipeline = ctx.pipeline();
-                if (pipeline.get("encoder") != null) {
-                    pipeline.remove("encoder");
-                }
-                if (pipeline.get("responseWrittenMonitor") != null) {
-                    pipeline.remove("responseWrittenMonitor");
-                }
-                if (pipeline.get("decoder") != null) {
-                    pipeline.remove("decoder");
-                }
-                if (pipeline.get("requestReadMonitor") != null) {
-                    pipeline.remove("requestReadMonitor");
-                }
-                tunneling = true;
-                return channel.newSucceededFuture();
-            } catch (Throwable t) {
-                return channel.newFailedFuture(t);
-            }
-        }
-    };
-
-    /**
      * Encrypts traffic on this connection with SSL/TLS.
      * 
      * @param sslEngine
@@ -395,20 +343,6 @@ public abstract class ProxyConnection<I extends HttpObject> extends
             pipeline.addAfter("ssl", "sslWithServer", handler);
         }
         return handler.handshakeFuture();
-    }
-
-    /**
-     * Enables decompression and aggregation of content, which is useful for
-     * certain types of filtering activity.
-     * 
-     * @param pipeline
-     * @param numberOfBytesToBuffer
-     */
-    protected void aggregateContentForFiltering(ChannelPipeline pipeline,
-            int numberOfBytesToBuffer) {
-        pipeline.addLast("inflater", new HttpContentDecompressor());
-        pipeline.addLast("aggregator", new HttpObjectAggregator(
-                numberOfBytesToBuffer));
     }
 
     /**
@@ -520,10 +454,6 @@ public abstract class ProxyConnection<I extends HttpObject> extends
 
     protected ConnectionState getCurrentState() {
         return currentState;
-    }
-
-    public boolean isTunneling() {
-        return tunneling;
     }
 
     public SSLEngine getSslEngine() {
@@ -667,29 +597,6 @@ public abstract class ProxyConnection<I extends HttpObject> extends
      **************************************************************************/
 
     /**
-     * Utility handler for monitoring bytes read on this connection.
-     */
-    @Sharable
-    protected abstract class BytesReadMonitor extends
-            ChannelInboundHandlerAdapter {
-        @Override
-        public void channelRead(ChannelHandlerContext ctx, Object msg)
-                throws Exception {
-            try {
-                if (msg instanceof ByteBuf) {
-                    bytesRead(((ByteBuf) msg).readableBytes());
-                }
-            } catch (Throwable t) {
-                LOG.warn("Unable to record bytesRead", t);
-            } finally {
-                super.channelRead(ctx, msg);
-            }
-        }
-
-        protected abstract void bytesRead(int numberOfBytes);
-    }
-
-    /**
      * Utility handler for monitoring requests read on this connection.
      */
     @Sharable
@@ -733,30 +640,6 @@ public abstract class ProxyConnection<I extends HttpObject> extends
         }
 
         protected abstract void responseRead(HttpResponse httpResponse);
-    }
-
-    /**
-     * Utility handler for monitoring bytes written on this connection.
-     */
-    @Sharable
-    protected abstract class BytesWrittenMonitor extends
-            ChannelOutboundHandlerAdapter {
-        @Override
-        public void write(ChannelHandlerContext ctx,
-                Object msg, ChannelPromise promise)
-                throws Exception {
-            try {
-                if (msg instanceof ByteBuf) {
-                    bytesWritten(((ByteBuf) msg).readableBytes());
-                }
-            } catch (Throwable t) {
-                LOG.warn("Unable to record bytesRead", t);
-            } finally {
-                super.write(ctx, msg, promise);
-            }
-        }
-
-        protected abstract void bytesWritten(int numberOfBytes);
     }
 
     /**

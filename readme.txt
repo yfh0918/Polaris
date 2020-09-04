@@ -1,4 +1,6 @@
-install 全体
+﻿0:尽量使用稳定分支
+ 
+1:install 全体
  
 2:提供两种类型的 demo（调用dubbo应用 和 无dubbo应用）
   主要参数可以参考Polaris_demo_web_resteasy的application.properties

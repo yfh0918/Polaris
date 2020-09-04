@@ -17,15 +17,4 @@ public class HttpFiltersSourceAdapter implements HttpFiltersSource {
             ChannelHandlerContext ctx) {
         return filterRequest(originalRequest);
     }
-
-    @Override
-    public int getMaximumRequestBufferSizeInBytes() {
-        return 0;
-    }
-
-    @Override
-    public int getMaximumResponseBufferSizeInBytes() {
-        return 0;
-    }
-
 }

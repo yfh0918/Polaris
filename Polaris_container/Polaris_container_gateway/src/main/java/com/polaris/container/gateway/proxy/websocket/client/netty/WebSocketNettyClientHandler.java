@@ -1,5 +1,8 @@
 package com.polaris.container.gateway.proxy.websocket.client.netty;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.polaris.container.gateway.proxy.websocket.client.WebSocketClientListener;
 
 import io.netty.channel.Channel;
@@ -21,7 +24,7 @@ public class WebSocketNettyClientHandler extends SimpleChannelInboundHandler<Obj
     private final WebSocketClientHandshaker handshaker;
     private ChannelPromise handshakeFuture;
     private WebSocketClientListener clientListener;
-
+    private static final Logger log = LoggerFactory.getLogger(WebSocketNettyClientHandler.class);
     public WebSocketNettyClientHandler(WebSocketClientHandshaker handshaker, WebSocketClientListener clientListener) {
         this.handshaker = handshaker;
         this.clientListener = clientListener;
@@ -43,6 +46,7 @@ public class WebSocketNettyClientHandler extends SimpleChannelInboundHandler<Obj
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
+        log.debug("channelInactive trigger onClose");
         clientListener.onClose(null);
     }
 
@@ -75,6 +79,7 @@ public class WebSocketNettyClientHandler extends SimpleChannelInboundHandler<Obj
     
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+        log.debug("exceptionCaught trigger onClose",cause);
         clientListener.onClose(null);
     }
 }

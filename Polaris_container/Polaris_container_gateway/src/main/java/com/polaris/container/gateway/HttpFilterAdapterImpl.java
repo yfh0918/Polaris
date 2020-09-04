@@ -22,10 +22,10 @@ import com.polaris.core.util.StringUtil;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
@@ -85,28 +85,6 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         } 
     }
 
-    /*
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-    public void proxyToServerRequestSending(FullFlowContext flowContext, HttpRequest httpRequest) {
-    	ClientToProxyConnection clientToProxyConnection = flowContext.getClientConnection();
-    	ProxyToServerConnection proxyConnection = flowContext.getServerConnection();
-        logger.debug("client channel:{}-{}", clientToProxyConnection.getChannel().localAddress().toString(), clientToProxyConnection.getChannel().remoteAddress().toString());
-        logger.debug("server channel:{}-{}", proxyConnection.getChannel().localAddress().toString(), proxyConnection.getChannel().remoteAddress().toString());
-        proxyConnection.getChannel().closeFuture().addListener(new GenericFutureListener() {
-            @Override
-            public void operationComplete(Future future) {
-                if (clientToProxyConnection.getChannel().isActive()) {
-                    logger.debug("channel:{}-{} will be closed", clientToProxyConnection.getChannel().localAddress().toString(), clientToProxyConnection.getChannel().remoteAddress().toString());
-                    clientToProxyConnection.getChannel().close();
-                } else {
-                    logger.debug("channel:{}-{} has been closed", clientToProxyConnection.getChannel().localAddress().toString(), clientToProxyConnection.getChannel().remoteAddress().toString());
-                }
-            }
-        });
-    }
-    */
-    
     @Override
     public HttpObject proxyToClientResponse(HttpObject httpObject) {
         if (httpObject instanceof HttpResponse) {
@@ -131,18 +109,6 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
     }
 
     @Override
-    public void proxyToServerConnectionSucceeded(FullFlowContext flowContext) {
-        ChannelPipeline pipeline = ctx.pipeline();
-        if (pipeline.get("inflater") != null) {
-            pipeline.remove("inflater");
-        }
-        if (pipeline.get("aggregator") != null) {
-            pipeline.remove("aggregator");
-        }
-        super.proxyToServerConnectionSucceeded(flowContext);    
-    }
-    
-    @Override
     public void proxyToServerConnectionFailed(FullFlowContext flowContext) {
     	ProxyToServerConnection proxyToServerConnection = flowContext.getServerConnection();
         String remoteIp = proxyToServerConnection.getRemoteAddress().getAddress().getHostAddress();
@@ -159,14 +125,13 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
             httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, message.getStatus());
         }
         HttpHeaders httpHeaders=new DefaultHttpHeaders();
-        httpHeaders.add("Transfer-Encoding","chunked");
-    	httpHeaders.set("Content-Type", "application/json");
-    	
-    	if (message.getHeader() != null) {
-    		for (Map.Entry<String, Object> entry : message.getHeader().entrySet()) {
-    			httpHeaders.set(entry.getKey(), entry.getValue());
-    		}
-    	}
+        if (message.getHeader() != null) {
+            for (Map.Entry<String, Object> entry : message.getHeader().entrySet()) {
+                httpHeaders.set(entry.getKey(), entry.getValue());
+            }
+        }
+    	httpHeaders.set(HttpHeaderNames.CONTENT_TYPE, "application/json");
+    	httpHeaders.set(HttpHeaderNames.CONTENT_LENGTH,String.valueOf(httpResponse.content().readableBytes()));
         httpResponse.headers().add(httpHeaders);
         return httpResponse;
     }

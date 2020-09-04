@@ -15,14 +15,12 @@
 package com.polaris.container.gateway.proxy.http2;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.HttpServerUpgradeHandler.UpgradeEvent;
 import io.netty.handler.codec.http2.DefaultHttp2Connection;
 import io.netty.handler.codec.http2.HttpToHttp2ConnectionHandler;
 import io.netty.handler.codec.http2.HttpToHttp2ConnectionHandlerBuilder;
 import io.netty.handler.codec.http2.InboundHttp2ToHttpAdapterBuilder;
 import io.netty.handler.ssl.ApplicationProtocolNames;
 import io.netty.handler.ssl.ApplicationProtocolNegotiationHandler;
-import io.netty.handler.ssl.SslHandshakeCompletionEvent;
 
 /**
  * Negotiates with the browser if HTTP2 or HTTP is going to be used. Once decided, the Netty
@@ -30,6 +28,7 @@ import io.netty.handler.ssl.SslHandshakeCompletionEvent;
  */
 public class Http2OrHttpHandler extends ApplicationProtocolNegotiationHandler {
 
+    public static String NAME = "Http2OrHttpHandler";
     private Http11Listener listener;
     public Http2OrHttpHandler(Http11Listener listener) {
         super(ApplicationProtocolNames.HTTP_1_1);
@@ -57,34 +56,11 @@ public class Http2OrHttpHandler extends ApplicationProtocolNegotiationHandler {
         throw new IllegalStateException("unknown protocol: " + protocol);
     }
     
-    @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-        
-        // for h2
-        if (evt instanceof SslHandshakeCompletionEvent) {
-            super.userEventTriggered(ctx, evt);
-            
-        
-        // for h2c
-        } else if (evt instanceof UpgradeEvent) {
-            try {
-                ctx.pipeline().addAfter(Http2SettingsHandler.NAME, null, Http2EmptyHandler.INSTANCE);
-            } catch (Throwable cause) {
-                exceptionCaught(ctx, cause);
-            } finally {
-                ctx.pipeline().remove(this);
-            }
-            ctx.fireUserEventTriggered(evt);
-        } else {
-            ctx.fireUserEventTriggered(evt);
-        }
-    }
-    
     public static HttpToHttp2ConnectionHandler createHttpToHttp2ConnectionHandler() {
         DefaultHttp2Connection connection = new DefaultHttp2Connection(true);
         HttpToHttp2ConnectionHandler connectionHandler = new HttpToHttp2ConnectionHandlerBuilder()
                 .frameListener(new InboundHttp2ToHttpAdapterBuilder(connection)
-                        .maxContentLength(Integer.MAX_VALUE)
+                        .maxContentLength(Http2ConfigReader.getMaxContentLength())
                         .propagateSettings(true)
                         .build())
                 .connection(connection)

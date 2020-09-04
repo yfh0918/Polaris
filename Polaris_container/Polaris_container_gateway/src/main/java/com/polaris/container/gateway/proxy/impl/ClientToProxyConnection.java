@@ -34,6 +34,8 @@ import com.polaris.container.gateway.proxy.HttpFilters;
 import com.polaris.container.gateway.proxy.HttpFiltersAdapter;
 import com.polaris.container.gateway.proxy.ProxyAuthenticator;
 import com.polaris.container.gateway.proxy.SslEngineSource;
+import com.polaris.container.gateway.proxy.html.HtmlServerHandler;
+import com.polaris.core.config.ConfClient;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -133,11 +135,6 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
     private volatile HttpFilters currentFilters = HttpFiltersAdapter.NOOP_FILTER;
 
     private volatile SSLSession clientSslSession;
-
-    /**
-     * Tracks whether or not this ClientToProxyConnection is current doing MITM.
-     */
-    private volatile boolean mitming = false;
 
     private AtomicBoolean authenticated = new AtomicBoolean();
 
@@ -285,9 +282,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
         LOG.debug("Finding ProxyToServerConnection serverHostAndPort for: {}", serverHostAndPort);
         String contextPath = HttpHostContext.getContextPath(httpRequest.uri());
         LOG.debug("Finding ProxyToServerConnection contextPath for: {}", contextPath);
-        currentServerConnection = isMitming() || isTunneling() ?
-                this.currentServerConnection
-                : this.serverConnectionsMap.get(serverHostAndPort + contextPath);
+        currentServerConnection = this.serverConnectionsMap.get(serverHostAndPort + contextPath);
 
         boolean newConnectionRequired = false;
         if (ProxyUtils.isCONNECT(httpRequest)) {
@@ -389,7 +384,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
     private boolean isRequestToOriginServer(HttpRequest httpRequest) {
         // while MITMing, all HTTPS requests are requests to the origin server, since the client does not know
         // the request is being MITM'd by the proxy
-        if (httpRequest.method() == HttpMethod.CONNECT || isMitming()) {
+        if (httpRequest.method() == HttpMethod.CONNECT ) {
             return false;
         }
 
@@ -663,14 +658,6 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
      */
     protected void serverDisconnected(ProxyToServerConnection serverConnection) {
         numberOfCurrentlyConnectedServers.decrementAndGet();
-
-        // for non-SSL connections, do not disconnect the client from the proxy, even if this was the last server connection.
-        // this allows clients to continue to use the open connection to the proxy to make future requests. for SSL
-        // connections, whether we are tunneling or MITMing, we need to disconnect the client because there is always
-        // exactly one ClientToProxyConnection per ProxyToServerConnection, and vice versa.
-        if (isTunneling() || isMitming()) {
-            disconnect();
-        }
     }
 
     /**
@@ -786,22 +773,18 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
                 proxyServer.getMaxInitialLineLength(),
                 proxyServer.getMaxHeaderSize(),
                 proxyServer.getMaxChunkSize()));
-
-        // Enable aggregation for filtering if necessary
-        int numberOfBytesToBuffer = proxyServer.getFiltersSource()
-                .getMaximumRequestBufferSizeInBytes();
-        if (numberOfBytesToBuffer > 0) {
-            aggregateContentForFiltering(pipeline, numberOfBytesToBuffer);
-        }
-
         pipeline.addLast("requestReadMonitor", requestReadMonitor);
         pipeline.addLast("responseWrittenMonitor", responseWrittenMonitor);
-
         pipeline.addLast(
                 "idle",
                 new IdleStateHandler(0, 0, proxyServer
                         .getIdleConnectionTimeout()));
-
+        
+        //support html
+        if (Boolean.parseBoolean(ConfClient.get("server.html.enable", "false"))) {
+            pipeline.addLast(HtmlServerHandler.NAME, new HtmlServerHandler());
+        }
+        
         pipeline.addLast("handler", this);
     }
 
@@ -1334,14 +1317,6 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequest> {
      */
     private void writeEmptyBuffer() {
         write(Unpooled.EMPTY_BUFFER);
-    }
-
-    public boolean isMitming() {
-        return mitming;
-    }
-
-    protected void setMitming(boolean isMitming) {
-        this.mitming = isMitming;
     }
 
     /***************************************************************************

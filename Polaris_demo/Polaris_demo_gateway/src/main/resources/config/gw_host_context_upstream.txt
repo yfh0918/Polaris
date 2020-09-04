@@ -1,7 +1,9 @@
 #ip:port:weight
-/payaa0=127.0.0.1:8082
-/payaa1=127.0.0.1:8082:1
-/paycatt=serviceName1222
-/paycatr=127.0.0.1:8082:1,127.0.0.1:8083:1
-/demospringmvc=127.0.0.1:9045
+/banyan2C=127.0.0.1:9141
+/BanyanAdmin=127.0.0.1:8787
+/banyanSystem=127.0.0.1:9140
+/banyanPacs=127.0.0.1:8089
+/banyanPacsDev=127.0.0.1:8088
+/log=127.0.0.1:60003
+/pipeline=127.0.0.1:9004
 /banyanNDI=127.0.0.1:60008

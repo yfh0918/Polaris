@@ -12,6 +12,7 @@ public class Http2EmptyHandler extends ChannelDuplexHandler{
     
     public static Http2EmptyHandler INSTANCE = new Http2EmptyHandler();
     
+    public static String NAME = "Http2EmptyHandler";
     private Http2EmptyHandler() {}
     
     @Override

@@ -1,0 +1,2 @@
+#default value 65536
+http2.maxContentLength=65536000

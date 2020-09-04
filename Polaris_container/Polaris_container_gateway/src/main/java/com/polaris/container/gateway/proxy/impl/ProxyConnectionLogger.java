@@ -107,9 +107,6 @@ class ProxyConnectionLogger {
 
     private String fullMessage(String message) {
         String stateMessage = connection.getCurrentState().toString();
-        if (connection.isTunneling()) {
-            stateMessage += " {tunneling}";
-        }
         String messagePrefix = "(" + stateMessage + ")";
         if (connection.channel != null) {
             messagePrefix = messagePrefix + " " + connection.channel;

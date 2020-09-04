@@ -3,3 +3,6 @@ websocket.request.maxNumber=2000
 
 #seconds
 websocket.idle.connect.timeout=600
+
+#default value 65536
+websocket.maxFramePayloadLength=65536000

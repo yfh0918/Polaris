@@ -174,6 +174,9 @@ public class HttpsTest {
         }
     }
     public static void main(String[] args) throws Exception {
+        System.out.println(get("https://127.0.0.1:8081/#/login"));
+    }
+    public static void main2(String[] args) throws Exception {
         Map<String, Object> paraMap = new HashMap<String, Object>();
         
         Map<String, Object> chierMap = new HashMap<String, Object>();
@@ -196,7 +199,7 @@ public class HttpsTest {
         System.out.println(JSON.toJSONString(paraMap));
 
         String cc = JSON.toJSONString(paraMap);
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 100000; i++) {
             try {
                 threadPool.submit(
                         new Runnable() {
