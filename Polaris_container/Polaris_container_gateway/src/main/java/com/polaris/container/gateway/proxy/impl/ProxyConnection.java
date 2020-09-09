@@ -7,6 +7,7 @@ import static com.polaris.container.gateway.proxy.impl.ConnectionState.DISCONNEC
 import javax.net.ssl.SSLEngine;
 
 import com.polaris.container.gateway.proxy.HttpFilters;
+import com.polaris.container.gateway.util.ProxyUtils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

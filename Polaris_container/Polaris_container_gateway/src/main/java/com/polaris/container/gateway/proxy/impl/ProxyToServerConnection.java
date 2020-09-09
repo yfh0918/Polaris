@@ -14,12 +14,14 @@ import java.util.concurrent.RejectedExecutionException;
 import javax.net.ssl.SSLProtocolException;
 
 import com.barchart.udt.nio.SelectorProviderUDT;
-import com.google.common.net.HostAndPort;
+import com.polaris.container.gateway.pojo.HttpProxy;
+import com.polaris.container.gateway.pojo.HttpRequestWrapper;
 import com.polaris.container.gateway.proxy.ActivityTracker;
 import com.polaris.container.gateway.proxy.FullFlowContext;
 import com.polaris.container.gateway.proxy.HttpFilters;
 import com.polaris.container.gateway.proxy.TransportProtocol;
 import com.polaris.container.gateway.proxy.UnknownTransportProtocolException;
+import com.polaris.container.gateway.util.ProxyUtils;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
@@ -31,6 +33,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpContent;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpMessage;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -70,8 +73,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private volatile TransportProtocol transportProtocol;
     private volatile InetSocketAddress remoteAddress;
     private volatile InetSocketAddress localAddress;
-    private final String serverHostAndPort;
-    private final String contextPath;
 
     /**
      * The filters to apply to response/chunks received from server.
@@ -102,7 +103,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      * This is the initial request received prior to connecting. We keep track
      * of it so that we can process it after connection finishes.
      */
-    private volatile HttpRequest initialRequest;
+    private volatile HttpRequestWrapper initialRequest;
 
     /**
      * Keeps track of HttpRequests that have been issued so that we can
@@ -125,7 +126,12 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      * flowContext
      */
     private volatile FullFlowContext flowContext;
-
+    
+    /**
+     * httpRroxy
+     */
+    private volatile HttpProxy httpRroxy;
+    
     /**
      * Create a new ProxyToServerConnection.
      *
@@ -139,16 +145,12 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      */
     static ProxyToServerConnection create(DefaultHttpProxyServer proxyServer,
                                           ClientToProxyConnection clientConnection,
-                                          String serverHostAndPort,
-                                          String contextPath,
                                           HttpFilters initialFilters,
-                                          HttpRequest initialHttpRequest,
+                                          HttpRequestWrapper initialHttpRequest,
                                           GlobalTrafficShapingHandler globalTrafficShapingHandler)
             throws UnknownHostException {
         return new ProxyToServerConnection(proxyServer,
                 clientConnection,
-                serverHostAndPort,
-                contextPath,
                 initialFilters,
                 globalTrafficShapingHandler,
                 initialHttpRequest
@@ -158,22 +160,18 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private ProxyToServerConnection(
             DefaultHttpProxyServer proxyServer,
             ClientToProxyConnection clientConnection,
-            String serverHostAndPort,
-            String contextPath,
             HttpFilters initialFilters,
             GlobalTrafficShapingHandler globalTrafficShapingHandler,
-            HttpRequest initialHttpRequest)
+            HttpRequestWrapper initialHttpRequest)
             throws UnknownHostException {
         super(DISCONNECTED, proxyServer);
         this.clientConnection = clientConnection;
-        this.serverHostAndPort = serverHostAndPort;
-        this.contextPath = contextPath;
         this.trafficHandler = globalTrafficShapingHandler;
         this.currentFilters = initialFilters;
         this.flowContext = new FullFlowContext(clientConnection,this);
         // Report connection status to HttpFilters
         currentFilters.proxyToServerConnectionQueued(flowContext);
-
+        this.httpRroxy = initialHttpRequest.getHttpProxy();
         setupConnectionParameters();
     }
 
@@ -284,9 +282,9 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      * @param msg
      * @param filters
      */
-    void write(Object msg, HttpFilters filters) {
+    void write(HttpRequestWrapper httpRequest, HttpFilters filters) {
         this.currentFilters = filters;
-        write(msg);
+        write(httpRequest);
     }
 
     @Override
@@ -298,9 +296,9 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
             ((ReferenceCounted) msg).retain();
         }
 
-        if (is(DISCONNECTED) && msg instanceof HttpRequest) {
+        if (is(DISCONNECTED) && msg instanceof HttpRequestWrapper) {
             LOG.debug("Currently disconnected, connect and then write the message");
-            connectAndWrite((HttpRequest) msg);
+            connectAndWrite((HttpRequestWrapper) msg);
         } else {
             if (isConnecting()) {
                 synchronized (connectLock) {
@@ -332,12 +330,33 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     protected void writeHttp(HttpObject httpObject) {
         if (httpObject instanceof HttpRequest) {
             HttpRequest httpRequest = (HttpRequest) httpObject;
+            
             // Remember that we issued this HttpRequest for later
             currentHttpRequest = httpRequest;
+            
+            //replace proxy host for remote connecting
+            replaceProxyHostForRemoteConnenct(httpRequest, hostToString(this.remoteAddress));
         }
         super.writeHttp(httpObject);
     }
-
+    
+    /**
+    * replace http request host for remote connection
+    * @return
+    */
+    private void replaceProxyHostForRemoteConnenct(HttpRequest httpRequest, String host) {
+        httpRequest.headers().remove(HttpHeaderNames.HOST.toString());
+        httpRequest.headers().add(HttpHeaderNames.HOST.toString(), host);
+    }
+    private String hostToString(InetSocketAddress address) {
+        String host = address.getHostName();
+        int port = address.getPort();
+        if (port != 80) {
+            host = host + ":" + port;
+        }
+        return host;
+    }
+    
     /***************************************************************************
      * Lifecycle
      **************************************************************************/
@@ -431,17 +450,9 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         return remoteAddress;
     }
 
-    public String getServerHostAndPort() {
-        return serverHostAndPort;
-    }
-
-    public HttpRequest getInitialRequest() {
+    public HttpRequestWrapper getInitialRequest() {
         return initialRequest;
     }
-    public String getContextPath() {
-    	return contextPath;
-    }
-
     @Override
     protected HttpFilters getHttpFiltersFromProxyServer(HttpRequest httpRequest) {
         return currentFilters;
@@ -482,7 +493,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      *
      * @param initialRequest the current HTTP request being handled
      */
-    private void connectAndWrite(HttpRequest initialRequest) {
+    private void connectAndWrite(HttpRequestWrapper initialRequest) {
         LOG.debug("Starting new connection to: {}", remoteAddress);
 
         // Remember our initial request so that we can write it after connecting
@@ -544,7 +555,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
 
             cb.handler(new ChannelInitializer<Channel>() {
                 protected void initChannel(Channel ch) throws Exception {
-                    initChannelPipeline(ch.pipeline(), initialRequest);
+                    initChannelPipeline(ch.pipeline());
                 };
             });
             cb.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
@@ -606,7 +617,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         this.ctx.pipeline().remove(this);
         this.ctx.close();
         this.ctx = null;
-
         this.setupConnectionParameters();
     }
 
@@ -619,29 +629,10 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private void setupConnectionParameters() throws UnknownHostException {
         this.transportProtocol = TransportProtocol.TCP;
 
-        // Report DNS resolution to HttpFilters
-        this.remoteAddress = this.currentFilters.proxyToServerResolutionStarted(flowContext,serverHostAndPort);
-
         // save the hostname and port of the unresolved address in hostAndPort, in case name resolution fails
-        String hostAndPort = null;
-        try {
-            if (this.remoteAddress == null) {
-                hostAndPort = serverHostAndPort;
-                this.remoteAddress = addressFor(serverHostAndPort, proxyServer);
-            } else if (this.remoteAddress.isUnresolved()) {
-                // filter returned an unresolved address, so resolve it using the proxy server's resolver
-                hostAndPort = HostAndPort.fromParts(this.remoteAddress.getHostName(), this.remoteAddress.getPort()).toString();
-                
-                this.remoteAddress = proxyServer.getServerResolver().resolve(this.remoteAddress.getHostName(),
-                        this.remoteAddress.getPort(),contextPath);
-            }
-        } catch (UnknownHostException e) {
-            // unable to resolve the hostname to an IP address. notify the filters of the failure before allowing the
-            // exception to bubble up.
-            this.currentFilters.proxyToServerResolutionFailed(flowContext,hostAndPort);
-            throw e;
-        }
-        this.currentFilters.proxyToServerResolutionSucceeded(flowContext,serverHostAndPort, this.remoteAddress);
+        if (this.remoteAddress == null || this.remoteAddress.isUnresolved()) {
+            this.remoteAddress = addressFor(httpRroxy, proxyServer);
+        } 
         this.localAddress = proxyServer.getLocalAddress();
     }
 
@@ -658,10 +649,8 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      * {@link HttpObjectAggregator} in the {@link ChannelPipeline}.
      *
      * @param pipeline
-     * @param httpRequest
      */
-    private void initChannelPipeline(ChannelPipeline pipeline,
-                                     HttpRequest httpRequest) {
+    private void initChannelPipeline(ChannelPipeline pipeline) {
 
         if (trafficHandler != null) {
             pipeline.addLast("global-traffic-shaping", trafficHandler);
@@ -714,25 +703,13 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     /**
      * Build an {@link InetSocketAddress} for the given hostAndPort.
      *
-     * @param hostAndPort String representation of the host and port
-     * @param proxyServer the current {@link DefaultHttpProxyServer}
      * @return a resolved InetSocketAddress for the specified hostAndPort
      * @throws UnknownHostException if hostAndPort could not be resolved, or if the input string could not be parsed into
      *          a host and port.
      */
-    private InetSocketAddress addressFor(String hostAndPort, DefaultHttpProxyServer proxyServer)
+    private InetSocketAddress addressFor(HttpProxy proxy, DefaultHttpProxyServer proxyServer)
             throws UnknownHostException {
-        HostAndPort parsedHostAndPort;
-        try {
-            parsedHostAndPort = HostAndPort.fromString(hostAndPort);
-        } catch (IllegalArgumentException e) {
-            // we couldn't understand the hostAndPort string, so there is no way we can resolve it.
-            throw new UnknownHostException(hostAndPort);
-        }
-        String host = parsedHostAndPort.getHost();
-        int port = parsedHostAndPort.getPortOrDefault(80);
-
-        return proxyServer.getServerResolver().resolve(host, port, contextPath);
+        return proxyServer.getServerResolver().resolve(proxy);
     }
 
     /***************************************************************************

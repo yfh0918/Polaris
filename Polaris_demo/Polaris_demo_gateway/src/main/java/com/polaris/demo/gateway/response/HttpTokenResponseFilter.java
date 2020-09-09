@@ -7,13 +7,13 @@ import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSONObject;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
-import com.polaris.container.gateway.request.HttpTokenRequestFilter;
 import com.polaris.container.gateway.response.HttpResponseFilter;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.JwtUtil;
 import com.polaris.core.util.ResultUtil;
 import com.polaris.core.util.StringUtil;
 import com.polaris.core.util.UuidUtil;
+import com.polaris.demo.gateway.request.HttpTokenRequestFilter;
 
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;

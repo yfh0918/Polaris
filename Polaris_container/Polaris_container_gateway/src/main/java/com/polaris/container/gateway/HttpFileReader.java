@@ -29,7 +29,7 @@ public class HttpFileReader {
     	}
     	
     	//load
-    	loadFile(file, content);
+    	file.setData(content);
     	listener.onChange(file);
 		logger.info("file:{} type:{} is added",file.getName(),file.getType());
 		
@@ -37,24 +37,25 @@ public class HttpFileReader {
 		ConfHandlerFactory.getOrCreate(file.getType()).listen(file.getName(),file.getType().getGroup(), new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
-				loadFile(file, content);
+		        file.setData(content);
 				listener.onChange(file);
 				logger.info("file:{} type:{} is updated",file.getName(),file.getType());
 			}
     	});
     }
-    private void loadFile(HttpFile file, String content) {
-    	Set<String> data = new LinkedHashSet<>();
-    	if  (StringUtil.isNotEmpty(content)) {
-        	String[] contents = content.split(Constant.LINE_SEP);
-        	for (String conf : contents) {
-        		if (StringUtil.isNotEmpty(conf)) {
-        			conf = conf.replace(Constant.NEW_LINE, Constant.EMPTY).trim();
-        			conf = conf.replace(Constant.RETURN, Constant.EMPTY).trim();
-        			data.add(conf);
-        		}
-        	}
-    	}
-    	file.setData(data);
+
+    public static Set<String> getData(String content) {
+        Set<String> data = new LinkedHashSet<>();
+        if  (StringUtil.isNotEmpty(content)) {
+            String[] contents = content.split(Constant.LINE_SEP);
+            for (String conf : contents) {
+                if (StringUtil.isNotEmpty(conf)) {
+                    conf = conf.replace(Constant.NEW_LINE, Constant.EMPTY).trim();
+                    conf = conf.replace(Constant.RETURN, Constant.EMPTY).trim();
+                    data.add(conf);
+                }
+            }
+        }
+        return data;
     }
 }

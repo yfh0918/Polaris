@@ -6,8 +6,6 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.LastHttpContent;
 
-import java.net.InetSocketAddress;
-
 /**
  * Convenience base class for implementations of {@link HttpFilters}.
  */
@@ -72,21 +70,6 @@ public class HttpFiltersAdapter implements HttpFilters {
 
     @Override
     public void proxyToServerConnectionQueued(FullFlowContext flowContext) {
-    }
-
-    @Override
-    public InetSocketAddress proxyToServerResolutionStarted(FullFlowContext flowContext,
-            String resolvingServerHostAndPort) {
-        return null;
-    }
-
-    @Override
-    public void proxyToServerResolutionFailed(FullFlowContext flowContext, String hostAndPort) {
-    }
-
-    @Override
-    public void proxyToServerResolutionSucceeded(FullFlowContext flowContext,String serverHostAndPort,
-            InetSocketAddress resolvedRemoteAddress) {
     }
 
     @Override

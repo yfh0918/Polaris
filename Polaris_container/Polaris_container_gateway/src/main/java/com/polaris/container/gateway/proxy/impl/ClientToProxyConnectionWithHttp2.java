@@ -1,12 +1,13 @@
 package com.polaris.container.gateway.proxy.impl;
 
+import com.polaris.container.gateway.pojo.HttpProtocolHttp2;
+import com.polaris.container.gateway.pojo.HttpProtocolTls;
+import com.polaris.container.gateway.proxy.Http11Listener;
 import com.polaris.container.gateway.proxy.SslEngineSource;
-import com.polaris.container.gateway.proxy.http2.Http11Listener;
 import com.polaris.container.gateway.proxy.http2.Http2ChannelInboundHandlerAdapter;
 import com.polaris.container.gateway.proxy.http2.Http2EventTriggerHandler;
 import com.polaris.container.gateway.proxy.http2.Http2OrHttpHandler;
 import com.polaris.container.gateway.proxy.http2.Http2UpgradeCodecFactory;
-import com.polaris.core.config.ConfClient;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -58,10 +59,8 @@ public class ClientToProxyConnectionWithHttp2 extends ClientToProxyConnectionWit
 
     @Override
     protected void initChannelPipeline(ChannelPipeline pipeline) {
-        boolean http2 = Boolean.parseBoolean(ConfClient.get("server.http2.enable","false"));
-        boolean tls = Boolean.parseBoolean(ConfClient.get("server.tls.enable","false"));
-        if (http2) {
-            if (tls) {
+        if (HttpProtocolHttp2.isHttp20Enable()) {
+            if (HttpProtocolTls.isTlsEnable()) {
                 configureSsl(pipeline.channel());
             } else {
                 configureClearText(pipeline.channel());

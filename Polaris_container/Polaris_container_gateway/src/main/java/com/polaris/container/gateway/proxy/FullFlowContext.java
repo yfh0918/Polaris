@@ -19,15 +19,6 @@ public class FullFlowContext extends FlowContext {
         this.serverConnection = serverConnection;
     }
 
-    /**
-     * The host and port for the server (i.e. the ultimate endpoint).
-     * 
-     * @return
-     */
-    public String getServerHostAndPort() {
-        return serverConnection.getServerHostAndPort();
-    }
-
 	public ClientToProxyConnection getClientConnection() {
 		return clientConnection;
 	}

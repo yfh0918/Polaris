@@ -3,41 +3,33 @@ package com.polaris.container.gateway;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
-import com.polaris.container.gateway.pojo.HttpFile;
-import com.polaris.container.gateway.pojo.HttpHostContext;
-import com.polaris.container.gateway.pojo.HttpHostContext.HttpContextUpstream;
+import com.polaris.container.gateway.pojo.HttpProxy;
 import com.polaris.container.gateway.proxy.HostResolver;
 import com.polaris.core.naming.NamingClient;
 import com.polaris.core.pojo.Server;
+import com.polaris.core.util.StringUtil;
 
 /**
  * @author:Tom.Yu Description:
  */
-public class HttpHostContextResolver implements HostResolver ,HttpFileListener{
+public class HttpHostContextResolver implements HostResolver{
     public static HttpHostContextResolver INSTANCE = new HttpHostContextResolver();
     private HttpHostContextResolver() {
-    	HttpFileReader.INSTANCE.readFile(this, new HttpFile(HttpHostContext.NAME));
-    }
-    
-    /**
-     * 配置更新回调
-     *
-     */
-    @Override
-    public void onChange(HttpFile file) {
-        HttpHostContext.load(file.getData());
     }
 
+
     @Override
-    public InetSocketAddress resolve(String host, int port, String contextPath)
+    public InetSocketAddress resolve(HttpProxy httpServerFile)
             throws UnknownHostException {
-    	HttpContextUpstream upstream = HttpHostContext.get(host, contextPath);
-        if (upstream != null) {
-            Server server = NamingClient.getServer(upstream.getServiceName());
-            if (server != null) {
-                return new InetSocketAddress(server.getIp(), server.getPort());
-            } 
+        if (httpServerFile != null) {
+            String proxy = httpServerFile.getProxy();
+            if (StringUtil.isNotEmpty(proxy)) {
+                Server server = NamingClient.getServer(proxy);
+                if (server != null) {
+                    return new InetSocketAddress(server.getIp(), server.getPort());
+                } 
+            }
         }
-        throw new UnknownHostException(host + HttpConstant.COLON + port + contextPath);
+        throw new UnknownHostException(httpServerFile.getProxy() + httpServerFile.getRewrite());
     }
 }

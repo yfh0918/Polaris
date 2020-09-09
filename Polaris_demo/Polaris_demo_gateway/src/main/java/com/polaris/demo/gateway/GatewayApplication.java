@@ -5,11 +5,10 @@ import com.polaris.container.ServerRunner;
 import com.polaris.container.annotation.PolarisApplication;
 import com.polaris.container.gateway.HttpFilterHelper;
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
-import com.polaris.container.gateway.pojo.HttpFilterEntityEnum;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.core.component.LifeCycle;
-import com.polaris.demo.gateway.request.TokenExtendHttpRequestFilter;
-import com.polaris.demo.gateway.response.HttpTokenResponseFilter;
+import com.polaris.demo.gateway.request.HttpCCRequestFilter;
+import com.polaris.demo.gateway.request.HttpDegradeRequestFilter;
 
 @PolarisApplication
 public class GatewayApplication {
@@ -20,9 +19,11 @@ public class GatewayApplication {
     	ServerRunner.run(args,GatewayApplication.class, new ServerListener() {
     		@Override
     		public void started(LifeCycle event) {
-                //HttpFilterHelper.removeFilter(HttpFilterEntityEnum.CC.getFilterEntity());
-    			HttpFilterHelper.replaceFilter(HttpFilterEntityEnum.Token.getFilterEntity(), new TokenExtendHttpRequestFilter());
-                HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpTokenResponseFilter(), "gateway.token", 2));
+    		    //HttpFilterHelper.removeFilter(HttpFilterEntityEnum.Args.getFilterEntity());
+                //HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpDegradeRequestFilter(), 1));
+                //HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpCCRequestFilter(), 8));
+    			//HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpTokenRequestFilter(), 24));
+                //HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpTokenResponseFilter(), 1));
     		}
     	});
     }

@@ -18,8 +18,6 @@ import org.slf4j.LoggerFactory;
 
 import com.barchart.udt.nio.SelectorProviderUDT;
 import com.polaris.container.gateway.proxy.ActivityTracker;
-import com.polaris.container.gateway.proxy.DefaultHostResolver;
-import com.polaris.container.gateway.proxy.DnsSecServerResolver;
 import com.polaris.container.gateway.proxy.HostResolver;
 import com.polaris.container.gateway.proxy.HttpFilters;
 import com.polaris.container.gateway.proxy.HttpFiltersSource;
@@ -30,6 +28,7 @@ import com.polaris.container.gateway.proxy.ProxyAuthenticator;
 import com.polaris.container.gateway.proxy.SslEngineSource;
 import com.polaris.container.gateway.proxy.TransportProtocol;
 import com.polaris.container.gateway.proxy.UnknownTransportProtocolException;
+import com.polaris.container.gateway.util.ProxyUtils;
 import com.polaris.core.config.ConfClient;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -85,7 +84,7 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
      * The proxy alias to use in the Via header if no explicit proxy alias is specified and the hostname of the local
      * machine cannot be resolved.
      */
-    private static final String FALLBACK_PROXY_ALIAS = "littleproxy";
+    private static final String FALLBACK_PROXY_ALIAS = "polarisGateway";
 
     /**
      * Our {@link ServerGroup}. Multiple proxy servers can share the same
@@ -575,7 +574,7 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
         private int idleConnectionTimeout = 70;
         private Collection<ActivityTracker> activityTrackers = new ConcurrentLinkedQueue<ActivityTracker>();
         private int connectTimeout = 40000;
-        private HostResolver serverResolver = new DefaultHostResolver();
+        private HostResolver serverResolver = null;
         private long readThrottleBytesPerSecond;
         private long writeThrottleBytesPerSecond;
         private InetSocketAddress localAddress;
@@ -636,8 +635,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
         }
 
         private DefaultHttpProxyServerBootstrap(Properties props) {
-            this.withUseDnsSec(ProxyUtils.extractBooleanDefaultFalse(
-                    props, "dnssec"));
             this.transparent = ProxyUtils.extractBooleanDefaultFalse(
                     props, "transparent");
             this.idleConnectionTimeout = ProxyUtils.extractInt(props,
@@ -715,16 +712,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
         public HttpProxyServerBootstrap withFiltersSource(
                 HttpFiltersSource filtersSource) {
             this.filtersSource = filtersSource;
-            return this;
-        }
-
-        @Override
-        public HttpProxyServerBootstrap withUseDnsSec(boolean useDnsSec) {
-            if (useDnsSec) {
-                this.serverResolver = new DnsSecServerResolver();
-            } else {
-                this.serverResolver = new DefaultHostResolver();
-            }
             return this;
         }
 

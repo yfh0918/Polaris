@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.HttpConstant;
+import com.polaris.container.gateway.HttpFileReader;
 import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
 
@@ -30,7 +31,7 @@ public class HttpWUrlRequestFilter extends HttpRequestFilter {
 	@Override
 	public void onChange(HttpFile file) {
 		Set<Pattern> tempPatterns = new HashSet<>();
-		for (String conf : file.getData()) {
+		for (String conf : HttpFileReader.getData(file.getData())) {
 			tempPatterns.add(Pattern.compile(conf));
 		}
 		patterns = tempPatterns;

@@ -1,11 +1,13 @@
-package com.polaris.container.gateway.request;
+package com.polaris.demo.gateway.request;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.polaris.container.gateway.HttpFileReader;
 import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
+import com.polaris.container.gateway.request.HttpRequestFilter;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.pojo.KeyValuePair;
@@ -47,7 +49,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
     	String TOKEN_MESSAGE_CODE_TEMP = null;
     	String TOKEN_MESSAGE_TEMP = null;
     	String TOKEN_POLICY_TEMP = null;
-    	for (String conf : file.getData()) {
+    	for (String conf : HttpFileReader.getData(file.getData())) {
 			KeyValuePair kv = PropertyUtil.getKVPair(conf);
 			if (kv != null && StringUtil.isNotEmpty(kv.getValue())) {
 				// 不需要验证token的uri

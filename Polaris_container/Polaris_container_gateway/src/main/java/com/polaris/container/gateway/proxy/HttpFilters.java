@@ -1,8 +1,6 @@
 package com.polaris.container.gateway.proxy;
 
-import java.net.InetSocketAddress;
-
-import com.polaris.container.gateway.proxy.impl.ProxyUtils;
+import com.polaris.container.gateway.util.ProxyUtils;
 
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpObject;
@@ -164,35 +162,6 @@ public interface HttpFilters {
      * Informs filter that proxy to server connection is in queue.
      */
     void proxyToServerConnectionQueued(FullFlowContext flowContext);
-
-    /**
-     * Filter DNS resolution from proxy to server.
-     * 
-     * @param resolvingServerHostAndPort
-     *            Server "HOST:PORT"
-     * @return alternative address resolution. Returning null will let normal
-     *         DNS resolution continue.
-     */
-    InetSocketAddress proxyToServerResolutionStarted(FullFlowContext flowContext,
-            String resolvingServerHostAndPort);
-
-    /**
-     * Informs filter that proxy to server DNS resolution failed for the specified host and port.
-     *
-     * @param hostAndPort hostname and port the proxy failed to resolve
-     */
-    void proxyToServerResolutionFailed(FullFlowContext flowContext, String hostAndPort);
-
-    /**
-     * Informs filter that proxy to server DNS resolution has happened.
-     * 
-     * @param serverHostAndPort
-     *            Server "HOST:PORT"
-     * @param resolvedRemoteAddress
-     *            Address it was proxyToServerResolutionSucceeded to
-     */
-    void proxyToServerResolutionSucceeded(FullFlowContext flowContext,String serverHostAndPort,
-            InetSocketAddress resolvedRemoteAddress);
 
     /**
      * Informs filter that proxy to server connection is initiating.

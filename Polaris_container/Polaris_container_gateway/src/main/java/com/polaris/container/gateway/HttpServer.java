@@ -9,6 +9,7 @@ import org.springframework.core.annotation.Order;
 
 import com.polaris.container.ServerOrder;
 import com.polaris.container.SpringContextServer;
+import com.polaris.container.gateway.pojo.HttpProtocolConnection;
 import com.polaris.container.gateway.proxy.ActivityTrackerAdapter;
 import com.polaris.container.gateway.proxy.FlowContext;
 import com.polaris.container.gateway.proxy.HttpFilters;
@@ -44,9 +45,9 @@ public class HttpServer extends SpringContextServer{
     public void start() throws Exception{
     	super.start();
     	
-        //milliseconds - 40seconds
-        int timeout = Integer.parseInt(ConfClient.get("connect.timeout","40000"));
-        int idleConnectionTimeout = Integer.parseInt(ConfClient.get("idle.connect.timeout","60"));
+        //milliseconds -
+        int timeout = HttpProtocolConnection.getTimeout();
+        int idleConnectionTimeout = HttpProtocolConnection.getIdleTimeout();
 
         //start
         ThreadPoolConfiguration threadPoolConfiguration = new ThreadPoolConfiguration();
@@ -62,7 +63,6 @@ public class HttpServer extends SpringContextServer{
                 .withConnectTimeout(timeout)
                 .withIdleConnectionTimeout(idleConnectionTimeout)
                 .withAllowRequestToOriginServer(true)
-                .withProxyAlias(ConfClient.get("server.tls.alias"))
                 .withThreadPoolConfiguration(threadPoolConfiguration)
                 //X-Real-IP,XFF设置
                 .plusActivityTracker(new ActivityTrackerAdapter() {

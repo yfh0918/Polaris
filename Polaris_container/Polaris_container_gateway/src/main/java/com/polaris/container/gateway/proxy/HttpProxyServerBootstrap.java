@@ -70,6 +70,14 @@ public interface HttpProxyServerBootstrap {
     HttpProxyServerBootstrap withPort(int port);
 
     /**
+     * Sets the alias to use when adding Via headers to incoming and outgoing HTTP messages. The alias may be any
+     * pseudonym, or if not specified, defaults to the hostname of the local machine. See RFC 7230, section 5.7.1.
+     *
+     * @param alias the pseudonym to add to Via headers
+     */
+    HttpProxyServerBootstrap withProxyAlias(String alias);
+    
+    /**
      * <p>
      * Specify whether or not to only allow local connections.
      * </p>
@@ -137,22 +145,6 @@ public interface HttpProxyServerBootstrap {
      */
     HttpProxyServerBootstrap withFiltersSource(
             HttpFiltersSource filtersSource);
-
-    /**
-     * <p>
-     * Specify whether or not to use secure DNS lookups for outbound
-     * connections.
-     * </p>
-     * 
-     * <p>
-     * Default = false
-     * </p>
-     * 
-     * @param useDnsSec
-     * @return
-     */
-    HttpProxyServerBootstrap withUseDnsSec(
-            boolean useDnsSec);
 
     /**
      * <p>
@@ -251,14 +243,6 @@ public interface HttpProxyServerBootstrap {
      * @param allowRequestToOriginServer when true, the proxy will accept origin-form HTTP requests
      */
     HttpProxyServerBootstrap withAllowRequestToOriginServer(boolean allowRequestToOriginServer);
-
-    /**
-     * Sets the alias to use when adding Via headers to incoming and outgoing HTTP messages. The alias may be any
-     * pseudonym, or if not specified, defaults to the hostname of the local machine. See RFC 7230, section 5.7.1.
-     *
-     * @param alias the pseudonym to add to Via headers
-     */
-    HttpProxyServerBootstrap withProxyAlias(String alias);
 
     /**
      * <p>

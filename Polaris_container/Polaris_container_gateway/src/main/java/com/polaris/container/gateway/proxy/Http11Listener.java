@@ -1,4 +1,4 @@
-package com.polaris.container.gateway.proxy.http2;
+package com.polaris.container.gateway.proxy;
 
 import io.netty.channel.ChannelPipeline;
 

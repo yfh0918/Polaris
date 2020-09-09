@@ -15,6 +15,7 @@ import com.barchart.udt.nio.SelectorProviderUDT;
 import com.polaris.container.gateway.proxy.HttpProxyServer;
 import com.polaris.container.gateway.proxy.TransportProtocol;
 import com.polaris.container.gateway.proxy.UnknownTransportProtocolException;
+import com.polaris.container.gateway.util.ProxyUtils;
 
 import io.netty.channel.EventLoopGroup;
 

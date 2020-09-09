@@ -14,6 +14,9 @@
  */
 package com.polaris.container.gateway.proxy.http2;
 
+import com.polaris.container.gateway.pojo.HttpProtocolHttp2;
+import com.polaris.container.gateway.proxy.Http11Listener;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http2.DefaultHttp2Connection;
 import io.netty.handler.codec.http2.HttpToHttp2ConnectionHandler;
@@ -60,7 +63,7 @@ public class Http2OrHttpHandler extends ApplicationProtocolNegotiationHandler {
         DefaultHttp2Connection connection = new DefaultHttp2Connection(true);
         HttpToHttp2ConnectionHandler connectionHandler = new HttpToHttp2ConnectionHandlerBuilder()
                 .frameListener(new InboundHttp2ToHttpAdapterBuilder(connection)
-                        .maxContentLength(Http2ConfigReader.getMaxContentLength())
+                        .maxContentLength(HttpProtocolHttp2.getMaxContentLength())
                         .propagateSettings(true)
                         .build())
                 .connection(connection)

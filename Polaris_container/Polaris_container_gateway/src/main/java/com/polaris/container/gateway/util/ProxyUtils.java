@@ -1,4 +1,4 @@
-package com.polaris.container.gateway.proxy.impl;
+package com.polaris.container.gateway.util;
 
 import java.io.IOException;
 import java.net.InetAddress;

@@ -5,13 +5,11 @@ import com.polaris.container.gateway.HttpFilter;
 public class HttpFilterEntity {
 	// 成员变量  
     private int order;  
-    private String key;
     private HttpFilter filter;
     private HttpFile[] files;
 
     // 构造方法  
-    public HttpFilterEntity(HttpFilter filter, String key, int order, HttpFile... files) {  
-    	this.key = key;
+    public HttpFilterEntity(HttpFilter filter, int order, HttpFile... files) {  
         this.order = order; 
         this.files = files;
         this.setFilter(filter);
@@ -22,12 +20,6 @@ public class HttpFilterEntity {
 	public void setFilter(HttpFilter filter) {
 		this.filter = filter;
 		this.filter.setHttpFilterEntity(this);
-	}
-	public String getKey() {
-		return this.key;
-	}
-	public void setKey(String key) {
-		this.key = key;
 	}
 	public void setOrder(Integer order) {
 		this.order = order;

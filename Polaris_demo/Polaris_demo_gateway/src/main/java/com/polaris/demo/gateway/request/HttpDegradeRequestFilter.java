@@ -1,4 +1,4 @@
-package com.polaris.container.gateway.request;
+package com.polaris.demo.gateway.request;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -6,8 +6,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.container.gateway.HttpFileReader;
 import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
+import com.polaris.container.gateway.request.HttpRequestFilter;
 import com.polaris.core.Constant;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.util.PropertyUtil;
@@ -40,7 +42,7 @@ public class HttpDegradeRequestFilter extends HttpRequestFilter {
     	Set<String> tempDegradeUrlSet = new HashSet<>();
     	String tempDegradeMessageCode = null;
     	String tempDegradeMessage = null;
-    	for (String conf : file.getData()) {
+    	for (String conf : HttpFileReader.getData(file.getData())) {
     		KeyValuePair kv = PropertyUtil.getKVPair(conf);
 			if (kv != null && StringUtil.isNotEmpty(kv.getValue())) {
 				// degrade.url

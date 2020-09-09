@@ -3,12 +3,13 @@ package com.polaris.container.gateway.proxy.websocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.polaris.container.gateway.pojo.HttpProtocolWebSocket;
+import com.polaris.container.gateway.pojo.HttpRequestWrapper;
 import com.polaris.container.gateway.proxy.HostResolver;
 import com.polaris.container.gateway.proxy.HttpFilters;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoopGroup;
-import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.websocketx.BinaryWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
@@ -28,7 +29,7 @@ public class WebSocketHandlerDefaultImpl implements WebSocketHandler {
      * */
     @Override
     public void upgrade(
-            HttpRequest req, 
+            HttpRequestWrapper req, 
             ChannelHandlerContext ctx, 
             HostResolver hostResolver, 
             EventLoopGroup eventLoopGroup,
@@ -36,7 +37,6 @@ public class WebSocketHandlerDefaultImpl implements WebSocketHandler {
         log.debug("websocket upgrade...");
         
         //get host and port
-        String serverHostAndPort = WebSocketSupport.identifyHostAndPort(req);
         WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory(
                 req.uri(), null, false);
         
@@ -47,7 +47,7 @@ public class WebSocketHandlerDefaultImpl implements WebSocketHandler {
         } else {
             
             //最大连接数
-            if (WebSocketAdmin.size() > WebSocketConfigReader.getRequestMaxNumber()) {
+            if (WebSocketAdmin.size() > HttpProtocolWebSocket.getRequestMaxNumber()) {
                 WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
                 return;
             }
@@ -61,7 +61,7 @@ public class WebSocketHandlerDefaultImpl implements WebSocketHandler {
                 
             } else {
                 //connect remote websocket
-                if (!WebSocketSupport.createWSClient(req, ctx, hostResolver,eventLoopGroup, serverHostAndPort,handshaker)) {
+                if (!WebSocketSupport.createWSClient(req, ctx, hostResolver,eventLoopGroup, handshaker)) {
                     
                     //failed
                     WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
@@ -126,7 +126,7 @@ public class WebSocketHandlerDefaultImpl implements WebSocketHandler {
     }
 
     @Override
-    public boolean isWSProtocol(HttpRequest req) {
+    public boolean isWSProtocol(HttpRequestWrapper req) {
         return WebSocketSupport.isWSProtocol(req);
     }
     
@@ -138,7 +138,7 @@ public class WebSocketHandlerDefaultImpl implements WebSocketHandler {
         }
         int newIdleConnectTimeout = wsAdmin.getWebSocketClient()
                                            .addAndGetIdleConnectTimeout(idleConnectTimeout);
-        if (newIdleConnectTimeout >= WebSocketConfigReader.getIdleConnectTimeout()) {
+        if (newIdleConnectTimeout >= HttpProtocolWebSocket.getIdleConnectTimeout()) {
             WebSocketAdmin.close(ctx);
             return true;
         }

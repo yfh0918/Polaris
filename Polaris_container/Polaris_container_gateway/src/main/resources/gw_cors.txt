@@ -1,7 +1,0 @@
-X-FRAME-OPTIONS=SAMEORIGIN
-Access-Control-Allow-Credentials=true
-Access-Control-Allow-Origin=*
-Access-Control-Allow-Methods=*
-Access-Control-Allow-Headers=*
-Access-Control-Expose-Headers=*
-Access-Control-Response=OPTIONS,HEAD,GET,POST,PUT

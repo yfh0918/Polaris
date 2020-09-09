@@ -1,6 +1,5 @@
 package com.polaris.container.gateway;
 
-import java.net.InetSocketAddress;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -71,20 +70,6 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         return wrapperHttp2(httpResponse);
     }
     
-    @Override
-    public void proxyToServerResolutionSucceeded(FullFlowContext flowContext,String serverHostAndPort,
-                                                 InetSocketAddress resolvedRemoteAddress) {
-        if (resolvedRemoteAddress == null) {
-        	if (ctx.channel().isWritable()) {
-                ctx.writeAndFlush(wrapperHttp2(createResponse(originalRequest, 
-                		HttpFilterMessage.of(
-                				ResultUtil.create(
-                						Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(),
-                						HttpResponseStatus.BAD_GATEWAY))));
-        	}
-        } 
-    }
-
     @Override
     public HttpObject proxyToClientResponse(HttpObject httpObject) {
         if (httpObject instanceof HttpResponse) {

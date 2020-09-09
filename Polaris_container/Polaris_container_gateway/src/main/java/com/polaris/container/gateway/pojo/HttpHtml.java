@@ -1,46 +1,35 @@
 package com.polaris.container.gateway.pojo;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class HttpHtml {
-    private String uri;
-    private String host;
-    private String fileType;
-    private String contentType;
-    private String filePath;
-    private String startup;
-    public String getUri() {
-        return uri;
+    private static Map<String, String> defaultContentTypeMap = new HashMap<>();
+    static {
+        defaultContentTypeMap.put("js", "application/javascript");
+        defaultContentTypeMap.put("css", "text/css");
+        defaultContentTypeMap.put("jpe", "image/jpeg");
+        defaultContentTypeMap.put("jpeg", "image/jpeg");
+        defaultContentTypeMap.put("jpg", "image/jpeg");
+        defaultContentTypeMap.put("gif", "image/gif");
+        defaultContentTypeMap.put("png", "image/x-portable-anymap");
+        defaultContentTypeMap.put("ppm", "image/x-portable-pixmap");
+        defaultContentTypeMap.put("tif", "image/tiff");
+        defaultContentTypeMap.put("tiff","image/tiff");
+        defaultContentTypeMap.put("xht", "application/xhtml+xml");
+        defaultContentTypeMap.put("xhtml","application/xhtml+xml");
+        defaultContentTypeMap.put("html", "text/html");
+        defaultContentTypeMap.put("htm", "text/html");
     }
-    public void setUri(String uri) {
-        this.uri = uri;
+    private volatile static Map<String, String> htmlSupportMap = new HashMap<>();
+    public static Map<String, String> getHtmlSupportMap() {
+        return htmlSupportMap;
     }
-    public String getHost() {
-        return host;
-    }
-    public void setHost(String host) {
-        this.host = host;
-    }
-    public String getFileType() {
-        return fileType;
-    }
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
-    }
-    public String getContentType() {
-        return contentType;
-    }
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-    public String getFilePath() {
-        return filePath;
-    }
-    public void setFilePath(String filePath) {
-        this.filePath = filePath;
-    }
-    public String getStartup() {
-        return startup;
-    }
-    public void setStartup(String startup) {
-        this.startup = startup;
+
+    public static void setHtmlSupportMap(Map<String, String> htmlSupportMap) {
+        for (Map.Entry<String, String> entry : defaultContentTypeMap.entrySet()) {
+            htmlSupportMap.putIfAbsent(entry.getKey(), entry.getValue());
+        }
+        HttpHtml.htmlSupportMap = htmlSupportMap;
     }
 }

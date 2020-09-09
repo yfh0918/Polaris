@@ -1,18 +1,21 @@
 package com.polaris.container.gateway.proxy.impl;
 
-import com.esotericsoftware.minlog.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.polaris.container.gateway.pojo.HttpRequestWrapper;
 import com.polaris.container.gateway.proxy.SslEngineSource;
 import com.polaris.container.gateway.proxy.TransportProtocol;
 import com.polaris.container.gateway.proxy.websocket.WebSocketHandlerFactory;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
-import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.traffic.GlobalTrafficShapingHandler;
 
 public class ClientToProxyConnectionWithWebSocket  extends ClientToProxyConnection{
-    
+    private static Logger logger = LoggerFactory.getLogger(ClientToProxyConnectionWithWebSocket.class);
+
     public ClientToProxyConnectionWithWebSocket(
             DefaultHttpProxyServer proxyServer, 
             SslEngineSource sslEngineSource, 
@@ -29,14 +32,14 @@ public class ClientToProxyConnectionWithWebSocket  extends ClientToProxyConnecti
         if (msg instanceof WebSocketFrame) {
             WebSocketHandlerFactory.get().proxyToServer(ctx, (WebSocketFrame) msg);
             return;
-        } else if (msg instanceof HttpRequest) {
-            if (WebSocketHandlerFactory.get().isWSProtocol((HttpRequest) msg)) {
+        } else if (msg instanceof HttpRequestWrapper) {
+            if (WebSocketHandlerFactory.get().isWSProtocol((HttpRequestWrapper) msg)) {
                 WebSocketHandlerFactory.get().upgrade(
-                        (HttpRequest) msg, 
+                        (HttpRequestWrapper) msg, 
                         ctx, 
                         this.proxyServer.getServerResolver(),
                         this.proxyServer.getProxyToServerWorkerFor(TransportProtocol.TCP),
-                        this.getHttpFiltersFromProxyServer((HttpRequest) msg));
+                        this.getHttpFiltersFromProxyServer((HttpRequestWrapper) msg));
                 return;
             } 
         } 
@@ -46,7 +49,7 @@ public class ClientToProxyConnectionWithWebSocket  extends ClientToProxyConnecti
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt)
             throws Exception {
-        Log.debug("userEventTriggered");
+        logger.debug("userEventTriggered");
         if (!WebSocketHandlerFactory.get().userEventTriggered(ctx,this.proxyServer.getIdleConnectionTimeout())) {
             return;
         }
