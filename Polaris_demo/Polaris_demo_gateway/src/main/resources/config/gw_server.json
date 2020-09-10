@@ -60,7 +60,7 @@
     },
     "proxy": [
         {
-          "127.0.0.1;localhost": {
+          "127.0.0.1": {
             "/": {
                 "index": "index.html",
                 "root": "c:/projects/banyan-admin-fe",
@@ -88,6 +88,31 @@
                 "rewrite":"/",
                 "404":"index.html",
                 "error":"index.html"
+            }
+          }
+        },
+        {
+          "localhost": {
+            "/banyanSystem/": {
+                "proxy": "127.0.0.1:9140"
+            },
+            "/banyanPacs/": {
+                "proxy": "127.0.0.1:8088"
+            },
+            "/3d/": {
+                "index": "index.html",
+                "root": "c:/projects/banyan-pacs-vtk-fe"
+            },
+            "/3d-viewer/": {
+                "index": "index.html",
+                "root": "c:/projects/banyan-3d-viewer/build",
+                "rewrite":"/",
+                "404": "index.html"
+            },
+            "/": {
+                "index": "index.html",
+                "root": "c:/projects/banyan-pacs-fe",
+                "404":"/index.html"
             }
           }
         }

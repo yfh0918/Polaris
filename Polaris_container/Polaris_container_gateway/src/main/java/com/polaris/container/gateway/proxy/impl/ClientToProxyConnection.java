@@ -52,6 +52,7 @@ import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.cors.CorsConfigBuilder;
 import io.netty.handler.codec.http.cors.CorsHandler;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.traffic.GlobalTrafficShapingHandler;
 import io.netty.util.concurrent.Future;
@@ -742,6 +743,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequestWrapper>
                 "idle",
                 new IdleStateHandler(0, 0, proxyServer
                         .getIdleConnectionTimeout()));
+        pipeline.addLast("chunkedWriteHandler", new ChunkedWriteHandler());
         pipeline.addLast(ClientToProxyConnectionBefore.NAME, new ClientToProxyConnectionBefore());
         if (HttpCors.isEnable()) {
             createCorsHandler(pipeline);

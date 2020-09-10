@@ -46,6 +46,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.handler.traffic.GlobalTrafficShapingHandler;
 import io.netty.util.ReferenceCounted;
@@ -666,7 +667,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
                 "idle",
                 new IdleStateHandler(0, 0, proxyServer
                         .getIdleConnectionTimeout()));
-
+        pipeline.addLast("chunkedWriteHandler", new ChunkedWriteHandler());
         pipeline.addLast("handler", this);
     }
 
