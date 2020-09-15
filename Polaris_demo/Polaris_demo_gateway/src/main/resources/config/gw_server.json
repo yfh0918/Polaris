@@ -3,9 +3,11 @@
         "connection":{
             "acceptorThreads":"1",
             "clientToProxyWorkerThreads":"40",
-            "proxyToServerWorkerThreads":"40",
+            "proxyToServerWorkerThreads":"80",
             "timeout":"40000",
-            "idleTimeout":"60"
+            "idleTimeout":"60",
+            "readThrottleBytesPerSecond":"0",
+            "writeThrottleBytesPerSecond":"0"
         },
         "tls":{
             "enable":"false",
@@ -16,12 +18,10 @@
         "http11":{
         },
         "http20":{
-            "enable":"false",
-            "maxContentLength":"65536000"
+            "enable":"false"
         },
         "websocket":{
-            "requestMaxNumber":"2000",
-            "maxFramePayloadLength":"65536000",
+            "maxFramePayloadLength":"65536",
             "idleTimeout":"600"
         }
     },

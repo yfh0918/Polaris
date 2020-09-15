@@ -114,7 +114,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
     private final int maxInitialLineLength;
     private final int maxHeaderSize;
     private final int maxChunkSize;
-    private final boolean allowRequestsToOriginServer;
 
     /**
      * The alias or pseudonym for this proxy, used when adding the Via header.
@@ -235,8 +234,7 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
             String proxyAlias,
             int maxInitialLineLength,
             int maxHeaderSize,
-            int maxChunkSize,
-            boolean allowRequestsToOriginServer) {
+            int maxChunkSize) {
         this.serverGroup = serverGroup;
         this.transportProtocol = transportProtocol;
         this.requestedAddress = requestedAddress;
@@ -271,7 +269,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
         this.maxInitialLineLength = maxInitialLineLength;
         this.maxHeaderSize = maxHeaderSize;
         this.maxChunkSize = maxChunkSize;
-        this.allowRequestsToOriginServer = allowRequestsToOriginServer;
     }
 
     /**
@@ -361,10 +358,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
 		return maxChunkSize;
 	}
 
-	public boolean isAllowRequestsToOriginServer() {
-        return allowRequestsToOriginServer;
-    }
-
     @Override
     public HttpProxyServerBootstrap clone() {
         return new DefaultHttpProxyServerBootstrap(serverGroup,
@@ -386,8 +379,7 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
                     proxyAlias,
                     maxInitialLineLength,
                     maxHeaderSize,
-                    maxChunkSize,
-                    allowRequestsToOriginServer);
+                    maxChunkSize);
     }
 
     @Override
@@ -585,7 +577,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
         private int maxInitialLineLength = MAX_INITIAL_LINE_LENGTH_DEFAULT;
         private int maxHeaderSize = MAX_HEADER_SIZE_DEFAULT;
         private int maxChunkSize = MAX_CHUNK_SIZE_DEFAULT;
-        private boolean allowRequestToOriginServer = false;
 
         private DefaultHttpProxyServer httpProxyServer; 
 
@@ -608,8 +599,7 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
                 String proxyAlias,
                 int maxInitialLineLength,
                 int maxHeaderSize,
-                int maxChunkSize,
-                boolean allowRequestToOriginServer) {
+                int maxChunkSize) {
             this.serverGroup = serverGroup;
             this.transportProtocol = transportProtocol;
             this.requestedAddress = requestedAddress;
@@ -631,7 +621,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
             this.maxInitialLineLength = maxInitialLineLength;
         	this.maxHeaderSize = maxHeaderSize;
         	this.maxChunkSize = maxChunkSize;
-        	this.allowRequestToOriginServer = allowRequestToOriginServer;
         }
 
         private DefaultHttpProxyServerBootstrap(Properties props) {
@@ -776,12 +765,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
         }
 
         @Override
-        public HttpProxyServerBootstrap withAllowRequestToOriginServer(boolean allowRequestToOriginServer) {
-            this.allowRequestToOriginServer = allowRequestToOriginServer;
-            return this;
-        }
-
-        @Override
         public HttpProxyServer start() {
         	httpProxyServer = build();
             return httpProxyServer.start();
@@ -819,8 +802,7 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
                     filtersSource, transparent,
                     idleConnectionTimeout, activityTrackers, connectTimeout,
                     serverResolver, readThrottleBytesPerSecond, writeThrottleBytesPerSecond,
-                    localAddress, proxyAlias, maxInitialLineLength, maxHeaderSize, maxChunkSize,
-                    allowRequestToOriginServer);
+                    localAddress, proxyAlias, maxInitialLineLength, maxHeaderSize, maxChunkSize);
         }
 
         private InetSocketAddress determineListenAddress() {

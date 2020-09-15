@@ -6,6 +6,7 @@ import static com.polaris.container.gateway.proxy.impl.ConnectionState.DISCONNEC
 
 import javax.net.ssl.SSLEngine;
 
+import com.polaris.container.gateway.pojo.HttpRequestWrapper;
 import com.polaris.container.gateway.proxy.HttpFilters;
 import com.polaris.container.gateway.util.ProxyUtils;
 
@@ -167,12 +168,6 @@ public abstract class ProxyConnection<I extends HttpObject> extends
         case CONNECTING:
             LOG.warn("Attempted to read from connection that's in the process of connecting.  This shouldn't happen.");
             break;
-        case NEGOTIATING_CONNECT:
-            LOG.debug("Attempted to read from connection that's in the process of negotiating an HTTP CONNECT.  This is probably the LastHttpContent of a chunked CONNECT.");
-            break;
-        case AWAITING_CONNECT_OK:
-            LOG.warn("AWAITING_CONNECT_OK should have been handled by ProxyToServerConnection.read()");
-            break;
         case HANDSHAKING:
             LOG.warn(
                     "Attempted to read from connection that's in the process of handshaking.  This shouldn't happen.",
@@ -202,14 +197,6 @@ public abstract class ProxyConnection<I extends HttpObject> extends
      */
     protected abstract void readHTTPChunk(HttpContent chunk);
 
-    /**
-     * Implement this to handle reading a raw buffer as they are used in HTTP
-     * tunneling.
-     * 
-     * @param buf
-     */
-    protected abstract void readRaw(ByteBuf buf);
-
     /***************************************************************************
      * Writing
      **************************************************************************/
@@ -221,9 +208,16 @@ public abstract class ProxyConnection<I extends HttpObject> extends
      * @param msg
      */
     void write(Object msg) {
-        if (msg instanceof ReferenceCounted) {
-            LOG.debug("Retaining reference counted message");
-            ((ReferenceCounted) msg).retain();
+        if (msg instanceof HttpRequestWrapper) {
+            if (((HttpRequestWrapper)msg).getOrgHttpRequest() instanceof ReferenceCounted) {
+                LOG.debug("Retaining reference counted message");
+                ((ReferenceCounted) ((HttpRequestWrapper)msg).getOrgHttpRequest()).retain();
+            }
+        } else {
+            if (msg instanceof ReferenceCounted) {
+                LOG.debug("Retaining reference counted message");
+                ((ReferenceCounted) msg).retain();
+            }
         }
 
         doWrite(msg);
@@ -250,7 +244,7 @@ public abstract class ProxyConnection<I extends HttpObject> extends
      */
     protected void writeHttp(HttpObject httpObject) {
         if (ProxyUtils.isLastChunk(httpObject)) {
-            channel.write(httpObject);
+            writeToChannelNoFlush(httpObject);
             LOG.debug("Writing an empty buffer to signal the end of our chunked transfer");
             writeToChannel(Unpooled.EMPTY_BUFFER);
         } else {
@@ -269,6 +263,13 @@ public abstract class ProxyConnection<I extends HttpObject> extends
 
     protected ChannelFuture writeToChannel(final Object msg) {
         return channel.writeAndFlush(msg);
+    }
+    protected ChannelFuture writeToChannelNoFlush(final Object msg) {
+        if (msg instanceof HttpRequestWrapper) {
+            return channel.write(((HttpRequestWrapper)msg).getOrgHttpRequest());
+        } else {
+            return channel.write(msg);
+        }
     }
 
     /***************************************************************************

@@ -21,11 +21,11 @@ public class HttpRequestFilterChain extends HttpFilterChain<HttpRequestFilter>{
     private HttpRequestFilterChain() {}
 
 
-    public ImmutablePair<Boolean, HttpFilterMessage> doFilter(HttpRequest originalRequest, HttpObject httpObject) {
+    public ImmutablePair<Boolean, HttpFilterMessage> doFilter(HttpRequest httpRequest, HttpObject httpObject) {
     	HttpFilterMessage httpMessage = new HttpFilterMessage();
     	for (HttpRequestFilter filter : filters) {
         	if (!skip(filter)) {
-                boolean result = filter.doFilter(originalRequest, httpObject, httpMessage);
+                boolean result = filter.doFilter(httpRequest, httpObject, httpMessage);
                 
                 //是否直接退出
                 if (httpMessage.isExit()) {

@@ -129,7 +129,8 @@ public class ClientToProxyConnectionBefore extends SimpleChannelInboundHandler<H
     }
     
     private void channelReadApi(ChannelHandlerContext ctx) {
-        ctx.fireChannelRead(ReferenceCountUtil.retain(request)); 
+        ReferenceCountUtil.retain(request.getOrgHttpRequest());
+        ctx.fireChannelRead(request); 
     }
     
     private void channelReadHtml(ChannelHandlerContext ctx) throws Exception {
@@ -195,7 +196,7 @@ public class ClientToProxyConnectionBefore extends SimpleChannelInboundHandler<H
         } else if (request.protocolVersion().equals(HTTP_1_0)) {
             response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }
-        ChannelFuture sendFileFuture = ctx.writeAndFlush(wrapperHttp2(response));
+        ChannelFuture sendFileFuture = ctx.writeAndFlush(addHttp2StreamId(response));
 
         // Decide whether to close the connection or not.
         if (!keepAlive) {
@@ -331,7 +332,7 @@ public class ClientToProxyConnectionBefore extends SimpleChannelInboundHandler<H
             response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }
 
-        ChannelFuture flushPromise = ctx.writeAndFlush(wrapperHttp2(response));
+        ChannelFuture flushPromise = ctx.writeAndFlush(addHttp2StreamId(response));
 
         if (!keepAlive) {
             // Close the connection as soon as the response is sent.
@@ -394,7 +395,7 @@ public class ClientToProxyConnectionBefore extends SimpleChannelInboundHandler<H
     }
 
     
-    private HttpResponse wrapperHttp2(HttpResponse response) {
+    private HttpResponse addHttp2StreamId(HttpResponse response) {
         if (response == null) {
             return response;
         }

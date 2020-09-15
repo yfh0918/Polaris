@@ -5,11 +5,13 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 
+import io.netty.handler.codec.http.HttpMessage;
+
 public abstract class HttpFilterHelper {
 	private static Logger logger = LoggerFactory.getLogger(HttpFilterHelper.class);
 	
 	//replace
-	public static void replaceFilter(HttpFilterEntity httpFilterEntity, HttpFilter newFilter) {
+	public static void replaceFilter(HttpFilterEntity httpFilterEntity, HttpFilter<? extends HttpMessage> newFilter) {
 		removeFilter(httpFilterEntity);
 		httpFilterEntity.setFilter(newFilter);
 		addFilter(httpFilterEntity);

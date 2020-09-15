@@ -9,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.polaris.core.Constant;
 import com.polaris.core.GlobalContext;
@@ -55,6 +56,14 @@ public class TraceFilter implements Filter {
 			//encoding
 			request.setCharacterEncoding(ConfClient.get("encoding",Constant.UTF_CODE));
 	        response.setCharacterEncoding(ConfClient.get("encoding",Constant.UTF_CODE));
+	        
+	        //streamId
+	        String streamId = ((HttpServletRequest)request).getHeader(GlobalContext.STREAM_ID);
+	        if (streamId != null) {
+	            ((HttpServletResponse)response).addHeader(GlobalContext.STREAM_ID, streamId);
+	        }
+	        
+	        //to do next filter
 	        chain.doFilter(request, response);
 		} finally {
 			GlobalContext.removeContext();

@@ -14,14 +14,12 @@
  */
 package com.polaris.container.gateway.proxy.http2;
 
-import com.polaris.container.gateway.pojo.HttpProtocolHttp2;
 import com.polaris.container.gateway.proxy.Http11Listener;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http2.DefaultHttp2Connection;
 import io.netty.handler.codec.http2.HttpToHttp2ConnectionHandler;
 import io.netty.handler.codec.http2.HttpToHttp2ConnectionHandlerBuilder;
-import io.netty.handler.codec.http2.InboundHttp2ToHttpAdapterBuilder;
 import io.netty.handler.ssl.ApplicationProtocolNames;
 import io.netty.handler.ssl.ApplicationProtocolNegotiationHandler;
 
@@ -62,10 +60,7 @@ public class Http2OrHttpHandler extends ApplicationProtocolNegotiationHandler {
     public static HttpToHttp2ConnectionHandler createHttpToHttp2ConnectionHandler() {
         DefaultHttp2Connection connection = new DefaultHttp2Connection(true);
         HttpToHttp2ConnectionHandler connectionHandler = new HttpToHttp2ConnectionHandlerBuilder()
-                .frameListener(new InboundHttp2ToHttpAdapterBuilder(connection)
-                        .maxContentLength(HttpProtocolHttp2.getMaxContentLength())
-                        .propagateSettings(true)
-                        .build())
+                .frameListener(new Http2InboundHttp2ToHttpAdapter(false, true))
                 .connection(connection)
                 .build();
         return connectionHandler;

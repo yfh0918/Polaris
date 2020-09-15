@@ -235,16 +235,6 @@ public interface HttpProxyServerBootstrap {
     HttpProxyServerBootstrap withMaxChunkSize(int maxChunkSize);
 
     /**
-     * When true, the proxy will accept requests that appear to be directed at an origin server (i.e. the URI in the HTTP
-     * request will contain an origin-form, rather than an absolute-form, as specified in RFC 7230, section 5.3).
-     * This is useful when the proxy is acting as a gateway/reverse proxy. <b>Note:</b> This feature should not be
-     * enabled when running as a forward proxy; doing so may cause an infinite loop if the client requests the URI of the proxy.
-     *
-     * @param allowRequestToOriginServer when true, the proxy will accept origin-form HTTP requests
-     */
-    HttpProxyServerBootstrap withAllowRequestToOriginServer(boolean allowRequestToOriginServer);
-
-    /**
      * <p>
      * Build and starts the server.
      * </p>

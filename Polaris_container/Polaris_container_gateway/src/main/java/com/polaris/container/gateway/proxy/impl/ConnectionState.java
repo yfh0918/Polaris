@@ -12,17 +12,6 @@ enum ConnectionState {
     HANDSHAKING(true),
 
     /**
-     * In the process of negotiating an HTTP CONNECT from the client.
-     */
-    NEGOTIATING_CONNECT(true),
-
-    /**
-     * When forwarding a CONNECT to a chained proxy, we await the CONNECTION_OK
-     * message from the proxy.
-     */
-    AWAITING_CONNECT_OK(true),
-
-    /**
      * Connected but waiting for proxy authentication.
      */
     AWAITING_PROXY_AUTHENTICATION,

@@ -1,5 +1,0 @@
-#ip:port:weight
-/payaa0=127.0.0.1:8082
-/payaa1=127.0.0.1:8082:1
-/paycatt=serviceName2
-/paycatr=127.0.0.1:8082:1,127.0.0.1:8083:1

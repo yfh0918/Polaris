@@ -62,8 +62,8 @@ public class HttpServer extends SpringContextServer{
                 .withSslEngineSource(SslEngineSourceFactory.get())
                 .withConnectTimeout(timeout)
                 .withIdleConnectionTimeout(idleConnectionTimeout)
-                .withAllowRequestToOriginServer(true)
                 .withThreadPoolConfiguration(threadPoolConfiguration)
+                .withThrottling(HttpProtocolConnection.getReadThrottleBytesPerSecond(), HttpProtocolConnection.getWriteThrottleBytesPerSecond())
                 //X-Real-IP,XFF设置
                 .plusActivityTracker(new ActivityTrackerAdapter() {
                     @Override

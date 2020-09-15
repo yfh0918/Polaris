@@ -11,7 +11,7 @@ import io.netty.handler.codec.http.HttpVersion;
 @SuppressWarnings("deprecation")
 public class HttpRequestWrapper implements HttpRequest {
 
-    private HttpRequest httpRequest;
+    protected HttpRequest httpRequest;
     
     private String context;
 
@@ -25,6 +25,10 @@ public class HttpRequestWrapper implements HttpRequest {
     
     public HttpRequestWrapper(HttpRequest httpRequest) {
         this.httpRequest = httpRequest;
+    }
+    
+    public HttpRequest getOrgHttpRequest() {
+        return this.httpRequest;
     }
     
     @Override

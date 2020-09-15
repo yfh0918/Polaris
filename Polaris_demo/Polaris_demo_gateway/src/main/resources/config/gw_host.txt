@@ -1,6 +1,0 @@
-#host=contextFile
-localhost=gw_host_context_upstream.txt
-127.0.0.1=gw_host_context_upstream.txt
-0.0.0.0=gw_host_context_upstream.txt
-192.168.1.2=gw_host_context_upstream2.txt
-192.168.1.11=gw_host_context_upstream.txt

@@ -38,11 +38,11 @@ public class HttpUaRequestFilter extends HttpRequestFilter {
 	}
 	
     @Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpFilterMessage httpMessage) {
+    public boolean doFilter(HttpRequest originalRequest,HttpObject httpObject, HttpFilterMessage httpMessage) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
-            List<String> headerValues = HttpConstant.getHeaderValues(originalRequest, "User-Agent");
+            List<String> headerValues = HttpConstant.getHeaderValues(((HttpRequest)httpObject), "User-Agent");
             if (headerValues.size() > 0 && headerValues.get(0) != null) {
                 for (Pattern pat : patterns) {
                     Matcher matcher = pat.matcher(headerValues.get(0));

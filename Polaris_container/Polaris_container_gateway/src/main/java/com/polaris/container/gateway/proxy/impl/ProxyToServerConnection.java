@@ -11,10 +11,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.RejectedExecutionException;
 
-import javax.net.ssl.SSLProtocolException;
-
 import com.barchart.udt.nio.SelectorProviderUDT;
-import com.polaris.container.gateway.pojo.HttpProxy;
 import com.polaris.container.gateway.pojo.HttpRequestWrapper;
 import com.polaris.container.gateway.proxy.ActivityTracker;
 import com.polaris.container.gateway.proxy.FullFlowContext;
@@ -24,8 +21,8 @@ import com.polaris.container.gateway.proxy.UnknownTransportProtocolException;
 import com.polaris.container.gateway.util.ProxyUtils;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -87,13 +84,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private volatile ConnectionFlow connectionFlow;
 
     /**
-     * Disables SNI when initializing connection flow in {@link #initializeConnectionFlow()}. This value is set to true
-     * when retrying a connection without SNI to work around Java's SNI handling issue (see
-     * {@link #connectionFailed(Throwable)}).
-     */
-    private volatile boolean disableSni = false;
-
-    /**
      * While we're in the process of connecting, it's possible that we'll
      * receive a new message to write. This lock helps us synchronize and wait
      * for the connection to be established before writing the next message.
@@ -101,16 +91,10 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private final Object connectLock = new Object();
 
     /**
-     * This is the initial request received prior to connecting. We keep track
-     * of it so that we can process it after connection finishes.
-     */
-    private volatile HttpRequestWrapper initialRequest;
-
-    /**
      * Keeps track of HttpRequests that have been issued so that we can
      * associate them with responses that we get back
      */
-    private volatile HttpRequest currentHttpRequest;
+    private volatile HttpRequestWrapper currentHttpRequest;
 
     /**
      * While we're doing a chunked transfer, this keeps track of the initial
@@ -129,11 +113,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     private volatile FullFlowContext flowContext;
     
     /**
-     * httpRroxy
-     */
-    private volatile HttpProxy httpRroxy;
-    
-    /**
      * Create a new ProxyToServerConnection.
      *
      * @param proxyServer
@@ -147,14 +126,14 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     static ProxyToServerConnection create(DefaultHttpProxyServer proxyServer,
                                           ClientToProxyConnection clientConnection,
                                           HttpFilters initialFilters,
-                                          HttpRequestWrapper initialHttpRequest,
+                                          InetSocketAddress remoteAddress,
                                           GlobalTrafficShapingHandler globalTrafficShapingHandler)
             throws UnknownHostException {
         return new ProxyToServerConnection(proxyServer,
                 clientConnection,
                 initialFilters,
                 globalTrafficShapingHandler,
-                initialHttpRequest
+                remoteAddress
                 );
     }
 
@@ -163,16 +142,17 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
             ClientToProxyConnection clientConnection,
             HttpFilters initialFilters,
             GlobalTrafficShapingHandler globalTrafficShapingHandler,
-            HttpRequestWrapper initialHttpRequest)
+            InetSocketAddress remoteAddress
+            )
             throws UnknownHostException {
         super(DISCONNECTED, proxyServer);
         this.clientConnection = clientConnection;
         this.trafficHandler = globalTrafficShapingHandler;
         this.currentFilters = initialFilters;
+        this.remoteAddress = remoteAddress;
         this.flowContext = new FullFlowContext(clientConnection,this);
         // Report connection status to HttpFilters
         currentFilters.proxyToServerConnectionQueued(flowContext);
-        this.httpRroxy = initialHttpRequest.getHttpProxy();
         setupConnectionParameters();
     }
 
@@ -218,7 +198,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
             return AWAITING_CHUNK;
         } else {
             currentFilters.serverToProxyResponseReceived(flowContext);
-
             return AWAITING_INITIAL;
         }
     }
@@ -226,11 +205,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     @Override
     protected void readHTTPChunk(HttpContent chunk) {
         respondWith(chunk);
-    }
-
-    @Override
-    protected void readRaw(ByteBuf buf) {
-        clientConnection.write(buf);
     }
 
     /**
@@ -285,6 +259,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      */
     void write(HttpRequestWrapper httpRequest, HttpFilters filters) {
         this.currentFilters = filters;
+        this.currentHttpRequest = httpRequest;
         write(httpRequest);
     }
 
@@ -292,9 +267,16 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
     void write(Object msg) {
         LOG.debug("Requested write of {}", msg);
 
-        if (msg instanceof ReferenceCounted) {
-            LOG.debug("Retaining reference counted message");
-            ((ReferenceCounted) msg).retain();
+        if (msg instanceof HttpRequestWrapper) {
+            if (((HttpRequestWrapper)msg).getOrgHttpRequest() instanceof ReferenceCounted) {
+                LOG.debug("Retaining reference counted message");
+                ((ReferenceCounted) ((HttpRequestWrapper)msg).getOrgHttpRequest()).retain();
+            }
+        } else {
+            if (msg instanceof ReferenceCounted) {
+                LOG.debug("Retaining reference counted message");
+                ((ReferenceCounted) msg).retain();
+            }
         }
 
         if (is(DISCONNECTED) && msg instanceof HttpRequestWrapper) {
@@ -329,8 +311,8 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
 
     @Override
     protected void writeHttp(HttpObject httpObject) {
-        if (httpObject instanceof HttpRequest) {
-            HttpRequest httpRequest = (HttpRequest) httpObject;
+        if (httpObject instanceof HttpRequestWrapper) {
+            HttpRequestWrapper httpRequest = (HttpRequestWrapper) httpObject;
             
             // Remember that we issued this HttpRequest for later
             currentHttpRequest = httpRequest;
@@ -451,9 +433,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         return remoteAddress;
     }
 
-    public HttpRequestWrapper getInitialRequest() {
-        return initialRequest;
-    }
+
     @Override
     protected HttpFilters getHttpFiltersFromProxyServer(HttpRequest httpRequest) {
         return currentFilters;
@@ -494,11 +474,11 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      *
      * @param initialRequest the current HTTP request being handled
      */
-    private void connectAndWrite(HttpRequestWrapper initialRequest) {
+    private void connectAndWrite(HttpRequestWrapper currentHttpRequest) {
         LOG.debug("Starting new connection to: {}", remoteAddress);
 
         // Remember our initial request so that we can write it after connecting
-        this.initialRequest = initialRequest;
+        this.currentHttpRequest = currentHttpRequest;
         initializeConnectionFlow();
         connectionFlow.start();
     }
@@ -526,49 +506,52 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
 
 		@Override
         protected Future<?> execute() {
-            Bootstrap cb = new Bootstrap().group(proxyServer.getProxyToServerWorkerFor(transportProtocol));
-
-            switch (transportProtocol) {
-                case TCP:
-                    LOG.debug("Connecting to server with TCP");
-                    cb.channelFactory(new io.netty.channel.ChannelFactory<Channel>() {
-                        @Override
-                        public Channel newChannel() {
-                            return new NioSocketChannel();
-                        }
-                    });
-                    break;
-                case UDT:
-                    LOG.debug("Connecting to server with UDT");
-                    cb.channelFactory(new io.netty.channel.ChannelFactory<Channel>() {
-                        @Override
-                        public Channel newChannel() {
-                            return new NioSocketChannel(SelectorProviderUDT.STREAM);
-                        }
-                    })
-                    .option(ChannelOption.SO_REUSEADDR, true);
-                    
-                    break;
-                
-                default:
-                    throw new UnknownTransportProtocolException(transportProtocol);
-            }
-
-            cb.handler(new ChannelInitializer<Channel>() {
-                protected void initChannel(Channel ch) throws Exception {
-                    initChannelPipeline(ch.pipeline());
-                };
-            });
-            cb.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
-                    proxyServer.getConnectTimeout());
-
-            if (localAddress != null) {
-                return cb.connect(remoteAddress, localAddress);
-            } else {
-                return cb.connect(remoteAddress);
-            }
-        }
+		    return connect();
+		}
     };
+    private ChannelFuture connect() {
+        Bootstrap cb = new Bootstrap().group(proxyServer.getProxyToServerWorkerFor(transportProtocol));
+        switch (transportProtocol) {
+            case TCP:
+                LOG.debug("Connecting to server with TCP");
+                cb.channelFactory(new io.netty.channel.ChannelFactory<Channel>() {
+                    @Override
+                    public Channel newChannel() {
+                        return new NioSocketChannel();
+                    }
+                });
+                break;
+            case UDT:
+                LOG.debug("Connecting to server with UDT");
+                cb.channelFactory(new io.netty.channel.ChannelFactory<Channel>() {
+                    @Override
+                    public Channel newChannel() {
+                        return new NioSocketChannel(SelectorProviderUDT.STREAM);
+                    }
+                })
+                .option(ChannelOption.SO_REUSEADDR, true);
+                
+                break;
+            
+            default:
+                throw new UnknownTransportProtocolException(transportProtocol);
+        }
+
+        cb.handler(new ChannelInitializer<Channel>() {
+            protected void initChannel(Channel ch) throws Exception {
+                initChannelPipeline(ch.pipeline());
+            };
+        });
+        cb.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
+                proxyServer.getConnectTimeout());
+
+        if (localAddress != null) {
+            return cb.connect(remoteAddress, localAddress);
+        } else {
+            return cb.connect(remoteAddress);
+        }
+    
+    }
 
     /**
      * Called when the connection to the server or upstream chained proxy fails. This method may return true to indicate
@@ -579,47 +562,13 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      */
     protected boolean connectionFailed(Throwable cause)
             throws UnknownHostException {
-        // unlike a browser, java throws an exception when receiving an unrecognized_name TLS warning, even if the server
-        // sends back a valid certificate for the expected host. we can retry the connection without SNI to allow the proxy
-        // to connect to these misconfigured hosts. we should only retry the connection without SNI if the connection
-        // failure happened when SNI was enabled, to prevent never-ending connection attempts due to SNI warnings.
-        if (!disableSni && cause instanceof SSLProtocolException) {
-            // unfortunately java does not expose the specific TLS alert number (112), so we have to look for the
-            // unrecognized_name string in the exception's message
-            if (cause.getMessage() != null && cause.getMessage().contains("unrecognized_name")) {
-                LOG.debug("Failed to connect to server due to an unrecognized_name SSL warning. Retrying connection without SNI.");
-
-                // disable SNI, re-setup the connection, and restart the connection flow
-                disableSni = true;
-                resetConnectionForRetry();
-                connectAndWrite(initialRequest);
-
-                return true;
-            }
-        }
-
         // the connection issue wasn't due to an unrecognized_name error, or the connection attempt failed even after
-        // disabling SNI. before falling back to a chained proxy, re-enable SNI.
-        disableSni = false;
         LOG.info("Connection to upstream server failed", cause);
 
         // no chained proxy fallback or other retry mechanism available
         return false;
     }
 
-    /**
-     * Convenience method to prepare to retry this connection. Closes the connection's channel and sets up
-     * the connection again using {@link #setupConnectionParameters()}.
-     *
-     * @throws UnknownHostException when {@link #setupConnectionParameters()} is unable to resolve the hostname
-     */
-    private void resetConnectionForRetry() throws UnknownHostException {
-        // Remove ourselves as handler on the old context
-        this.ctx.pipeline().remove(this);
-        this.ctx.close();
-        this.ctx = null;
-        this.setupConnectionParameters();
-    }
 
     /**
      * Set up our connection parameters based on server address and chained
@@ -629,11 +578,6 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
      */
     private void setupConnectionParameters() throws UnknownHostException {
         this.transportProtocol = TransportProtocol.TCP;
-
-        // save the hostname and port of the unresolved address in hostAndPort, in case name resolution fails
-        if (this.remoteAddress == null || this.remoteAddress.isUnresolved()) {
-            this.remoteAddress = addressFor(httpRroxy, proxyServer);
-        } 
         this.localAddress = proxyServer.getLocalAddress();
     }
 
@@ -687,30 +631,18 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
                 shouldForwardInitialRequest);
 
         if (shouldForwardInitialRequest) {
-            LOG.debug("Writing initial request: {}", initialRequest);
-            write(initialRequest);
+            LOG.debug("Writing initial request: {}", currentHttpRequest);
+            write(currentHttpRequest);
         } else {
-            LOG.debug("Dropping initial request: {}", initialRequest);
+            LOG.debug("Dropping initial request: {}", currentHttpRequest);
         }
 
         // we're now done with the initialRequest: it's either been forwarded to the upstream server (HTTP requests), or
         // completely dropped (HTTPS CONNECTs). if the initialRequest is reference counted (typically because the HttpObjectAggregator is in
         // the pipeline to generate FullHttpRequests), we need to manually release it to avoid a memory leak.
-        if (initialRequest instanceof ReferenceCounted) {
-            ((ReferenceCounted)initialRequest).release();
+        if (currentHttpRequest.getOrgHttpRequest() instanceof ReferenceCounted) {
+            ((ReferenceCounted)(currentHttpRequest.getOrgHttpRequest())).release();
         }
-    }
-
-    /**
-     * Build an {@link InetSocketAddress} for the given hostAndPort.
-     *
-     * @return a resolved InetSocketAddress for the specified hostAndPort
-     * @throws UnknownHostException if hostAndPort could not be resolved, or if the input string could not be parsed into
-     *          a host and port.
-     */
-    private InetSocketAddress addressFor(HttpProxy proxy, DefaultHttpProxyServer proxyServer)
-            throws UnknownHostException {
-        return proxyServer.getServerResolver().resolve(proxy);
     }
 
     /***************************************************************************
@@ -756,4 +688,11 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
         }
     };
 
+    public HttpRequestWrapper getCurrentHttpRequest() {
+        return currentHttpRequest;
+    }
+
+    public void setCurrentHttpRequest(HttpRequestWrapper currentHttpRequest) {
+        this.currentHttpRequest = currentHttpRequest;
+    }
 }

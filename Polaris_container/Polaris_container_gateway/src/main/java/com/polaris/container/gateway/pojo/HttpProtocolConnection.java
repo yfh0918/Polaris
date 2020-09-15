@@ -14,6 +14,10 @@ public abstract class HttpProtocolConnection {
     
     private static int TIMEOUT = 40000;
     
+    private static long READ_THROTTLE_BYTES_PER_SECOND = 0l;
+    
+    private static long WRITE_THROTTLE_BYTES_PER_SECOND = 0l;
+    
     public static int getAcceptorThreads() {
         init();
         return ACCEPTOR_THREADS;
@@ -73,7 +77,37 @@ public abstract class HttpProtocolConnection {
                 }
             }
             
+            String readThrottleBytesPerSecond = HttpProtocol.getConnectionMap().get("readThrottleBytesPerSecond");
+            if (StringUtil.isNotEmpty(readThrottleBytesPerSecond)) {
+                try {
+                    READ_THROTTLE_BYTES_PER_SECOND = Long.parseLong(readThrottleBytesPerSecond);
+                } catch (Exception ex) {
+                }
+            }
+            
+            String writeThrottleBytesPerSecond = HttpProtocol.getConnectionMap().get("writeThrottleBytesPerSecond");
+            if (StringUtil.isNotEmpty(writeThrottleBytesPerSecond)) {
+                try {
+                    WRITE_THROTTLE_BYTES_PER_SECOND = Long.parseLong(writeThrottleBytesPerSecond);
+                } catch (Exception ex) {
+                }
+            }
+            
           INITIAL = false;
         }
+    }
+    public static long getReadThrottleBytesPerSecond() {
+        init();
+        return READ_THROTTLE_BYTES_PER_SECOND;
+    }
+    public static void setReadThrottleBytesPerSecond(long readThrottleBytesPerSecond) {
+        HttpProtocolConnection.READ_THROTTLE_BYTES_PER_SECOND = readThrottleBytesPerSecond;
+    }
+    public static long getWriteThrottleBytesPerSecond() {
+        init();
+        return WRITE_THROTTLE_BYTES_PER_SECOND;
+    }
+    public static void setWriteThrottleBytesPerSecond(long writeThrottleBytesPerSecond) {
+        HttpProtocolConnection.WRITE_THROTTLE_BYTES_PER_SECOND = writeThrottleBytesPerSecond;
     }
 }

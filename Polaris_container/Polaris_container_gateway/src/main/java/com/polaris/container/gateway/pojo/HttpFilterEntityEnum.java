@@ -3,6 +3,7 @@ package com.polaris.container.gateway.pojo;
 import com.polaris.container.gateway.request.HttpArgsRequestFilter;
 import com.polaris.container.gateway.request.HttpCookieRequestFilter;
 import com.polaris.container.gateway.request.HttpIpRequestFilter;
+import com.polaris.container.gateway.request.HttpPostRequestFilter;
 import com.polaris.container.gateway.request.HttpScannerRequestFilter;
 import com.polaris.container.gateway.request.HttpUaRequestFilter;
 import com.polaris.container.gateway.request.HttpUrlRequestFilter;
@@ -19,8 +20,8 @@ public enum HttpFilterEntityEnum {
 	Ua(new HttpFilterEntity(new HttpUaRequestFilter(), 14,new HttpFile("gw_ua.txt"))),
 	Url(new HttpFilterEntity(new HttpUrlRequestFilter(), 16,new HttpFile("gw_url.txt"))),
 	Args(new HttpFilterEntity(new HttpArgsRequestFilter(), 18,new HttpFile("gw_args.txt"))),
-	Cookie(new HttpFilterEntity(new HttpCookieRequestFilter(), 20,new HttpFile("gw_cookie.txt")));
-//	Post(new HttpFilterEntity(new HttpPostRequestFilter(), 22,new HttpFile("gw_post.txt"),new HttpFile("gw_file.txt")));
+	Cookie(new HttpFilterEntity(new HttpCookieRequestFilter(), 20,new HttpFile("gw_cookie.txt"))),
+	Post(new HttpFilterEntity(new HttpPostRequestFilter(), 22,new HttpFile("gw_post.txt"),new HttpFile("gw_file.txt")));
 
     // 构造方法  
 	private HttpFilterEntity filterEntity;

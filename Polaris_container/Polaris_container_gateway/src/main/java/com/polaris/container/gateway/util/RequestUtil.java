@@ -51,11 +51,11 @@ public class RequestUtil {
 	public static void setCookie(String key, String value) {
 		holder.get().get(COOKIE_PARAMETER).put(key, value);
 	}
-	public static void remove() {
-		holder.get().get(QUERY_STRING).clear();
-		holder.get().get(POST_PARAMETER).clear();
-		holder.get().get(COOKIE_PARAMETER).clear();
-		holder.get().clear();
-		holder.remove();
+	public static void clearLocalThread() {
+	    holder.get().get(QUERY_STRING).clear();
+        holder.get().get(POST_PARAMETER).clear();
+        holder.get().get(COOKIE_PARAMETER).clear();
+        holder.get().clear();
+        holder.remove();
 	}
 }

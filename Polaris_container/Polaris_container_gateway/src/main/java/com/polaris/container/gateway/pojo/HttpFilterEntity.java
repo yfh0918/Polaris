@@ -2,22 +2,23 @@ package com.polaris.container.gateway.pojo;
 
 import com.polaris.container.gateway.HttpFilter;
 
+import io.netty.handler.codec.http.HttpMessage;
+
 public class HttpFilterEntity {
-	// 成员变量  
     private int order;  
-    private HttpFilter filter;
+    private HttpFilter<? extends HttpMessage> filter;
     private HttpFile[] files;
 
     // 构造方法  
-    public HttpFilterEntity(HttpFilter filter, int order, HttpFile... files) {  
+    public HttpFilterEntity(HttpFilter<? extends HttpMessage> filter, int order, HttpFile... files) {  
         this.order = order; 
         this.files = files;
         this.setFilter(filter);
     }
-	public HttpFilter getFilter() {
+	public HttpFilter<? extends HttpMessage> getFilter() {
 		return this.filter;
 	}
-	public void setFilter(HttpFilter filter) {
+	public void setFilter(HttpFilter<? extends HttpMessage> filter) {
 		this.filter = filter;
 		this.filter.setHttpFilterEntity(this);
 	}

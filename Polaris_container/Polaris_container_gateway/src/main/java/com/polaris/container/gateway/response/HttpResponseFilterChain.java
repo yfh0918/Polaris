@@ -5,7 +5,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import com.polaris.container.gateway.HttpFilterChain;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
 
-import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpResponse;
 
 /**
@@ -19,11 +19,11 @@ public class HttpResponseFilterChain extends HttpFilterChain<HttpResponseFilter>
     public static HttpResponseFilterChain INSTANCE = new HttpResponseFilterChain();
     private HttpResponseFilterChain() {}
 
-    public ImmutablePair<Boolean, HttpFilterMessage> doFilter(HttpRequest originalRequest, HttpResponse httpResponse) {
+    public ImmutablePair<Boolean, HttpFilterMessage> doFilter(HttpResponse httpResponse, HttpObject httpObject) {
     	HttpFilterMessage httpMessage = new HttpFilterMessage();
     	for (HttpResponseFilter filter : filters) {
         	if (!skip(filter)) {
-                boolean result = filter.doFilter(originalRequest, httpResponse, httpMessage);
+                boolean result = filter.doFilter(httpResponse, httpObject, httpMessage);
                 if (result) {
                 	return new ImmutablePair<>(true, httpMessage);
                 }

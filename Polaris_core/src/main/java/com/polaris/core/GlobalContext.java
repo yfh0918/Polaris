@@ -13,6 +13,8 @@ public abstract class GlobalContext {
 	public static final String PARENT_ID = "parentId";
 	public static final String SPAN_ID = "spanId";
 	public static final String MODULE_ID = "moduleId";// 本模块ID
+    public static final String STREAM_ID = "x-http2-stream-id";// http2.0
+	
 	public static String getTraceId() {
 		Object objTraceId = GlobalContext.getContext(GlobalContext.TRACE_ID);
 		if (objTraceId == null) {

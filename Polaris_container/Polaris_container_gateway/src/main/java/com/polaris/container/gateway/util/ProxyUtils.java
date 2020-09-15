@@ -24,6 +24,7 @@ import com.barchart.udt.nio.SelectorProviderUDT;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.polaris.container.gateway.pojo.HttpRequestWrapper;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -159,6 +160,9 @@ public class ProxyUtils {
      * 
      */
     public static boolean isLastChunk(final HttpObject httpObject) {
+        if (httpObject instanceof HttpRequestWrapper) {
+            return ((HttpRequestWrapper)httpObject).getOrgHttpRequest() instanceof LastHttpContent;
+        }
         return httpObject instanceof LastHttpContent;
     }
 

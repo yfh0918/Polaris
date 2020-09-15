@@ -35,7 +35,6 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
 	private static String TOKEN_POLICY = TOKEN_POLICY_DEFAULT_VALUE;
 	public volatile static Set<String> UNCHECKED_PATHS = new HashSet<>();
 	public volatile static Set<String> UNCHECKED_PATHS_PREFIX = new HashSet<>();
-	public volatile static Set<String> TOKEN_PATHS = new HashSet<>();
 	public static String TOKEN_MESSAGE_CODE_DEFAULT_VALUE=Constant.TOKEN_FAIL_CODE;
 	public static String TOKEN_MESSAGE_CODE=TOKEN_MESSAGE_CODE_DEFAULT_VALUE;
 	public static String TOKEN_MESSAGE_DEFAULT_VALUE="认证失败，请先登录";
@@ -45,7 +44,6 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
 	public void onChange(HttpFile file) {
     	Set<String> UNCHECKED_PATHS_TEMP = new HashSet<>();
     	Set<String> UNCHECKED_PATHS_PREFIX_TEMP = new HashSet<>();
-    	Set<String> TOKEN_PATHS_TEMP = new HashSet<>();
     	String TOKEN_MESSAGE_CODE_TEMP = null;
     	String TOKEN_MESSAGE_TEMP = null;
     	String TOKEN_POLICY_TEMP = null;
@@ -60,11 +58,6 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
     			// 不需要验证token的uri前缀，一般为context
     			if (kv.getKey().equals("UNCHECKED_PATHS_PREFIX")) {
     				UNCHECKED_PATHS_PREFIX_TEMP.add(kv.getValue());
-    			}
-    			
-    			//tokenUrl
-    			if (kv.getKey().equals("TOKEN_PATH") || kv.getKey().equals("TOKEN_PATHS")) {
-    				TOKEN_PATHS_TEMP.add(kv.getValue());
     			}
     			
     			//tokenMessageCode
@@ -86,7 +79,6 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
 
     	UNCHECKED_PATHS_PREFIX = UNCHECKED_PATHS_PREFIX_TEMP;
     	UNCHECKED_PATHS = UNCHECKED_PATHS_TEMP;
-    	TOKEN_PATHS = TOKEN_PATHS_TEMP;
     	if (TOKEN_MESSAGE_CODE_TEMP != null) {
     		TOKEN_MESSAGE_CODE = TOKEN_MESSAGE_CODE_TEMP;
     	} else {
@@ -151,10 +143,6 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
     }
 
     
-    public static boolean isTokenPath(String url) {
-    	return TOKEN_PATHS.contains(url);
-    }
-    
     public static boolean isUncheckPolicy() {
     	if (TOKEN_POLICY.equals(TOKEN_POLICY_DEFAULT_VALUE)) {
     		return true;
@@ -163,7 +151,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
     }
     
 	@Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpFilterMessage httpMessage) {
+    public boolean doFilter(HttpRequest originalRequest,HttpObject httpObject, HttpFilterMessage httpMessage) {
         if (httpObject instanceof HttpRequest) {
         	
             //获取request

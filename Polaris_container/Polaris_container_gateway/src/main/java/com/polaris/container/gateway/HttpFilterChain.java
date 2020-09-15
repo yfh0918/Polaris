@@ -6,7 +6,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.polaris.container.gateway.pojo.HttpFilterEntity;
 
-public abstract class HttpFilterChain <T extends HttpFilter>{
+import io.netty.handler.codec.http.HttpMessage;
+
+public abstract class HttpFilterChain <T extends HttpFilter<? extends HttpMessage>>{
 	protected List<T> filters = new CopyOnWriteArrayList<>();
     public void add(T filter) {
     	filters.add(filter);

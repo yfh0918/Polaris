@@ -6,10 +6,10 @@ import com.polaris.container.gateway.pojo.HttpFilterMessage;
 import com.polaris.core.component.LifeCycle;
 import com.polaris.core.component.ManagedComponent;
 
+import io.netty.handler.codec.http.HttpMessage;
 import io.netty.handler.codec.http.HttpObject;
-import io.netty.handler.codec.http.HttpRequest;
 
-public abstract class HttpFilter extends ManagedComponent implements HttpFileListener {
+public abstract class HttpFilter<T extends HttpMessage> extends ManagedComponent implements HttpFileListener {
 	protected HttpFilterEntity httpFilterEntity;
 	
     /**
@@ -51,11 +51,11 @@ public abstract class HttpFilter extends ManagedComponent implements HttpFileLis
 	/**
      * httpRequest拦截逻辑
      *
-     * @param originalRequest original request
+     * @param httpMessage     httpRequest or httpResoponse
      * @param httpObject      http请求
      * @param httpMessage     httpFilterMessage
      * @return true:正则匹配成功,false:正则匹配失败
      */
-	public abstract boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpFilterMessage httpFilterMessage);
+	public abstract boolean doFilter(T httpMessage, HttpObject httpObject, HttpFilterMessage httpFilterMessage);
 
 }

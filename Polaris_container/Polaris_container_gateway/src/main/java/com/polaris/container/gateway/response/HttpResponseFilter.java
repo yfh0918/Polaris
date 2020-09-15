@@ -3,13 +3,15 @@ package com.polaris.container.gateway.response;
 import com.polaris.container.gateway.HttpFilter;
 import com.polaris.core.component.LifeCycle;
 
+import io.netty.handler.codec.http.HttpResponse;
+
 /**
  * @author:Tom.Yu
  *
  * Description:
  *
  */
-public abstract class HttpResponseFilter extends HttpFilter {
+public abstract class HttpResponseFilter extends HttpFilter<HttpResponse> {
 	
     /**
      * 构造函数并加入调用链

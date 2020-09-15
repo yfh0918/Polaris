@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import com.polaris.container.gateway.HttpFilter;
 import com.polaris.core.component.LifeCycle;
 
+import io.netty.handler.codec.http.HttpRequest;
+
 /**
  * @author:Tom.Yu
  * <p>
@@ -12,7 +14,7 @@ import com.polaris.core.component.LifeCycle;
  * <p>
  * HTTP Request拦截器抽象类
  */
-public abstract class HttpRequestFilter extends HttpFilter  {
+public abstract class HttpRequestFilter extends HttpFilter<HttpRequest>  {
 	
     /**
      * 构造函数并加入调用链

@@ -46,12 +46,6 @@ public class WebSocketHandlerDefaultImpl implements WebSocketHandler {
             WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
         } else {
             
-            //最大连接数
-            if (WebSocketAdmin.size() > HttpProtocolWebSocket.getRequestMaxNumber()) {
-                WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
-                return;
-            }
-            
             //http filter
             HttpResponse response = filters.clientToProxyRequest(WebSocketSupport.convertParameter(req));
             if (response != null) {
