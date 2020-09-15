@@ -11,12 +11,12 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 
 public class WebSocketAdmin {
 
+    private WebSocketAdmin() {}
     /**
      * 将ctx关联
      * */
     private static final Map<ChannelHandlerContext, WebSocketAdmin> contextMap =
             new ConcurrentHashMap<>();
-
     public static WebSocketAdmin get(ChannelHandlerContext context) {
         return contextMap.get(context);
     }
@@ -66,5 +66,9 @@ public class WebSocketAdmin {
     public WebSocketAdmin setWebSocketClient(WebSocketClient webSocketClient) {
         this.webSocketClient = webSocketClient;
         return this;
+    }
+    
+    public static WebSocketAdmin create() {
+        return new WebSocketAdmin();
     }
 }

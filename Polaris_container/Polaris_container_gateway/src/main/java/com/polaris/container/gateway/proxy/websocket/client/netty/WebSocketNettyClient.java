@@ -1,5 +1,6 @@
 package com.polaris.container.gateway.proxy.websocket.client.netty;
 import java.net.URISyntaxException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +22,16 @@ public class WebSocketNettyClient extends AbstractWebSocketClient{
     private static final Logger log = LoggerFactory.getLogger(WebSocketNettyClientHandler.class);
     private WebSocketStatus status = WebSocketStatus.NOT_YET_CONNECTED;
     private Channel channel;
-    
+    private volatile AtomicBoolean initialized = new AtomicBoolean(false);
     public WebSocketNettyClient(String uri, EventLoopGroup eventLoopGroup, ChannelHandlerContext ctx) throws URISyntaxException {
         super(uri, eventLoopGroup, ctx);
     }
     
     @Override
     public void connect() {
+        if (!initialized.compareAndSet(false, true)) {
+            return;
+        }
         channel = WebSocketNettyConnector.getChannel(uri,eventLoopGroup, this);
         status = WebSocketStatus.OPEN;
     }
@@ -35,6 +39,7 @@ public class WebSocketNettyClient extends AbstractWebSocketClient{
     @Override
     public void close() {
         channel.close();
+        status = WebSocketStatus.CLOSED;
     }
 
     @Override

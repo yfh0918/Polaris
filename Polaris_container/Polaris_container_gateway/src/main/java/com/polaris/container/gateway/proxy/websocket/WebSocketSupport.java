@@ -83,9 +83,10 @@ public class WebSocketSupport {
             for (int i = 0; i < 10 ; i++) {
                 if (client.getState().equals(WebSocketStatus.OPEN)) {
                     handshaker.handshake(ctx.channel(), req);
-                    new WebSocketAdmin().setWebSocketClient(client)
-                              .setWebSocketServerHandshaker(handshaker)
-                              .setChannelHandlerContext(ctx);
+                    WebSocketAdmin.create()
+                                  .setWebSocketClient(client)
+                                  .setWebSocketServerHandshaker(handshaker)
+                                  .setChannelHandlerContext(ctx);
                     return true;
                 }
                 TimeUnit.MILLISECONDS.sleep(200);
