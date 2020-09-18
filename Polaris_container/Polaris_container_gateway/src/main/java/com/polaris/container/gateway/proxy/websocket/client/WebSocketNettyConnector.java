@@ -1,10 +1,9 @@
-package com.polaris.container.gateway.proxy.websocket.client.netty;
+package com.polaris.container.gateway.proxy.websocket.client;
 
 import java.net.URI;
 
 import com.polaris.container.gateway.pojo.HttpProtocolWebSocket;
 import com.polaris.container.gateway.proxy.websocket.WebSocketException;
-import com.polaris.container.gateway.proxy.websocket.client.WebSocketClientListener;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;

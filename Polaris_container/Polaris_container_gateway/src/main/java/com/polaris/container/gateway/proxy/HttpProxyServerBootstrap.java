@@ -116,22 +116,6 @@ public interface HttpProxyServerBootstrap {
 
     /**
      * <p>
-     * Specify a {@link ProxyAuthenticator} to use for doing basic HTTP
-     * authentication of clients.
-     * </p>
-     * 
-     * <p>
-     * Default = null
-     * </p>
-     * 
-     * @param proxyAuthenticator
-     * @return
-     */
-    HttpProxyServerBootstrap withProxyAuthenticator(
-            ProxyAuthenticator proxyAuthenticator);
-
-    /**
-     * <p>
      * Specify a {@link HttpFiltersSource} to use for filtering requests and/or
      * responses through this proxy.
      * </p>

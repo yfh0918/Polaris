@@ -11,9 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.HttpConstant;
-import com.polaris.container.gateway.HttpFileReader;
 import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
+import com.polaris.container.gateway.util.FileReaderUtil;
 import com.polaris.container.gateway.util.RequestUtil;
 
 import io.netty.buffer.Unpooled;
@@ -39,7 +39,7 @@ public class HttpPostRequestFilter extends HttpRequestFilter {
 		//0-file
 		if (file == httpFilterEntity.getFiles()[0]) {
 			Set<Pattern> tempPatterns = new HashSet<>();
-			for (String conf : HttpFileReader.getData(file.getData())) {
+			for (String conf : FileReaderUtil.getDataSet(file.getData())) {
 				tempPatterns.add(Pattern.compile(conf));
 			}
 			patterns0 = tempPatterns;
@@ -47,7 +47,7 @@ public class HttpPostRequestFilter extends HttpRequestFilter {
 		} else {
 			//1-file
 			Set<Pattern> tempPatterns = new HashSet<>();
-			for (String conf : HttpFileReader.getData(file.getData())) {
+			for (String conf : FileReaderUtil.getDataSet(file.getData())) {
 				tempPatterns.add(Pattern.compile(conf));
 			}
 			patterns1 = tempPatterns;

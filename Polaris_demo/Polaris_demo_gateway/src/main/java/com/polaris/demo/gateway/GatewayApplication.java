@@ -24,11 +24,11 @@ public class GatewayApplication {
     		@Override
     		public void started(LifeCycle event) {
     		    //HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpPostRequestFilter(), 22,new HttpFile("gw_post.txt"),new HttpFile("gw_file.txt")));
-                HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpDegradeRequestFilter(), 1,new HttpFile("gw_degrade.txt")));
-                HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpDegradeRequestFilter(), 1,new HttpFile("gw_degrade.txt")));
+//                HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpDegradeRequestFilter(), 1,new HttpFile("gw_degrade.txt")));
+//                HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpDegradeRequestFilter(), 1,new HttpFile("gw_degrade.txt")));
                 //HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpCCRequestFilter(), 8,new HttpFile("gw_cc.txt")));
-                HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpTokenRequestFilter(), 24,new HttpFile("gw_token.txt")));
-                HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpTokenResponseFilter(), 0));
+//                HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpTokenRequestFilter(), 24,new HttpFile("gw_token.txt")));
+//                HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpTokenResponseFilter(), 0));
     		}
     	});
     }

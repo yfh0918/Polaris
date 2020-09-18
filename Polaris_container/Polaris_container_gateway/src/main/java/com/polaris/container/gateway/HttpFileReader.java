@@ -1,13 +1,9 @@
 package com.polaris.container.gateway;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.pojo.HttpFile;
-import com.polaris.core.Constant;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.provider.ConfHandlerFactory;
 import com.polaris.core.config.reader.launcher.ConfLauncherReaderStrategyFactory;
@@ -42,20 +38,5 @@ public class HttpFileReader {
 				logger.info("file:{} type:{} is updated",file.getName(),file.getType());
 			}
     	});
-    }
-
-    public static Set<String> getData(String content) {
-        Set<String> data = new LinkedHashSet<>();
-        if  (StringUtil.isNotEmpty(content)) {
-            String[] contents = content.split(Constant.LINE_SEP);
-            for (String conf : contents) {
-                if (StringUtil.isNotEmpty(conf)) {
-                    conf = conf.replace(Constant.NEW_LINE, Constant.EMPTY).trim();
-                    conf = conf.replace(Constant.RETURN, Constant.EMPTY).trim();
-                    data.add(conf);
-                }
-            }
-        }
-        return data;
     }
 }

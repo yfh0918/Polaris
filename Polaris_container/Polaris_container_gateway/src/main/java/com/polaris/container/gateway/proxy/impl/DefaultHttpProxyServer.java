@@ -24,7 +24,6 @@ import com.polaris.container.gateway.proxy.HttpFiltersSource;
 import com.polaris.container.gateway.proxy.HttpFiltersSourceAdapter;
 import com.polaris.container.gateway.proxy.HttpProxyServer;
 import com.polaris.container.gateway.proxy.HttpProxyServerBootstrap;
-import com.polaris.container.gateway.proxy.ProxyAuthenticator;
 import com.polaris.container.gateway.proxy.SslEngineSource;
 import com.polaris.container.gateway.proxy.TransportProtocol;
 import com.polaris.container.gateway.proxy.UnknownTransportProtocolException;
@@ -104,7 +103,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
     private volatile InetSocketAddress localAddress;
     private volatile InetSocketAddress boundAddress;
     private final SslEngineSource sslEngineSource;
-    private final ProxyAuthenticator proxyAuthenticator;
     private final HttpFiltersSource filtersSource;
     private final boolean transparent;
     private volatile int connectTimeout;
@@ -221,7 +219,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
             TransportProtocol transportProtocol,
             InetSocketAddress requestedAddress,
             SslEngineSource sslEngineSource,
-            ProxyAuthenticator proxyAuthenticator,
             HttpFiltersSource filtersSource,
             boolean transparent,
             int idleConnectionTimeout,
@@ -239,7 +236,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
         this.transportProtocol = transportProtocol;
         this.requestedAddress = requestedAddress;
         this.sslEngineSource = sslEngineSource;
-        this.proxyAuthenticator = proxyAuthenticator;
         this.filtersSource = filtersSource;
         this.transparent = transparent;
         this.idleConnectionTimeout = idleConnectionTimeout;
@@ -365,8 +361,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
                 new InetSocketAddress(requestedAddress.getAddress(),
                         requestedAddress.getPort() == 0 ? 0 : requestedAddress.getPort() + 1),
                     sslEngineSource,
-                    
-                    proxyAuthenticator,
                     filtersSource,
                     transparent,
                     idleConnectionTimeout,
@@ -473,10 +467,10 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
         //http2 or http1.1 to be continue...
         ChannelInitializer<Channel> initializer = new ChannelInitializer<Channel>() {
             protected void initChannel(Channel ch) throws Exception {
-                new ClientToProxyConnectionWithHttp2(
-                        DefaultHttpProxyServer.this,
-                        sslEngineSource,
-                        ch.pipeline(),
+                ClientToProxyConnectionFactory.create(
+                        DefaultHttpProxyServer.this, 
+                        sslEngineSource, 
+                        ch.pipeline(), 
                         globalTrafficShapingHandler);
             };
         };
@@ -530,10 +524,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
         return sslEngineSource;
     }
 
-    protected ProxyAuthenticator getProxyAuthenticator() {
-        return proxyAuthenticator;
-    }
-
     public HttpFiltersSource getFiltersSource() {
         return filtersSource;
     }
@@ -551,7 +541,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
         return serverGroup.getProxyToServerWorkerPoolForTransport(transportProtocol);
     }
 
-    // TODO: refactor bootstrap into a separate class
     private static class DefaultHttpProxyServerBootstrap implements HttpProxyServerBootstrap {
         private String name = "LittleProxy";
         private ServerGroup serverGroup = null;
@@ -560,7 +549,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
         private int port = 8080;
         private boolean allowLocalOnly = true;
         private SslEngineSource sslEngineSource = null;
-        private ProxyAuthenticator proxyAuthenticator = null;
         private HttpFiltersSource filtersSource = new HttpFiltersSourceAdapter();
         private boolean transparent = false;
         private int idleConnectionTimeout = 70;
@@ -588,7 +576,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
                 TransportProtocol transportProtocol,
                 InetSocketAddress requestedAddress,
                 SslEngineSource sslEngineSource,
-                ProxyAuthenticator proxyAuthenticator,
                 HttpFiltersSource filtersSource,
                 boolean transparent, int idleConnectionTimeout,
                 Collection<ActivityTracker> activityTrackers,
@@ -605,7 +592,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
             this.requestedAddress = requestedAddress;
             this.port = requestedAddress.getPort();
             this.sslEngineSource = sslEngineSource;
-            this.proxyAuthenticator = proxyAuthenticator;
             this.filtersSource = filtersSource;
             this.transparent = transparent;
             this.idleConnectionTimeout = idleConnectionTimeout;
@@ -687,13 +673,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
         public HttpProxyServerBootstrap withSslEngineSource(
                 SslEngineSource sslEngineSource) {
             this.sslEngineSource = sslEngineSource;
-            return this;
-        }
-
-        @Override
-        public HttpProxyServerBootstrap withProxyAuthenticator(
-                ProxyAuthenticator proxyAuthenticator) {
-            this.proxyAuthenticator = proxyAuthenticator;
             return this;
         }
 
@@ -798,7 +777,6 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
             return new DefaultHttpProxyServer(serverGroup,
                     transportProtocol, determineListenAddress(),
                     sslEngineSource, 
-                    proxyAuthenticator,
                     filtersSource, transparent,
                     idleConnectionTimeout, activityTrackers, connectTimeout,
                     serverResolver, readThrottleBytesPerSecond, writeThrottleBytesPerSecond,

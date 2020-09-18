@@ -132,6 +132,9 @@ public class HttpServerConfigReader implements HttpFileListener , ConfEndPoint{
                 }
                 HttpHtml.setHtmlSupportMap(htmlSupportMap);
             }
+            if (htmlMap.containsKey("cacheTime")) {
+                HttpHtml.setCacheTime(htmlMap.get("cacheTime").toString());
+            }
         }
     }
     

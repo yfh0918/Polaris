@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class HttpHtml {
     private static Map<String, String> defaultContentTypeMap = new HashMap<>();
+    private static int cacheTime = 60;
     static {
         defaultContentTypeMap.put("js", "application/javascript");
         defaultContentTypeMap.put("css", "text/css");
@@ -31,5 +32,15 @@ public class HttpHtml {
             htmlSupportMap.putIfAbsent(entry.getKey(), entry.getValue());
         }
         HttpHtml.htmlSupportMap = htmlSupportMap;
+    }
+    
+    public static void setCacheTime(String cacheTime) {
+        try {
+            HttpHtml.cacheTime = Integer.parseInt(cacheTime);
+        } catch (Exception ex) {}
+    }
+    
+    public static int getCacheTime() {
+        return HttpHtml.cacheTime; 
     }
 }

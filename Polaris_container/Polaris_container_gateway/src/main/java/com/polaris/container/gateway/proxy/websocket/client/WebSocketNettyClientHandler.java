@@ -1,9 +1,7 @@
-package com.polaris.container.gateway.proxy.websocket.client.netty;
+package com.polaris.container.gateway.proxy.websocket.client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.polaris.container.gateway.proxy.websocket.client.WebSocketClientListener;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -79,7 +77,7 @@ public class WebSocketNettyClientHandler extends SimpleChannelInboundHandler<Obj
     
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.debug("exceptionCaught trigger onClose",cause);
+        log.error("exceptionCaught trigger onClose",cause);
         clientListener.onClose(null);
     }
 }

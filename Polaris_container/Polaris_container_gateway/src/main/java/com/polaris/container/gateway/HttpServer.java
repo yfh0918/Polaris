@@ -15,9 +15,9 @@ import com.polaris.container.gateway.proxy.FlowContext;
 import com.polaris.container.gateway.proxy.HttpFilters;
 import com.polaris.container.gateway.proxy.HttpFiltersSourceAdapter;
 import com.polaris.container.gateway.proxy.HttpProxyServerBootstrap;
-import com.polaris.container.gateway.proxy.extras.SslEngineSourceFactory;
 import com.polaris.container.gateway.proxy.impl.DefaultHttpProxyServer;
 import com.polaris.container.gateway.proxy.impl.ThreadPoolConfiguration;
+import com.polaris.container.gateway.proxy.tls.SslEngineSourceFactory;
 import com.polaris.container.util.NetUtils;
 import com.polaris.core.config.ConfClient;
 

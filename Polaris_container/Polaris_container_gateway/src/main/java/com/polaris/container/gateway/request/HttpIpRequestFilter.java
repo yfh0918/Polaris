@@ -7,9 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.HttpConstant;
-import com.polaris.container.gateway.HttpFileReader;
 import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
+import com.polaris.container.gateway.util.FileReaderUtil;
 
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
@@ -27,7 +27,7 @@ public class HttpIpRequestFilter extends HttpRequestFilter {
 
 	@Override
 	public void onChange(HttpFile file) {
-		ipSet = HttpFileReader.getData(file.getData());
+		ipSet = FileReaderUtil.getDataSet(file.getData());
 	}
 	
     @Override

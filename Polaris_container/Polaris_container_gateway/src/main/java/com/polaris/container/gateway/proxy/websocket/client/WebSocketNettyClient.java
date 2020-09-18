@@ -1,4 +1,4 @@
-package com.polaris.container.gateway.proxy.websocket.client.netty;
+package com.polaris.container.gateway.proxy.websocket.client;
 import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.proxy.websocket.WebSocketAdmin;
 import com.polaris.container.gateway.proxy.websocket.WebSocketStatus;
-import com.polaris.container.gateway.proxy.websocket.client.AbstractWebSocketClient;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;

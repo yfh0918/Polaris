@@ -67,12 +67,11 @@ import io.netty.handler.codec.http2.HttpConversionUtil;
 import io.netty.util.CharsetUtil;
 import io.netty.util.ReferenceCountUtil;
 
-public class ClientToProxyConnectionBefore extends SimpleChannelInboundHandler<HttpRequest> {
-    public static final String NAME = ClientToProxyConnectionBefore.class.getSimpleName();
+public class ClientToProxyConnectionPre extends SimpleChannelInboundHandler<HttpRequest> {
+    public static final String NAME = ClientToProxyConnectionPre.class.getSimpleName();
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
-    public static final int HTTP_CACHE_SECONDS = 60;
-
+    
     private HttpRequestWrapper request;
 
     @Override
@@ -87,50 +86,24 @@ public class ClientToProxyConnectionBefore extends SimpleChannelInboundHandler<H
         HostAndPort hostAndPort = HttpProtocol.getHostAndPort(serverHostAndPort);
         String host = hostAndPort.getHost();
 
-        HttpProxy httpProxy = null;
-        HttpProxy defaultHttpProxy = null;
-        List<HttpProxy> proxyList = HttpProxy.getServerNameMap().get(host);
-        if (proxyList != null) {
-            for (HttpProxy proxy : proxyList) {
-                if (proxy.getContext().equals(HttpConstant.SLASH)) {
-                    defaultHttpProxy = proxy;
-                    continue;
-                }
-                if (request.uri().startsWith(proxy.getContext())) {
-                    httpProxy = proxy;
-                    break;
-                }
-            }
-        }
+        //select httpProxy
+        HttpProxy httpProxy = selectHttpProxy(ctx, request, host);
         if (httpProxy == null) {
-            if (defaultHttpProxy == null) {
-                pageError(ctx, "host:"+host+",uri:"+request.uri() + " is not found");
-                return;
-            }
-            httpProxy = defaultHttpProxy;
+            return;
         }
         
-        //wrapper request
-        HttpRequestWrapper requestWrapper = new HttpRequestWrapper(request);
-        requestWrapper.setContext(httpProxy.getContext());
-        requestWrapper.setHostAndPort(hostAndPort);
-        requestWrapper.setHttpProxy(httpProxy);
-        requestWrapper.setOrgUri(request.uri());
-        requestWrapper.setServerHostAndPort(serverHostAndPort);
-        request.setUri((requestWrapper.getOrgUri().replaceFirst(httpProxy.getContext(), httpProxy.getRewrite())).replace("//", "/")); 
+        //create wrapper request
+        this.request = wrapHttpRequest(request, httpProxy, hostAndPort, serverHostAndPort);
 
         //is it html file?
-        this.request = requestWrapper;
         if (StringUtil.isNotEmpty(httpProxy.getRoot()) && StringUtil.isNotEmpty(httpProxy.getIndex())) {
             channelReadHtml(ctx);
         } else {
-            channelReadApi(ctx);
+            
+            //next channel 
+            ReferenceCountUtil.retain(this.request.getOrgHttpRequest());
+            ctx.fireChannelRead(this.request);
         }
-    }
-    
-    private void channelReadApi(ChannelHandlerContext ctx) {
-        ReferenceCountUtil.retain(request.getOrgHttpRequest());
-        ctx.fireChannelRead(request); 
     }
     
     private void channelReadHtml(ChannelHandlerContext ctx) throws Exception {
@@ -371,9 +344,9 @@ public class ClientToProxyConnectionBefore extends SimpleChannelInboundHandler<H
         response.headers().set(HttpHeaderNames.DATE, dateFormatter.format(time.getTime()));
 
         // Add cache headers
-        time.add(Calendar.SECOND, HTTP_CACHE_SECONDS);
+        time.add(Calendar.SECOND, HttpHtml.getCacheTime());
         response.headers().set(HttpHeaderNames.EXPIRES, dateFormatter.format(time.getTime()));
-        response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, max-age=" + HTTP_CACHE_SECONDS);
+        response.headers().set(HttpHeaderNames.CACHE_CONTROL, "private, max-age=" + HttpHtml.getCacheTime());
         response.headers().set(
                 HttpHeaderNames.LAST_MODIFIED, dateFormatter.format(new Date(fileToCache.lastModified())));
     }
@@ -393,7 +366,6 @@ public class ClientToProxyConnectionBefore extends SimpleChannelInboundHandler<H
         }
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
     }
-
     
     private HttpResponse addHttp2StreamId(HttpResponse response) {
         if (response == null) {
@@ -406,5 +378,43 @@ public class ClientToProxyConnectionBefore extends SimpleChannelInboundHandler<H
             }
         } catch (Exception ex) {}
         return response;
+    }
+    
+    private HttpProxy selectHttpProxy(ChannelHandlerContext ctx, HttpRequest request, String host) throws Exception {
+        HttpProxy httpProxy = null;
+        HttpProxy defaultHttpProxy = null;
+        List<HttpProxy> proxyList = HttpProxy.getServerNameMap().get(host);
+        if (proxyList != null) {
+            for (HttpProxy proxy : proxyList) {
+                if (proxy.getContext().equals(HttpConstant.SLASH)) {
+                    defaultHttpProxy = proxy;
+                    continue;
+                }
+                if (request.uri().startsWith(proxy.getContext())) {
+                    httpProxy = proxy;
+                    break;
+                }
+            }
+        }
+        if (httpProxy == null) {
+            if (defaultHttpProxy == null) {
+                pageError(ctx, "host:"+host+",uri:"+request.uri() + " is not found");
+                return null;
+            }
+            httpProxy = defaultHttpProxy;
+        }
+        return httpProxy;
+    }
+    
+    private HttpRequestWrapper wrapHttpRequest(HttpRequest request, 
+            HttpProxy httpProxy, HostAndPort hostAndPort, String serverHostAndPort) {
+        HttpRequestWrapper requestWrapper = new HttpRequestWrapper(request);
+        requestWrapper.setContext(httpProxy.getContext());
+        requestWrapper.setHostAndPort(hostAndPort);
+        requestWrapper.setHttpProxy(httpProxy);
+        requestWrapper.setOrgUri(request.uri());
+        requestWrapper.setServerHostAndPort(serverHostAndPort);
+        request.setUri((requestWrapper.getOrgUri().replaceFirst(httpProxy.getContext(), httpProxy.getRewrite())).replace("//", "/")); 
+        return requestWrapper;
     }
 }

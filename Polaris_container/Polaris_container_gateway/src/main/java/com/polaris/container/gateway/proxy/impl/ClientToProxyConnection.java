@@ -658,15 +658,15 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequestWrapper>
                 new IdleStateHandler(0, 0, proxyServer
                         .getIdleConnectionTimeout()));
         pipeline.addLast("chunkedWriteHandler", new ChunkedWriteHandler());
-        pipeline.addLast(ClientToProxyConnectionBefore.NAME, new ClientToProxyConnectionBefore());
-        if (HttpCors.isEnable()) {
-            createCorsHandler(pipeline);
-        }
+        pipeline.addLast(ClientToProxyConnectionPre.NAME, new ClientToProxyConnectionPre());
+        createCorsHandler(pipeline);//cors
         pipeline.addLast("handler", this);
     }
     
     private void createCorsHandler(ChannelPipeline pipeline) {
-        
+        if (!HttpCors.isEnable()) {
+            return;
+        }        
         //orgin
         String[] allowOrigin = new String[HttpCors.getAllowOrigin().size()];
         HttpCors.getAllowOrigin().toArray(allowOrigin);

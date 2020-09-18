@@ -29,10 +29,10 @@ import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.RateLimiter;
 import com.polaris.container.gateway.HttpConstant;
-import com.polaris.container.gateway.HttpFileReader;
 import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
 import com.polaris.container.gateway.request.HttpRequestFilter;
+import com.polaris.container.gateway.util.FileReaderUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.pojo.KeyValuePair;
 import com.polaris.core.pojo.Result;
@@ -127,7 +127,7 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
     	
     	Set<String> tempCcSkipIp = new HashSet<>();
     	Set<String> tempCcSkipUrl = new HashSet<>();
-    	for (String conf : HttpFileReader.getData(file.getData())) {
+    	for (String conf : FileReaderUtil.getDataSet(file.getData())) {
     		KeyValuePair kv = PropertyUtil.getKVPair(conf);
 			if (kv != null) {
 	    		// skip.ip

@@ -2,8 +2,6 @@ package com.polaris.container.gateway.proxy.websocket.client;
 
 import java.lang.reflect.Constructor;
 
-import com.polaris.container.gateway.proxy.websocket.client.netty.WebSocketNettyClient;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.EventLoopGroup;
 
