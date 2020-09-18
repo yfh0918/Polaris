@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--设置log4j2的自身log级别为warn -->
+<configuration status="warn">
+    <properties>
+        <Property name="log_path">/usr/gaorong/application/logs/taillog</Property>
+    </properties>
+    <appenders>
+        <console name="Console" target="SYSTEM_OUT">
+            <Filters>
+                <ThresholdFilter level="INFO"/>
+                <ThresholdFilter level="OFF" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss a} [Thread: %t] [%p] [%l]:%m%n"/>
+        </console>
+
+        <RollingFile name="RollingFileInfo" fileName="${log_path}/info.log"
+                     filePattern="${log_path}/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log.gz">
+            <Filters>
+                <ThresholdFilter level="INFO"/>
+                <ThresholdFilter level="OFF" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss a} [Thread: %t] [%p] [%l]:%m%n"/>
+            <Policies>
+                <!-- 归档每天的文件 -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <!-- 限制单个文件大小 -->
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+            <!-- 限制每天文件个数 -->
+            <DefaultRolloverStrategy compressionLevel="0" max="10">
+                <Delete basePath="${log_path}/$${date:yyyy-MM-dd}/" maxDepth="2">
+                    <IfFileName glob="*.log.gz" />
+                    <!--!Note: 这里的age必须和filePattern协调, 后者是精确到HH, 这里就要写成xH, xd就不起作用
+                    另外, 数字最好>2, 否则可能造成删除的时候, 最近的文件还处于被占用状态,导致删除不成功!-->
+                    <!--7天-->
+                    <IfLastModified age="7d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+        <RollingFile name="RollingFileWarn" fileName="${log_path}/warn.log"
+                     filePattern="${log_path}/$${date:yyyy-MM}/warn-%d{yyyy-MM-dd}-%i.log.gz">
+            <Filters>
+                <ThresholdFilter level="WARN"/>
+                <ThresholdFilter level="OFF" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss a} [Thread: %t] [%p] [%l]:%m%n"/>
+            <Policies>
+                <!-- 归档每天的文件 -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <!-- 限制单个文件大小 -->
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+            <!-- 限制每天文件个数 -->
+            <DefaultRolloverStrategy compressionLevel="0" max="10"/>
+        </RollingFile>
+
+
+
+        <!-- 配置mongdb appender -->
+    </appenders>
+
+    <loggers>
+        <root level="info">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="RollingFileInfo"/>
+            <appender-ref ref="RollingFileWarn"/>
+        </root>
+
+    </loggers>
+
+</configuration>

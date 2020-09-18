@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+   <parent>
+        <groupId>com.polaris</groupId>
+        <artifactId>Polaris_parent</artifactId>
+        <version>1.5.4</version>
+    </parent>
+    <groupId>com.polaris</groupId>
+    <artifactId>polarisVedio</artifactId>
+    <version>1.0.0</version>
+    <name>polarisVedio</name>
+    <description>polarisVedio</description>
+    
+    <dependencies>
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_container_launcher</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_container_springboot</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_naming_nacos</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_conf_nacos</artifactId>
+        </dependency>        
+
+        <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>5.6.0</version>
+        </dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.bytedeco/javacpp -->
+		<dependency>
+		    <groupId>org.bytedeco</groupId>
+		    <artifactId>javacpp</artifactId>
+		    <version>1.5.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.bytedeco/javacv -->
+		<dependency>
+		    <groupId>org.bytedeco</groupId>
+		    <artifactId>javacv</artifactId>
+		    <version>1.5.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.bytedeco/javacv-platform -->
+		<dependency>
+		    <groupId>org.bytedeco</groupId>
+		    <artifactId>javacv-platform</artifactId>
+		    <version>1.5.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.bytedeco/javacpp-platform -->
+		<dependency>
+		    <groupId>org.bytedeco</groupId>
+		    <artifactId>javacpp-platform</artifactId>
+		    <version>1.5.4</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/xuggle/xuggle-xuggler -->
+		<dependency>
+		    <groupId>xuggle</groupId>
+		    <artifactId>xuggle-xuggler</artifactId>
+		    <version>5.4</version>
+		</dependency>
+
+    </dependencies>
+    
+    <build>
+    
+        <resources>
+            <!--这里是将[directory]目录下面的[includes]中设定的所有配置打包进 [targetPath]这个里面去 -->
+            <resource>
+                <targetPath>${project.build.directory}/classes</targetPath>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <excludes>
+			        <exclude>**/*.dll</exclude>
+			        <exclude>**/*.so</exclude>
+			    </excludes>
+            </resource>
+            
+            
+			<resource>
+			    <directory>src/main/resources</directory>
+			    <filtering>false</filtering>
+			    <includes>
+			        <include>**/*.dll</include>
+			        <include>**/*.so</include>
+			    </includes>
+			</resource>
+
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+            </plugin>
+        </plugins>
+        <finalName>polarisVedio</finalName>
+    </build>
+
+</project>
