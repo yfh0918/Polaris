@@ -24,11 +24,7 @@
         </dependency>
         <dependency>
             <groupId>com.polaris</groupId>
-            <artifactId>Polaris_naming_nacos</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.polaris</groupId>
-            <artifactId>Polaris_conf_nacos</artifactId>
+            <artifactId>Polaris_conf_file</artifactId>
         </dependency>        
 
         <!-- https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform -->
