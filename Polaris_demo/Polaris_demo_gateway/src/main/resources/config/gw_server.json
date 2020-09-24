@@ -21,7 +21,7 @@
             "enable":"false"
         },
         "websocket":{
-            "maxFramePayloadLength":"6553600",
+            "maxFramePayloadLength":"65536000",
             "idleTimeout":"600"
         }
     },
