@@ -237,10 +237,8 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequestWrapper>
             }
         }
         
-
-        String strRemoteAddress = remoteAddress.toString();
-        LOG.debug("Finding ProxyToServerConnection remoteAddress for :{}, serverHostAndPort for: {}", strRemoteAddress, serverHostAndPort);
-        currentServerConnection = this.serverConnectionsMap.get(remoteAddress.toString());
+        LOG.debug("Finding ProxyToServerConnection remoteAddress for :{}, serverHostAndPort for: {}", remoteAddress.toString(), serverHostAndPort);
+        currentServerConnection = this.serverConnectionsMap.get(remoteAddress);
         if (currentServerConnection == null) {
             try {
                 currentServerConnection = ProxyToServerConnection.create(
@@ -508,7 +506,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequestWrapper>
         // the connection to the server failed, so disconnect the server and remove the ProxyToServerConnection from the
         // map of open server connections
         serverConnection.disconnect();
-        this.serverConnectionsMap.remove(serverConnection.getRemoteAddress().toString());
+        this.serverConnectionsMap.remove(serverConnection.getRemoteAddress());
         boolean keepAlive = writeBadGateway(initialRequest);
         if (keepAlive) {
             become(AWAITING_INITIAL);

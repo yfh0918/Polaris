@@ -54,7 +54,6 @@ public class HttpServer extends SpringContextServer{
         threadPoolConfiguration.withAcceptorThreads(HttpConstant.AcceptorThreads);
         threadPoolConfiguration.withClientToProxyWorkerThreads(HttpConstant.ClientToProxyWorkerThreads);
         threadPoolConfiguration.withProxyToServerWorkerThreads(HttpConstant.ProxyToServerWorkerThreads);
-
         inetSocketAddress = new InetSocketAddress(Integer.parseInt(ConfClient.get("server.port")));
         httpProxyServerBootstrap = DefaultHttpProxyServer.bootstrap()
                 .withAddress(inetSocketAddress);
@@ -95,7 +94,7 @@ public class HttpServer extends SpringContextServer{
                 .withFiltersSource(new HttpFiltersSourceAdapter() {
                     @Override
                     public HttpFilters filterRequest(HttpRequest originalRequest, ChannelHandlerContext ctx) {
-                        return HttpFilterAdapterFactory.get(originalRequest, ctx);
+                        return HttpFilterAdapterFactory.create(originalRequest, ctx);
                     }
                 }).start();
         logger.info("Gateway started on port(s) " + inetSocketAddress.getPort() + " with context path '/'");

@@ -7,7 +7,7 @@ import io.netty.handler.codec.http.HttpRequest;
 
 public class HttpFilterAdapterFactory {
 
-    public synchronized static HttpFilters get(HttpRequest originalRequest, ChannelHandlerContext ctx) {
+    public synchronized static HttpFilters create(HttpRequest originalRequest, ChannelHandlerContext ctx) {
         return new HttpFilterAdapterImpl(originalRequest,ctx);
     }
 }
