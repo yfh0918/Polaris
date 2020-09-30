@@ -10,13 +10,13 @@ import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpHtml;
 import com.polaris.container.gateway.pojo.HttpProtocol;
 import com.polaris.container.gateway.pojo.HttpProxy;
-import com.polaris.core.config.ConfEndPoint;
+import com.polaris.core.component.Initial;
 import com.polaris.core.util.JacksonUtil;
 import com.polaris.core.util.StringUtil;
 
 import io.netty.handler.codec.http.HttpMethod;
 
-public class HttpServerConfigReader implements HttpFileListener , ConfEndPoint{
+public class HttpServerConfigReader implements HttpFileListener , Initial{
     public static final String NAME = "gw_server.json";
     
     @Override

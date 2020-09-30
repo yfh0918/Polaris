@@ -29,8 +29,6 @@ public class HttpServer extends SpringContextServer{
 	
 	private static Logger logger = LoggerFactory.getLogger(HttpServer.class);
 	
-	private InetSocketAddress inetSocketAddress;
-	
 	/**
      * 服务器
      */
@@ -54,7 +52,7 @@ public class HttpServer extends SpringContextServer{
         threadPoolConfiguration.withAcceptorThreads(HttpConstant.AcceptorThreads);
         threadPoolConfiguration.withClientToProxyWorkerThreads(HttpConstant.ClientToProxyWorkerThreads);
         threadPoolConfiguration.withProxyToServerWorkerThreads(HttpConstant.ProxyToServerWorkerThreads);
-        inetSocketAddress = new InetSocketAddress(Integer.parseInt(ConfClient.get("server.port")));
+        InetSocketAddress inetSocketAddress = new InetSocketAddress(Integer.parseInt(ConfClient.get("server.port")));
         httpProxyServerBootstrap = DefaultHttpProxyServer.bootstrap()
                 .withAddress(inetSocketAddress);
         httpProxyServerBootstrap.withServerResolver(HttpResolverFactory.get())

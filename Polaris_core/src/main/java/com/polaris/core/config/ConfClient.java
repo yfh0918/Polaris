@@ -5,7 +5,7 @@ import java.util.Properties;
 import com.polaris.core.Constant;
 import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.Config.Type;
-import com.polaris.core.config.provider.ConfEndPointProxy;
+import com.polaris.core.config.provider.ConfigChangeListenerProxy;
 import com.polaris.core.config.provider.ConfHandlerFactory;
 import com.polaris.core.util.AppNameUtil;
 
@@ -37,10 +37,9 @@ public class ConfClient implements ConfigChangeListener{
 	* @since 
 	*/
 	public static void init() {
-	    ConfHandlerFactory.getOrCreate(Type.SYS, INSTANCE, ConfEndPointProxy.INSTANCE).init();
-        ConfHandlerFactory.getOrCreate(Type.EXT, INSTANCE, ConfEndPointProxy.INSTANCE).init();
-        ConfHandlerFactory.getOrCreate(Type.GBL, INSTANCE, ConfEndPointProxy.INSTANCE).init();
-        ConfEndPointProxy.INSTANCE.init();
+	    ConfHandlerFactory.getOrCreate(Type.SYS, INSTANCE, ConfigChangeListenerProxy.INSTANCE).init();
+        ConfHandlerFactory.getOrCreate(Type.EXT, INSTANCE, ConfigChangeListenerProxy.INSTANCE).init();
+        ConfHandlerFactory.getOrCreate(Type.GBL, INSTANCE, ConfigChangeListenerProxy.INSTANCE).init();
 	}
 	
 	/**

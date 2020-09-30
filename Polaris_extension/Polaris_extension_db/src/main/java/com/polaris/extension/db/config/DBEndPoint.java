@@ -3,11 +3,11 @@ package com.polaris.extension.db.config;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.polaris.core.config.ConfEndPoint;
 import com.polaris.core.config.Config.Opt;
+import com.polaris.core.config.ConfigChangeListener;
 import com.polaris.core.util.StringUtil;
 
-public class DBEndPoint implements ConfEndPoint {
+public class DBEndPoint implements ConfigChangeListener {
 	
 	private static List<String> nameList = new ArrayList<>();
 	private static String endfix = ".url";

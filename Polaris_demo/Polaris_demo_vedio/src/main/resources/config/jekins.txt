@@ -1,0 +1,32 @@
+https://cloud.tencent.com/developer/article/1100102
+node{
+    def workspace = pwd()
+    def remote = [:]
+    remote.name = 'pudong'
+    remote.host = '192.168.1.2'
+    remote.user = 'root'
+    remote.password = 'xxx'
+    remote.allowAnyHosts = true
+
+    stage('clean workspace'){
+        echo "$workspace"
+        cleanWs()
+    }
+    stage('pull'){
+
+       git branch: '1.2.0', credentialsId: 'gitlab-xxx', url: 'http://192.168.1.2/test/test.git'
+
+    }
+    stage('package'){
+      withMaven(maven: 'maven3') {
+             sh "mvn clean package -U -Dmaven.test.skip=true"
+      }
+    }
+    stage('deploy'){
+      sshCommand remote: remote, command: "rm -rf /usr/xx/application/yy/*"
+      sshPut remote: remote, from: 'yy/target/test-bin.zip', into: '/usr/xx/application/yy'
+      sshCommand remote: remote, command: "cd /usr/xx/application/yy/;unzip test-bin.zip;mv yy/* ./" 
+      sshCommand remote: remote, command: "cd /usr/xx/application;sh killprocess.sh -n banyan2C"
+      sshCommand remote: remote, command: "cd /usr/xx/application/yy;source /etc/profile;nohup java -XX:+UseG1GC -Xmx1g -XX:MaxGCPauseMillis=200  -jar  test.jar > log.txt &"
+    }
+}

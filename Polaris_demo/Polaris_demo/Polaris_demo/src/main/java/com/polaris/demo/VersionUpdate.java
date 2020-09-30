@@ -10,10 +10,10 @@ import cn.hutool.core.io.FileUtil;
 
 public final class VersionUpdate {
 	public static void main(String[] args) throws Exception { 
-		String oldChar = "<version>1.5.4</version>";
-		String newChar = "<version>1.5.5</version>";
-		String oldChar2 = "<polaris-version>1.5.4</polaris-version>";
-		String newChar2 = "<polaris-version>1.5.5</polaris-version>";
+		String oldChar = "<version>1.5.5</version>";
+		String newChar = "<version>1.5.6</version>";
+		String oldChar2 = "<polaris-version>1.5.5</polaris-version>";
+		String newChar2 = "<polaris-version>1.5.6</polaris-version>";
 		List<String> scanFiles = new ArrayList<String>();
         scanFilesWithRecursion(scanFiles, "C:\\projects\\mayun\\Polaris", "pom.xml");
         for (String file : scanFiles) {

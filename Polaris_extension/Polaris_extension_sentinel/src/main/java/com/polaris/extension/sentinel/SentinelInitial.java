@@ -1,7 +1,7 @@
 package com.polaris.extension.sentinel;
 
+import com.polaris.core.component.Initial;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.ConfEndPoint;
 import com.polaris.core.util.StringUtil;
 
 /**
@@ -17,7 +17,7 @@ import com.polaris.core.util.StringUtil;
 * @version
 *
 */
-public class SentinelEndPoint implements ConfEndPoint {
+public class SentinelInitial implements Initial {
 	
 	@Override
 	public void init() {

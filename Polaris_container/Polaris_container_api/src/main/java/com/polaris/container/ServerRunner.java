@@ -5,6 +5,7 @@ import com.polaris.container.banner.BannerPrinter;
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.container.listener.ServerListener;
 import com.polaris.container.listener.ServerListenerHelper;
+import com.polaris.core.component.InitialProxy;
 import com.polaris.core.config.ConfClient;
 
 /**
@@ -40,9 +41,12 @@ public abstract class ServerRunner {
     	//各类参数载入
     	ConfClient.init();
     	
-		//载入配置类
+        //全局初始化
+        InitialProxy.INSTANCE.init();
+
+        //载入配置类
 		ConfigurationHelper.init(args, configClass);		
-    	
+        
     	//载入监听器
     	ServerListenerHelper.init(args, serverListeners);
     	

@@ -4,15 +4,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.polaris.core.config.ConfEndPoint;
 import com.polaris.core.config.Config.Opt;
+import com.polaris.core.config.ConfigChangeListener;
 import com.polaris.core.config.properties.ConfigurationProperties.ConfigurationPropertiesBean;
 import com.polaris.core.util.SpringUtil;
 import com.polaris.core.util.StringUtil;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
 
-public class ConfigurationPropertiesEndPoint implements ConfEndPoint{
+public class ConfigurationPropertiesEndPoint implements ConfigChangeListener{
 	private Map<String, Set<ConfigurationPropertiesBean>> benMap = new ConcurrentHashMap<>();
 	
 	@Override
