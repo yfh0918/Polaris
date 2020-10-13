@@ -7,23 +7,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.polaris.core.config.Config;
 
-public enum ConfigDefault implements Config {
+public class ConfigDefault implements Config {
 	
-	SYS(Type.SYS),
-	EXT(Type.EXT),
-	GBL(Type.GBL);
-
-	private Type type;
     private Map<String, Properties> cacheFile = new ConcurrentHashMap<>();
-
-    ConfigDefault(Type type) {
-        this.type = type;
-    }
-    
-    @Override
-    public Type getType() {
-        return type;
-    }
 
 	@Override
     public void put(String file, Properties properties) {

@@ -22,7 +22,7 @@ public class ConfApolloClient {
 	}
 	
 	// 获取文件内容
-	public String getConfig(String fileName, String group) {
+	public String getConfig(String group,String fileName) {
 		String fileFormart = "properties";
 		if (fileName != null && fileName.lastIndexOf(".") > 0) {
 			fileFormart = fileName.substring(fileName.lastIndexOf(".") + 1);
@@ -36,7 +36,7 @@ public class ConfApolloClient {
 	}
 	
 	// 监听需要关注的内容
-	public void addListener(String fileName, String group, ConfHandlerListener listener) {
+	public void addListener(String group,String fileName, ConfHandlerListener listener) {
 		String fileFormart = null;
 		if (fileName != null && fileName.lastIndexOf(".") > 0) {
 			fileFormart = fileName.substring(fileName.lastIndexOf(".") + 1);

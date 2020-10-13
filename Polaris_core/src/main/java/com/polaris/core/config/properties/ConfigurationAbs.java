@@ -10,27 +10,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
-import com.polaris.core.config.Config.Type;
-import com.polaris.core.config.provider.ConfHandlerFactory;
-import com.polaris.core.config.provider.ConfigFactory;
-import com.polaris.core.exception.ConfigException;
-import com.polaris.core.util.StringUtil;
-
 public abstract class ConfigurationAbs implements BeanPostProcessor, PriorityOrdered, ApplicationContextAware, InitializingBean{
     protected <A extends Annotation> A getAnnotation(Object bean, String beanName, Class<A> type) {
         return AnnotatedElementUtils.findMergedAnnotation(bean.getClass(), type);
-    }
-    
-    protected void init(Object bean, String[] files, Type type) {
-        for (String file : files) {
-            if (StringUtil.isNotEmpty(file)) {
-                if (ConfigFactory.get(type).getProperties(file) == null) {
-                    if (ConfHandlerFactory.getOrCreate(type).getAndListen(file,type.getGroup())==null) {
-                        throw new ConfigException("type:"+type.toString()+" file:" + file + " is not exsit");
-                    }
-                } 
-            } 
-        }
     }
     
     @Override

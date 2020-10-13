@@ -11,8 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.core.Ordered;
 
-import com.polaris.core.config.ConfClient;
+import com.polaris.core.config.Config;
+import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.annotation.PolarisConfigurationProperties;
+import com.polaris.core.config.annotation.PolarisMultiConfigurationProperties;
+import com.polaris.core.config.provider.ConfHandlerFactory;
+import com.polaris.core.config.provider.ConfigFactory;
+import com.polaris.core.exception.ConfigException;
 import com.polaris.core.util.BeanUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -23,21 +28,54 @@ public class ConfigurationProperties extends ConfigurationAbs {
 	
 	@Override
 	public int getOrder() {
-		return Ordered.HIGHEST_PRECEDENCE + 3;
+		return Ordered.HIGHEST_PRECEDENCE + 1;
 	}
 
 	@Override
 	public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
-		PolarisConfigurationProperties annotation = getAnnotation(bean, beanName, PolarisConfigurationProperties.class);
-		if (annotation != null) {
-			configBeanSet.add(new ConfigurationPropertiesBean(bean,annotation));
-			bind(bean,annotation);
-		}
+	    PolarisConfigurationProperties annotation = getAnnotation(bean, beanName, PolarisConfigurationProperties.class);
+	     
+	    if (annotation != null) {
+	        postProcessBeforeInitialization0(bean, annotation);
+        } else {
+            PolarisMultiConfigurationProperties annotations = getAnnotation(bean, beanName, PolarisMultiConfigurationProperties.class);
+            if (annotations != null && annotations.value() != null && annotations.value().length > 0) {
+                for (PolarisConfigurationProperties annotationElement : annotations.value()) {
+                    postProcessBeforeInitialization0(bean, annotationElement);
+                }
+            }
+        }
 		return bean;
 	}
 	
+	private void postProcessBeforeInitialization0(Object bean, PolarisConfigurationProperties annotation) {
+	    init(bean,annotation);
+        configBeanSet.add(new ConfigurationPropertiesBean(bean,annotation));
+        bind(bean,annotation);
+	}
+	
+	private void init(Object bean, PolarisConfigurationProperties annotation) {
+        if (StringUtil.isNotEmpty(annotation.value())) {
+            if (ConfigFactory.get(Type.EXT).getProperties(getPropertiesKey(annotation)) == null) {
+                if (annotation.autoRefreshed()) {
+                    if (ConfHandlerFactory.get(Type.EXT).getAndListen(annotation.group(),annotation.value())==null) {
+                        throw new ConfigException("type:EXT file:" + getPropertiesKey(annotation) + " is not exsit");
+                    }
+                } else {
+                    if (ConfHandlerFactory.get(Type.EXT).get(annotation.group(),annotation.value())==null) {
+                        throw new ConfigException("type:EXT file:" + getPropertiesKey(annotation) + " is not exsit");
+                    }
+                }
+                
+            } 
+        } 
+    }
+	
 	protected void bind(Object bean, PolarisConfigurationProperties annotation) {
-		Properties properties = ConfClient.get();
+	    if (!annotation.bind()) {
+	        return;
+	    }
+	    Properties properties = ConfigFactory.get(Type.EXT).getProperties(getPropertiesKey(annotation));
 		Map<String, String> bindMap = new LinkedHashMap<>();
 		if (StringUtil.isNotEmpty(annotation.prefix())) {
 			for (Map.Entry<Object, Object> entry : properties.entrySet()) {
@@ -56,6 +94,10 @@ public class ConfigurationProperties extends ConfigurationAbs {
 		} catch (Exception ex) {
 			logger.error("ERROR:",ex);
 		}
+	}
+	
+	private String getPropertiesKey(PolarisConfigurationProperties annotation) {
+	    return Config.merge(annotation.group(), annotation.value());
 	}
 
 	protected Set<ConfigurationPropertiesBean> getConfigBeanSet() {

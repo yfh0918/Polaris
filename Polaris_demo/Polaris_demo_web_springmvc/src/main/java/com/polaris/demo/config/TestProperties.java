@@ -5,7 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.polaris.core.config.annotation.PolarisConfigurationProperties;
 
-@PolarisConfigurationProperties(prefix="test",ext="testP.properties")
+@PolarisConfigurationProperties(prefix="test",value="testP.properties",bind=true)
 @JsonIgnoreProperties(value = { "$$beanFactory"})
 public class TestProperties {
 	private String address1;

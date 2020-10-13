@@ -1,14 +1,12 @@
 package com.polaris.core.config;
 
-import com.polaris.core.component.Initial;
-
 /**
 * 第三方扩展包接口
 * {@link}Polaris_conf_nacos
 * {@link}Polaris_conf_zk
 * {@link}Polaris_conf_file
 */
-public interface ConfHandler extends Initial{
+public interface ConfHandler {
     
     /**
      * 监听指定文件-第三方扩展包，Polaris_conf_nacos，Polaris_conf_zk，Polaris_conf_file等等
@@ -19,7 +17,7 @@ public interface ConfHandler extends Initial{
      * @Exception 
      * @since 
      */
-	default void listen(String fileName, String group, ConfHandlerListener listener) {}
+	default void listen(String group, String fileName, ConfHandlerListener listener) {}
 	
     /**
      * 获取文件内容-第三方扩展包，Polaris_conf_nacos，Polaris_conf_zk，Polaris_conf_file等等
@@ -29,7 +27,7 @@ public interface ConfHandler extends Initial{
      * @Exception 
      * @since 
      */
-	default String get(String fileName, String group) {return null;}
+	default String get(String group, String fileName) {return null;}
 	
 	/**
      * 获取+监听文件内容-第三方扩展包，Polaris_conf_nacos，Polaris_conf_zk，Polaris_conf_file等等
@@ -40,11 +38,11 @@ public interface ConfHandler extends Initial{
      * @Exception 
      * @since 
      */
-    default String getAndListen(String fileName, String group, ConfHandlerListener... listeners) {
-        String result = get(fileName,group);
+    default String getAndListen(String group, String fileName, ConfHandlerListener... listeners) {
+        String result = get(group,fileName);
         if (listeners != null) {
             for (ConfHandlerListener listener: listeners) {
-                listen(fileName,group,listener);
+                listen(group,fileName,listener);
             }
         }
         return result;

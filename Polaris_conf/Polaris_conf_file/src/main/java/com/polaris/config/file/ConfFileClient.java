@@ -55,7 +55,7 @@ public class ConfFileClient {
                 		if (isModifiedByFile(entry.getKey(),lastModifiedFileMap.get(entry.getKey()))) {
                 			if (entry.getValue() != null) {
                 				for (ConfHandlerListener listener : entry.getValue()) {
-                					listener.receive(getConfig(entry.getKey(), null));
+                					listener.receive(getConfig(null,entry.getKey()));
                 				}
                 			}
                 			
@@ -73,7 +73,7 @@ public class ConfFileClient {
 	
 	
 	// 获取文件内容
-	public String getConfig(String fileName, String group) {
+	public String getConfig(String group,String fileName) {
 		
 		//可以监听的文件有效
 		File file = ConfLauncherReaderStrategyFactory.get().getFile(fileName);
@@ -90,7 +90,7 @@ public class ConfFileClient {
 	}
 	
 	// 监听需要关注的内容
-	public void addListener(String fileName, String group, ConfHandlerListener listener) {
+	public void addListener(String group,String fileName, ConfHandlerListener listener) {
 		Set<ConfHandlerListener> set = fileListeners.get(fileName);
 		if (set == null) {
 			set = new LinkedHashSet<>();

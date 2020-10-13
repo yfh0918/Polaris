@@ -16,9 +16,11 @@ public class ConfigChangeListenerProxy implements ConfigChangeListener {
         }
     }
     @Override
-    public void onChange (String sequence, Object key, Object value, Opt opt) {
+    public void onChange(String sequence, String group, String file, Object key, Object value, Opt opt) {
     	for (ConfigChangeListener confEndPoint : listeners) {
+    	    confEndPoint.onChange(sequence, group, file, key, value, opt);
 	    	confEndPoint.onChange(sequence, key, value, opt);
+            confEndPoint.onChange(key, value, opt);
         }
     }
     @Override

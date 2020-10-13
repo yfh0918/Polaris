@@ -37,9 +37,8 @@ public class ConfClient implements ConfigChangeListener{
 	* @since 
 	*/
 	public static void init() {
-	    ConfHandlerFactory.getOrCreate(Type.SYS, INSTANCE, ConfigChangeListenerProxy.INSTANCE).init();
-        ConfHandlerFactory.getOrCreate(Type.EXT, INSTANCE, ConfigChangeListenerProxy.INSTANCE).init();
-        ConfHandlerFactory.getOrCreate(Type.GBL, INSTANCE, ConfigChangeListenerProxy.INSTANCE).init();
+	    ConfHandlerFactory.create(Type.SYS, INSTANCE, ConfigChangeListenerProxy.INSTANCE);
+        ConfHandlerFactory.create(Type.EXT, INSTANCE, ConfigChangeListenerProxy.INSTANCE);
 	}
 	
 	/**
@@ -134,7 +133,7 @@ public class ConfClient implements ConfigChangeListener{
 	}
 
 	@Override
-    public void onChange(String sequence, Object key, Object value, Opt opt) {
+    public void onChange(String sequence, String group, String file, Object key, Object value, Opt opt) {
         if (opt != Opt.DEL) {
             cache.put(key, value);
         } else {

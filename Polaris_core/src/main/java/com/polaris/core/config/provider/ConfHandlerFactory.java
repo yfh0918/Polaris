@@ -10,7 +10,7 @@ import com.polaris.core.config.Config.Type;
 public class ConfHandlerFactory {
 	
 	private static Map<Type , ConfHandler> confHandlerProxyMap = new ConcurrentHashMap<>();
-	public static ConfHandler getOrCreate(Type type, ConfigChangeListener... configListeners) {
+	public static void create(Type type, ConfigChangeListener... configListeners) {
 	    ConfHandler confHandlerProxy = confHandlerProxyMap.get(type);
 		if (confHandlerProxy == null) {
 			synchronized(type.name().intern()) {
@@ -22,7 +22,9 @@ public class ConfHandlerFactory {
 			    confHandlerProxyMap.put(type, confHandlerProxy);
 			}
 		}
-		return confHandlerProxy;
-		
 	}
+
+	public static ConfHandler get(Type type) {
+        return confHandlerProxyMap.get(type);
+    }
 }

@@ -15,7 +15,7 @@ public class DBEndPoint implements ConfigChangeListener {
 	private static String prefix2 = "spring.datasource.";
 	
 	@Override
-	public void onChange(String sequence, Object keyObj, Object value, Opt opt) {
+	public void onChange(Object keyObj, Object value, Opt opt) {
 		String key = keyObj.toString();
 		if (StringUtil.isNotEmpty(key) && key.endsWith(endfix)) {
 			if (key.startsWith(prefix1) && key.length() > 8) {

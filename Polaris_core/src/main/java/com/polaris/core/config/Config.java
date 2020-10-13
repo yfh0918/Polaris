@@ -3,6 +3,9 @@ package com.polaris.core.config;
 import java.util.Collection;
 import java.util.Properties;
 
+import com.polaris.core.Constant;
+import com.polaris.core.util.StringUtil;
+
 /**
 * properties文件，yaml文件的对外接口暴露
 * {@link}ConfHandlerComposite
@@ -17,24 +20,20 @@ public interface Config {
 	}
 	
 	public enum Type {
-		SYS("project.system.properties",null),//system,目前用不到
-		EXT("project.extension.properties",null),//application.properties中定义的extension
-	    GBL("project.global.properties","global");//application.properties中定义的global
-        private String propertyType;
-        private String group;
-	    Type(String propertyType, String group) {
-	        this.propertyType = propertyType;
-	        this.group = group;
-	    }
-        public String getPropertyType() {
-            return propertyType;
-        }
-        public String getGroup() {
-            return group == null?ConfClient.getAppName():group;
-        }
+		SYS(),
+		EXT();
 	}
 	
-	Type getType();
+	public static String merge(String group, String fileName) {
+        return group + Constant.COLON + fileName;
+    }
+    public static String group() {
+        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
+            return ConfClient.getGroup();
+        }
+        return ConfClient.getAppName();
+    }
+	
 	default Collection<Properties> getProperties() {return null;}
 	default Properties getProperties(String file) {return null;}
 	default void put(String file, Properties properties) {};

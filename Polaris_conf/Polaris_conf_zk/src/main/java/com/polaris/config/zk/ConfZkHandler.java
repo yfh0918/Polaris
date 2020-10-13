@@ -10,12 +10,12 @@ import com.polaris.core.config.ConfHandler;
 public class ConfZkHandler implements ConfHandler {
 
 	@Override
-	public String get(String fileName, String group) {
+	public String get(String group, String fileName) {
 		return ConfZkClient.getConfig(fileName,group);
 	}
 
 	@Override
-	public void listen(String fileName, String group, ConfHandlerListener listener) {
-		ConfZkClient.addListener(fileName, group, listener);
+	public void listen(String group, String fileName, ConfHandlerListener listener) {
+		ConfZkClient.addListener(group, fileName, listener);
 	}
 }

@@ -4,32 +4,35 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.polaris.core.Constant;
+import com.polaris.core.config.ConfHandler;
 import com.polaris.core.config.ConfHandlerListener;
 import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.Config.Type;
-import com.polaris.core.config.reader.launcher.ConfLauncherReaderStrategyFactory;
 import com.polaris.core.config.ConfigChangeListener;
+import com.polaris.core.config.reader.launcher.ConfLauncherReaderStrategyFactory;
 import com.polaris.core.exception.ConfigException;
 import com.polaris.core.util.EnvironmentUtil;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
-public class ConfHandlerSystem extends ConfHandlerProxy{
+public class ConfHandlerSystem implements ConfHandler{
 	private static volatile String CONFIG_NAME = "application";
 	private static String SYSTEM_SEQUENCE = "system";
     private static Properties properties;
+    private ConfigChangeListener[] configChangeListeners;
+    private static String systemConfigName;
 	public ConfHandlerSystem(Type type, ConfigChangeListener... configListeners) {
-	    super(type,configListeners);
+	    this.configChangeListeners = configListeners;
+	    init();
 	}
 	
-	@Override
-	public void init() {
+	private void init() {
         ConfigFactory.get(Type.SYS).put(Type.SYS.name(), getProperties());
         if (configChangeListeners != null) {
             for (ConfigChangeListener configChangeListener : configChangeListeners) {
                 configChangeListener.onStart(SYSTEM_SEQUENCE);
                 for (Map.Entry<Object, Object> entry : getProperties().entrySet()) {
-                    configChangeListener.onChange(SYSTEM_SEQUENCE, entry.getKey(), entry.getValue(), Opt.ADD);
+                    configChangeListener.onChange(SYSTEM_SEQUENCE, Constant.DEFAULT_GROUP,systemConfigName,entry.getKey(), entry.getValue(), Opt.ADD);
                 }
                 configChangeListener.onComplete(SYSTEM_SEQUENCE);
             }
@@ -54,11 +57,13 @@ public class ConfHandlerSystem extends ConfHandlerProxy{
 	    		file = System.getProperty(Constant.PROJECT_CONFIG_NAME);
 	    	}
 	    	if (StringUtil.isNotEmpty(file)) {
+	    	    systemConfigName = file;
 	    	    localProperties = ConfLauncherReaderStrategyFactory.get().getProperties(file);
 	    	} 
 	    	
 			//folder-scan
 	    	if (localProperties == null) {
+	    	    systemConfigName = CONFIG_NAME;
 	    	    localProperties = ConfLauncherReaderStrategyFactory.get().getProperties(CONFIG_NAME);
 	    	}
 	    	

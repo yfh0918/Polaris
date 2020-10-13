@@ -23,16 +23,16 @@ public class ConfHandlerProxy implements ConfHandler{
     private static ConfHandler handler;
 
     //instance-var
-    protected ConfigChangeListener[] configChangeListeners;
-    protected Type type;
-	protected ConfigChangeNotifier notifier = ConfigChangeNotifierFactory.get();
+    private ConfigChangeListener[] configChangeListeners;
+    private Type type;
+    private ConfigChangeNotifier notifier = ConfigChangeNotifierFactory.get();
 	public ConfHandlerProxy(Type type, ConfigChangeListener... configChangeListeners) {
 	    this.type = type;
 	    this.configChangeListeners = configChangeListeners;
+	    init();
 	}
 	
-	@Override
-	public void init() {
+	private void init() {
         
         //initial config handler
 	    if (!initialized.compareAndSet(false, true)) {
@@ -49,35 +49,22 @@ public class ConfHandlerProxy implements ConfHandler{
             throw new ConfigException("Excepiton caused by ConfHandler is null");
         }
         
-        //get target files from system properties
-        String files = ConfigFactory.get(Type.SYS).getProperties(Type.SYS.name()).getProperty(type.getPropertyType());
-        if (StringUtil.isEmpty(files)) {
-            return;
-        }
-        
-        //target files loop
-        String[] fileArray = files.split(",");
-        for (String fileName : fileArray) {
-            if (getAndListen(fileName, type.getGroup()) == null) {
-                throw new ConfigException("type:"+type.name()+" file:"+fileName+" is not exsit");
-            }
-        }
     }
 	
 	@Override
-    public String getAndListen(String fileName,String group, ConfHandlerListener... listener) {
+    public String getAndListen(String group,String fileName, ConfHandlerListener... listener) {
     	
 		//get
-		String contents = get(fileName,group);
+		String contents = get(group, fileName);
 		if (StringUtil.isNotEmpty(contents)) {
-			notifier.notify(ConfigFactory.get(type), fileName, contents,configChangeListeners);
+			notifier.notify(ConfigFactory.get(type), group, fileName, contents,configChangeListeners);
 		}
 		
 		//listen
-    	listen(fileName, group, new ConfHandlerListener() {
+    	listen(group, fileName, new ConfHandlerListener() {
 			@Override
 			public void receive(String contents) {
-			    notifier.notify(ConfigFactory.get(type), fileName, contents,configChangeListeners);
+			    notifier.notify(ConfigFactory.get(type), group,fileName,  contents,configChangeListeners);
 			}
 		});
     	
@@ -85,17 +72,17 @@ public class ConfHandlerProxy implements ConfHandler{
     }
 
 	@Override
-    public String get(String fileName, String group) {
+    public String get(String group, String fileName) {
 		if (handler != null) {
-			return handler.get(fileName, group);
+			return handler.get(group, fileName);
 		}
     	return null;
 	}
 	
 	@Override
-    public void listen(String fileName,String group, ConfHandlerListener listener) {
+    public void listen(String group, String fileName,ConfHandlerListener listener) {
 		if (handler != null) {
-			handler.listen(fileName, group, listener);
+			handler.listen(group, fileName, listener);
 		}
 	}
 }

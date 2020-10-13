@@ -12,13 +12,13 @@ public class ConfZkClient {
 	private static int sessionTimeoutMs = Integer.parseInt(ConfClient.get("config.registry.zk.sessionTimeoutMs", "20000"));
 	private static ZooKeeper zk = ZkClient.getInstance(ConfClient.getConfigRegistryAddress(), sessionTimeoutMs);
 	
-	public static String getConfig(String fileName, String group) {
-		String path = getPath(fileName,group);
+	public static String getConfig(String group,String fileName) {
+		String path = getPath(group,fileName);
 		ZkClient.createWithParent(zk,path,CreateMode.PERSISTENT);//创建路径
 		return ZkClient.getPathData(zk,path);//获取数据
 	}
-	public static void addListener(String fileName, String group, ConfHandlerListener listener) {
-		String path = getPath(fileName,group);
+	public static void addListener(String group, String fileName, ConfHandlerListener listener) {
+		String path = getPath(group,fileName);
 		ZkClient.addWatchForPath(zk, path, new ZkListener() {
 			@Override
 			public void listen(String path, EventType type) {
@@ -32,7 +32,7 @@ public class ConfZkClient {
 		});
 	}
 	
-	private static String getPath(String fileName, String group) {
+	private static String getPath(String group, String fileName) {
 		StringBuilder groupSb = new StringBuilder();
 		
 		//rootPath
@@ -46,13 +46,7 @@ public class ConfZkClient {
 			groupSb.append(Constant.SLASH);
 		}
 		
-		//cluster
-		if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
-			groupSb.append(ConfClient.getGroup());
-			groupSb.append(Constant.SLASH);
-		}
-		
-		//service
+		//group
 		groupSb.append(group);
 		groupSb.append(Constant.SLASH);
 		

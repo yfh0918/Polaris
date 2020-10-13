@@ -16,7 +16,10 @@ public class ConfigurationPropertiesEndPoint implements ConfigChangeListener{
 	private Map<String, Set<ConfigurationPropertiesBean>> benMap = new ConcurrentHashMap<>();
 	
 	@Override
-	public void onChange(String sequence, Object key, Object value, Opt opt) {
+	public void onChange(String sequence, String group, String file, Object key, Object value, Opt opt) {
+	    if (group == null || file == null) {
+	        return;
+	    }
 		ConfigurationProperties configurationProperties = SpringUtil.getBean(ConfigurationProperties.class);
 		if (configurationProperties == null) {
 			return;
@@ -35,13 +38,15 @@ public class ConfigurationPropertiesEndPoint implements ConfigChangeListener{
 			}
 		}
 		for (ConfigurationPropertiesBean bean : configBeans) {
-			if (StringUtil.isEmpty(bean.annotation.prefix())) {
-				beanSet.add(bean);
-			} else {
-				if (key.toString().startsWith(bean.annotation.prefix()+".")) {
-					beanSet.add(bean);
-				}
-			}
+		    if (file.equals(bean.annotation.value()) && group.equals(bean.annotation.group())) {
+		        if (StringUtil.isEmpty(bean.annotation.prefix())) {
+		            beanSet.add(bean);
+		        } else {
+		            if (key.toString().startsWith(bean.annotation.prefix()+".")) {
+                        beanSet.add(bean);
+                    }
+		        }
+		    }
 		}
 	}
 	
@@ -54,10 +59,9 @@ public class ConfigurationPropertiesEndPoint implements ConfigChangeListener{
 		Set<ConfigurationPropertiesBean> beanSet = benMap.remove(sequence);
 		if (beanSet != null) {
 			for (ConfigurationPropertiesBean bean : beanSet) {
-				if (bean.getAnnotation().autoRefreshed()) {
-					configurationProperties.bind(bean.getObject(), bean.getAnnotation());
-				}
+                configurationProperties.bind(bean.getObject(), bean.getAnnotation());
 			}
+			beanSet.clear();
 		}
 		
 	}

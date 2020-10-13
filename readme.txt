@@ -23,15 +23,9 @@
   需要在自己的服务pom.xml中引入 Polaris_conf_xxx
   引入配置中心后，所有的properties文件都可以放入配置中心（除了application.properties或者application.yaml 或者application.xml 和 log4j2.xml）
   在application.properties中引入需要放入配置中心的配置文件
-  #extension files(以下配置文件配置方式  或者也可以采用PolarisConfigurationExt注解或者PolarisConfigurationProperties注解注入)
-  #project.extension.properties=main.properties,redis.properties
-  #project.extension.properties=main.yaml,redis.yaml
-  #project.extension.properties=main.xml,redis.xml
-  #global files(以下配置文件配置方式  或者也可以采用PolarisConfigurationGbl注解或者PolarisConfigurationProperties注解注入)
-  #project.global.properties=redis.properties,database.properties
-  #project.global.properties=redis.yaml,database.yaml
+  配置文件采用注解注入（单个PolarisConfigurationProperties和复苏PolarisMultiConfigurationProperties）
+  并且，如果属性bind=true的场景可以动态注入到Bean中
   默认支持Spring注解@Value的自动更新-（nacos,zookeeper等配置中心的推送更新会同步到@Value注解）
-  可以用value.auto.update=false来关闭
 
 5:Polaris_extension_workflow是现有的服务（工作流activity内核）
  具体请参考模块的配置,详细参考Polaris_demo目录下的workflow

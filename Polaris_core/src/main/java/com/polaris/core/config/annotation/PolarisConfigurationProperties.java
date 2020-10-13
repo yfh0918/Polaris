@@ -8,8 +8,8 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.annotation.AliasFor;
 
+import com.polaris.core.Constant;
 import com.polaris.core.config.properties.ConfigurationPropertiesImport;
 
 /**
@@ -20,19 +20,8 @@ import com.polaris.core.config.properties.ConfigurationPropertiesImport;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Configuration
-@PolarisConfigurationExt
-@PolarisConfigurationGbl
 @Import(ConfigurationPropertiesImport.class)
 public @interface PolarisConfigurationProperties {
-
-	/**
-	 * The name prefix of the properties that are valid to bind to this object. Synonym
-	 * for {@link #prefix()}. A valid prefix is defined by one or more words separated
-	 * with dots (e.g. {@code "acme.system.feature"}).
-	 * @return the name prefix of the properties to bind
-	 */
-	@AliasFor("prefix")
-	String value() default "";
 
 	/**
 	 * The name prefix of the properties that are valid to bind to this object. Synonym
@@ -40,30 +29,34 @@ public @interface PolarisConfigurationProperties {
 	 * dots (e.g. {@code "acme.system.feature"}).
 	 * @return the name prefix of the properties to bind
 	 */
-	@AliasFor("value")
 	String prefix() default "";
     
-	
     /**
-     * It indicates the properties of current doBind bean is auto-refreshed when configuration is changed.
+     * auto-refreshed when configuration is changed.
      *
      * @return default value is <code>false</code>
      */
     boolean autoRefreshed() default true;
     
     /**
-     * linked PolarisConfigurationExt
+     * It indicates the properties of current doBind bean.
      *
-     * @return default value is <code>ext</code>
+     * @return default value is <code>false</code>
      */
-	@AliasFor(annotation = PolarisConfigurationExt.class, attribute = "value")
-	String[] ext() default {};
+    boolean bind() default false;
+    
+    /**
+     * group.
+     *
+     * @return 
+     */
+    String group() default Constant.DEFAULT_GROUP;
+
+    /**
+     * value.
+     *
+     * @return 
+     */
+    String value() default "";
 	
-	/**
-     * linked PolarisConfigurationGlobal
-     *
-     * @return default value is <code>global</code>
-     */
-	@AliasFor(annotation = PolarisConfigurationGbl.class, attribute = "value")
-	String[] global() default {};
 }

@@ -33,12 +33,19 @@ import com.polaris.container.servlet.initializer.WebInitParamRegister;
 import com.polaris.container.servlet.initializer.WebListenerRegister;
 import com.polaris.container.servlet.initializer.WebServletRegister;
 import com.polaris.core.component.LifeCycle;
+import com.polaris.core.config.annotation.PolarisConfigurationProperties;
+import com.polaris.core.config.annotation.PolarisMultiConfigurationProperties;
 
 /**
  * 入口启动类
  *
  */
 @PolarisApplication
+@PolarisMultiConfigurationProperties({
+    @PolarisConfigurationProperties(group="group1",value="main.properties"),
+    @PolarisConfigurationProperties(group="group2",value="global.yaml"),
+    @PolarisConfigurationProperties(group="group1",value="test.xml")
+})
 public class DemoApplication
 {
     

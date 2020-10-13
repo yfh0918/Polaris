@@ -26,12 +26,18 @@ import com.polaris.container.servlet.initializer.WebFilterRegister.WebFilterBean
 import com.polaris.container.servlet.initializer.WebInitParamRegister;
 import com.polaris.container.servlet.initializer.WebListenerRegister;
 import com.polaris.core.component.LifeCycle;
+import com.polaris.core.config.annotation.PolarisConfigurationProperties;
+import com.polaris.core.config.annotation.PolarisMultiConfigurationProperties;
 
 /**
  * 入口启动类
  *
  */
 @PolarisApplication
+@PolarisMultiConfigurationProperties({
+    @PolarisConfigurationProperties(group="group1",value="main.properties"),
+    @PolarisConfigurationProperties(group="group2",value="global.properties")
+})
 public class DemoApplication
 {
     
@@ -104,7 +110,6 @@ public class DemoApplication
             System.out.println(request.getServletContext().getInitParameter("testdemo"));
             chain.doFilter(request, response);
         }
-
     }
 
 }

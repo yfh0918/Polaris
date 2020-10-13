@@ -21,6 +21,8 @@ public interface ConfigChangeListener {
 	/**
 	* 配置发生变化的回调处理
 	* @param  sequence 配置中心以文件为单位，相同的文件sequence也相同
+    * @param  group 
+    * @param  file 
 	* @param  key 
 	* @param  value 
 	* @param  opt 
@@ -28,7 +30,9 @@ public interface ConfigChangeListener {
 	* @Exception 
 	* @since 
 	*/
+    default void onChange(String sequence, String group, String file, Object key, Object value, Opt opt) {}
 	default void onChange(String sequence, Object key, Object value, Opt opt) {}
+    default void onChange(Object key, Object value, Opt opt) {}
 	
 	/**
 	* 配置发生变化结束后的回调处理

@@ -124,4 +124,9 @@ public class Constant {
 	public static final String RETURN ="\r";
 	public static final String EMPTY = "";
 	
+	public static final String COLON = ":";
+	public static final String COMMA = ",";
+	
+	public static final String DEFAULT_GROUP = "DEFAULT_GROUP";
+	
 }

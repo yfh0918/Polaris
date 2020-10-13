@@ -10,12 +10,12 @@ import com.polaris.core.config.ConfHandler;
 public class ConfApolloHandler implements ConfHandler {
 
 	@Override
-	public String get(String fileName, String group) {
-		return ConfApolloClient.getInstance().getConfig(fileName,group);
+	public String get(String group,String fileName) {
+		return ConfApolloClient.getInstance().getConfig(group,fileName);
 	}
 
 	@Override
-	public void listen(String fileName, String group, ConfHandlerListener listener) {
-		ConfApolloClient.getInstance().addListener(fileName, group, listener);
+	public void listen(String group,String fileName, ConfHandlerListener listener) {
+		ConfApolloClient.getInstance().addListener(group,fileName, listener);
 	}
 }

@@ -9,21 +9,17 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import com.polaris.core.config.properties.ConfigurationGblImport;
+import com.polaris.core.config.properties.ConfigurationPropertiesImport;
 
 /**
- * An annotation as Properties files.
+ * An annotation for Polaris configuration Properties for binding POJO as Properties Object.
  *
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Configuration
-@Import(ConfigurationGblImport.class)
-public @interface PolarisConfigurationGbl {
-
-	/**
-	 * global file from local or data center
-	 */
-	String[] value() default{};
+@Import(ConfigurationPropertiesImport.class)
+public @interface PolarisMultiConfigurationProperties {
+    PolarisConfigurationProperties[] value();
 }
