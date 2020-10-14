@@ -11,6 +11,7 @@ import com.polaris.container.listener.ServerListenerHelper;
 import com.polaris.core.OrderWrapper;
 import com.polaris.core.component.LifeCycle;
 import com.polaris.core.component.LifeCyclePublisherWithListener;
+import com.polaris.core.naming.NamingClient;
 
 public class ServerProxy extends LifeCyclePublisherWithListener implements Server {
 
@@ -55,12 +56,14 @@ public class ServerProxy extends LifeCyclePublisherWithListener implements Serve
     
 	@Override
 	public void starting(LifeCycle event) {
+	    NamingClient.unRegister();
 		ServerListenerHelper.starting(event);
 	}
 
 	@Override
 	public void started(LifeCycle event) {
 		ServerListenerHelper.started(event);
+        NamingClient.register();
         Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
 	}
 

@@ -63,12 +63,7 @@ public class NacosServer implements NamingHandler {
 		//获取有效URL
 		try {
 			Instance instance = null;
-	        String groupName = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-	        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
-	        	groupName = ConfClient.getGroup();
-			}
-
-			instance = naming.selectOneHealthyInstance(serviceName, groupName);
+			instance = naming.selectOneHealthyInstance(serviceName, ConfClient.getAppGroup());
 			if (instance != null) {
 				return Server.of(instance.getIp(), instance.getPort(), new Double(instance.getWeight()).intValue());
 			}
@@ -99,11 +94,7 @@ public class NacosServer implements NamingHandler {
 		//获取有效URL
 		try {
 			List<Instance> instances = null;
-	        String groupName = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-	        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
-	        	groupName = ConfClient.getGroup();
-			}
-
+	        String groupName = ConfClient.getAppGroup();
 			instances = naming.selectInstances(serviceName, groupName, true, false);
 
 			List<Server> serverList = new ArrayList<>();
@@ -135,11 +126,7 @@ public class NacosServer implements NamingHandler {
 	        instance.setWeight(weight);
 	        boolean ephemeral = Boolean.parseBoolean(ConfClient.get(Constant.PROJECT_EPHEMERAL, Constant.PROJECT_EPHEMERAL_DEFAULT));
 	        instance.setEphemeral(ephemeral);
-	        String groupName = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-	        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
-	        	groupName = ConfClient.getGroup();
-			}
-        	naming.registerInstance(ConfClient.getAppName(), groupName, instance);
+        	naming.registerInstance(ConfClient.getAppName(), ConfClient.getAppGroup(), instance);
         	return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -153,12 +140,7 @@ public class NacosServer implements NamingHandler {
 			return false;
 		}
 		 try {
-	        //String cluster = ConfClient.getCluster();
-	        String groupName = com.alibaba.nacos.api.common.Constants.DEFAULT_GROUP;
-	        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
-	        	groupName = ConfClient.getGroup();
-			}
-
+	        String groupName = ConfClient.getAppGroup();
 			naming.deregisterInstance(ConfClient.getAppName(), groupName, server.getIp(), server.getPort());
 			return true;
 		} catch (Exception e) {

@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.core.component.LifeCycle;
 import com.polaris.core.component.ManagedComponent;
-import com.polaris.core.naming.NamingClient;
 import com.polaris.core.thread.ThreadPoolBuilder;
 
 public abstract class ServerListenerHelper {
@@ -53,8 +52,6 @@ public abstract class ServerListenerHelper {
 			logger.debug("serverListener:{} started",serverListener.getClass().getName());
 			serverListener.started(event);
 		}
-		// the last one is  register
-		NamingClient.register();
 	}
 	public static void failure(LifeCycle event, Throwable cause) {
 		for (ServerListener serverListener : serverListenerList) {
@@ -63,8 +60,6 @@ public abstract class ServerListenerHelper {
 		}
 	}
 	public static void stopping(LifeCycle event) {
-		// The first one to unRegister 
-		NamingClient.unRegister();
 		for (ServerListener serverListener : serverListenerList) {
 			logger.debug("serverListener:{} stopping",serverListener.getClass().getName());
 			serverListener.stopping(event);

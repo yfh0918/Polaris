@@ -4,15 +4,18 @@ import com.polaris.core.config.Config.Type;
 
 public class HttpFile {
 	
-	public HttpFile(String name) {
+	public HttpFile(String group, String name) {
+	    this.group = group;
 		this.name = name;
 		this.type = Type.EXT;
 	}
-	public HttpFile(String name, Type type) {
+	public HttpFile(String group, String name, Type type) {
+	    this.group = group;
 		this.name = name;
 		this.type = type;
 	}
 	private Type type;
+	private String group;
 	private String name;
 	private String data;
 	public Type getType() {
@@ -21,7 +24,13 @@ public class HttpFile {
 	public void setType(Type type) {
 		this.type = type;
 	}
-	public String getName() {
+	public String getGroup() {
+        return group;
+    }
+    public void setGroup(String group) {
+        this.group = group;
+    }
+    public String getName() {
 		return name;
 	}
 	public void setName(String name) {

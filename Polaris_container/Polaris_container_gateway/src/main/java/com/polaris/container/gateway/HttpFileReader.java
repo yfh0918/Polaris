@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.core.config.ConfHandlerListener;
-import com.polaris.core.config.Config;
 import com.polaris.core.config.provider.ConfHandlerFactory;
 import com.polaris.core.config.reader.launcher.ConfLauncherReaderStrategyFactory;
 import com.polaris.core.util.StringUtil;
@@ -18,7 +17,7 @@ public class HttpFileReader {
     public void readFile(HttpFileListener listener, HttpFile file){
     	
 		//先获取
-    	String content = ConfHandlerFactory.get(file.getType()).get(Config.group(),file.getName());
+    	String content = ConfHandlerFactory.get(file.getType()).get(file.getGroup(),file.getName());
     	
     	//获取不到-从本地文件系统获取
     	if (StringUtil.isEmpty(content)) {
@@ -28,15 +27,15 @@ public class HttpFileReader {
     	//load
     	file.setData(content);
     	listener.onChange(file);
-		logger.info("file:{} type:{} is added",file.getName(),file.getType());
+		logger.info("file:{} group:{} is added",file.getName(),file.getGroup());
 		
 		//后监听
-		ConfHandlerFactory.get(file.getType()).listen(Config.group(),file.getName(), new ConfHandlerListener() {
+		ConfHandlerFactory.get(file.getType()).listen(file.getGroup(),file.getName(), new ConfHandlerListener() {
 			@Override
 			public void receive(String content) {
 		        file.setData(content);
 				listener.onChange(file);
-				logger.info("file:{} type:{} is updated",file.getName(),file.getType());
+				logger.info("file:{} group:{} is updated",file.getName(),file.getGroup());
 			}
     	});
     }

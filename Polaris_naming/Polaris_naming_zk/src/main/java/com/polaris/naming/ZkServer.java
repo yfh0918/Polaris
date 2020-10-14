@@ -142,11 +142,9 @@ public class ZkServer implements NamingHandler {
 			groupSb.append(Constant.SLASH);
 		}
 		
-		//cluster
-		if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
-			groupSb.append(ConfClient.getGroup());
-			groupSb.append(Constant.SLASH);
-		}
+		//group
+        groupSb.append(ConfClient.getAppGroup());
+        groupSb.append(Constant.SLASH);
 		
 		//key
 		groupSb.append(key);

@@ -2,11 +2,10 @@ package com.polaris.demo.config;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.polaris.core.config.annotation.PolarisConfigurationProperties;
 
 @PolarisConfigurationProperties(prefix="test",value="testP.properties",bind=true)
-@JsonIgnoreProperties(value = { "$$beanFactory"})
+//@JsonIgnoreProperties(value = { "$$beanFactory"})
 public class TestProperties {
 	private String address1;
     private String password;

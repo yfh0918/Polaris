@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Properties;
 
 import com.polaris.core.Constant;
-import com.polaris.core.util.StringUtil;
 
 /**
 * properties文件，yaml文件的对外接口暴露
@@ -26,12 +25,6 @@ public interface Config {
 	
 	public static String merge(String group, String fileName) {
         return group + Constant.COLON + fileName;
-    }
-    public static String group() {
-        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
-            return ConfClient.getGroup();
-        }
-        return ConfClient.getAppName();
     }
 	
 	default Collection<Properties> getProperties() {return null;}

@@ -76,10 +76,7 @@ public class EurekaServer implements NamingHandler {
 		}
 					
         //应用配置#应用配置
-		String group = "default";
-        if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
-        	group = ConfClient.getGroup();
-		}
+		String group = ConfClient.getAppGroup();
 		properties.setProperty("eureka.appGroup", group);
         properties.setProperty("eureka.name", ConfClient.getAppName());
         properties.setProperty("eureka.vipAddress", ConfClient.getAppName());

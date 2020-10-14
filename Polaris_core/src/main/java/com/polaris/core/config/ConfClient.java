@@ -8,6 +8,7 @@ import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.provider.ConfigChangeListenerProxy;
 import com.polaris.core.config.provider.ConfHandlerFactory;
 import com.polaris.core.util.AppNameUtil;
+import com.polaris.core.util.StringUtil;
 
 /**
 *
@@ -128,8 +129,18 @@ public class ConfClient implements ConfigChangeListener{
 	* @Exception 
 	* @since 
 	*/
-	public static String getGroup() {
-		return get(Constant.PROJECR_GROUP_NAME);
+	public static String getAppGroup() {
+	    return getAppGroup(null);
+	}
+	public static String getAppGroup(String group) {
+	    if (StringUtil.isNotEmpty(group)) {
+	        return group;
+	    }
+	    String appGroup = get(Constant.PROJECR_GROUP_NAME);
+	    if (StringUtil.isNotEmpty(appGroup)) {
+            return appGroup;
+        }
+        return Constant.DEFAULT_GROUP;
 	}
 
 	@Override

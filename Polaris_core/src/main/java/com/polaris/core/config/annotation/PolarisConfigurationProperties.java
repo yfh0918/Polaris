@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import com.polaris.core.Constant;
 import com.polaris.core.config.properties.ConfigurationPropertiesImport;
 
 /**
@@ -50,13 +49,13 @@ public @interface PolarisConfigurationProperties {
      *
      * @return 
      */
-    String group() default Constant.DEFAULT_GROUP;
+    String group() default "";
 
     /**
      * value.
      *
      * @return 
      */
-    String value() default "";
+    String value();
 	
 }

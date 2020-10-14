@@ -15,7 +15,6 @@ import com.alibaba.csp.sentinel.slots.system.SystemRuleManager;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.StringUtil;
 
 /**
 *
@@ -37,7 +36,7 @@ public class NacosDataSourceInit {
 		// remoteAddress 代表 Nacos 服务端的地址
 		// groupId 和 dataId 对应 Nacos 中相应配置
 		String remoteAddress = ConfClient.getConfigRegistryAddress();
-		String groupId = getGroup();
+		String groupId = group();
 		
         // data source for FlowRule
 		ReadableDataSource<String, List<FlowRule>> flowRuleDataSource = new NacosDataSource<>(remoteAddress, groupId, "FlowRule.json",
@@ -58,17 +57,9 @@ public class NacosDataSourceInit {
 		ReadableDataSource<String, List<ParamFlowRule>> paramFlowRuleDataSource = new NacosDataSource<>(remoteAddress, groupId, "ParamFlowRule.json",
 			    source -> JSON.parseObject(source, new TypeReference<List<ParamFlowRule>>() {}));
 		ParamFlowRuleManager.register2Property(paramFlowRuleDataSource.getProperty());
+	}
 
-	}
-	 
-	// 获取分组信息
-	private String getGroup() {
-		StringBuilder group = new StringBuilder();
-		if (StringUtil.isNotEmpty(ConfClient.getGroup())) {
-			group.append(ConfClient.getGroup());
-			group.append(":");
-		}
-		group.append(ConfClient.getAppName());
-		return group.toString();
-	}
+    private String group() {
+        return ConfClient.getAppGroup(ConfClient.get("csp.sentinel.nacos.group"));
+    }
 }
