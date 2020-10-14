@@ -18,7 +18,7 @@ public class HttpFilterInit {
         init(ConfClient.getAppGroup());
     }
 	public static void init(String group) {
-	    HttpServerConfigReader.INSTANCE.init(group);
+	    HttpFileReader.INSTANCE.readFile(new HttpServerConfigReader(), new HttpFile(group,"gw_server.json"));
         HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpWIpRequestFilter(), 4,new HttpFile(group,"gw_wip.txt")));
         HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpIpRequestFilter(), 6,new HttpFile(group,"gw_ip.txt")));
         HttpFilterHelper.addFilter(new HttpFilterEntity(new HttpScannerRequestFilter(), 10));

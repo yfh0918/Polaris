@@ -17,16 +17,6 @@ import io.netty.handler.codec.http.HttpMethod;
 
 public class HttpServerConfigReader implements HttpFileListener{
     
-    public static final String NAME = "gw_server.json";
-    
-    public static HttpServerConfigReader INSTANCE = new HttpServerConfigReader();
-    
-    private HttpServerConfigReader() {}
-    
-    public void init(String group) {
-        HttpFileReader.INSTANCE.readFile(this, new HttpFile(group,NAME));
-    }
-    
     @SuppressWarnings("unchecked")
     @Override
     public void onChange(HttpFile file) {
