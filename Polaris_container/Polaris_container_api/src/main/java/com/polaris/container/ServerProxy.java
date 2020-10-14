@@ -56,7 +56,6 @@ public class ServerProxy extends LifeCyclePublisherWithListener implements Serve
     
 	@Override
 	public void starting(LifeCycle event) {
-	    NamingClient.unRegister();
 		ServerListenerHelper.starting(event);
 	}
 
@@ -74,6 +73,7 @@ public class ServerProxy extends LifeCyclePublisherWithListener implements Serve
 
 	@Override
 	public void stopping(LifeCycle event) {
+        NamingClient.unRegister();
 		ServerListenerHelper.stopping(event);
 		//lifeCycleStopped method will not be called after the service is stopped
 		//so stopped method is called after the service is stopping
