@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.ConfHandlerListener;
-import com.polaris.core.config.reader.launcher.ConfLauncherReaderStrategyFactory;
+import com.polaris.core.config.reader.launcher.ConfLauncherReaderStrategy;
 import com.polaris.core.util.FileUtil;
 
 import cn.hutool.core.thread.NamedThreadFactory;
@@ -76,13 +76,13 @@ public class ConfFileClient {
 	public String getConfig(String group,String fileName) {
 		
 		//可以监听的文件有效
-		File file = ConfLauncherReaderStrategyFactory.get().getFile(fileName);
+		File file = ConfLauncherReaderStrategy.INSTANCE.getFile(fileName);
 		if (file != null) {
 			isModifiedByFile(fileName, file);
 		}
 
 		try {
-			return FileUtil.read(ConfLauncherReaderStrategyFactory.get().getInputStream(fileName));
+			return FileUtil.read(ConfLauncherReaderStrategy.INSTANCE.getInputStream(fileName));
         } catch (IOException e) {
         	//ignore
         }
@@ -126,7 +126,7 @@ public class ConfFileClient {
 				lastModifiedTimeMap.put(fileName, file.lastModified());
 	    		
 			} else {
-				File newFile = ConfLauncherReaderStrategyFactory.get().getFile(fileName);
+				File newFile = ConfLauncherReaderStrategy.INSTANCE.getFile(fileName);
 				if (newFile == null || !newFile.exists()) {
 					isModified = false;//传入的file和查询的file都为空，表示没有发生修改
 				} else {

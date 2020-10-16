@@ -9,6 +9,16 @@ package com.polaris.core.config;
 public interface ConfHandler {
     
     /**
+     * 获取文件内容-第三方扩展包，Polaris_conf_nacos，Polaris_conf_zk，Polaris_conf_file等等
+     * @param  fileName 指定的文件
+     * @param  group 
+     * @return String 文件内容
+     * @Exception 
+     * @since 
+     */
+    default String get(String group, String fileName) {return null;}
+    
+    /**
      * 监听指定文件-第三方扩展包，Polaris_conf_nacos，Polaris_conf_zk，Polaris_conf_file等等
      * @param  fileName 被监听的文件
      * @param  group 
@@ -18,16 +28,7 @@ public interface ConfHandler {
      * @since 
      */
 	default void listen(String group, String fileName, ConfHandlerListener listener) {}
-	
-    /**
-     * 获取文件内容-第三方扩展包，Polaris_conf_nacos，Polaris_conf_zk，Polaris_conf_file等等
-     * @param  fileName 指定的文件
-     * @param  group 
-     * @return String 文件内容
-     * @Exception 
-     * @since 
-     */
-	default String get(String group, String fileName) {return null;}
+
 	
 	/**
      * 获取+监听文件内容-第三方扩展包，Polaris_conf_nacos，Polaris_conf_zk，Polaris_conf_file等等
@@ -38,13 +39,9 @@ public interface ConfHandler {
      * @Exception 
      * @since 
      */
-    default String getAndListen(String group, String fileName, ConfHandlerListener... listeners) {
+    default String getAndListen(String group, String fileName, ConfHandlerListener listener) {
         String result = get(group,fileName);
-        if (listeners != null) {
-            for (ConfHandlerListener listener: listeners) {
-                listen(group,fileName,listener);
-            }
-        }
+        listen(group,fileName,listener);
         return result;
     }
 }

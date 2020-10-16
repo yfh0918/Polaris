@@ -11,11 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.core.Ordered;
 
-import com.polaris.core.config.Config;
-import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.annotation.PolarisConfigurationProperties;
 import com.polaris.core.config.annotation.PolarisMultiConfigurationProperties;
-import com.polaris.core.config.provider.ConfigFactory;
+import com.polaris.core.config.provider.Config;
 import com.polaris.core.util.BeanUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -59,7 +57,7 @@ public class ConfigurationProperties extends ConfigurationAbs {
         if (!annotation.bind()) {
             return;
         }
-        Properties properties = ConfigFactory.get(Type.EXT).getProperties(Config.merge(ConfigurationPropertiesImport.getGroup(annotation), annotation.value()));
+        Properties properties = Config.INSTANCE.getProperties(ConfigurationPropertiesImport.getGroup(annotation), annotation.value());
         Map<String, String> bindMap = new LinkedHashMap<>();
         if (StringUtil.isNotEmpty(annotation.prefix())) {
             for (Map.Entry<Object, Object> entry : properties.entrySet()) {

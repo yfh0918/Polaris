@@ -1,13 +1,13 @@
 package com.polaris.container.gateway.pojo;
 
-import com.polaris.core.config.Config.Type;
+import com.polaris.core.config.provider.Config.Type;
 
 public class HttpFile {
 	
 	public HttpFile(String group, String name) {
 	    this.group = group;
 		this.name = name;
-		this.type = Type.EXT;
+		this.type = Type.DEFAULT;
 	}
 	public HttpFile(String group, String name, Type type) {
 	    this.group = group;

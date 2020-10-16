@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.reader.launcher.ConfLauncherReaderStrategyFactory;
+import com.polaris.core.config.reader.launcher.ConfLauncherReaderStrategy;
 import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -27,7 +27,7 @@ public class BannerPrinter {
 	public static void print(Banner.Mode bannerMode) {
 		
 		try {
-			String contents = FileUtil.read(ConfLauncherReaderStrategyFactory.get().getInputStream(BANNER_FILE));
+			String contents = FileUtil.read(ConfLauncherReaderStrategy.INSTANCE.getInputStream(BANNER_FILE));
 			if (StringUtil.isNotEmpty(contents)) {
 				BANNER = contents.split(Constant.LINE_SEP);
 			}

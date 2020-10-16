@@ -2,8 +2,8 @@ package com.polaris.core.config.provider;
 
 import java.util.ServiceLoader;
 
-import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.ConfigChangeListener;
+import com.polaris.core.config.provider.Config.Opt;
 
 public class ConfigChangeListenerProxy implements ConfigChangeListener {
     protected final ServiceLoader<ConfigChangeListener> listeners = ServiceLoader.load(ConfigChangeListener.class);

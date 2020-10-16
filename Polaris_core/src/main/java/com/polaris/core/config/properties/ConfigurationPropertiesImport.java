@@ -8,12 +8,11 @@ import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.core.type.AnnotationMetadata;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.config.Config;
-import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.annotation.PolarisConfigurationProperties;
 import com.polaris.core.config.annotation.PolarisMultiConfigurationProperties;
 import com.polaris.core.config.provider.ConfHandlerFactory;
-import com.polaris.core.config.provider.ConfigFactory;
+import com.polaris.core.config.provider.Config;
+import com.polaris.core.config.provider.Config.Type;
 import com.polaris.core.exception.ConfigException;
 import com.polaris.core.util.StringUtil;
 
@@ -48,23 +47,19 @@ public class ConfigurationPropertiesImport implements ImportBeanDefinitionRegist
 
 	private void loadPropertiesFromAnnotation(PolarisConfigurationProperties annotation) {
         if (StringUtil.isNotEmpty(annotation.value())) {
-            if (ConfigFactory.get(Type.EXT).getProperties(getPropertiesKey(annotation)) == null) {
+            if (Config.INSTANCE.getProperties(getGroup(annotation), annotation.value()) == null) {
                 if (annotation.autoRefreshed()) {
-                    if (ConfHandlerFactory.get(Type.EXT).getAndListen(getGroup(annotation),annotation.value())==null) {
-                        throw new ConfigException("type:EXT file:" + getPropertiesKey(annotation) + " is not exsit");
+                    if (ConfHandlerFactory.get(Type.EXT).getAndListen(getGroup(annotation),annotation.value(), null)==null) {
+                        throw new ConfigException("group:"+getGroup(annotation)+ "file:" + annotation.value() + " is not exsit");
                     }
                 } else {
                     if (ConfHandlerFactory.get(Type.EXT).get(getGroup(annotation),annotation.value())==null) {
-                        throw new ConfigException("type:EXT file:" + getPropertiesKey(annotation) + " is not exsit");
+                        throw new ConfigException("group:"+getGroup(annotation)+ "file:" + annotation.value() + " is not exsit");
                     }
                 }
                 
             } 
         } 
-    }
-	
-	private String getPropertiesKey(PolarisConfigurationProperties annotation) {
-        return Config.merge(getGroup(annotation), annotation.value());
     }
 	
 	public static String getGroup(PolarisConfigurationProperties annotation) {

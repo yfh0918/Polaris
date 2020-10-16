@@ -3,10 +3,10 @@ package com.polaris.core.config;
 import java.util.Properties;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.Config.Opt;
-import com.polaris.core.config.Config.Type;
-import com.polaris.core.config.provider.ConfigChangeListenerProxy;
 import com.polaris.core.config.provider.ConfHandlerFactory;
+import com.polaris.core.config.provider.Config;
+import com.polaris.core.config.provider.Config.Type;
+import com.polaris.core.config.provider.ConfigChangeListenerProxy;
 import com.polaris.core.util.AppNameUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -23,12 +23,7 @@ import com.polaris.core.util.StringUtil;
 * @version
 *
 */
-public class ConfClient implements ConfigChangeListener{
-    
-    private static Properties cache = new Properties();
-    
-    private static ConfClient INSTANCE = new ConfClient();
-    private ConfClient() {}
+public abstract class ConfClient{
     
 	/**
 	* 初始化
@@ -38,8 +33,15 @@ public class ConfClient implements ConfigChangeListener{
 	* @since 
 	*/
 	public static void init() {
-	    ConfHandlerFactory.create(Type.SYS, INSTANCE, ConfigChangeListenerProxy.INSTANCE);
-        ConfHandlerFactory.create(Type.EXT, INSTANCE, ConfigChangeListenerProxy.INSTANCE);
+	    
+	    //用于非配置文件,不设置监听器
+        ConfHandlerFactory.create(Type.DEFAULT);
+        
+        //用于application.properties(yaml,xml)和System.setProperty设置ide参数
+	    ConfHandlerFactory.create(Type.SYS, Config.INSTANCE, ConfigChangeListenerProxy.INSTANCE);
+	    
+	    //用于通过PolarisMultiConfigurationProperties或者PolarisConfigurationProperties注入的配置
+        ConfHandlerFactory.create(Type.EXT, Config.INSTANCE, ConfigChangeListenerProxy.INSTANCE);
 	}
 	
 	/**
@@ -50,7 +52,7 @@ public class ConfClient implements ConfigChangeListener{
 	* @since 
 	*/
 	public static void set(String key, String value) {
-	    cache.put(key, value);
+	    Config.INSTANCE.putForAll(key, value);
 	}
 	
 	/**
@@ -62,9 +64,9 @@ public class ConfClient implements ConfigChangeListener{
 	*/
 	public static String get(String key, String... defaultVal) {
 	    if (defaultVal == null || defaultVal.length == 0) {
-            return cache.getProperty(key);
+            return Config.INSTANCE.getForAll(key, null);
         }
-        return cache.getProperty(key,defaultVal[0]);
+        return Config.INSTANCE.getForAll(key,defaultVal[0]);
 	}
 	
     /**
@@ -75,7 +77,7 @@ public class ConfClient implements ConfigChangeListener{
     * @since 
     */
     public static Properties get() {
-        return cache;
+        return Config.INSTANCE.getForAll();
     }
 	
 	/**
@@ -142,13 +144,4 @@ public class ConfClient implements ConfigChangeListener{
         }
         return Constant.DEFAULT_GROUP;
 	}
-
-	@Override
-    public void onChange(String sequence, String group, String file, Object key, Object value, Opt opt) {
-        if (opt != Opt.DEL) {
-            cache.put(key, value);
-        } else {
-            cache.remove(key);
-        }
-    }
 }

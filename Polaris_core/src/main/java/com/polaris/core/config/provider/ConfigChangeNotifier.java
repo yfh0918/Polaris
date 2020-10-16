@@ -7,23 +7,17 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.core.config.Config;
-import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.ConfigChangeListener;
-import com.polaris.core.config.ConfigChangeNotifier;
-import com.polaris.core.config.reader.ConfReaderFactory;
+import com.polaris.core.config.provider.Config.Opt;
 import com.polaris.core.util.UuidUtil;
 
 @SuppressWarnings("rawtypes")
-public class ConfigChangeNotifierDefault implements ConfigChangeNotifier {
-	private static final Logger logger = LoggerFactory.getLogger(ConfigChangeNotifierDefault.class);
-	public static final ConfigChangeNotifier INSTANCE = new ConfigChangeNotifierDefault();
-	private ConfigChangeNotifierDefault() {}
+public class ConfigChangeNotifier {
+	private static final Logger logger = LoggerFactory.getLogger(ConfigChangeNotifier.class);
+	public static final ConfigChangeNotifier INSTANCE = new ConfigChangeNotifier();
+	private ConfigChangeNotifier() {}
 	
-	@Override
-	public void notify(Config config, String group, String file, String contents, ConfigChangeListener... configListeners) {
-		Properties oldProperties = config.getProperties(Config.merge(group, file));
-		Properties newProperties = ConfReaderFactory.get(file).getProperties(contents);
+	public void notify(String group, String file, Properties oldProperties, Properties newProperties, ConfigChangeListener... configListeners) {
 		
 		//generate id for one notify
 		String sequence = UuidUtil.generateUuid();
@@ -68,7 +62,6 @@ public class ConfigChangeNotifierDefault implements ConfigChangeNotifier {
                 logger.info("group:{} file:{}, key:{} value:{} opt:{}", group,file,entry.getKey(),entry.getValue(),Opt.DEL.name());
 			}
 		}
-		config.put(Config.merge(group, file), newProperties);
 		
 		//complete
 		if (configListeners != null) {

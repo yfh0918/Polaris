@@ -5,26 +5,28 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import com.polaris.core.config.ConfHandler;
 import com.polaris.core.config.ConfigChangeListener;
-import com.polaris.core.config.Config.Type;
+import com.polaris.core.config.provider.Config.Type;
 
 public class ConfHandlerFactory {
 	
-	private static Map<Type , ConfHandler> confHandlerProxyMap = new ConcurrentHashMap<>();
+	private static Map<Type , ConfHandler> confHandlerMap = new ConcurrentHashMap<>();
 	public static void create(Type type, ConfigChangeListener... configListeners) {
-	    ConfHandler confHandlerProxy = confHandlerProxyMap.get(type);
-		if (confHandlerProxy == null) {
+	    ConfHandler confHandler = confHandlerMap.get(type);
+		if (confHandler == null) {
 			synchronized(type.name().intern()) {
 			    if (type == Type.SYS) {
-	                confHandlerProxy = new ConfHandlerSystem(type,configListeners);
+			        confHandler = new ConfHandlerSystem(configListeners);
+			    } else if (type == Type.EXT) {
+			        confHandler = new ConfHandlerExtension(configListeners);
 			    } else {
-	                confHandlerProxy = new ConfHandlerProxy(type,configListeners);
+			        confHandler = new ConfHandlerDefault();
 			    }
-			    confHandlerProxyMap.put(type, confHandlerProxy);
+			    confHandlerMap.put(type, confHandler);
 			}
 		}
 	}
 
 	public static ConfHandler get(Type type) {
-        return confHandlerProxyMap.get(type);
+        return confHandlerMap.get(type);
     }
 }

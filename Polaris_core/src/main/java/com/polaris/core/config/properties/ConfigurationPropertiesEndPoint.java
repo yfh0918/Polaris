@@ -4,9 +4,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.polaris.core.config.Config.Opt;
 import com.polaris.core.config.ConfigChangeListener;
 import com.polaris.core.config.properties.ConfigurationProperties.ConfigurationPropertiesBean;
+import com.polaris.core.config.provider.Config.Opt;
 import com.polaris.core.util.SpringUtil;
 import com.polaris.core.util.StringUtil;
 

@@ -1,6 +1,6 @@
 package com.polaris.core.config;
 
-import com.polaris.core.config.Config.Opt;
+import com.polaris.core.config.provider.Config.Opt;
 
 /**
 * 配置变化的监听器-用于properties文件，yaml文件

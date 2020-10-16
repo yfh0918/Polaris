@@ -1,44 +1,25 @@
 package com.polaris.core.config.provider;
 
-import java.util.Map;
 import java.util.Properties;
 
 import com.polaris.core.Constant;
-import com.polaris.core.config.ConfHandler;
 import com.polaris.core.config.ConfHandlerListener;
-import com.polaris.core.config.Config.Opt;
-import com.polaris.core.config.Config.Type;
 import com.polaris.core.config.ConfigChangeListener;
-import com.polaris.core.config.reader.launcher.ConfLauncherReaderStrategyFactory;
+import com.polaris.core.config.reader.launcher.ConfLauncherReaderStrategy;
 import com.polaris.core.exception.ConfigException;
 import com.polaris.core.util.EnvironmentUtil;
 import com.polaris.core.util.NetUtils;
 import com.polaris.core.util.StringUtil;
 
-public class ConfHandlerSystem implements ConfHandler{
+public class ConfHandlerSystem extends ConfHandlerExtension {
 	private static volatile String CONFIG_NAME = "application";
-	private static String SYSTEM_SEQUENCE = "system";
     private static Properties properties;
-    private ConfigChangeListener[] configChangeListeners;
     private static String systemConfigName;
-	public ConfHandlerSystem(Type type, ConfigChangeListener... configListeners) {
-	    this.configChangeListeners = configListeners;
-	    init();
+	public ConfHandlerSystem(ConfigChangeListener... configListeners) {
+	    super(configListeners);
+        notifier.notify(Constant.DEFAULT_GROUP, systemConfigName, null,getProperties(),configChangeListeners);
 	}
-	
-	private void init() {
-        ConfigFactory.get(Type.SYS).put(Type.SYS.name(), getProperties());
-        if (configChangeListeners != null) {
-            for (ConfigChangeListener configChangeListener : configChangeListeners) {
-                configChangeListener.onStart(SYSTEM_SEQUENCE);
-                for (Map.Entry<Object, Object> entry : getProperties().entrySet()) {
-                    configChangeListener.onChange(SYSTEM_SEQUENCE, Constant.DEFAULT_GROUP,systemConfigName,entry.getKey(), entry.getValue(), Opt.ADD);
-                }
-                configChangeListener.onComplete(SYSTEM_SEQUENCE);
-            }
-        }
-	}
-	
+
 	public static Properties getProperties() {
 		if (properties != null) {
 			return properties;
@@ -58,13 +39,13 @@ public class ConfHandlerSystem implements ConfHandler{
 	    	}
 	    	if (StringUtil.isNotEmpty(file)) {
 	    	    systemConfigName = file;
-	    	    localProperties = ConfLauncherReaderStrategyFactory.get().getProperties(file);
+	    	    localProperties = ConfLauncherReaderStrategy.INSTANCE.getProperties(file);
 	    	} 
 	    	
 			//folder-scan
 	    	if (localProperties == null) {
 	    	    systemConfigName = CONFIG_NAME;
-	    	    localProperties = ConfLauncherReaderStrategyFactory.get().getProperties(CONFIG_NAME);
+	    	    localProperties = ConfLauncherReaderStrategy.INSTANCE.getProperties(CONFIG_NAME);
 	    	}
 	    	
 	    	if (StringUtil.isNotEmpty(System.getProperty(Constant.IP_ADDRESS))) {
@@ -96,7 +77,7 @@ public class ConfHandlerSystem implements ConfHandler{
 	}
 	
 	@Override
-    public String getAndListen(String fileName, String group, ConfHandlerListener... listeners) {
+    public String getAndListen(String fileName, String group, ConfHandlerListener listener) {
         throw new ConfigException("Not supported for getAndListen method");
     }
 }
