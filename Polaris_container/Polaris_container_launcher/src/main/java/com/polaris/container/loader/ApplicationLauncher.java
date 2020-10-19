@@ -53,12 +53,12 @@ public class ApplicationLauncher {
                                 return;
                             }
                         } catch (Exception e) {
-                            logger.error(e.getMessage());
+                            logger.error("ERROR:{}",e);
                         }
                     }
                 }
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                logger.error("ERROR:{}",e);
             }
         }
         logger.error("startup class is not found"); 
