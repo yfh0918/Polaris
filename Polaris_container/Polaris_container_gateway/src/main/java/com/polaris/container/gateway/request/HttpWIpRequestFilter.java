@@ -36,16 +36,16 @@ public class HttpWIpRequestFilter extends HttpRequestFilter {
     }
 
     @Override
-    public boolean doFilter(HttpRequest originalRequest,HttpObject httpObject, HttpFilterMessage httpMessage) {
+    public HttpFilterMessage doFilter(HttpRequest originalRequest,HttpObject httpObject) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
             String ip = HttpConstant.getRealIp(httpRequest);
             if (ipSet.contains(ip)) {
                 hackLog(logger, HttpConstant.getRealIp(httpRequest), HttpWIpRequestFilter.class.getSimpleName(), "white ip");
-            	return true;
+            	return HttpFilterMessage.of("HttpWIpRequestFilter White List");
             }
         }
-        return false;
+        return null;
     }
 }

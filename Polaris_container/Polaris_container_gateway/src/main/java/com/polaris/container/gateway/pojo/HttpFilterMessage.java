@@ -13,13 +13,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
  */
 public class HttpFilterMessage {
 
-    /**
-     * 是否直接退出filter调用链
-     *
-     * true:直接ctx.writeAndFlush退出， false : 默认操作
-     */
-	private boolean exit = false;
-	
 	private String result;
 	public String getResult() {
 		return result;
@@ -38,14 +31,6 @@ public class HttpFilterMessage {
 	}
 	
 	private Map<String, Object> header = new HashMap<>();
-
-	public boolean isExit() {
-		return exit;
-	}
-
-	public void setExit(boolean exit) {
-		this.exit = exit;
-	}
 
 	public Map<String, Object> getHeader() {
 		return header;

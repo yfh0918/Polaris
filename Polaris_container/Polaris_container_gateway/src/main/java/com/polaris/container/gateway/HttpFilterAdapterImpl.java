@@ -1,8 +1,5 @@
 package com.polaris.container.gateway;
 
-import java.util.Map;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,27 +10,17 @@ import com.polaris.container.gateway.proxy.impl.ProxyToServerConnection;
 import com.polaris.container.gateway.request.HttpRequestFilterChain;
 import com.polaris.container.gateway.response.HttpResponseFilterChain;
 import com.polaris.container.gateway.util.RequestUtil;
+import com.polaris.container.gateway.util.ResponseUtil;
 import com.polaris.core.Constant;
 import com.polaris.core.naming.NamingClient;
 import com.polaris.core.pojo.Server;
 import com.polaris.core.util.ResultUtil;
-import com.polaris.core.util.StringUtil;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.DefaultHttpHeaders;
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpMessage;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
-import io.netty.handler.codec.http2.HttpConversionUtil;
-import io.netty.util.CharsetUtil;
 
 /**
  * @author:Tom.Yu
@@ -58,12 +45,12 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	if (httpObject instanceof HttpRequest) {
         		RequestUtil.clearLocalThread();//clear local thread
         	}
-            ImmutablePair<Boolean, HttpFilterMessage> immutablePair = HttpRequestFilterChain.INSTANCE.doFilter(this.originalRequest, httpObject);
-            if (immutablePair.left) {
-                httpResponse = createResponse(originalRequest, immutablePair.right);
+        	HttpFilterMessage httpFilterMessage = HttpRequestFilterChain.INSTANCE.doFilter(this.originalRequest, httpObject);
+            if (httpFilterMessage != null) {
+                httpResponse = ResponseUtil.createResponse(originalRequest, httpFilterMessage);//blacklist
             }
         } catch (Exception e) {
-            httpResponse = createResponse(originalRequest, 
+            httpResponse = ResponseUtil.createResponse(originalRequest, 
             		HttpFilterMessage.of(
             				ResultUtil.create(Constant.RESULT_FAIL,e.toString()).toJSONString(),
             				HttpResponseStatus.BAD_GATEWAY));
@@ -78,7 +65,7 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         if (httpObject instanceof HttpResponse) {
             originalResponse = (HttpResponse) httpObject;
         	if (((HttpResponse) httpObject).status().code() == HttpResponseStatus.BAD_GATEWAY.code()) {
-        	    httpObject = createResponse(originalResponse, 
+        	    httpObject = ResponseUtil.createResponse(originalResponse, 
                         HttpFilterMessage.of(
                                 ResultUtil.create(
                                         Constant.RESULT_FAIL,Constant.MESSAGE_GLOBAL_ERROR).toJSONString(),
@@ -87,9 +74,9 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         	}
         	
         }
-        ImmutablePair<Boolean, HttpFilterMessage> immutablePair = HttpResponseFilterChain.INSTANCE.doFilter(originalResponse, httpObject);
-        if (immutablePair.left) {
-            httpObject = createResponse(originalResponse, immutablePair.right);
+        HttpFilterMessage message = HttpResponseFilterChain.INSTANCE.doFilter(originalResponse, httpObject);
+        if (message != null) {
+            httpObject = ResponseUtil.createResponse(originalResponse, message);
             return (HttpResponse)httpObject;
         }
         
@@ -104,29 +91,5 @@ public class HttpFilterAdapterImpl extends HttpFiltersAdapter {
         NamingClient.onConnectionFail(Server.of(remoteIp, remotePort));
     }
 
-	private FullHttpResponse createResponse(HttpMessage httpMessage, HttpFilterMessage message) {
-	    FullHttpResponse httpResponse;
-        if (StringUtil.isNotEmpty(message.getResult())) {
-        	ByteBuf buf = io.netty.buffer.Unpooled.copiedBuffer(message.getResult(), CharsetUtil.UTF_8); 
-        	httpResponse  = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, message.getStatus(), buf);
-        } else {
-            httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, message.getStatus());
-        }
-        HttpHeaders httpHeaders=new DefaultHttpHeaders();
-        if (message.getHeader() != null) {
-            for (Map.Entry<String, Object> entry : message.getHeader().entrySet()) {
-                httpHeaders.set(entry.getKey(), entry.getValue());
-            }
-        }
-    	httpHeaders.set(HttpHeaderNames.CONTENT_TYPE, "application/json");
-    	httpHeaders.set(HttpHeaderNames.CONTENT_LENGTH,String.valueOf(httpResponse.content().readableBytes()));
-    	if (httpMessage != null) {
-            String streamId = httpMessage.headers().get(HttpConversionUtil.ExtensionHeaderNames.STREAM_ID.text());
-            if (streamId != null) {
-                httpHeaders.set(HttpConversionUtil.ExtensionHeaderNames.STREAM_ID.text(),streamId);
-            }
-    	}
-        httpResponse.headers().add(httpHeaders);
-        return httpResponse;
-    }
+	
 }

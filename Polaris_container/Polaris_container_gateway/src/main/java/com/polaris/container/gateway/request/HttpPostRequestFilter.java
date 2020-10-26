@@ -56,7 +56,7 @@ public class HttpPostRequestFilter extends HttpRequestFilter {
 		
 	}
     @Override
-    public boolean doFilter(HttpRequest originalRequest, HttpObject httpObject, HttpFilterMessage httpFilterMessage) {
+    public HttpFilterMessage doFilter(HttpRequest originalRequest, HttpObject httpObject) {
         
         if (httpObject instanceof HttpRequest) {
             if (((HttpRequest)httpObject).method().name().equals("POST")) {
@@ -85,7 +85,7 @@ public class HttpPostRequestFilter extends HttpRequestFilter {
                                 Matcher matcher = pattern.matcher(contentBody.toLowerCase());
                                 if (matcher.find()) {
                                     hackLog(logger, HttpConstant.getRealIp(((HttpRequest)httpObject)), HttpPostRequestFilter.class.getSimpleName(), pattern.toString());
-                                    return true;
+                                    return HttpFilterMessage.of("HttpPostRequestFilter Black List");
                                 }
                             }
                             Matcher fileMatcher = filePattern.matcher(contentBody);
@@ -94,7 +94,7 @@ public class HttpPostRequestFilter extends HttpRequestFilter {
                                 for (Pattern pat : patterns1) {
                                     if (pat.matcher(fileExt).matches()) {
                                         hackLog(logger, HttpConstant.getRealIp(((HttpRequest)httpObject)), HttpPostRequestFilter.class.getSimpleName(), filePattern.toString());
-                                        return true;
+                                        return HttpFilterMessage.of("HttpPostRequestFilter Black List");
                                     }
                                 }
                             }
@@ -104,6 +104,6 @@ public class HttpPostRequestFilter extends HttpRequestFilter {
             }
         }
 
-        return false;
+        return null;
     }
 }

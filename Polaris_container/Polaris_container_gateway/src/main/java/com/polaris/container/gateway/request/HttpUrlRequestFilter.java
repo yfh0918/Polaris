@@ -15,6 +15,7 @@ import com.polaris.container.gateway.util.FileReaderUtil;
 
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponseStatus;
 
 /**
  * @author:Tom.Yu
@@ -37,7 +38,7 @@ public class HttpUrlRequestFilter extends HttpRequestFilter {
 	}
 	
     @Override
-    public boolean doFilter(HttpRequest originalRequest,HttpObject httpObject, HttpFilterMessage httpMessage) {
+    public HttpFilterMessage doFilter(HttpRequest originalRequest,HttpObject httpObject) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
@@ -51,11 +52,16 @@ public class HttpUrlRequestFilter extends HttpRequestFilter {
             for (Pattern pat : patterns) {
                 Matcher matcher = pat.matcher(url);
                 if (matcher.find()) {
+                    if (url.startsWith("/favicon.ico")) {
+                        HttpFilterMessage httpMessage = new HttpFilterMessage();
+                        httpMessage.setStatus(HttpResponseStatus.OK);
+                        return httpMessage;
+                    }
                     hackLog(logger, HttpConstant.getRealIp(httpRequest), HttpUrlRequestFilter.class.getSimpleName(), pat.toString());
-                    return true;
+                    return HttpFilterMessage.of("HttpUrlRequestFilter Black List");
                 }
             }
         }
-        return false;
+        return null;
     }
 }

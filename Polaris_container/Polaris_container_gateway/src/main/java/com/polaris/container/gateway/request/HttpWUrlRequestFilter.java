@@ -15,7 +15,6 @@ import com.polaris.container.gateway.util.FileReaderUtil;
 
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
-import io.netty.handler.codec.http.HttpResponseStatus;
 
 /**
  * @author:Tom.Yu
@@ -43,7 +42,7 @@ public class HttpWUrlRequestFilter extends HttpRequestFilter {
     }
 
     @Override
-    public boolean doFilter(HttpRequest originalRequest,HttpObject httpObject, HttpFilterMessage httpMessage) {
+    public HttpFilterMessage doFilter(HttpRequest originalRequest,HttpObject httpObject) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
@@ -58,14 +57,10 @@ public class HttpWUrlRequestFilter extends HttpRequestFilter {
                 Matcher matcher = pat.matcher(url);
                 if (matcher.find()) {
                     hackLog(logger, HttpConstant.getRealIp(httpRequest), HttpWUrlRequestFilter.class.getSimpleName(), pat.toString());
-                    if (url.startsWith("/favicon.ico")) {
-                    	httpMessage.setExit(true);
-                    	httpMessage.setStatus(HttpResponseStatus.OK);
-                    }
-                    return true;
+                    return HttpFilterMessage.of("HttpWUrlRequestFilter White List");
                 }
             }
         }
-        return false;
+        return null;
     }
 }

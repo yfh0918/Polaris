@@ -22,7 +22,7 @@ public class HttpScannerRequestFilter extends HttpRequestFilter {
 	private static Logger logger = LoggerFactory.getLogger(HttpScannerRequestFilter.class);
 
     @Override
-    public boolean doFilter(HttpRequest originalRequest,HttpObject httpObject, HttpFilterMessage httpMessage) {
+    public HttpFilterMessage doFilter(HttpRequest originalRequest,HttpObject httpObject) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
@@ -51,22 +51,22 @@ public class HttpScannerRequestFilter extends HttpRequestFilter {
 
             if (acunetixAspect || acunetixAspectPassword || acunetixAspectQueries) {
                 hackLog(logger, HttpConstant.getRealIp(httpRequest), "scanner", "Acunetix Web Vulnerability");
-                return true;
+                return HttpFilterMessage.of("HttpScannerRequestFilter Black List");
             } else if (xScanMemo || xRequestMemo || xRequestManagerMemo || xWIPP) {
                 hackLog(logger, HttpConstant.getRealIp(httpRequest), "scanner", "HP WebInspect");
-                return true;
+                return HttpFilterMessage.of("HttpScannerRequestFilter Black List");
             } else if (matcher1.find()) {
                 hackLog(logger, HttpConstant.getRealIp(httpRequest), "scanner", "Appscan");
-                return true;
+                return HttpFilterMessage.of("HttpScannerRequestFilter Black List");
             } else if (matcher2) {
                 hackLog(logger, HttpConstant.getRealIp(httpRequest), "scanner", "Bugscan");
-                return true;
+                return HttpFilterMessage.of("HttpScannerRequestFilter Black List");
             } else if (matcher3.find()) {
                 hackLog(logger, HttpConstant.getRealIp(httpRequest), "scanner", "Netsparker");
-                return true;
+                return HttpFilterMessage.of("HttpScannerRequestFilter Black List");
             }
         }
-        return false;
+        return null;
     }
 }
 

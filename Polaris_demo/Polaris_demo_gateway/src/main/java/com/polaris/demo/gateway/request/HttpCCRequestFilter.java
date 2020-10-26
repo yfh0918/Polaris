@@ -244,7 +244,7 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
 	}
     
 	@Override
-    public boolean doFilter(HttpRequest originalRequest,HttpObject httpObject, HttpFilterMessage httpMessage) {
+    public HttpFilterMessage doFilter(HttpRequest originalRequest,HttpObject httpObject) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             String realIp = HttpConstant.getRealIp((HttpRequest) httpObject);
@@ -254,43 +254,46 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
             String url = getUrl(httpRequest);
             
             //view black ip list
-            if (viewBlackLog(url,httpMessage)) {
-            	return true;
+            HttpFilterMessage httpMessage = viewBlackLog(url);
+            if (httpMessage != null) {
+            	return httpMessage;
             }
             
             //判断是否是无需验证的IP
             if (ccSkipIp.contains(realIp)) {
-            	return false;
+            	return null;
             }
             
             //无需验证的url
             if (ccSkipUrl.contains(url)) {
-            	return false;
+            	return null;
             }
             
         	//是否黑名单
         	if (isBlackIp && blackIpCache.get(realIp) != null){
         		String message = realIp + " access has exceeded ";
+        		httpMessage = new HttpFilterMessage();
         		httpMessage.setResult(ResultUtil.create(Constant.RESULT_FAIL,message).toJSONString());
                 hackLog(logger, realIp, "cc", message);
-        		return true;
+        		return httpMessage;
         	}
 
         	//cc攻击
             if (ccHack(url, realIp)) {
             	String message = httpRequest.uri() + " " + realIp + " access  has exceeded ";
+            	httpMessage = new HttpFilterMessage();
             	httpMessage.setResult(ResultUtil.create(Constant.RESULT_FAIL,message).toJSONString());
                 hackLog(logger, realIp, "cc", message);
-            	return true;
+            	return httpMessage;
             }
             
             //统计
             saveStatisticsLog(url, realIp);
         }
-        return false;
+        return null;
     }
 	
-	private boolean viewBlackLog(String url, HttpFilterMessage httpMessage) {
+	private HttpFilterMessage viewBlackLog(String url) {
         if (url.equals("/gateway/cc/ip")) {
         	@SuppressWarnings("rawtypes")
 			Result<List> dto = new Result<>();
@@ -305,11 +308,12 @@ public class HttpCCRequestFilter extends HttpRequestFilter {
             	}
         	} catch (Exception ex) {}
         	dto.setData(dataList);
+        	HttpFilterMessage httpMessage = new HttpFilterMessage();
         	httpMessage.setStatus(HttpResponseStatus.OK);
         	httpMessage.setResult(dto.toJSONString());
-        	return true;
+        	return httpMessage;
         }
-        return false;
+        return null;
 	}
 	
 	public boolean doSentinel(String url, String realIp) {

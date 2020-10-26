@@ -56,6 +56,6 @@ public abstract class HttpFilter<T extends HttpMessage> extends ManagedComponent
      * @param httpMessage     httpFilterMessage
      * @return true:正则匹配成功,false:正则匹配失败
      */
-	public abstract boolean doFilter(T httpMessage, HttpObject httpObject, HttpFilterMessage httpFilterMessage);
+	public abstract HttpFilterMessage doFilter(T httpMessage, HttpObject httpObject);
 
 }

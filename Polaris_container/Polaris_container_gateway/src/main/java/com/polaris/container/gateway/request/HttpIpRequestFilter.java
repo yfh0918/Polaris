@@ -31,16 +31,16 @@ public class HttpIpRequestFilter extends HttpRequestFilter {
 	}
 	
     @Override
-    public boolean doFilter(HttpRequest originalRequest,HttpObject httpObject, HttpFilterMessage httpMessage) {
+    public HttpFilterMessage doFilter(HttpRequest originalRequest,HttpObject httpObject) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
             String realIp = HttpConstant.getRealIp(httpRequest);
             if (ipSet.contains(realIp)) {
                 hackLog(logger, HttpConstant.getRealIp(httpRequest), HttpIpRequestFilter.class.getSimpleName(), "black ip");
-                return true;
+                return HttpFilterMessage.of("HttpIpRequestFilter Black List");
             }
         }
-        return false;
+        return null;
     }
 }

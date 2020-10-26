@@ -151,7 +151,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
     }
     
 	@Override
-    public boolean doFilter(HttpRequest originalRequest,HttpObject httpObject, HttpFilterMessage httpMessage) {
+    public HttpFilterMessage doFilter(HttpRequest originalRequest,HttpObject httpObject) {
         if (httpObject instanceof HttpRequest) {
         	
             //获取request
@@ -159,7 +159,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
             
             //检验系统调用
             if (isSystemCall(httpRequest)) {
-                return false;
+                return null;
             }
 
             //是否为不验证的url
@@ -167,7 +167,7 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
             if (uncheckUrl) {
             	if (isUncheckPolicy()) {
             	    httpRequest.headers().add(SystemCallUtil.key(ConfClient.get()), SystemCallUtil.value(ConfClient.get()));
-            		return false;
+            		return null;
             	}
             }
             
@@ -179,10 +179,11 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
             if (StringUtil.isEmpty(token)) {
                 if (uncheckUrl) {
                     httpRequest.headers().add(SystemCallUtil.key(ConfClient.get()), SystemCallUtil.value(ConfClient.get()));
-                	return false;
+                	return null;
                 }
+                HttpFilterMessage httpMessage = new HttpFilterMessage();
                 httpMessage.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
-                return true;
+                return httpMessage;
             }
 
             try {
@@ -191,26 +192,29 @@ public class HttpTokenRequestFilter extends HttpRequestFilter {
                 String signKey = ConfClient.get(JwtUtil.JWT_SIGN_KEY, UuidUtil.generateUuid());
                 Claims claims = JwtUtil.parseJWT(token,signKey);
                 if (claims == null) {
+                    HttpFilterMessage httpMessage = new HttpFilterMessage();
                 	httpMessage.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
-                    return true;
+                    return httpMessage;
                 }
                 String userName = claims.getSubject();
                 if (StrUtil.isEmpty(userName)) {
+                    HttpFilterMessage httpMessage = new HttpFilterMessage();
                 	httpMessage.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
-                    return true;
+                    return httpMessage;
                 }
                 
                 //设置claims信息
                 httpRequest.headers().add(JwtUtil.CLAIMS_KEY, JwtUtil.encode(claims));
                 httpRequest.headers().add(SystemCallUtil.key(ConfClient.get()), SystemCallUtil.value(ConfClient.get()));
-                return false;
+                return null;
             } catch (Exception ex) {
+                HttpFilterMessage httpMessage = new HttpFilterMessage();
             	httpMessage.setResult(ResultUtil.create(TOKEN_MESSAGE_CODE,TOKEN_MESSAGE).toJSONString());
-                return true;
+                return httpMessage;
             }
 
         }
-        return false;
+        return null;
     }
 }
 

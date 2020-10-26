@@ -29,6 +29,8 @@ import com.polaris.container.gateway.proxy.FullFlowContext;
 import com.polaris.container.gateway.proxy.HttpFilters;
 import com.polaris.container.gateway.proxy.HttpFiltersAdapter;
 import com.polaris.container.gateway.proxy.SslEngineSource;
+import com.polaris.container.gateway.proxy.jersey.JerseyConfig;
+import com.polaris.container.gateway.proxy.jersey.JerseyServerHandler;
 import com.polaris.container.gateway.util.ProxyUtils;
 
 import io.netty.buffer.Unpooled;
@@ -197,7 +199,14 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequestWrapper>
         
         // Send the request through the clientToProxyRequest filter, and respond with the short-circuit response if required
         HttpResponse clientToProxyFilterResponse = currentFilters.clientToProxyRequest(httpRequest);
-
+        if (clientToProxyFilterResponse == null) {
+            // JAX-RS- support
+            if (JerseyConfig.hasEndPoints()) {
+                clientToProxyFilterResponse = JerseyServerHandler.INSTANCE.clientToProxyRequest(ctx, httpRequest.getOrgHttpRequest());
+            }
+        }
+        
+        //request is blocked by filters
         if (clientToProxyFilterResponse != null) {
             LOG.debug("Responding to client with short-circuit response from filter: {}", clientToProxyFilterResponse);
             boolean keepAlive = respondWithShortCircuitResponse(clientToProxyFilterResponse);
@@ -207,6 +216,9 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequestWrapper>
                 return DISCONNECT_REQUESTED;
             }
         }
+        
+        
+        
 
         // Identify our server and chained proxy
         String serverHostAndPort = httpRequest.getServerHostAndPort();
@@ -698,7 +710,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequestWrapper>
         }
         pipeline.addLast(new CorsHandler(corsConfigBuilder.build()));
     }
-
+    
     /**
      * This method takes care of closing client to proxy and/or proxy to server
      * connections after finishing a write.

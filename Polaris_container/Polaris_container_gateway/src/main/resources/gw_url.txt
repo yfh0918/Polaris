@@ -1,3 +1,4 @@
+/favicon.ico$
 \.(svn|git|htaccess|bash_history)
 \.(bak|inc|old|mdb|sql|backup|java|class)$
 (vhost|bbs|host|wwwroot|www|site|root|hytop|flashfxp).*\.rar

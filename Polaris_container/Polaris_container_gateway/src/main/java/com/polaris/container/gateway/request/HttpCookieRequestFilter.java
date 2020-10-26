@@ -39,7 +39,7 @@ public class HttpCookieRequestFilter extends HttpRequestFilter {
 	}
 	
     @Override
-    public boolean doFilter(HttpRequest originalRequest,HttpObject httpObject, HttpFilterMessage httpMessage) {
+    public HttpFilterMessage doFilter(HttpRequest originalRequest,HttpObject httpObject) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             HttpRequest httpRequest = (HttpRequest) httpObject;
@@ -55,12 +55,12 @@ public class HttpCookieRequestFilter extends HttpRequestFilter {
                         Matcher matcher = pat.matcher(cookie.toLowerCase());
                         if (matcher.find()) {
                             hackLog(logger, HttpConstant.getRealIp(httpRequest), HttpCookieRequestFilter.class.getSimpleName(), pat.toString());
-                            return true;
+                            return HttpFilterMessage.of("HttpCookieRequestFilter Black List");
                         }
                     }
                 }
             }
         }
-        return false;
+        return null;
     }
 }

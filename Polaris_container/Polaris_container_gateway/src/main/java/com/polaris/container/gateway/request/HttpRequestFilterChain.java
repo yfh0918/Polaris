@@ -1,7 +1,5 @@
 package com.polaris.container.gateway.request;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-
 import com.polaris.container.gateway.HttpFilterChain;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
 
@@ -21,26 +19,20 @@ public class HttpRequestFilterChain extends HttpFilterChain<HttpRequestFilter>{
     private HttpRequestFilterChain() {}
 
 
-    public ImmutablePair<Boolean, HttpFilterMessage> doFilter(HttpRequest httpRequest, HttpObject httpObject) {
-    	HttpFilterMessage httpMessage = new HttpFilterMessage();
+    public HttpFilterMessage doFilter(HttpRequest httpRequest, HttpObject httpObject) {
     	for (HttpRequestFilter filter : filters) {
         	if (!skip(filter)) {
-                boolean result = filter.doFilter(httpRequest, httpObject, httpMessage);
-                
-                //是否直接退出
-                if (httpMessage.isExit()) {
-                	return new ImmutablePair<>(true, httpMessage);
-                }
-                
-                //default
-                if (result && filter.isBlacklist()) {
-                    return new ImmutablePair<>(true, httpMessage);
-                } else if (result && !filter.isBlacklist()) {
-                    break;
-                }
+        	    HttpFilterMessage httpMessage = filter.doFilter(httpRequest, httpObject);
+        	    if (httpMessage != null) {
+        	        if (filter.isBlacklist()) {
+        	            return httpMessage;//black list
+        	        } else {
+        	            return null;
+        	        }
+        	    }
         	}
         }
-        return new ImmutablePair<>(false, null);
+        return null;
     }
 
 }

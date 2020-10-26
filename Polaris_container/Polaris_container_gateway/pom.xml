@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.polaris</groupId>
         <artifactId>Polaris_container</artifactId>
-		<version>1.6.2</version>
+		<version>1.7.0</version>
 	</parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>Polaris_container_gateway</artifactId>
@@ -13,6 +13,7 @@
     <properties>
         <netty.tcnative.version>2.0.34.Final</netty.tcnative.version>
         <udt.version>2.3.0</udt.version>
+        <glassfish.jersey.version>2.32</glassfish.jersey.version>
     </properties>
 
     <dependencies>
@@ -66,7 +67,41 @@
             <groupId>com.polaris</groupId>
             <artifactId>Polaris_logger</artifactId>
         </dependency>   
-    
+
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>${glassfish.jersey.version}</version>
+        </dependency>        
+        <dependency>
+            <groupId>org.glassfish.jersey.connectors</groupId>
+            <artifactId>jersey-netty-connector</artifactId>
+            <version>${glassfish.jersey.version}</version>
+        </dependency>
+		<dependency>
+		    <groupId>org.glassfish.jersey.core</groupId>
+		    <artifactId>jersey-server</artifactId>
+		    <version>${glassfish.jersey.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.glassfish.jersey.media</groupId>
+		    <artifactId>jersey-media-json-jackson</artifactId>
+            <version>${glassfish.jersey.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.glassfish.jersey.media</groupId>
+		    <artifactId>jersey-media-multipart</artifactId>
+            <version>${glassfish.jersey.version}</version>
+		</dependency>
+            
+        <!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-common -->
+		<dependency>
+		    <groupId>org.glassfish.jersey.core</groupId>
+		    <artifactId>jersey-common</artifactId>
+		    <version>${glassfish.jersey.version}</version>
+		</dependency>
+
+
 </dependencies>
 
 

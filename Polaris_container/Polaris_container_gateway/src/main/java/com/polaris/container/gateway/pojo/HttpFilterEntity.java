@@ -9,7 +9,9 @@ public class HttpFilterEntity {
     private HttpFilter<? extends HttpMessage> filter;
     private HttpFile[] files;
 
-    // 构造方法  
+    public HttpFilterEntity(HttpFilter<? extends HttpMessage> filter, HttpFile... files) {
+        this(filter, Integer.MIN_VALUE, files);
+    }
     public HttpFilterEntity(HttpFilter<? extends HttpMessage> filter, int order, HttpFile... files) {  
         this.order = order; 
         this.files = files;

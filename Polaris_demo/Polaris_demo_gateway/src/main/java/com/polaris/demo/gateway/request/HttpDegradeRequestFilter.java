@@ -69,7 +69,7 @@ public class HttpDegradeRequestFilter extends HttpRequestFilter {
     }
     
 	@Override
-    public boolean doFilter(HttpRequest originalRequest,HttpObject httpObject, HttpFilterMessage httpMessage) {
+    public HttpFilterMessage doFilter(HttpRequest originalRequest,HttpObject httpObject) {
         if (httpObject instanceof HttpRequest) {
             logger.debug("filter:{}", this.getClass().getName());
             
@@ -79,11 +79,12 @@ public class HttpDegradeRequestFilter extends HttpRequestFilter {
             //降级URL
             String url = HttpCCRequestFilter.getUrl(httpRequest);
             if (degradeUrlSet.size() > 0 && degradeUrlSet.contains(url)) {
+                HttpFilterMessage httpMessage = new HttpFilterMessage();
             	httpMessage.setResult(ResultUtil.create(degradeMessageCode,degradeMessage).toJSONString());
-            	return true;
+            	return httpMessage;
             }
         }
-        return false;
+        return null;
     }
 
 }

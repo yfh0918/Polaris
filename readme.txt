@@ -32,7 +32,8 @@
 
 6:Polaris_container_gateway是现有的api网管，提供api的统一入口服务(基于netty 实现),
   目前支持http1.0，1.1和websocket协议 以及Http2.0协议的接入（配置详细请参考gw_server.json）
-  支持之定义过滤器扩展，详细请参考Polaris_demo_gateway
+  支持之定义过滤器扩展，详细请参考Polaris_demo_gateway，
+  另外除了原始的filter机制，还支持JAX_RS标准的filter,优先级低于原始的filter
 
 7:支持Sentinel（流量监控类），需要在自己的配置文件中设置如下
   #sentinel
