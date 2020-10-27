@@ -21,6 +21,6 @@ public abstract class JerseyFilter extends HttpFilter<HttpRequest>{
     @Override
     public void starting(LifeCycle event) {
         super.starting(event);
-        JerseyConfig.add(this);
+        JerseyConfig.addFilter(this);
     } 
 }

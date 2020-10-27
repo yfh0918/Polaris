@@ -11,6 +11,7 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpFilterMessage;
 import com.polaris.container.gateway.proxy.jersey.JerseyFilter;
 import com.polaris.core.Constant;
@@ -22,12 +23,18 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 @Path("/gateway")
 public class EchoEndpoint extends JerseyFilter {
 
+    private String fileContent = null;
+    
+    public void onChange(HttpFile file) {
+        fileContent = file.getData();
+    };
+    
     @Path("/cc/ip")
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public Response echo(@Context Request request, @Context HttpHeaders headers, @QueryParam("test") String test) {
         return Response.status(Status.FORBIDDEN)
-                .entity(test)
+                .entity(test + fileContent)
                 .build();
     }
     @Path("/cc/test")
