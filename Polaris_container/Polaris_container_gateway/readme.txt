@@ -1,3 +1,7 @@
+The JMeter test uses 4 concurrent threads to generate requests to [germany.html] (site/wikipedia/germany.html).
+ Each thread makes 200 consecutive requests with no delay in between. 
+To simulate a normal browser, JMeter looks for resources referenced in the page and loads those with each page as well.
+
 Environment
 
 Machine:          MacBook Air 2013
