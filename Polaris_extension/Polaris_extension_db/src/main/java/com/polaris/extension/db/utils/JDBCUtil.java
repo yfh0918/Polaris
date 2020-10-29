@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.SpringUtil;
+import com.polaris.core.util.SpringContextHealper;
 import com.polaris.extension.db.datasource.DynamicDataSource;
 
 abstract public class JDBCUtil {
@@ -37,7 +37,7 @@ abstract public class JDBCUtil {
 	 * @author: XuChuanHou
 	 */
 	public static void buildQueryTOQueue(String sql, LinkedBlockingQueue<Map<String, Object>> queue) {
-		DataSource dSource = SpringUtil.getBean(DynamicDataSource.class);
+		DataSource dSource = SpringContextHealper.getBean(DynamicDataSource.class);
 		buildQueryTOQueue(sql,queue,dSource);
 	}
 	public static void buildQueryTOQueue(String sql, LinkedBlockingQueue<Map<String, Object>> queue, DataSource dSource) {
@@ -112,7 +112,7 @@ abstract public class JDBCUtil {
 	 * @author: XuChuanHou
 	 */
 	public List<Map<String, Object>> getQueryResult(String sql) {
-		DataSource dSource = SpringUtil.getBean(DynamicDataSource.class);
+		DataSource dSource = SpringContextHealper.getBean(DynamicDataSource.class);
 		return getQueryResult(sql,dSource);
 	}
 	public static List<Map<String, Object>> getQueryResult(String sql, DataSource dSource) {
@@ -177,7 +177,7 @@ abstract public class JDBCUtil {
      * @author: 
      */
     public static long queryCount(String sql) {
-    	DataSource dSource = SpringUtil.getBean(DynamicDataSource.class);
+    	DataSource dSource = SpringContextHealper.getBean(DynamicDataSource.class);
     	return queryCount(sql,dSource);
     }
     public static long queryCount(String sql,DataSource dSource) {
@@ -229,7 +229,7 @@ abstract public class JDBCUtil {
 	 * @author: XuChuanHou
 	 */
 	public static boolean saveBatch(List<String> sqlList) {
-		DataSource dSource = SpringUtil.getBean(DynamicDataSource.class);
+		DataSource dSource = SpringContextHealper.getBean(DynamicDataSource.class);
 		return saveBatch(sqlList,dSource);
 	}
 	public static boolean saveBatch(List<String> sqlList,DataSource dSource) {

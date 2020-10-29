@@ -4,9 +4,7 @@ import javax.servlet.ServletContext;
 
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.exception.ServletContextException;
-import com.polaris.core.util.SpringUtil;
 
 /**
 * ServletContext helper class
@@ -20,28 +18,17 @@ abstract public class ServletContextHelper {
     * load servlet context into spring context
     * 
     */
-    public static void loadServletContext(ServletContext servletContext,boolean refreshSpringContext) {
-        ConfigurableApplicationContext context = SpringUtil.createApplicationContext(ConfigurationHelper.getConfiguration());
-        loadServletContext(context,servletContext,refreshSpringContext);
-    }
-    public static void loadServletContext(ConfigurableApplicationContext context, ServletContext servletContext,boolean refreshSpringContext) {
+    public static void setServletContext(ConfigurableApplicationContext context, ServletContext servletContext) {
         if (context == null) {
             throw new ServletContextException("loadServletContext is error caused by ConfigurableApplicationContext is null");
         }
         context.getEnvironment().getSystemProperties().put(SERVLET_CONTEXT_KEY, servletContext);
-        SpringUtil.setApplicationContext(context);
-        if (refreshSpringContext) {
-            SpringUtil.refresh();
-        } 
     }
     
     /**
      * get servlet context from spring context
      * 
      */
-    public static ServletContext getServletContext() {
-        return getServletContext(SpringUtil.getApplicationContext());
-    }
     public static ServletContext getServletContext(ConfigurableApplicationContext context) {
         if (context == null) {
             return null;

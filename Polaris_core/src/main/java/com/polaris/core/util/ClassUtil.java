@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.support.DefaultConversionService;
 
+
 /**
  * Class关联处理
  */
@@ -36,7 +37,7 @@ public class ClassUtil {
         if (cls == null) {
             return null;
         }
-        Map<String, T> beanMap = SpringUtil.getApplicationContext().getBeansOfType(cls);
+        Map<String, T> beanMap = SpringContextHealper.getApplicationContext().getBeansOfType(cls);
         if (beanMap == null || beanMap.size() == 0) {
         	return null;
         }

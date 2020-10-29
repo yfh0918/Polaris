@@ -1,62 +1,36 @@
 package com.polaris.core.util;
 
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+/**
+ * Deprecated
+ * {@link SpringContextHealper}
+ */
+@Deprecated
 public class SpringUtil {
-	private static ConfigurableApplicationContext context = null;
-	
+    
+    @Deprecated
     public static ConfigurableApplicationContext getApplicationContext() {
-    	return context;
+        return SpringContextHealper.getApplicationContext();
     }
     
+    @Deprecated
     public static ConfigurableApplicationContext createApplicationContext(Class<?>... clazz) {
-    	if (context == null) {
-    		synchronized(SpringUtil.class) {
-    			if (context == null) {
-    				AnnotationConfigApplicationContext annotationContext = new AnnotationConfigApplicationContext();
-    		    	annotationContext.register(clazz);
-    		    	context = annotationContext;
-    			}
-    		}
-    	}
-        return context;
+        return SpringContextHealper.createApplicationContext(clazz);
     }
     
+    @Deprecated
     public static Object getBean(String serviceName){
-    	try {
-    		if (context == null) {
-    			return null;
-    		}
-            return getApplicationContext().getBean(serviceName);
-    	} catch (Exception ex) {
-    		return null;
-    	}
+        return SpringContextHealper.getBean(serviceName);
     }
 
+    @Deprecated
     public static <T> T getBean(Class<T> requiredType){
-    	try {
-    		if (context == null) {
-    			return null;
-    		}
-        	return getApplicationContext().getBean(requiredType);
-    	} catch (Exception ex) {
-    		return null;
-    	}
+        return SpringContextHealper.getBean(requiredType);
     }
     
+    @Deprecated
     public static void setApplicationContext(ConfigurableApplicationContext inputContext){
-    	context = inputContext;
+        SpringContextHealper.setApplicationContext(inputContext);
     }
-    
-    public static void refresh(Class<?>... clazz) {
-		context = createApplicationContext(clazz);
-		if (context instanceof ConfigurableApplicationContext) {
-			((ConfigurableApplicationContext)context).refresh();
-		} else {
-			throw new RuntimeException("context can't refresh");
-		}
-    }
-
-
 }

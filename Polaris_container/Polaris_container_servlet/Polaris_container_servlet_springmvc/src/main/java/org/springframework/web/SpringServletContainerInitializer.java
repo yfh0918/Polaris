@@ -16,6 +16,7 @@ import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.container.servlet.initializer.ServletContextHelper;
 import com.polaris.container.servlet.initializer.WebComponentFactory;
 import com.polaris.container.servlet.initializer.WebComponentFactory.WebComponent;
+import com.polaris.core.util.SpringContextHealper;
 
 public class SpringServletContainerInitializer implements ServletContainerInitializer {
 
@@ -35,8 +36,10 @@ public class SpringServletContainerInitializer implements ServletContainerInitia
                 return;
             }
             super.onStartup(servletContext);
-            ServletContextHelper.loadServletContext((ConfigurableApplicationContext)context, servletContext,false);
-            WebComponentFactory.init(WebComponent.INIT,WebComponent.LISTENER,WebComponent.FILTER);
+            ServletContextHelper.setServletContext((ConfigurableApplicationContext)context, servletContext);
+            SpringContextHealper.setApplicationContext((ConfigurableApplicationContext)context);
+            WebComponentFactory.init((ConfigurableApplicationContext)context, servletContext, 
+                    WebComponent.INIT,WebComponent.LISTENER,WebComponent.FILTER);
         }
         
         @Override

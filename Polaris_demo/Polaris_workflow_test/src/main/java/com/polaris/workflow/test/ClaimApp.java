@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,7 @@ import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.JacksonUtil;
-import com.polaris.core.util.SpringUtil;
+import com.polaris.core.util.SpringContextHealper;
 import com.polaris.workflow.dto.WorkflowDto;
 import com.polaris.workflow.service.WorkflowCreateService;
 import com.polaris.workflow.service.WorkflowProcessService;
@@ -33,8 +34,9 @@ public class ClaimApp {
 
     public static void main(String[] args) {
     	ConfClient.init();
-        SpringUtil.refresh(ConfigurationHelper.getConfiguration());
-        ClaimApp app = SpringUtil.getBean(ClaimApp.class);
+    	ConfigurableApplicationContext context = SpringContextHealper.createApplicationContext(ConfigurationHelper.getConfiguration());
+    	context.refresh();
+        ClaimApp app = SpringContextHealper.getBean(ClaimApp.class);
         app.deployDiagram();//载入流程（即使重复调用，也不会重复载入）
 //    	app.startWorkflow();//启动流程
 //    	app.findTodoTasks();//查询自己的任务列表

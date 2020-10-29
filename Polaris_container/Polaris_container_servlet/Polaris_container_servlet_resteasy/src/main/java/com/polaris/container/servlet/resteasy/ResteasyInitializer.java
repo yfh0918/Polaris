@@ -5,9 +5,13 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 
+import org.springframework.context.ConfigurableApplicationContext;
+
+import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.container.servlet.initializer.ServletContextHelper;
 import com.polaris.container.servlet.initializer.WebComponentFactory;
 import com.polaris.container.servlet.initializer.WebComponentFactory.WebComponent;
+import com.polaris.core.util.SpringContextHealper;
 
 public class ResteasyInitializer implements javax.servlet.ServletContainerInitializer { 
 	
@@ -23,8 +27,11 @@ public class ResteasyInitializer implements javax.servlet.ServletContainerInitia
                 addServlet(REST_SERVLET, org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher.class);
                 servletRegistration.setLoadOnStartup(1);
                 servletRegistration.addMapping(MAPPING_ALL);
-        ServletContextHelper.loadServletContext(servletContext,true);
-        WebComponentFactory.init(WebComponent.INIT,WebComponent.LISTENER,WebComponent.FILTER);
+        ConfigurableApplicationContext springContext = SpringContextHealper.createApplicationContext(ConfigurationHelper.getConfiguration());
+        springContext.refresh();
+        ServletContextHelper.setServletContext(springContext, servletContext);
+        WebComponentFactory.init(springContext,servletContext,
+                WebComponent.INIT,WebComponent.LISTENER,WebComponent.FILTER);
     }
 	
 

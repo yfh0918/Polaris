@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.polaris.core.config.ConfigChangeListener;
 import com.polaris.core.config.properties.ConfigurationProperties.ConfigurationPropertiesBean;
 import com.polaris.core.config.provider.Config.Opt;
-import com.polaris.core.util.SpringUtil;
+import com.polaris.core.util.SpringContextHealper;
 import com.polaris.core.util.StringUtil;
 
 import cn.hutool.core.collection.ConcurrentHashSet;
@@ -17,7 +17,7 @@ public class ConfigurationPropertiesEndPoint implements ConfigChangeListener{
 	
 	@Override
 	public void onChange(String sequence, String group, String file, Object key, Object value, Opt opt) {
-		ConfigurationProperties configurationProperties = SpringUtil.getBean(ConfigurationProperties.class);
+		ConfigurationProperties configurationProperties = SpringContextHealper.getBean(ConfigurationProperties.class);
 		if (configurationProperties == null) {
 			return;
 		}
@@ -49,7 +49,7 @@ public class ConfigurationPropertiesEndPoint implements ConfigChangeListener{
 	
 	@Override
 	public void onComplete(String sequence) {
-		ConfigurationProperties configurationProperties = SpringUtil.getBean(ConfigurationProperties.class);
+		ConfigurationProperties configurationProperties = SpringContextHealper.getBean(ConfigurationProperties.class);
 		if (configurationProperties == null) {
 			return;
 		}

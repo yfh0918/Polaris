@@ -15,7 +15,7 @@ import com.polaris.container.SpringContextServer;
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.SpringUtil;
+import com.polaris.core.util.SpringContextHealper;
 import com.polaris.core.util.StringUtil;
 
 import io.netty.handler.ssl.SslContextBuilder;
@@ -45,7 +45,7 @@ public class WebfluxServer extends SpringContextServer{
         super.start();
         
         //通过ApplicationContext创建HttpHandler
-        HttpHandler httpHandler = WebHttpHandlerBuilder.applicationContext(SpringUtil.getApplicationContext()).build();
+        HttpHandler httpHandler = WebHttpHandlerBuilder.applicationContext(SpringContextHealper.getApplicationContext()).build();
         ReactorHttpHandlerAdapter httpHandlerAdapter = new ReactorHttpHandlerAdapter(httpHandler);
         port = Integer.parseInt(ConfClient.get(Constant.SERVER_PORT_NAME, Constant.SERVER_PORT_DEFAULT_VALUE));
         HttpServer server =

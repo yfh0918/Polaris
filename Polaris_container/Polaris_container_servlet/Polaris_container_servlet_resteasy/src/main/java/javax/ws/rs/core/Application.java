@@ -47,7 +47,7 @@ import javax.ws.rs.Path;
 
 import com.polaris.container.servlet.initializer.ComponentScanRegister;
 import com.polaris.container.servlet.initializer.ServletContextHelper;
-import com.polaris.core.util.SpringUtil;
+import com.polaris.core.util.SpringContextHealper;
 
 /**
  * Defines the components of a JAX-RS application and supplies additional
@@ -74,7 +74,7 @@ public abstract class Application extends ComponentScanRegister{
 
     
     public Application() {
-        super(SpringUtil.getApplicationContext(), ServletContextHelper.getServletContext(), Path.class);
+        super(SpringContextHealper.getApplicationContext(), ServletContextHelper.getServletContext(SpringContextHealper.getApplicationContext()), Path.class);
         init();
     }
     

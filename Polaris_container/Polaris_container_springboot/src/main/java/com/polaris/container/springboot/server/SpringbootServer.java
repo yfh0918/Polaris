@@ -14,7 +14,7 @@ import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.container.servlet.initializer.ServletContextHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
-import com.polaris.core.util.SpringUtil;
+import com.polaris.core.util.SpringContextHealper;
 
 @Order(ServerOrder.SPRINGBOOT)
 public class SpringbootServer extends SpringContextServer{
@@ -43,9 +43,8 @@ public class SpringbootServer extends SpringContextServer{
         ConfigurableApplicationContext context = springApplication.run(ConfigurationHelper.getArgs());
         if (context instanceof WebApplicationContext) {
             ServletContext servletContext = ((WebApplicationContext)context).getServletContext();
-            ServletContextHelper.loadServletContext(context, servletContext, false);
-        } else {
-            SpringUtil.setApplicationContext(context);
-        }
+            ServletContextHelper.setServletContext(context, servletContext);
+        } 
+        SpringContextHealper.setApplicationContext(context);
     }
 }
