@@ -12,6 +12,7 @@ import com.alibaba.nacos.api.PropertyKeyConst;
 import com.alibaba.nacos.api.naming.NamingFactory;
 import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
+import com.polaris.naming.Constant;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.naming.NamingHandler;
 import com.polaris.core.naming.NamingHandlerOrder;
@@ -34,6 +35,12 @@ public class NacosServer implements NamingHandler {
         properties.setProperty(PropertyKeyConst.SERVER_ADDR, ConfClient.getNamingRegistryAddress());
         if (StringUtil.isNotEmpty(ConfClient.getNameSpace())) {
             properties.setProperty(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
+        }
+        if (StringUtil.isNotEmpty(ConfClient.get(Constant.NAMING_REGISTRY_USERNAME))) {
+            properties.put(PropertyKeyConst.USERNAME, ConfClient.get(Constant.NAMING_REGISTRY_USERNAME));
+        }
+        if (StringUtil.isNotEmpty(ConfClient.get(Constant.NAMING_REGISTRY_PASSWORD))) {
+            properties.put(PropertyKeyConst.PASSWORD, ConfClient.get(Constant.NAMING_REGISTRY_PASSWORD));
         }
         try {
 			naming = NamingFactory.createNamingService(properties);

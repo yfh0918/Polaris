@@ -73,6 +73,8 @@ public class Constant {
 	public static String SERVER_PORT_NAME = "server.port";
 	public static String NAME_REGISTRY_SWITCH = "name.registry.switch";
 	public static final String NAMING_REGISTRY_ADDRESS_NAME = "name.registry.address";
+    public static final String NAMING_REGISTRY_USERNAME = "name.registry.username";
+    public static final String NAMING_REGISTRY_PASSWORD = "name.registry.password";
 
 	// dubbo端口号 和注册中心
 	public static final String DUBBO_PROTOCOL_PORT_NAME = "dubbo.protocol.port";
@@ -86,6 +88,8 @@ public class Constant {
 
 	// 配置中心
 	public static final String CONFIG_REGISTRY_ADDRESS_NAME = "config.registry.address";
+	public static final String CONFIG_REGISTRY_USERNAME = "config.registry.username";
+    public static final String CONFIG_REGISTRY_PASSWORD = "config.registry.password";
 	
 	// 日志
 	public static final String LOG_TRACE_ENABEL="logging.trace.enable";

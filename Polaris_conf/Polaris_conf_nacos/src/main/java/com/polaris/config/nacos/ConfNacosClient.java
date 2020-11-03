@@ -45,6 +45,12 @@ public class ConfNacosClient {
 		if (StringUtil.isNotEmpty(ConfClient.getNameSpace())) {
 			properties.put(PropertyKeyConst.NAMESPACE, ConfClient.getNameSpace());
 		}
+		if (StringUtil.isNotEmpty(ConfClient.get(Constant.CONFIG_REGISTRY_USERNAME))) {
+		    properties.put(PropertyKeyConst.USERNAME, ConfClient.get(Constant.CONFIG_REGISTRY_USERNAME));
+		}
+        if (StringUtil.isNotEmpty(ConfClient.get(Constant.CONFIG_REGISTRY_PASSWORD))) {
+            properties.put(PropertyKeyConst.PASSWORD, ConfClient.get(Constant.CONFIG_REGISTRY_PASSWORD));
+        }
 		try {
 			configService = NacosFactory.createConfigService(properties);
 			logger.info("nacos init success");

@@ -252,42 +252,48 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequestWrapper>
         LOG.debug("Finding ProxyToServerConnection remoteAddress for :{}, serverHostAndPort for: {}", remoteAddress.toString(), serverHostAndPort);
         currentServerConnection = this.serverConnectionsMap.get(remoteAddress);
         if (currentServerConnection == null) {
-            try {
-                currentServerConnection = ProxyToServerConnection.create(
-                        proxyServer,
-                        this,
-                        currentFilters,
-                        remoteAddress,
-                        globalTrafficShapingHandler);
+            synchronized(remoteAddress.toString().intern()) {
+                currentServerConnection = this.serverConnectionsMap.get(remoteAddress);
                 if (currentServerConnection == null) {
-                    LOG.debug("Unable to create server connection, probably no chained proxies available");
-                    boolean keepAlive = writeBadGateway(httpRequest);
-                    resumeReading();
-                    if (keepAlive) {
-                        return AWAITING_INITIAL;
-                    } else {
-                        return DISCONNECT_REQUESTED;
+                    try {
+                        currentServerConnection = ProxyToServerConnection.create(
+                                proxyServer,
+                                this,
+                                currentFilters,
+                                remoteAddress,
+                                globalTrafficShapingHandler);
+                        if (currentServerConnection == null) {
+                            LOG.debug("Unable to create server connection, probably no chained proxies available");
+                            boolean keepAlive = writeBadGateway(httpRequest);
+                            resumeReading();
+                            if (keepAlive) {
+                                return AWAITING_INITIAL;
+                            } else {
+                                return DISCONNECT_REQUESTED;
+                            }
+                        }
+                        // Remember the connection for later
+                        serverConnectionsMap.put(remoteAddress, currentServerConnection);
+                    } catch (UnknownHostException uhe) {
+                        LOG.info("Bad Host {}", serverHostAndPort + httpRequest.uri());
+                        boolean keepAlive = writeBadGateway(httpRequest);
+                        resumeReading();
+                        if (keepAlive) {
+                            return AWAITING_INITIAL;
+                        } else {
+                            return DISCONNECT_REQUESTED;
+                        }
                     }
-                }
-                // Remember the connection for later
-                serverConnectionsMap.put(remoteAddress, currentServerConnection);
-            } catch (UnknownHostException uhe) {
-                LOG.info("Bad Host {}", serverHostAndPort + httpRequest.uri());
-                boolean keepAlive = writeBadGateway(httpRequest);
-                resumeReading();
-                if (keepAlive) {
-                    return AWAITING_INITIAL;
                 } else {
-                    return DISCONNECT_REQUESTED;
+                    LOG.debug("Reusing existing server connection: {}",
+                            currentServerConnection);
                 }
             }
         } else {
             LOG.debug("Reusing existing server connection: {}",
                     currentServerConnection);
         }
-
         modifyRequestHeadersToReflectProxying(httpRequest);
-
         HttpResponse proxyToServerFilterResponse = currentFilters.proxyToServerRequest(httpRequest);
         if (proxyToServerFilterResponse != null) {
             LOG.debug("Responding to client with short-circuit response from filter: {}", proxyToServerFilterResponse);
