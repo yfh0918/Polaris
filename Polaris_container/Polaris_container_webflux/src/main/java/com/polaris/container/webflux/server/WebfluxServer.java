@@ -4,19 +4,27 @@ import java.io.File;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.http.server.reactive.ReactorHttpHandlerAdapter;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.reactive.config.EnableWebFlux;
+import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 
 import com.polaris.container.ServerOrder;
 import com.polaris.container.SpringContextServer;
 import com.polaris.container.config.ConfigurationHelper;
 import com.polaris.core.Constant;
+import com.polaris.core.GlobalContext;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.SpringContextHealper;
 import com.polaris.core.util.StringUtil;
+import com.polaris.core.util.UuidUtil;
 
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
@@ -33,6 +41,10 @@ public class WebfluxServer extends SpringContextServer{
     private DisposableServer disposableSever;
     
     private int port = 80;
+    
+    private String contextPath;
+    
+    private String contextPathForJudge;
     
     /**
      * 启动服务器
@@ -69,7 +81,7 @@ public class WebfluxServer extends SpringContextServer{
         disposableSever = server.bindNow();
 
         //log
-        logger.info("netty-webflux started on port(s) " + port + " with context path '/'");
+        logger.info("netty-webflux started on port(s) " + port + " with context path '"+contextPath+"'");
         
         //block
         new Thread(new Runnable() {
@@ -79,6 +91,60 @@ public class WebfluxServer extends SpringContextServer{
             }
         }, "disposableSever-onDispose-block").start();
         
+    }
+    
+    private void setCcontextPath() {
+        contextPath = ConfClient.get(Constant.SERVER_CONTEXT,ConfClient.get(Constant.SERVER_SPRING_CONTEXT, Constant.SLASH));
+        contextPathForJudge = contextPath;
+        if (!contextPathForJudge.endsWith(Constant.SLASH)) {
+            contextPathForJudge = contextPathForJudge + Constant.SLASH;
+        }
+    }
+    
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    public WebFilter contextPathWebFilter() {
+        setCcontextPath();
+        return (exchange, chain) -> {
+            ServerHttpRequest request = exchange.getRequest();
+            ServerHttpResponse response = exchange.getResponse();
+            try {
+                //traceId
+                String traceId = request.getHeaders().getFirst(GlobalContext.TRACE_ID);
+                if (StringUtil.isEmpty(traceId)) {
+                    GlobalContext.setTraceId(UuidUtil.generateUuid());
+                }  else {
+                    GlobalContext.setTraceId(traceId);
+                }
+                
+                //parentId
+                String parentId = request.getHeaders().getFirst(GlobalContext.SPAN_ID);
+                if (StringUtil.isNotEmpty(parentId)) {
+                    GlobalContext.setParentId(parentId);
+                } 
+                
+                //spanId
+                GlobalContext.setSpanId(UuidUtil.generateUuid());
+                
+                //streamId
+                String streamId = request.getHeaders().getFirst(GlobalContext.STREAM_ID);
+                if (streamId != null) {
+                    response.getHeaders().add(GlobalContext.STREAM_ID, streamId);
+                }
+                
+                if (request.getURI().getPath().startsWith(contextPathForJudge)) {
+                    return chain.filter(
+                        exchange.mutate()
+                        .request(request.mutate().contextPath(contextPath).build())
+                        .build());
+                } else {
+                    response.setStatusCode(HttpStatus.NOT_FOUND);
+                    return response.setComplete();
+                }
+            } finally {
+                GlobalContext.removeContext();
+            }
+        };
     }
     
     /**
