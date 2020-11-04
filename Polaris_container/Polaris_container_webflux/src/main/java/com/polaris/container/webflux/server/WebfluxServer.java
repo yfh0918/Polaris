@@ -103,7 +103,7 @@ public class WebfluxServer extends SpringContextServer{
     
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public WebFilter contextPathWebFilter() {
+    public WebFilter traceFilter() {
         setCcontextPath();
         return (exchange, chain) -> {
             ServerHttpRequest request = exchange.getRequest();
