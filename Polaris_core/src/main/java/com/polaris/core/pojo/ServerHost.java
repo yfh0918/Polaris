@@ -4,10 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServerHost {
-	public static final String HTTP_PREFIX = "http://";
-	public static final String HTTPS_PREFIX = "https://";
-	public static final String WS_PREFIX = "ws://";
-	public static final String WSS_PREFIX = "wss://";
+    public static final String SLASH = "/";
+    public static final String DOUBLE_SLASH = "://";
+    public static final String HTTP = "http";
+	public static final String HTTP_PREFIX = HTTP+DOUBLE_SLASH;
+	
+    public static final String HTTPS = "https";
+	public static final String HTTPS_PREFIX = HTTPS+DOUBLE_SLASH;
+	
+    public static final String WS = "ws";
+	public static final String WS_PREFIX = WS+DOUBLE_SLASH;
+	
+    public static final String WSS = "wss";
+	public static final String WSS_PREFIX = WSS+DOUBLE_SLASH;
+	
 	private String prefix;
 	private String serviceName;
 	private String uri;

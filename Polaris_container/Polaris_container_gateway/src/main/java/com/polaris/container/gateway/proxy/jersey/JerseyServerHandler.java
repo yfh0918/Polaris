@@ -61,6 +61,7 @@ import org.glassfish.jersey.server.spi.ContainerResponseWriter;
 
 import com.polaris.container.gateway.pojo.HttpProtocolTls;
 import com.polaris.container.gateway.util.ResponseUtil;
+import com.polaris.core.pojo.ServerHost;
 import com.polaris.core.util.JacksonUtil;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -74,8 +75,6 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 /**
  * {@link io.netty.channel.ChannelInboundHandler} which servers as a bridge
  * between Netty and Jersey.
- *
- * @author Pavel Bucek (pavel.bucek at oracle.com)
  */
 public class JerseyServerHandler {
 
@@ -154,7 +153,7 @@ public class JerseyServerHandler {
      */
     private ContainerRequest createContainerRequest(ChannelHandlerContext ctx, HttpRequest req) throws URISyntaxException{
         HttpHeaders headers = req.headers();
-        URI baseUri = new URI((HttpProtocolTls.isTlsEnable() ? "https" : "http") + "://" + headers.get(HttpHeaderNames.HOST) + "/");
+        URI baseUri = new URI((HttpProtocolTls.isTlsEnable() ? ServerHost.HTTPS : ServerHost.HTTP) + ServerHost.DOUBLE_SLASH + headers.get(HttpHeaderNames.HOST) + ServerHost.SLASH);
         String s = req.uri().startsWith("/") ? req.uri().substring(1) : req.uri();
         URI requestUri = URI.create(baseUri + ContainerUtils.encodeUnsafeCharacters(s));
 
