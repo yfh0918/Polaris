@@ -31,6 +31,7 @@ public class ConfApolloClient {
 		ConfigFile config = ConfigService.getConfigFile(fileName, ConfigFileFormat.fromString(fileFormart));
 		if (config == null) {
 			logger.error("Apollo ConfigFile load error,ConfigFile is null");
+			return null;
 		}
 		return config.getContent();
 	}
