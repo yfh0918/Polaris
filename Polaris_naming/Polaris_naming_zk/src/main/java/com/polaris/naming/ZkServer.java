@@ -52,10 +52,22 @@ public class ZkServer implements NamingHandler {
 
 	@Override
 	public Server getServer(String serviceName) {
-		
+	    if (StringUtil.isEmpty(serviceName)) {
+            return null;
+        }
 		//get curator
 		CuratorFramework curator = getCurator();
-		String childNodePathCache = getPath(serviceName);
+		
+		//获取Group=xxx@@yyyyy
+        String[] groupAndServiceName = serviceName.split(Constant.SERVICE_INFO_SPLITER);
+        String group = null;
+        if (groupAndServiceName.length >= 2) {
+            group = groupAndServiceName[0];
+            serviceName = groupAndServiceName[1];
+        } else {
+            group = Constant.DEFAULT_GROUP;
+        }
+		String childNodePathCache = getPath(serviceName,group);
 
         //childData：设置缓存节点的数据状态
 		ZkCache zkCache = getZkCache(curator, childNodePathCache);
@@ -67,10 +79,22 @@ public class ZkServer implements NamingHandler {
 
 	@Override
 	public List<Server> getServerList(String serviceName) {
-		
+	    if (StringUtil.isEmpty(serviceName)) {
+            return null;
+        }
 		//get curator
 		CuratorFramework curator = getCurator();
-		String childNodePathCache = getPath(serviceName);
+		
+		//获取Group=xxx@@yyyyy
+        String[] groupAndServiceName = serviceName.split(Constant.SERVICE_INFO_SPLITER);
+        String group = null;
+        if (groupAndServiceName.length >= 2) {
+            group = groupAndServiceName[0];
+            serviceName = groupAndServiceName[1];
+        } else {
+            group = Constant.DEFAULT_GROUP;
+        }
+		String childNodePathCache = getPath(serviceName,group);
 		
 		//childData：设置缓存节点的数据状态
 		ZkCache zkCache = getZkCache(curator, childNodePathCache);
@@ -98,7 +122,7 @@ public class ZkServer implements NamingHandler {
 		
 		//register-data
 		String regContent = ip + ":" + port+ ":" + ConfClient.get(Constant.PROJECT_WEIGHT, Constant.PROJECT_WEIGHT_DEFAULT);
-		String zkRegPathPrefix = getPath(ConfClient.getAppName()) + Constant.SLASH + "server-provider-";
+		String zkRegPathPrefix = getPath(ConfClient.getAppName(),ConfClient.getAppGroup()) + Constant.SLASH + "server-provider-";
 		
 		//re-connect
 		ZkConnectionStateListener stateListener = new ZkConnectionStateListener(zkRegPathPrefix, regContent);
@@ -128,7 +152,7 @@ public class ZkServer implements NamingHandler {
 		return true;
 	}
 	
-	private String getPath(String key) {
+	private String getPath(String key, String group) {
 		StringBuilder groupSb = new StringBuilder();
 		
 		//rootPath
@@ -143,7 +167,7 @@ public class ZkServer implements NamingHandler {
 		}
 		
 		//group
-        groupSb.append(ConfClient.getAppGroup());
+        groupSb.append(group);
         groupSb.append(Constant.SLASH);
 		
 		//key

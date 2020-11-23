@@ -67,10 +67,20 @@ public class NacosServer implements NamingHandler {
 			}
 		} 
 		
+		//获取Group=xxx@@yyyyy
+		String[] groupAndServiceName = serviceName.split(Constant.SERVICE_INFO_SPLITER);
+		String group = null;
+		if (groupAndServiceName.length >= 2) {
+		    group = groupAndServiceName[0];
+		    serviceName = groupAndServiceName[1];
+		} else {
+		    group = Constant.DEFAULT_GROUP;
+		}
+		
 		//获取有效URL
 		try {
 			Instance instance = null;
-			instance = naming.selectOneHealthyInstance(serviceName, ConfClient.getAppGroup());
+			instance = naming.selectOneHealthyInstance(serviceName, group);
 			if (instance != null) {
 				return Server.of(instance.getIp(), instance.getPort(), new Double(instance.getWeight()).intValue());
 			}
@@ -97,12 +107,21 @@ public class NacosServer implements NamingHandler {
 				}
 			}
 		} 
-				
+		
+		//获取Group=xxx@@yyyyy
+        String[] groupAndServiceName = serviceName.split(Constant.SERVICE_INFO_SPLITER);
+        String group = null;
+        if (groupAndServiceName.length >= 2) {
+            group = groupAndServiceName[0];
+            serviceName = groupAndServiceName[1];
+        } else {
+            group = Constant.DEFAULT_GROUP;
+        }
+        
 		//获取有效URL
 		try {
 			List<Instance> instances = null;
-	        String groupName = ConfClient.getAppGroup();
-			instances = naming.selectInstances(serviceName, groupName, true, false);
+			instances = naming.selectInstances(serviceName, group, true, false);
 
 			List<Server> serverList = new ArrayList<>();
 			if (instances != null && instances.size() > 0) {

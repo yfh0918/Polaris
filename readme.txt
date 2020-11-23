@@ -13,6 +13,7 @@
   每一个服务 需要在自己的配置文件中设置注册中心
   #name.registry.address=127.0.0.1:8848
   需要在自己的服务pom.xml中引入 Polaris_naming_xxx
+  获取某个特定的服务时候 采用group@@servicename指定group和service名称
   
 4:配置中心支持多种模式（zookeeper,nacos,apollo的ConfigFile以及本地文件file），需要在自己的配置文件中设置配置中心
   所有的配置服务端软件需自己下载软件，比如nacos,apollo,   

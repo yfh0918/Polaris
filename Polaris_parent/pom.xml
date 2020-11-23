@@ -3,7 +3,7 @@
    <parent>
 		<groupId>com.polaris</groupId>
 		<artifactId>Polaris</artifactId>
-		<version>1.7.1</version>
+		<version>1.7.2</version>
 	</parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>Polaris_parent</artifactId>
@@ -17,7 +17,7 @@
         <tomcat-version>9.0.35</tomcat-version>
         <jetty-version>9.4.24.v20191120</jetty-version>
         <undertow-version>2.0.30.Final</undertow-version>
-        <polaris-version>1.7.1</polaris-version>
+        <polaris-version>1.7.2</polaris-version>
         <activiti-version>5.22.0</activiti-version>
         <hibernate-version>5.4.10.Final</hibernate-version>
         <lucene-version>7.2.0</lucene-version>
