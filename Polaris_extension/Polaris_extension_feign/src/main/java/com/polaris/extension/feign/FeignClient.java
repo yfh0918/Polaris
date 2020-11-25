@@ -1,7 +1,10 @@
 package com.polaris.extension.feign;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.client.HttpClient;
 
@@ -20,9 +23,15 @@ import feign.jackson.JacksonEncoder;
 
 public class FeignClient {
     
-    //不启用CloseableHttpClient的retry
-    private static HttpClient defaultHttpClient = HttpClientUtil.createHttpClient(100, 20, 0);
-
+    private static HttpClient defaultHttpClient = HttpClientUtil.createHttpClient(100, 20, 0);//不启用CloseableHttpClient的retry
+    private static Retryer defaultRetryer = new Retryer.Default(100, SECONDS.toMillis(1), 2);//设置retry
+    private static Options defaultOptions = new Options(10, TimeUnit.SECONDS, 60, TimeUnit.SECONDS, true);
+    
+    public static void Default(HttpClient httpClient, Retryer retryer, Options options) {
+        defaultHttpClient = httpClient;
+        defaultRetryer = retryer;
+        defaultOptions = options;
+    }
     
     public static <T> T target(Class<T> apiType, String url,RequestInterceptor... requestInterceptors) {
         return target(apiType,null,null,null,url,requestInterceptors);
@@ -48,10 +57,10 @@ public class FeignClient {
     }
     public static <T> T target(Class<T> apiType, Retryer retryer,Options option,  HttpClient httpClient, String url,RequestInterceptor... requestInterceptors) {
         if (retryer == null) {
-            retryer = new Retryer.Default();
+            retryer = defaultRetryer;
         }
         if (option == null) {
-            option = new Options();
+            option = defaultOptions;
         }
         if (httpClient == null) {
             httpClient = defaultHttpClient;
