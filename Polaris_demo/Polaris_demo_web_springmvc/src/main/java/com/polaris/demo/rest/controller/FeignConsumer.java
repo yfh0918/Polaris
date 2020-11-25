@@ -1,18 +1,6 @@
 package com.polaris.demo.rest.controller;
 
-//import com.netflix.client.ClientFactory;
-//import com.netflix.client.config.IClientConfig;
-//import com.netflix.config.ConfigurationManager;
-//import com.netflix.loadbalancer.ILoadBalancer;
-//import com.netflix.loadbalancer.RandomRule;
-//import com.netflix.loadbalancer.ZoneAwareLoadBalancer;
-
-import feign.Feign;
-import feign.jackson.JacksonDecoder;
-import feign.jackson.JacksonEncoder;
-//import feign.ribbon.LBClient;
-//import feign.ribbon.LBClientFactory;
-//import feign.ribbon.RibbonClient;
+import com.polaris.extension.feign.FeignClient;
 
 public class FeignConsumer {
     public static void main(String[] args) throws Exception {
@@ -25,13 +13,14 @@ public class FeignConsumer {
         
         //固定url
         String url = "http://localhost:9045/demospringmvc";
-        
-        RemoteService service = Feign.builder()
-                .encoder(new JacksonEncoder())
-                .decoder(new JacksonDecoder())
-                .target(RemoteService.class, url);        
+
+        //RemoteService service = FeignClient.target(RemoteService.class, url);
+//        RemoteService service = Feign.builder()
+//                .encoder(new JacksonEncoder())
+//                .decoder(new JacksonDecoder())
+//                .target(RemoteService.class, url);        
         for (int i = 1; i <= 10; i++) {
-            User result = service.getOwner(param);
+            User result = FeignClient.target(RemoteService.class, url).getOwner(param);
             System.out.println(result.getId() + "," + result.getUsername());
         }
         

@@ -38,21 +38,9 @@
             <artifactId>Polaris_extension_mvc_config</artifactId>
         </dependency>
 
-		<!-- feign , robbin -->
 		<dependency>
-		    <groupId>io.github.openfeign</groupId>
-		    <artifactId>feign-core</artifactId>
-		    <version>10.11</version>
-		</dependency>
-		<dependency>
-		    <groupId>io.github.openfeign</groupId>
-		    <artifactId>feign-jackson</artifactId>
-		    <version>10.11</version>
-		</dependency>
-		<dependency>
-		        <groupId>com.netflix.feign</groupId>
-		        <artifactId>feign-ribbon</artifactId>
-		        <version>8.18.0</version>
+            <groupId>com.polaris</groupId>
+            <artifactId>Polaris_extension_feign</artifactId>
         </dependency>
 
 				

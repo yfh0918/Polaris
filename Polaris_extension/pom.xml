@@ -18,7 +18,7 @@
 	<module>Polaris_extension_cache</module>
 	<module>Polaris_extension_workflow</module>
 	<module>Polaris_extension_zk</module>
-	
+	<module>Polaris_extension_feign</module>
   </modules>
   
   <dependencies>
