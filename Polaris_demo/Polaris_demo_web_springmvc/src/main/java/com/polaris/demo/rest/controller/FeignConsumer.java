@@ -2,6 +2,8 @@ package com.polaris.demo.rest.controller;
 
 import com.polaris.extension.feign.FeignClient;
 
+import feign.Request.Options;
+
 public class FeignConsumer {
     public static void main(String[] args) throws Exception {
 
@@ -11,7 +13,9 @@ public class FeignConsumer {
         //走注册中心
         //String url = NamingClient.getRealIpUrl("http://Polaris_demo_web_springmvc/demospringmvc");
         
-        //固定url
+        //固定url,可以是注册中心注册的serviceName，如果由指定的group可以采用group@@serviceName
+        //例如 http://test@@myfeign/demospringmvc
+        //String url = "http://serviceName/demospringmvc";
         String url = "http://localhost:9045/demospringmvc";
 
         //RemoteService service = FeignClient.target(RemoteService.class, url);
@@ -19,6 +23,7 @@ public class FeignConsumer {
 //                .encoder(new JacksonEncoder())
 //                .decoder(new JacksonDecoder())
 //                .target(RemoteService.class, url);        
+        FeignClient.Default(null, new Options(), null, null, null);//设置全局参数
         for (int i = 1; i <= 10; i++) {
             User result = FeignClient.target(RemoteService.class, url).getOwner(param);
             System.out.println(result.getId() + "," + result.getUsername());

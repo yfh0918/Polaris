@@ -32,7 +32,7 @@ public class FeignClient {
     private static Decoder defaultDecoder = new JacksonDecoder();
     private static RequestInterceptor[] defaultRequestInterceptors = new RequestInterceptor[]{};
     
-    public static void Default(HttpClient httpClient, Retryer retryer, Options options, Encoder encoder, Decoder decoder,RequestInterceptor... requestInterceptors) {
+    public static void Default(Retryer retryer, Options options, Encoder encoder, Decoder decoder,HttpClient httpClient, RequestInterceptor... requestInterceptors) {
         if (httpClient != null) {
             defaultHttpClient = httpClient;
         }
@@ -90,7 +90,11 @@ public class FeignClient {
         }
         Encoder encoder = defaultEncoder;
         Decoder decoder = defaultDecoder;
-        
+        url = NamingClient.getRealIpUrl(url);
+        return target0(apiType,retryer,option,encoder,decoder,httpClient,url,requestInterceptors);
+    }
+    
+    private static <T> T target0(Class<T> apiType, Retryer retryer,Options option,  Encoder encoder, Decoder decoder, HttpClient httpClient, String url,RequestInterceptor[] requestInterceptors) {
         Set<RequestInterceptor> requestInterceptorSet = new HashSet<>();
         requestInterceptorSet.add(new TraceInterceptor());
         for (RequestInterceptor requestInterceptor : requestInterceptors) {
@@ -102,11 +106,10 @@ public class FeignClient {
                 .encoder(encoder)
                 .decoder(decoder)
                 .retryer(retryer)
-                .options(option).target(apiType, NamingClient.getRealIpUrl(url));
+                .options(option).target(apiType, url);
     }
     
     private static class TraceInterceptor implements RequestInterceptor {
-        
         @Override
         public void apply(RequestTemplate requestTemplate) {
             requestTemplate.header(GlobalContext.TRACE_ID, GlobalContext.getTraceId());
