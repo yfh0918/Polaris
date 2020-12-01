@@ -46,11 +46,27 @@ public class ResponseUtil {
         OutputStream out = response.getOutputStream();
         try (WritableByteChannel outChannel = Channels.newChannel(out)){
             for (File file : files) {
-                try (FileInputStream inputstream = new FileInputStream(file.getAbsolutePath());
-                     FileChannel inChannel= inputstream.getChannel()) {
-                    inChannel.transferTo(0, inChannel.size(), outChannel);
-                } 
+                download0(outChannel, file.getAbsolutePath());
             }
         } 
+    }
+    
+    public static void download(HttpServletResponse response, String... filePaths) throws IOException {
+        if (filePaths == null || filePaths.length == 0) {
+            return;
+        }
+        OutputStream out = response.getOutputStream();
+        try (WritableByteChannel outChannel = Channels.newChannel(out)){
+            for (String filePath : filePaths) {
+                download0(outChannel, filePath);
+            }
+        } 
+    }
+    
+    private static void download0(WritableByteChannel outChannel, String filePath) throws IOException {
+        try (FileInputStream inputstream = new FileInputStream(filePath);
+             FileChannel inChannel= inputstream.getChannel()) {
+               inChannel.transferTo(0, inChannel.size(), outChannel);
+        }  
     }
 }
