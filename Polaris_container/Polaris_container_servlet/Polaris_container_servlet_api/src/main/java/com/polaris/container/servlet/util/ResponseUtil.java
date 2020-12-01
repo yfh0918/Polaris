@@ -1,7 +1,13 @@
 package com.polaris.container.servlet.util;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.WritableByteChannel;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,5 +38,19 @@ public class ResponseUtil {
             }
         }
     }
-
+    
+    public static void download(HttpServletResponse response, File... files) throws IOException {
+        if (files == null || files.length == 0) {
+            return;
+        }
+        OutputStream out = response.getOutputStream();
+        try (WritableByteChannel outChannel = Channels.newChannel(out)){
+            for (File file : files) {
+                try (FileInputStream inputstream = new FileInputStream(file.getAbsolutePath());
+                     FileChannel inChannel= inputstream.getChannel()) {
+                    inChannel.transferTo(0, inChannel.size(), outChannel);
+                } 
+            }
+        } 
+    }
 }
