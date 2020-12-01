@@ -6,7 +6,6 @@ import java.util.Map;
 
 public class HttpProxy {
 
-    //html
     private volatile static Map<String, List<HttpProxy>> serverNameMap = new LinkedHashMap<>();
     private volatile static Map<String, HttpProxy> serverNameContextMap = new LinkedHashMap<>();
     

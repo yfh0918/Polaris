@@ -1,6 +1,7 @@
 package com.polaris.container.gateway;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import com.polaris.container.gateway.pojo.HttpFile;
 import com.polaris.container.gateway.pojo.HttpHtml;
 import com.polaris.container.gateway.pojo.HttpProtocol;
 import com.polaris.container.gateway.pojo.HttpProxy;
+import com.polaris.container.gateway.pojo.HttpUpstream;
 import com.polaris.core.util.JacksonUtil;
 import com.polaris.core.util.StringUtil;
 
@@ -35,6 +37,9 @@ public class HttpServerConfigReader implements HttpFileListener{
         //create cors object
         createHttpCorsObject(dataMap);
         
+        //create upstream
+        createUpstreamObject(dataMap);
+        
         //create proxy object
         createHttpProxyObject(dataMap);
     }
@@ -58,7 +63,6 @@ public class HttpServerConfigReader implements HttpFileListener{
                 }
             }
         }
-        
     }
     
     @SuppressWarnings("unchecked")
@@ -128,6 +132,22 @@ public class HttpServerConfigReader implements HttpFileListener{
             if (htmlMap.containsKey("cacheTime")) {
                 HttpHtml.setCacheTime(htmlMap.get("cacheTime").toString());
             }
+        }
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void createUpstreamObject(Map<String, Object> dataMap) {
+        if (dataMap.containsKey("upstream")) {
+            Map<String, String> protocolMap = (Map<String, String>)dataMap.get("upstream");
+            Map<String, HttpUpstream> upstreamMap = new HashMap<>();
+            for (Map.Entry<String, String> elementName : protocolMap.entrySet()) {
+                String name = elementName.getKey();
+                HttpUpstream upstream = new HttpUpstream();
+                upstream.setName(name);
+                upstream.setHost(elementName.getValue());
+                upstreamMap.put(name, upstream);
+            }
+            HttpUpstream.setUpstreamMap(upstreamMap);
         }
     }
     

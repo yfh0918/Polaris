@@ -59,28 +59,36 @@
             {"value":"*"}
         ]
     },
+    
+    "upstream":{
+        "banyanSystemAddress":"127.0.0.1:9140",
+        "BanyanAdminAddress":"127.0.0.1:8787", 
+        "banyanNDIAddress":"127.0.0.1:60008", 
+        "FileBrowserAddress":"192.168.1.28" 
+    },
+    
     "proxy": [
         {
           "127.0.0.1": {
             "/": {
                 "index": "index.html",
                 "root": "c:/projects/banyan-admin-fe",
-                "proxy": "127.0.0.1:9140"
+                "proxy": "banyanSystemAddress"
             },
             "/gateway": {
-                "proxy": "127.0.0.1:9140"
+                "proxy": "banyanSystemAddress"
             },
             "/banyanSystem": {
-                "proxy": "127.0.0.1:9140"
+                "proxy": "banyanSystemAddress"
             },
             "/BanyanAdmin": {
-                "proxy": "127.0.0.1:8787"
+                "proxy": "BanyanAdminAddress"
             },
             "/banyanNDI": {
-                "proxy": "127.0.0.1:60008"
+                "proxy": "banyanNDIAddress"
             },
             "/FileBrowser/api": {
-                "proxy": "192.168.1.28",
+                "proxy": "FileBrowserAddress",
                 "rewrite":"/api"
             },
             "/FileBrowser": {
@@ -101,19 +109,19 @@
                 "error":"index.html"
             },
             "/gateway": {
-                "proxy": "127.0.0.1:9140"
+                "proxy": "banyanSystemAddress"
             },
             "/banyanSystem": {
-                "proxy": "127.0.0.1:9140"
+                "proxy": "banyanSystemAddress"
             },
             "/BanyanAdmin": {
-                "proxy": "127.0.0.1:8787"
+                "proxy": "BanyanAdminAddress"
             },
             "/banyanNDI": {
-                "proxy": "127.0.0.1:60008"
+                "proxy": "banyanNDIAddress"
             },
             "/FileBrowser/api": {
-                "proxy": "192.168.1.28",
+                "proxy": "FileBrowserAddress",
                 "rewrite":"/api"
             },
             "/FileBrowser": {
