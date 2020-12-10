@@ -7,10 +7,16 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.client.HttpClient;
+import org.springframework.core.annotation.AnnotationUtils;
 
+import com.polaris.core.Constant;
 import com.polaris.core.GlobalContext;
+import com.polaris.core.exception.NamingException;
 import com.polaris.core.naming.NamingClient;
+import com.polaris.core.naming.annotation.NamingRequest;
+import com.polaris.core.pojo.ServerHost;
 import com.polaris.core.util.HttpClientUtil;
+import com.polaris.core.util.StringUtil;
 
 import feign.Feign;
 import feign.Request.Options;
@@ -53,29 +59,29 @@ public class FeignClient {
         }
     }
     
-    public static <T> T target(Class<T> apiType, String url,RequestInterceptor... requestInterceptors) {
-        return target(apiType,null,null,null,url,requestInterceptors);
+    public static <T> T target(Class<T> apiType, RequestInterceptor... requestInterceptors) {
+        return target(apiType,null,null,null,requestInterceptors);
     }
-    public static <T> T target(Class<T> apiType, Retryer retryer, String url,RequestInterceptor... requestInterceptors) {
-        return target(apiType,retryer,null,null,url,requestInterceptors);
+    public static <T> T target(Class<T> apiType, Retryer retryer, RequestInterceptor... requestInterceptors) {
+        return target(apiType,retryer,null,null,requestInterceptors);
     }
-    public static <T> T target(Class<T> apiType, Options option, String url,RequestInterceptor... requestInterceptors) {
-        return target(apiType,null,option,null,url,requestInterceptors);
+    public static <T> T target(Class<T> apiType, Options option, RequestInterceptor... requestInterceptors) {
+        return target(apiType,null,option,null,requestInterceptors);
     }
-    public static <T> T target(Class<T> apiType, Retryer retryer,Options option, String url,RequestInterceptor... requestInterceptors) {
-        return target(apiType,retryer,option,null,url,requestInterceptors);
+    public static <T> T target(Class<T> apiType, Retryer retryer,Options option, RequestInterceptor... requestInterceptors) {
+        return target(apiType,retryer,option,null,requestInterceptors);
     }
     
-    public static <T> T target(Class<T> apiType, HttpClient httpClient, String url,RequestInterceptor... requestInterceptors) {
-        return target(apiType,null,null,httpClient,url,requestInterceptors);
+    public static <T> T target(Class<T> apiType, HttpClient httpClient, RequestInterceptor... requestInterceptors) {
+        return target(apiType,null,null,httpClient,requestInterceptors);
     }
-    public static <T> T target(Class<T> apiType, Retryer retryer, HttpClient httpClient,String url,RequestInterceptor... requestInterceptors) {
-        return target(apiType,retryer,null,httpClient,url,requestInterceptors);
+    public static <T> T target(Class<T> apiType, Retryer retryer, HttpClient httpClient,RequestInterceptor... requestInterceptors) {
+        return target(apiType,retryer,null,httpClient,requestInterceptors);
     }
-    public static <T> T target(Class<T> apiType, Options option, HttpClient httpClient,String url,RequestInterceptor... requestInterceptors) {
-        return target(apiType,null,option,httpClient,url,requestInterceptors);
+    public static <T> T target(Class<T> apiType, Options option, HttpClient httpClient,RequestInterceptor... requestInterceptors) {
+        return target(apiType,null,option,httpClient,requestInterceptors);
     }
-    public static <T> T target(Class<T> apiType, Retryer retryer,Options option,  HttpClient httpClient, String url,RequestInterceptor... requestInterceptors) {
+    public static <T> T target(Class<T> apiType, Retryer retryer,Options option,  HttpClient httpClient, RequestInterceptor... requestInterceptors) {
         if (retryer == null) {
             retryer = defaultRetryer;
         }
@@ -90,7 +96,7 @@ public class FeignClient {
         }
         Encoder encoder = defaultEncoder;
         Decoder decoder = defaultDecoder;
-        url = NamingClient.getRealIpUrl(url);
+        String url = url(AnnotationUtils.findAnnotation(apiType, NamingRequest.class));
         return target0(apiType,retryer,option,encoder,decoder,httpClient,url,requestInterceptors);
     }
     
@@ -107,6 +113,25 @@ public class FeignClient {
                 .decoder(decoder)
                 .retryer(retryer)
                 .options(option).target(apiType, url);
+    }
+    
+    public static String url(NamingRequest request) {
+        if (request == null) {
+            throw new NamingException("NamingRequest is not setted");
+        }
+        StringBuilder strB = new StringBuilder();
+        strB.append(request.protocol());
+        if (StringUtil.isNotEmpty(request.group())) {
+            strB.append(request.group() + Constant.SERVICE_INFO_SPLITER);
+        }
+        strB.append(NamingClient.getServer(request.value()));
+        if (StringUtil.isNotEmpty(request.context())) {
+            if (!request.context().startsWith(ServerHost.SLASH)) {
+                strB.append(ServerHost.SLASH);
+            }
+            strB.append(request.context());
+        }
+        return strB.toString();
     }
     
     private static class TraceInterceptor implements RequestInterceptor {
