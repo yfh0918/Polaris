@@ -71,7 +71,7 @@
 9，
    9.1 支持整体调用链路的跟踪，需要配置开启logging.trace.enable=true
        遵循opening trace协议：traceId, spanId,parentId,moduleId
-       日志采用slf4j的 Logger xLogger = LoggerFactory.getLogger(xxx.class);只需引入Polaris_core包
+       日志采用slf4j的 Logger xLogger = LoggerFactory.getLogger(xxx.class);只需引入Polaris_logger包
 	另外如果采用线程池的方式，
 	需要使用ThreadPoolBuilder.newBuilder().inheritable(true).xxx().xx().build()，或者使用ThreadPoolBuilder.newScheduledBuilder().inheritable(true).xxx().xx().build(),并且这样做的好处是你不用手动释放连接池由容器来释放
 	线程池中的traceId信息也会进行传递
