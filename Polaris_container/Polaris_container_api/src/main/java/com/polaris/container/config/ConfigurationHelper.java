@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.util.ClassUtils;
 
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.config.spring.value.SpringAutoUpdateConfigChangeListener;
@@ -22,7 +23,7 @@ abstract public class ConfigurationHelper {
 	private static String[] args;
 	private static Class<?>[] classes;
 	private static Set<String> basePackageSet = new HashSet<>();
-    private static Set<Class<?>> basePackageClassesSet = new HashSet<>();
+    //private static Set<Class<?>> basePackageClassesSet = new HashSet<>();
 	
 	public static void init(String[] arg, Class<?>... clazz) {
 		//设置
@@ -68,7 +69,7 @@ abstract public class ConfigurationHelper {
     		            basePackageSet.add(basePackage);
     		        }
     		        for (Class<?> basePackageClass : componentScan.basePackageClasses()) {
-    		            basePackageClassesSet.add(basePackageClass);
+    		            basePackageSet.add(ClassUtils.getPackageName(basePackageClass));
     		        }
                     basePackageSet.add(clazz0.getPackage().getName());
     		    }
@@ -84,9 +85,6 @@ abstract public class ConfigurationHelper {
 	public static Set<String> getBasePackageSet() {
 		return basePackageSet;
 	}
-	public static Set<Class<?>> getBasePackageClassesSet() {
-        return basePackageClassesSet;
-    }
 	
 	@Configuration
 	protected static class ConfPropertyConfiguration {
