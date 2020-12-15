@@ -1,6 +1,6 @@
 package com.polaris.demo.rest.controller;
 
-import com.polaris.core.naming.annotation.NamingRequest;
+import com.polaris.core.naming.request.NamingRequest;
 
 import feign.Headers;
 import feign.RequestLine;

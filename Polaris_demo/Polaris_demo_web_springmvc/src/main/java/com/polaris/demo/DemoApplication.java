@@ -28,6 +28,7 @@ import com.polaris.container.servlet.initializer.WebListenerRegister;
 import com.polaris.core.component.LifeCycle;
 import com.polaris.core.config.annotation.PolarisConfigurationProperties;
 import com.polaris.core.config.annotation.PolarisMultiConfigurationProperties;
+import com.polaris.core.naming.request.EnableNamingRequest;
 
 /**
  * 入口启动类
@@ -38,6 +39,7 @@ import com.polaris.core.config.annotation.PolarisMultiConfigurationProperties;
     @PolarisConfigurationProperties(group="group1",value="main.properties"),
     @PolarisConfigurationProperties(group="group2",value="global.properties")
 })
+@EnableNamingRequest
 public class DemoApplication
 {
     

@@ -28,9 +28,12 @@ import com.polaris.demo.config.TestProperties.InnerA;
 @RequestMapping("/demo")
 public class DemoController {
 	private static final Logger logger = LoggerFactory.getLogger(DemoController.class);
+	
 	@Autowired
 	private TestProperties testProperties;
 	
+	@Autowired
+	private RemoteService remoteService;
 	
 	@RequestMapping(value = "/test", produces = "application/json;charset=UTF-8")
     @ResponseBody
@@ -71,11 +74,17 @@ public class DemoController {
 		return "aa";
     }
 	
-	@RequestMapping(value = "/close", produces = "application/json;charset=UTF-8")
+	
+	@RequestMapping(value = "/remote", produces = "application/json;charset=UTF-8")
     @ResponseBody
-    public String close(HttpServletRequest request)throws Exception  {
-		System.exit(0);
-		return "aa";
-	}
+    public String remote(HttpServletRequest request)throws Exception  {
+	    User param = new User();
+        param.setUsername("scott");
+        for (int i = 1; i <= 10; i++) {
+            User result = remoteService.getOwner(param);
+            System.out.println(result.getId() + "," + result.getUsername());
+        }
+        return "aa";
+    }
 	
 }
