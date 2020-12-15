@@ -31,7 +31,7 @@ public class NamingRequestRegistrar implements ImportBeanDefinitionRegistrar, Re
     private Environment environment;
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        if (!NamingRequestFactoryBean.exist()) {
+        if (!NamingRequestFactoryBean.existHandler()) {
             return;
         }
         registerNamingRequests(importingClassMetadata,registry);

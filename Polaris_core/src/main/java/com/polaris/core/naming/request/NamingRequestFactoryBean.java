@@ -5,15 +5,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
 
-public class NamingRequestFactoryBean implements FactoryBean<Object>, InitializingBean {
+public class NamingRequestFactoryBean implements FactoryBean<Object> {
     private static final ServiceLoader<NamingRequestHandler> handlerLoader = ServiceLoader.load(NamingRequestHandler.class);
     private static volatile AtomicBoolean initialized = new AtomicBoolean(false);
     private static NamingRequestHandler handler;
     private Class<T> invokerInterface;
  
-    public static boolean exist() {
+    public static boolean existHandler() {
         if (initialized.compareAndSet(false, true)) {
             if (handler == null) {
                 for (NamingRequestHandler namingRequestHandler : handlerLoader) {
@@ -46,9 +45,4 @@ public class NamingRequestFactoryBean implements FactoryBean<Object>, Initializi
     public boolean isSingleton() {
         return true;
     }
- 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-    }
-
 }

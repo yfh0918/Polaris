@@ -35,6 +35,9 @@ public class DemoController {
 	@Autowired
 	private RemoteService remoteService;
 	
+	@Autowired
+    private RemoteService2 remoteService2;
+	
 	@RequestMapping(value = "/test", produces = "application/json;charset=UTF-8")
     @ResponseBody
     public String uploadBase64Img(HttpServletRequest request)throws Exception  {
@@ -82,7 +85,9 @@ public class DemoController {
         param.setUsername("scott");
         for (int i = 1; i <= 10; i++) {
             User result = remoteService.getOwner(param);
-            System.out.println(result.getId() + "," + result.getUsername());
+            System.out.println(result.getId() + "1," + result.getUsername());
+            result = remoteService2.getOwner(param);
+            System.out.println(result.getId() + "2," + result.getUsername());
         }
         return "aa";
     }
