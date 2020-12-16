@@ -10,7 +10,6 @@ import org.apache.http.client.HttpClient;
 import org.springframework.core.annotation.AnnotationUtils;
 
 import com.polaris.core.GlobalContext;
-import com.polaris.core.naming.request.NamingRequest;
 import com.polaris.core.util.HttpClientUtil;
 
 import feign.Feign;
@@ -91,7 +90,7 @@ public class FeignClient {
         }
         Encoder encoder = defaultEncoder;
         Decoder decoder = defaultDecoder;
-        String url = NamingRequest.Convert.url(AnnotationUtils.findAnnotation(apiType, NamingRequest.class));
+        String url = FeignRequest.Convert.url(AnnotationUtils.findAnnotation(apiType, FeignRequest.class));
         return target0(apiType,retryer,option,encoder,decoder,httpClient,url,requestInterceptors);
     }
     

@@ -1,11 +1,11 @@
 package com.polaris.demo.rest.controller;
 
-import com.polaris.core.naming.request.NamingRequest;
+import com.polaris.extension.feign.FeignRequest;
 
 import feign.Headers;
 import feign.RequestLine;
 
-@NamingRequest(value="localhost:9045",context="/demospringmvc")
+@FeignRequest(value="localhost:9045",context="/demospringmvc")
 public interface RemoteService2 {    
     @Headers({"Content-Type: application/json","Accept: application/json"})
     @RequestLine("GET /users/list")

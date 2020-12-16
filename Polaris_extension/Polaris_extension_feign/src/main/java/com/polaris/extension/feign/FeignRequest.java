@@ -1,4 +1,4 @@
-package com.polaris.core.naming.request;
+package com.polaris.extension.feign;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -15,14 +15,14 @@ import com.polaris.core.util.StringUtil;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface NamingRequest {
+public @interface FeignRequest {
     String protocol() default ServerHost.HTTP;
     String group() default "";
     String value();
     String context() default "";
     
     public static class Convert {
-        public static String url(NamingRequest request) {
+        public static String url(FeignRequest request) {
             if (request == null) {
                 throw new NamingException("NamingRequest is not setted");
             }

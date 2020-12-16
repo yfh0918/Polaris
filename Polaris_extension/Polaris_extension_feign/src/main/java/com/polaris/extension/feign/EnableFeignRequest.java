@@ -1,4 +1,4 @@
-package com.polaris.core.naming.request;
+package com.polaris.extension.feign;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import(NamingRequestRegistrar.class)
-public @interface EnableNamingRequest {
+@Import(FeignRequestRegistrar.class)
+public @interface EnableFeignRequest {
     /**
      * Alias for the {@link #basePackages()} attribute. Allows for more concise annotation
      * declarations e.g.: {@code @ComponentScan("org.my.pkg")} instead of

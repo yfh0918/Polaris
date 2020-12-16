@@ -1,4 +1,4 @@
-package com.polaris.core.naming.request;
+package com.polaris.extension.feign;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -26,14 +26,11 @@ import org.springframework.util.StringUtils;
 
 import com.polaris.core.exception.NamingException;
 
-public class NamingRequestRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware{
+public class FeignRequestRegistrar implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware{
     private ResourceLoader resourceLoader;
     private Environment environment;
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        if (!NamingRequestFactoryBean.existHandler()) {
-            return;
-        }
         registerNamingRequests(importingClassMetadata,registry);
     }
     
@@ -53,7 +50,7 @@ public class NamingRequestRegistrar implements ImportBeanDefinitionRegistrar, Re
         LinkedHashSet<BeanDefinition> candidateComponents = new LinkedHashSet<>();
         ClassPathScanningCandidateComponentProvider scanner = getScanner();
         scanner.setResourceLoader(this.resourceLoader);
-        scanner.addIncludeFilter(new AnnotationTypeFilter(NamingRequest.class));
+        scanner.addIncludeFilter(new AnnotationTypeFilter(FeignRequest.class));
         Set<String> basePackages = getBasePackages(metadata);
         for (String basePackage : basePackages) {
             candidateComponents.addAll(scanner.findCandidateComponents(basePackage));
@@ -65,7 +62,7 @@ public class NamingRequestRegistrar implements ImportBeanDefinitionRegistrar, Re
                 Assert.isTrue(annotationMetadata.isInterface(),
                         "@NamingRequest can only be specified on an interface");
                 Map<String, Object> attributes = annotationMetadata
-                        .getAnnotationAttributes(NamingRequest.class.getCanonicalName());
+                        .getAnnotationAttributes(FeignRequest.class.getCanonicalName());
                 registerNamingRequest(registry, annotationMetadata, attributes);
             }
         }
@@ -75,7 +72,7 @@ public class NamingRequestRegistrar implements ImportBeanDefinitionRegistrar, Re
             AnnotationMetadata annotationMetadata, Map<String, Object> attributes) {
         String className = annotationMetadata.getClassName();
         BeanDefinitionBuilder definition = BeanDefinitionBuilder
-                .genericBeanDefinition(NamingRequestFactoryBean.class);
+                .genericBeanDefinition(FeignRequestFactoryBean.class);
         try {
             definition.addConstructorArgValue(Class.forName(className));
         } catch (ClassNotFoundException e) {
@@ -89,7 +86,7 @@ public class NamingRequestRegistrar implements ImportBeanDefinitionRegistrar, Re
     
     protected Set<String> getBasePackages(AnnotationMetadata importingClassMetadata) {
         Map<String, Object> attributes = importingClassMetadata
-                .getAnnotationAttributes(EnableNamingRequest.class.getCanonicalName());
+                .getAnnotationAttributes(EnableFeignRequest.class.getCanonicalName());
 
         Set<String> basePackages = new HashSet<>();
         for (String pkg : (String[]) attributes.get("value")) {
