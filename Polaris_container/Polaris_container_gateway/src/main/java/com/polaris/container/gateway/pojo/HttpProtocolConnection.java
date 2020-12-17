@@ -16,9 +16,7 @@ public abstract class HttpProtocolConnection {
     private static long READ_THROTTLE_BYTES_PER_SECOND = 0l;
     
     private static long WRITE_THROTTLE_BYTES_PER_SECOND = 0l;
-    static {
-        init();
-    }
+    
     public static int getAcceptorThreads() {
         return ACCEPTOR_THREADS;
     }
@@ -35,7 +33,7 @@ public abstract class HttpProtocolConnection {
         return TIMEOUT;
     }
     
-    private static void init() {
+    public static void init() {
         String acceptorThreads = HttpProtocol.getConnectionMap().get("acceptorThreads");
         if (StringUtil.isNotEmpty(acceptorThreads)) {
             try {

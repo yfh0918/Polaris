@@ -9,10 +9,6 @@ public abstract class HttpProtocolTls {
     private static String PRIVATE_KEY_FILE = null;
     private static String PRIVATE_KEY_PASSWORD = null;
     
-    static {
-        init();
-    }
-    
     public static boolean isTlsEnable() {
         return TLS_ENABLE;
     }
@@ -29,7 +25,7 @@ public abstract class HttpProtocolTls {
         return PRIVATE_KEY_PASSWORD;
     }
     
-    private static void init() {
+    public static void init() {
         String enable = HttpProtocol.getTlsMap().get("enable");
         if (StringUtil.isNotEmpty(enable)) {
             try {

@@ -7,9 +7,7 @@ public abstract class HttpProtocolWebSocket {
     private static int WS_IDLE_CONNECT_TIMEOUT = 600;
     
     private static int WS_MAX_FRAME_PAYLOAD_LENGTH = 65536;
-    static {
-        init();
-    }
+    
     public static int getIdleConnectTimeout() {
         return WS_IDLE_CONNECT_TIMEOUT;
     }
@@ -17,7 +15,7 @@ public abstract class HttpProtocolWebSocket {
         return WS_MAX_FRAME_PAYLOAD_LENGTH;
     }
     
-    private static void init() {
+    public static void init() {
         String idleTimeout = HttpProtocol.getWebsocketMap().get("idleTimeout");
         if (StringUtil.isNotEmpty(idleTimeout)) {
             try {

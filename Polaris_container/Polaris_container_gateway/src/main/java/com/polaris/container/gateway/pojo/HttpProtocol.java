@@ -31,6 +31,7 @@ public class HttpProtocol {
 
     public static void setConnectionMap(Map<String, String> connectionMap) {
         HttpProtocol.connectionMap = connectionMap;
+        HttpProtocolConnection.init();
     }
 
     public static Map<String, String> getTlsMap() {
@@ -39,6 +40,7 @@ public class HttpProtocol {
 
     public static void setTlsMap(Map<String, String> tlsMap) {
         HttpProtocol.tlsMap = tlsMap;
+        HttpProtocolTls.init();
     }
 
     public static Map<String, String> getHttp11Map() {
@@ -55,6 +57,7 @@ public class HttpProtocol {
 
     public static void setHttp20Map(Map<String, String> http20Map) {
         HttpProtocol.http20Map = http20Map;
+        HttpProtocolHttp2.init();
     }
 
     public static Map<String, String> getWebsocketMap() {
@@ -63,6 +66,7 @@ public class HttpProtocol {
 
     public static void setWebsocketMap(Map<String, String> websocketMap) {
         HttpProtocol.websocketMap = websocketMap;
+        HttpProtocolWebSocket.init();
     }
     
     public static String identifyHostAndPort(HttpRequest httpRequest) {
