@@ -536,12 +536,11 @@
 /Polaris_naming/Polaris_naming_nacos/.pmd
 /Polaris_naming/Polaris_naming_zk/.pmd
 /Polaris_parent/.pmd
+/Polaris_demo/Polaris_demo_vedio/.classpath
+/Polaris_demo/Polaris_demo_vedio/.project
+/Polaris_demo/Polaris_demo_vedio/.settings
+/Polaris_demo/Polaris_demo_vedio/target
+/Polaris_extension/Polaris_extension_feign/.settings
 /Polaris_extension/Polaris_extension_feign/target
-/Polaris_extension/Polaris_extension_feign/target/classes/META-INF/MANIFEST.MF
-/Polaris_extension/Polaris_extension_feign/target/classes/META-INF/maven/com.polaris/Polaris_extension_feign/pom.properties
-/Polaris_extension/Polaris_extension_feign/target/classes/META-INF/maven/com.polaris/Polaris_extension_feign/pom.xml
-/Polaris_extension/Polaris_extension_feign/target/classes/com/polaris/extension/feign/FeignClient.class
-/Polaris_extension/Polaris_extension_feign/target/test-classes/com/polaris/extension/feign/AppTest.class
 /Polaris_extension/Polaris_extension_feign/.classpath
 /Polaris_extension/Polaris_extension_feign/.project
-/Polaris_extension/Polaris_extension_feign/.settings
