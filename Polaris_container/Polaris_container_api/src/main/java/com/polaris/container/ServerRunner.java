@@ -2,9 +2,9 @@ package com.polaris.container;
 
 import com.polaris.container.banner.Banner;
 import com.polaris.container.banner.BannerPrinter;
-import com.polaris.container.config.ConfigurationHelper;
+import com.polaris.container.config.ConfigurationProxy;
 import com.polaris.container.listener.ServerListener;
-import com.polaris.container.listener.ServerListenerHelper;
+import com.polaris.container.listener.ServerListenerProxy;
 import com.polaris.core.component.InitialProxy;
 import com.polaris.core.config.ConfClient;
 
@@ -26,7 +26,7 @@ public abstract class ServerRunner {
     * startServer
     * @param 
     * @return 
-     * @throws Exception 
+    * @throws Exception 
     * @Exception 
     * @since 
     */
@@ -36,19 +36,19 @@ public abstract class ServerRunner {
     public static void run(String[] args, Class<?>[] configClass, ServerListener... serverListeners) throws Exception {
     	
     	//banna打印
-    	BannerPrinter.print(bannerMode);
+    	BannerPrinter.INSTANCE.init(bannerMode);
     	
     	//各类参数载入
-    	ConfClient.init();
+    	ConfClient.INSTANCE.init();
     	
         //全局初始化
         InitialProxy.INSTANCE.init();
 
         //载入配置类
-		ConfigurationHelper.init(args, configClass);		
+		ConfigurationProxy.INSTANCE.init(args, configClass);		
         
     	//载入监听器
-    	ServerListenerHelper.init(args, serverListeners);
+    	ServerListenerProxy.INSTANCE.init(args, serverListeners);
     	
     	//启动Server
     	ServerProxy.INSTANCE.start();;

@@ -17,15 +17,17 @@ import com.polaris.core.config.spring.value.SpringAutoUpdateConfigChangeListener
 import com.polaris.core.config.spring.value.SpringPlaceholderConfigurer;
 import com.polaris.core.config.spring.value.SpringValueProcessor;
 
-abstract public class ConfigurationHelper {
+public class ConfigurationProxy {
+    
+    public static ConfigurationProxy INSTANCE = new ConfigurationProxy();
+    private ConfigurationProxy() {}
 
-	private static List<Class<?>> configClassList = new ArrayList<>();
-	private static String[] args;
-	private static Class<?>[] classes;
-	private static Set<String> basePackageSet = new HashSet<>();
-    //private static Set<Class<?>> basePackageClassesSet = new HashSet<>();
+	private List<Class<?>> configClassList = new ArrayList<>();
+	private String[] args;
+	private Class<?>[] classes;
+	private Set<String> basePackageSet = new HashSet<>();
 	
-	public static void init(String[] arg, Class<?>... clazz) {
+	public void init(String[] arg, Class<?>... clazz) {
 		//设置
 		args = arg;
 		classes = clazz;
@@ -34,22 +36,23 @@ abstract public class ConfigurationHelper {
 		addConfigurationExtension();
 		addBasePackage(clazz);
 	}
-	public static Class<?>[] getConfiguration() {
+	
+	private Class<?>[] getConfiguration() {
 		Class<?>[] returnClass = new Class[configClassList.size()];
 		return configClassList.toArray(returnClass);
 	}
-    public static Class<?>[] getConfiguration(Class<?>... clazz) {
+    public Class<?>[] getConfiguration(Class<?>... clazz) {
     	addConfiguration(clazz);
     	return getConfiguration();
  	} 
-    public static void addConfiguration(Class<?>... clazz) {
+    public void addConfiguration(Class<?>... clazz) {
     	if (clazz != null && clazz.length > 0) {
     		for (Class<?> clazz0 : clazz) {
     			configClassList.add(clazz0);
     		}
     	}
  	}
-	private static void addConfigurationExtension() {
+	private void addConfigurationExtension() {
 		ServiceLoader<ConfigurationExtension> configurationExtensions = ServiceLoader.load(ConfigurationExtension.class);
 		for (ConfigurationExtension configurationExtension : configurationExtensions) {
 			Class<?>[] classes = configurationExtension.getConfigurations();
@@ -60,7 +63,7 @@ abstract public class ConfigurationHelper {
 			}
         }
 	}
-	private static void addBasePackage(Class<?>... clazz) {
+	private void addBasePackage(Class<?>... clazz) {
 		if (clazz != null && clazz.length > 0) {
     		for (Class<?> clazz0 : clazz) {
     		    ComponentScan componentScan = AnnotationUtils.findAnnotation(clazz0, ComponentScan.class);
@@ -76,13 +79,13 @@ abstract public class ConfigurationHelper {
     		}
     	}
 	}
-	public static String[] getArgs() {
+	public String[] getArgs() {
 		return args;
 	}
-	public static Class<?>[] getClasses() {
+	public Class<?>[] getClasses() {
 		return classes;
 	}
-	public static Set<String> getBasePackageSet() {
+	public Set<String> getBasePackageSet() {
 		return basePackageSet;
 	}
 	

@@ -3,6 +3,7 @@ package com.polaris.core.config;
 import java.util.Properties;
 
 import com.polaris.core.Constant;
+import com.polaris.core.component.Initial;
 import com.polaris.core.config.provider.ConfHandlerFactory;
 import com.polaris.core.config.provider.Config;
 import com.polaris.core.config.provider.Config.Type;
@@ -23,7 +24,10 @@ import com.polaris.core.util.StringUtil;
 * @version
 *
 */
-public abstract class ConfClient{
+public class ConfClient implements Initial{
+    
+    public static ConfClient INSTANCE = new ConfClient();
+    private ConfClient(){}
     
 	/**
 	* 初始化
@@ -32,12 +36,13 @@ public abstract class ConfClient{
 	* @Exception 
 	* @since 
 	*/
-	public static void init() {
+    @Override
+	public void init() {
 	    
 	    //用于非配置文件,不设置监听器
         ConfHandlerFactory.create(Type.DEFAULT);
         
-        //用于application.properties(yaml,xml)和System.setProperty设置ide参数
+        //用于application.properties(yaml,xml)和System.setProperty设置参数
 	    ConfHandlerFactory.create(Type.SYS, Config.INSTANCE, ConfigChangeListenerProxy.INSTANCE);
 	    
 	    //用于通过PolarisMultiConfigurationProperties或者PolarisConfigurationProperties注入的配置

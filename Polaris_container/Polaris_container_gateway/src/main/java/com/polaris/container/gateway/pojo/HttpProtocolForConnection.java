@@ -2,7 +2,7 @@ package com.polaris.container.gateway.pojo;
 
 import com.polaris.core.util.StringUtil;
 
-public abstract class HttpProtocolConnection {
+public abstract class HttpProtocolForConnection {
     private static int ACCEPTOR_THREADS = 1;
     
     private static int CLIENT_TO_PROXY_WORKER_THREADS = 40;
@@ -90,12 +90,12 @@ public abstract class HttpProtocolConnection {
         return READ_THROTTLE_BYTES_PER_SECOND;
     }
     public static void setReadThrottleBytesPerSecond(long readThrottleBytesPerSecond) {
-        HttpProtocolConnection.READ_THROTTLE_BYTES_PER_SECOND = readThrottleBytesPerSecond;
+        HttpProtocolForConnection.READ_THROTTLE_BYTES_PER_SECOND = readThrottleBytesPerSecond;
     }
     public static long getWriteThrottleBytesPerSecond() {
         return WRITE_THROTTLE_BYTES_PER_SECOND;
     }
     public static void setWriteThrottleBytesPerSecond(long writeThrottleBytesPerSecond) {
-        HttpProtocolConnection.WRITE_THROTTLE_BYTES_PER_SECOND = writeThrottleBytesPerSecond;
+        HttpProtocolForConnection.WRITE_THROTTLE_BYTES_PER_SECOND = writeThrottleBytesPerSecond;
     }
 }

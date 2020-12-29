@@ -2,7 +2,7 @@ package com.polaris.container.gateway.pojo;
 
 import com.polaris.core.util.StringUtil;
 
-public abstract class HttpProtocolHttp2 {
+public abstract class HttpProtocolForHttp2 {
     
     private static boolean HTTP20_ENABLE = false;
     

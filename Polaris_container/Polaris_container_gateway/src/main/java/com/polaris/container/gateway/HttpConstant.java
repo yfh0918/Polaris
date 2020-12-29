@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.polaris.container.gateway.pojo.HttpProtocolConnection;
+import com.polaris.container.gateway.pojo.HttpProtocolForConnection;
 
 import io.netty.handler.codec.http.HttpMessage;
 import io.netty.handler.codec.http.HttpRequest;
@@ -23,9 +23,9 @@ public class HttpConstant {
         DENY,//表示该页面不允许在 frame 中展示,即便是在相同域名的页面中嵌套也不允许.
         SAMEORIGIN//表示该页面可以在相同域名页面的 frame 中展示.
     }
-    public static int AcceptorThreads = HttpProtocolConnection.getAcceptorThreads();
-    public static int ClientToProxyWorkerThreads = HttpProtocolConnection.getClientToProxyWorkerThreads();
-    public static int ProxyToServerWorkerThreads = HttpProtocolConnection.getProxyToServerWorkerThreads();
+    public static int AcceptorThreads = HttpProtocolForConnection.getAcceptorThreads();
+    public static int ClientToProxyWorkerThreads = HttpProtocolForConnection.getClientToProxyWorkerThreads();
+    public static int ProxyToServerWorkerThreads = HttpProtocolForConnection.getProxyToServerWorkerThreads();
     public static X_Frame_Options X_Frame_Option = X_Frame_Options.SAMEORIGIN;
     public static final String X_Forwarded_For = "X-Forwarded-For";
     public static final String X_Real_IP = "X-Real-IP";

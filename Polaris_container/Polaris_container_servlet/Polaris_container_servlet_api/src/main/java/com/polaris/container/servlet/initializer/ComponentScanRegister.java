@@ -17,7 +17,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.core.type.filter.TypeFilter;
 
-import com.polaris.container.config.ConfigurationHelper;
+import com.polaris.container.config.ConfigurationProxy;
 import com.polaris.core.component.Initial;
 import com.polaris.core.util.Requires;
 
@@ -69,7 +69,7 @@ public abstract class ComponentScanRegister implements Initial{
         for (TypeFilter typeFilter : typeFilters) {
             componentProvider.addIncludeFilter(typeFilter);
         }
-        for (String basePackage : ConfigurationHelper.getBasePackageSet()) {
+        for (String basePackage : ConfigurationProxy.INSTANCE.getBasePackageSet()) {
             for (BeanDefinition candidate : componentProvider.findCandidateComponents(basePackage)) {
                 if (candidate instanceof ScannedGenericBeanDefinition) {
                     candidateComponents.add((ScannedGenericBeanDefinition)candidate);

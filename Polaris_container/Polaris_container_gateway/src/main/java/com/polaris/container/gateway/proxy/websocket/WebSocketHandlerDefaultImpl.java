@@ -3,7 +3,7 @@ package com.polaris.container.gateway.proxy.websocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.polaris.container.gateway.pojo.HttpProtocolWebSocket;
+import com.polaris.container.gateway.pojo.HttpProtocolForWebSocket;
 import com.polaris.container.gateway.pojo.HttpRequestWrapper;
 import com.polaris.container.gateway.proxy.HostResolver;
 import com.polaris.container.gateway.proxy.HttpFilters;
@@ -132,7 +132,7 @@ public class WebSocketHandlerDefaultImpl implements WebSocketHandler {
         }
         int newIdleConnectTimeout = wsAdmin.getWebSocketClient()
                                            .addAndGetIdleConnectTimeout(idleConnectTimeout);
-        if (newIdleConnectTimeout >= HttpProtocolWebSocket.getIdleConnectTimeout()) {
+        if (newIdleConnectTimeout >= HttpProtocolForWebSocket.getIdleConnectTimeout()) {
             WebSocketAdmin.close(ctx);
             return true;
         }

@@ -11,9 +11,12 @@ import com.polaris.core.util.FileUtil;
 import com.polaris.core.util.StringUtil;
 
 public class BannerPrinter {
+    public static BannerPrinter INSTANCE = new BannerPrinter();
+    private BannerPrinter(){}
+    
 	private static final Logger logger = LoggerFactory.getLogger(BannerPrinter.class);
-	private static final String BANNER_FILE = "banner.txt";
-	private static String[] BANNER = { "", 
+	private final String BANNER_FILE = "banner.txt";
+	private String[] BANNER = { "", 
 			"__________      .__               .__        ",
 			"\\______   \\____ |  | _____ _______|__| ______",
 			" |     ___/  _ \\|  | \\__  \\\\_  __ \\  |/  ___/",
@@ -24,7 +27,7 @@ public class BannerPrinter {
 			};
 	
 	
-	public static void print(Banner.Mode bannerMode) {
+	public void init(Banner.Mode bannerMode) {
 		
 		try {
 			String contents = FileUtil.read(ConfLauncherReaderStrategy.INSTANCE.getInputStream(BANNER_FILE));

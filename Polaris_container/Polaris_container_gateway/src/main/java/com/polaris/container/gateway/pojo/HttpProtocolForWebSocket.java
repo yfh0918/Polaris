@@ -2,7 +2,7 @@ package com.polaris.container.gateway.pojo;
 
 import com.polaris.core.util.StringUtil;
 
-public abstract class HttpProtocolWebSocket {
+public abstract class HttpProtocolForWebSocket {
     
     private static int WS_IDLE_CONNECT_TIMEOUT = 600;
     

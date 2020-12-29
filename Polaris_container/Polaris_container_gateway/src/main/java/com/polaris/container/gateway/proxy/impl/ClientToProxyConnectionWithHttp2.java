@@ -1,6 +1,6 @@
 package com.polaris.container.gateway.proxy.impl;
 
-import com.polaris.container.gateway.pojo.HttpProtocolTls;
+import com.polaris.container.gateway.pojo.HttpProtocolForTls;
 import com.polaris.container.gateway.proxy.Http11Listener;
 import com.polaris.container.gateway.proxy.SslEngineSource;
 import com.polaris.container.gateway.proxy.http2.Http2ChannelInboundHandlerAdapter;
@@ -58,7 +58,7 @@ public class ClientToProxyConnectionWithHttp2 extends ClientToProxyConnectionWit
 
     @Override
     protected void initChannelPipeline(ChannelPipeline pipeline) {
-        if (HttpProtocolTls.isTlsEnable()) {
+        if (HttpProtocolForTls.isTlsEnable()) {
             configureSsl(pipeline.channel());
         } else {
             configureClearText(pipeline.channel());

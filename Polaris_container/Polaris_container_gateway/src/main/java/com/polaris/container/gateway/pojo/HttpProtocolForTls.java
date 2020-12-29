@@ -2,7 +2,7 @@ package com.polaris.container.gateway.pojo;
 
 import com.polaris.core.util.StringUtil;
 
-public abstract class HttpProtocolTls {
+public abstract class HttpProtocolForTls {
     private static boolean TLS_ENABLE = false;
     
     private static String CERTIFICATE_FILE = null;

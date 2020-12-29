@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.polaris.container.listener.ServerListenerHelper;
+import com.polaris.container.listener.ServerListenerProxy;
 import com.polaris.core.OrderWrapper;
 import com.polaris.core.component.LifeCycle;
 import com.polaris.core.component.LifeCyclePublisherWithListener;
@@ -56,28 +56,28 @@ public class ServerProxy extends LifeCyclePublisherWithListener implements Serve
     
 	@Override
 	public void starting(LifeCycle event) {
-		ServerListenerHelper.starting(event);
+		ServerListenerProxy.INSTANCE.starting(event);
 	}
 
 	@Override
 	public void started(LifeCycle event) {
-		ServerListenerHelper.started(event);
+		ServerListenerProxy.INSTANCE.started(event);
         NamingClient.register();
         Runtime.getRuntime().addShutdownHook(jvmShutdownHook);
 	}
 
 	@Override
 	public void failure(LifeCycle event, Throwable cause) {
-		ServerListenerHelper.failure(event,cause);
+		ServerListenerProxy.INSTANCE.failure(event,cause);
 	}
 
 	@Override
 	public void stopping(LifeCycle event) {
         NamingClient.unRegister();
-		ServerListenerHelper.stopping(event);
+		ServerListenerProxy.INSTANCE.stopping(event);
 		//lifeCycleStopped method will not be called after the service is stopped
 		//so stopped method is called after the service is stopping
-		ServerListenerHelper.stopped(event);
+		ServerListenerProxy.INSTANCE.stopped(event);
 	}
 	
 	private static class ServerProvider {

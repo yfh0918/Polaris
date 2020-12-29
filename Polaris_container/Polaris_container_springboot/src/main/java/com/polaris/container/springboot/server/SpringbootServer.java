@@ -10,7 +10,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.polaris.container.ServerOrder;
 import com.polaris.container.SpringContextServer;
-import com.polaris.container.config.ConfigurationHelper;
+import com.polaris.container.config.ConfigurationProxy;
 import com.polaris.container.servlet.initializer.ServletContextHelper;
 import com.polaris.core.Constant;
 import com.polaris.core.config.ConfClient;
@@ -36,11 +36,11 @@ public class SpringbootServer extends SpringContextServer{
         System.setProperty(Constant.SERVER_SPRING_CONTEXT, serverContext);
         
         //start server
-        ConfigurationHelper.addConfiguration(SpringbootConfiguration.class);
-        SpringApplication springApplication = new SpringApplication(ConfigurationHelper.getConfiguration());
+        ConfigurationProxy.INSTANCE.addConfiguration(SpringbootConfiguration.class);
+        SpringApplication springApplication = new SpringApplication(ConfigurationProxy.INSTANCE.getConfiguration());
         springApplication.setBannerMode(Banner.Mode.OFF);
         springApplication.setRegisterShutdownHook(false);//统一由容器管理shutdown处理
-        ConfigurableApplicationContext context = springApplication.run(ConfigurationHelper.getArgs());
+        ConfigurableApplicationContext context = springApplication.run(ConfigurationProxy.INSTANCE.getArgs());
         if (context instanceof WebApplicationContext) {
             ServletContext servletContext = ((WebApplicationContext)context).getServletContext();
             ServletContextHelper.setServletContext(context, servletContext);

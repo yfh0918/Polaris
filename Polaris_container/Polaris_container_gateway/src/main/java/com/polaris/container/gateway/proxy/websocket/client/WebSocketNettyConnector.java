@@ -2,7 +2,7 @@ package com.polaris.container.gateway.proxy.websocket.client;
 
 import java.net.URI;
 
-import com.polaris.container.gateway.pojo.HttpProtocolWebSocket;
+import com.polaris.container.gateway.pojo.HttpProtocolForWebSocket;
 import com.polaris.container.gateway.proxy.websocket.WebSocketException;
 
 import io.netty.bootstrap.Bootstrap;
@@ -26,14 +26,14 @@ public class WebSocketNettyConnector {
             URI uri = new URI(url);
             final int port = uri.getPort();
             WebSocketNettyClientHandler handler = new WebSocketNettyClientHandler(
-                    WebSocketClientHandshakerFactory.newHandshaker(uri, WebSocketVersion.V13, null, false, new DefaultHttpHeaders(), HttpProtocolWebSocket.getMaxFramePayloadLength()), 
+                    WebSocketClientHandshakerFactory.newHandshaker(uri, WebSocketVersion.V13, null, false, new DefaultHttpHeaders(), HttpProtocolForWebSocket.getMaxFramePayloadLength()), 
                     clientListener);
             Channel channelClient = new Bootstrap()
                     .group(eventLoopGroup).channel(NioSocketChannel.class).handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel ch) {
                             ChannelPipeline p = ch.pipeline();
-                            p.addLast(new HttpClientCodec(), new HttpObjectAggregator(HttpProtocolWebSocket.getMaxFramePayloadLength()), handler);
+                            p.addLast(new HttpClientCodec(), new HttpObjectAggregator(HttpProtocolForWebSocket.getMaxFramePayloadLength()), handler);
                         }
                     })
                     .connect(uri.getHost(), port).sync().channel();

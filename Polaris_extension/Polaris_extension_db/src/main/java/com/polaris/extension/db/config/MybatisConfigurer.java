@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.google.common.base.Joiner;
-import com.polaris.container.config.ConfigurationHelper;
+import com.polaris.container.config.ConfigurationProxy;
 import com.polaris.core.config.ConfClient;
 import com.polaris.core.util.StringUtil;
 import com.polaris.extension.db.PolarisBaseMapper;
@@ -36,7 +36,7 @@ public class MybatisConfigurer{
             mapperScannerConfigurer.setBasePackage(mapperScanBasePackage);
         } else {
         	Set<String> mappers = new HashSet<>();
-        	for (String basePackage : ConfigurationHelper.getBasePackageSet()) {
+        	for (String basePackage : ConfigurationProxy.INSTANCE.getBasePackageSet()) {
         		mappers.add(basePackage + ".**.mapper");
         	}
             mapperScannerConfigurer.setBasePackage(Joiner.on(',').skipNulls().join(mappers));

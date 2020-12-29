@@ -59,7 +59,7 @@ import org.glassfish.jersey.server.ContainerResponse;
 import org.glassfish.jersey.server.internal.ContainerUtils;
 import org.glassfish.jersey.server.spi.ContainerResponseWriter;
 
-import com.polaris.container.gateway.pojo.HttpProtocolTls;
+import com.polaris.container.gateway.pojo.HttpProtocolForTls;
 import com.polaris.container.gateway.util.ResponseUtil;
 import com.polaris.core.pojo.ServerHost;
 import com.polaris.core.util.JacksonUtil;
@@ -153,7 +153,7 @@ public class JerseyServerHandler {
      */
     private ContainerRequest createContainerRequest(ChannelHandlerContext ctx, HttpRequest req) throws URISyntaxException{
         HttpHeaders headers = req.headers();
-        URI baseUri = new URI((HttpProtocolTls.isTlsEnable() ? ServerHost.HTTPS : ServerHost.HTTP) + ServerHost.DOUBLE_SLASH + headers.get(HttpHeaderNames.HOST) + ServerHost.SLASH);
+        URI baseUri = new URI((HttpProtocolForTls.isTlsEnable() ? ServerHost.HTTPS : ServerHost.HTTP) + ServerHost.DOUBLE_SLASH + headers.get(HttpHeaderNames.HOST) + ServerHost.SLASH);
         String s = req.uri().startsWith("/") ? req.uri().substring(1) : req.uri();
         URI requestUri = URI.create(baseUri + ContainerUtils.encodeUnsafeCharacters(s));
 

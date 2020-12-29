@@ -2,8 +2,8 @@ package com.polaris.container.gateway.proxy.tls;
 
 import java.io.File;
 
-import com.polaris.container.gateway.pojo.HttpProtocolHttp2;
-import com.polaris.container.gateway.pojo.HttpProtocolTls;
+import com.polaris.container.gateway.pojo.HttpProtocolForHttp2;
+import com.polaris.container.gateway.pojo.HttpProtocolForTls;
 import com.polaris.container.gateway.proxy.http2.Http2Exception;
 import com.polaris.core.util.StringUtil;
 
@@ -38,7 +38,7 @@ public class SelfSignedSslALPNContextFactory {
     private static SslContext create() {
         
         try {
-            String certificate = HttpProtocolTls.getCertificateFile();
+            String certificate = HttpProtocolForTls.getCertificateFile();
             boolean isCertificate = false;
             File certificateFile = null;
             if (StringUtil.isNotEmpty(certificate)) {
@@ -47,7 +47,7 @@ public class SelfSignedSslALPNContextFactory {
                     isCertificate = true;
                 }
             }
-            String privateKey = HttpProtocolTls.getPrivateKeyFile();
+            String privateKey = HttpProtocolForTls.getPrivateKeyFile();
             boolean isPrivateKey = false;
             File privateKeyFile = null;
             if (StringUtil.isNotEmpty(privateKey)) {
@@ -61,7 +61,7 @@ public class SelfSignedSslALPNContextFactory {
                 certificateFile = cert.certificate();
                 privateKeyFile = cert.privateKey();
             }
-            String privateKeyPassword = HttpProtocolTls.getPrivateKeyPassword();
+            String privateKeyPassword = HttpProtocolForTls.getPrivateKeyPassword();
             if (StringUtil.isEmpty(privateKeyPassword)) {
                 privateKeyPassword = null;
             }
@@ -84,7 +84,7 @@ public class SelfSignedSslALPNContextFactory {
     }
     
     private static String[] listProtocols() {
-        if (HttpProtocolHttp2.isHttp20Enable()) {
+        if (HttpProtocolForHttp2.isHttp20Enable()) {
             return new String[] {  ApplicationProtocolNames.HTTP_2 ,ApplicationProtocolNames.HTTP_1_1};        
         }
         return new String[] { ApplicationProtocolNames.HTTP_1_1 };

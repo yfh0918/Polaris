@@ -18,7 +18,7 @@ import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
 
 import com.polaris.container.ServerOrder;
 import com.polaris.container.SpringContextServer;
-import com.polaris.container.config.ConfigurationHelper;
+import com.polaris.container.config.ConfigurationProxy;
 import com.polaris.core.Constant;
 import com.polaris.core.GlobalContext;
 import com.polaris.core.config.ConfClient;
@@ -53,7 +53,7 @@ public class WebfluxServer extends SpringContextServer{
      */
     @Override
     public void start() throws Exception {
-        ConfigurationHelper.addConfiguration(WebfluxServer.class);
+        ConfigurationProxy.INSTANCE.addConfiguration(WebfluxServer.class);
         super.start();
         
         //通过ApplicationContext创建HttpHandler

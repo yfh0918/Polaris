@@ -2,14 +2,14 @@ package com.polaris.container;
 
 import org.springframework.context.ConfigurableApplicationContext;
 
-import com.polaris.container.config.ConfigurationHelper;
+import com.polaris.container.config.ConfigurationProxy;
 import com.polaris.core.util.SpringContextHealper;
 
 public class SpringContextServer implements Server{
 	
     @Override
     public void start() throws Exception {
-        ConfigurableApplicationContext context = SpringContextHealper.createApplicationContext(ConfigurationHelper.getConfiguration());
+        ConfigurableApplicationContext context = SpringContextHealper.createApplicationContext(ConfigurationProxy.INSTANCE.getConfiguration());
         context.refresh();
     }
     

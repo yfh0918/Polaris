@@ -1,6 +1,6 @@
 package com.polaris.container.gateway.proxy.impl;
 
-import com.polaris.container.gateway.pojo.HttpProtocolHttp2;
+import com.polaris.container.gateway.pojo.HttpProtocolForHttp2;
 import com.polaris.container.gateway.proxy.SslEngineSource;
 
 import io.netty.channel.ChannelPipeline;
@@ -13,7 +13,7 @@ public abstract class ClientToProxyConnectionFactory {
             SslEngineSource sslEngineSource, 
             ChannelPipeline pipeline, 
             GlobalTrafficShapingHandler globalTrafficShapingHandler) {
-        if (HttpProtocolHttp2.isHttp20Enable()) {
+        if (HttpProtocolForHttp2.isHttp20Enable()) {
             return new ClientToProxyConnectionWithHttp2(
                     proxyServer,
                     sslEngineSource,

@@ -9,7 +9,7 @@ import org.springframework.core.annotation.Order;
 
 import com.polaris.container.ServerOrder;
 import com.polaris.container.SpringContextServer;
-import com.polaris.container.gateway.pojo.HttpProtocolConnection;
+import com.polaris.container.gateway.pojo.HttpProtocolForConnection;
 import com.polaris.container.gateway.proxy.ActivityTrackerAdapter;
 import com.polaris.container.gateway.proxy.FlowContext;
 import com.polaris.container.gateway.proxy.HttpFilters;
@@ -44,8 +44,8 @@ public class HttpServer extends SpringContextServer{
     	super.start();
     	
         //milliseconds -
-        int timeout = HttpProtocolConnection.getTimeout();
-        int idleConnectionTimeout = HttpProtocolConnection.getIdleTimeout();
+        int timeout = HttpProtocolForConnection.getTimeout();
+        int idleConnectionTimeout = HttpProtocolForConnection.getIdleTimeout();
 
         //start
         ThreadPoolConfiguration threadPoolConfiguration = new ThreadPoolConfiguration();
@@ -60,7 +60,7 @@ public class HttpServer extends SpringContextServer{
                 .withConnectTimeout(timeout)
                 .withIdleConnectionTimeout(idleConnectionTimeout)
                 .withThreadPoolConfiguration(threadPoolConfiguration)
-                .withThrottling(HttpProtocolConnection.getReadThrottleBytesPerSecond(), HttpProtocolConnection.getWriteThrottleBytesPerSecond())
+                .withThrottling(HttpProtocolForConnection.getReadThrottleBytesPerSecond(), HttpProtocolForConnection.getWriteThrottleBytesPerSecond())
                 //X-Real-IP,XFF设置
                 .plusActivityTracker(new ActivityTrackerAdapter() {
                     @Override
