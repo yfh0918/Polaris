@@ -542,7 +542,7 @@ public class DefaultHttpProxyServer implements HttpProxyServer {
     }
 
     private static class DefaultHttpProxyServerBootstrap implements HttpProxyServerBootstrap {
-        private String name = "LittleProxy";
+        private String name = "PolarisGateway";
         private ServerGroup serverGroup = null;
         private TransportProtocol transportProtocol = TransportProtocol.TCP;
         private InetSocketAddress requestedAddress;

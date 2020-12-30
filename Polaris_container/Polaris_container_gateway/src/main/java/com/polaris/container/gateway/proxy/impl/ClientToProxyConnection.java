@@ -648,7 +648,7 @@ public class ClientToProxyConnection extends ProxyConnection<HttpRequestWrapper>
 
     /**
      * Initialize the {@link ChannelPipeline} for the client to proxy channel.
-     * LittleProxy acts like a server here.
+     * Proxy acts like a server here.
      * 
      * A {@link ChannelPipeline} invokes the read (Inbound) handlers in
      * ascending ordering of the list and then the write (Outbound) handlers in

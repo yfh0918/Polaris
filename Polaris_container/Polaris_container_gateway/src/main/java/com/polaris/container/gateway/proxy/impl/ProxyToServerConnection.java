@@ -583,7 +583,7 @@ public class ProxyToServerConnection extends ProxyConnection<HttpResponse> {
 
     /**
      * Initialize our {@link ChannelPipeline} to connect the upstream server.
-     * LittleProxy acts as a client here.
+     * Proxy acts as a client here.
      *
      * A {@link ChannelPipeline} invokes the read (Inbound) handlers in
      * ascending ordering of the list and then the write (Outbound) handlers in

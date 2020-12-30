@@ -17,9 +17,6 @@ public interface HttpProxyServerBootstrap {
      * Give the server a name (used for naming threads, useful for logging).
      * </p>
      * 
-     * <p>
-     * Default = LittleProxy
-     * </p>
      * 
      * @param name
      * @return
