@@ -115,5 +115,5 @@
 
 15, 新增模块ManagedComponent抽象类，任何继承ManagedComponent类的资源释放都可以在close方法中完成，可以参考Polaris_demo_web_springmvc的DemoLifCycle
 
-16,   如果采用注解方式调用http等请求，需要引入Polaris_extension_feign，也可以自定义解决方案，采用spi机制注入feign客户端
+16,   如果采用注解方式调用http等请求，需要引入Polaris_extension_feign，
        具体参考Polaris_demo_web_springmvc的DemoController 的remote方法，需要开启@EnableFeignRequest注解
