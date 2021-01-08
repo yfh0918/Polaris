@@ -38,19 +38,19 @@ public abstract class ServerRunner {
     	//banna打印
     	BannerPrinter.INSTANCE.init(bannerMode);
     	
-    	//各类参数载入
+    	//各类配置中心的文件
     	ConfClient.INSTANCE.init();
     	
-        //全局初始化
+        //载入扩展全局init-spi机制
         InitialProxy.INSTANCE.init();
 
-        //载入配置类
+        //载入扩展Spring的configuration-spi机制
 		ConfigurationProxy.INSTANCE.init(args, configClass);		
         
-    	//载入监听器
+    	//载入扩展载入监听器-spi机制
     	ServerListenerProxy.INSTANCE.init(args, serverListeners);
     	
-    	//启动Server
+    	//启动Server-spi机制
     	ServerProxy.INSTANCE.start();;
     }
     
