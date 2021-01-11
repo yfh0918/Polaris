@@ -1,9 +1,11 @@
-﻿0: 基于JDK1.8及以上版本
+﻿0:作者离职，git版本已不再更新，最新版请参考码云：https://gitee.com/yu_fenghua/Polaris 
+   JDK1.8及以上版本
    基于注册中心和配置中心提供统一的入口，可以替换不同的实现方式--基于SPI
    不同于springboot的context内包含内置容器，提供容器和servlet标准接口的分离实现---基于SPI
    基于受托管的生命周期进行管理容器和组件
    提供独立的网关API接口+静态文件服务，实现目前主流协议，可以替换部分nginx的功能
    提供各类扩展实现，详细参考Polaris_extension_xxx
+   
  
 1:install 全体
  
