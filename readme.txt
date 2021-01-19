@@ -4,6 +4,7 @@
    基于受托管的生命周期进行管理容器和组件
    提供独立的网关API接口+静态文件服务，实现目前主流协议，可以替换部分nginx的功能
    提供各类扩展实现，详细参考Polaris_extension_xxx
+   配合注册中心实现集群的定时器功能CronScheduledBusinessTask
    
  
 1:install 全体
