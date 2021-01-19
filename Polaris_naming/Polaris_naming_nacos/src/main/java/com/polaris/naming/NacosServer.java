@@ -46,7 +46,6 @@ public class NacosServer implements NamingHandler {
 			naming = NamingFactory.createNamingService(properties);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
-			throw new IllegalArgumentException(Constant.NAMING_REGISTRY_ADDRESS_NAME + ":"+ConfClient.getNamingRegistryAddress() + " is not correct ");
 		}
 	}
 	
