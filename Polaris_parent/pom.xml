@@ -25,7 +25,7 @@
         <cxf.version>2.7.13</cxf.version>
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <swagger-version>2.9.2</swagger-version>
-        <nacos.version>1.4.0</nacos.version>
+        <nacos.version>2.0.0</nacos.version>
         <dubbo-version>2.7.4</dubbo-version>
         <sentinel-version>1.7.0</sentinel-version>
         <springboot-version>2.3.0.RELEASE</springboot-version>
