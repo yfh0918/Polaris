@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <resteasy-version>3.0.13.Final</resteasy-version>
         <spring_version>5.2.6.RELEASE</spring_version>
-        <tomcat-version>9.0.35</tomcat-version>
+        <tomcat-version>9.0.41</tomcat-version>
         <jetty-version>9.4.35.v20201120</jetty-version>
         <undertow-version>2.0.30.Final</undertow-version>
         <polaris-version>1.7.6</polaris-version>
