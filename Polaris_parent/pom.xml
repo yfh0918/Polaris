@@ -26,7 +26,7 @@
         <jsr311-api.version>1.1.1</jsr311-api.version>
         <swagger-version>2.9.2</swagger-version>
         <nacos.version>1.4.0</nacos.version>
-        <dubbo-version>2.7.4</dubbo-version>
+        <dubbo-version>2.7.15</dubbo-version>
         <sentinel-version>1.7.0</sentinel-version>
         <springboot-version>2.3.0.RELEASE</springboot-version>
         <jackson.version>2.11.0</jackson.version>
