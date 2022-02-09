@@ -745,7 +745,7 @@
             <dependency>
                 <groupId>org.infinispan</groupId>
                 <artifactId>infinispan-core</artifactId>
-                <version>10.0.0.Final</version>
+                <version>11.0.6.Final</version>
                 <exclusions>
 					<exclusion>
 						<artifactId>jboss-logging</artifactId>
