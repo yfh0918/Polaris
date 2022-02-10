@@ -19,7 +19,7 @@
         <undertow-version>2.0.30.Final</undertow-version>
         <polaris-version>1.7.6</polaris-version>
         <activiti-version>5.22.0</activiti-version>
-        <hibernate-version>5.4.10.Final</hibernate-version>
+        <hibernate-version>5.4.24.Final</hibernate-version>
         <lucene-version>7.2.0</lucene-version>
         <!-- cxf -->
         <cxf.version>2.7.13</cxf.version>
