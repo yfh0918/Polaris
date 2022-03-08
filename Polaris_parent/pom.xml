@@ -30,7 +30,7 @@
         <sentinel-version>1.7.0</sentinel-version>
         <springboot-version>2.3.0.RELEASE</springboot-version>
         <jackson.version>2.11.0</jackson.version>
-        <poi.version>4.1.2</poi.version>
+        <poi.version>5.2.1</poi.version>
         <minio.version>7.0.2</minio.version>
         <hutool.version>4.1.18</hutool.version>
         <guava.version>28.0-jre</guava.version>
